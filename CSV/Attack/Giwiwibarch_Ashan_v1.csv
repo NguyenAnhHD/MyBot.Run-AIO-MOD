@@ -1,0 +1,64 @@
+NOTE  |Author: Ahsan - ver. 0.1-
+NOTE  |Attack: GiWiWiBarch
+NOTE  |Make Troops: 12-15 giants, 4-8 wb, 9-12 wiz, 8-12 ice wiz, rest barch
+NOTE  |Make Spells: 2-3 rage, 3-4 eq (optional), 1 eq in CC (optional), 1-2 Freeze spell, 1-2 jump spell
+
+      |-----------------------------------------------------------------------------------------------|
+      |                                                                                               |
+      |                                                                                               |
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |0          |0          |0          |0          |0          |0          |10         |EAGLE      |
+
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |A          |FRONT-LEFT |10         |1          |INT-EXT    |0          |2          |           |
+MAKE  |B          |FRONT-RIGHT|10         |1          |INT-EXT    |0          |2          |           |
+MAKE  |C          |FRONT-LEFT |10         |2          |EXT-INT    |0          |3          |           |
+MAKE  |D          |FRONT-RIGHT|10         |2          |EXT-INT    |0          |3          |           |
+MAKE  |F          |FRONT-LEFT |10         |-7         |INT-EXT    |0          |0          |           |
+MAKE  |G          |FRONT-LEFT |10         |-14        |INT-EXT    |0          |0          |           |
+MAKE  |H          |FRONT-LEFT |10         |-12        |INT-EXT    |0          |0          |           |
+MAKE  |I          |FRONT-LEFT |10         |-19        |INT-EXT    |0          |0          |           |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|           |
+DROP  |H          |1          |3          |Espell     |0          |0          |500-600    |           |
+
+WAIT  |1500-2500  |           |           |           |           |           |           |           |
+
+RECALC|           |           |           |           |           |           |           |           |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|           |
+DROP  |H          |1          |1          |Espell     |0          |0          |500-600    |           |
+DROP  |H          |1          |1          |Jspell     |0          |0          |500-600    |           |
+DROP  |F          |1          |1          |Jspell     |0          |0          |500-600    |           |
+DROP  |A-B        |1-8        |100%       |giant      |20-30      |0          |300-600    |           |
+DROP  |A-B        |1-10       |100%       |barb       |20-30      |0          |300-600    |           |
+DROP  |A          |1          |100%       |wall       |10-50      |0          |5-10       |           |
+DROP  |C-D        |1-10       |100%       |iceW       |20-30      |0          |100-200    |           |
+DROP  |C-D        |1-10       |100%       |arch       |20-30      |0          |300-600    |           |
+DROP  |C-D        |1-10       |100%       |wiza       |20-30      |0          |100-200    |           |
+DROP  |A          |1          |1          |king       |0          |0          |100-300    |           |
+DROP  |A          |1          |1          |queen      |0          |0          |100-300    |           |
+DROP  |A          |1          |1          |warden     |0          |0          |500-600    |           |
+DROP  |A          |1          |1          |castle     |0          |0          |50-100     |           |
+
+WAIT  |1000-2000  |           |           |           |           |           |           |           |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|           |
+DROP  |F          |1          |1          |Rspell     |1          |0          |100-200    |           |
+DROP  |A          |1          |100%       |Remain     |10-50      |0          |100-500    |           |
+
+      |DEFENSE____|OPTIONS________|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|
+DROPS |EAGLE      |R:T,B:F,S:A,L:T|1          |FSpell     |0          |0          |0          |            |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|           |
+DROP  |G          |1          |1          |Rspell     |1          |0          |100-200    |           |
+
+      |DEFENSE____|OPTIONS________|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|
+DROPS |INFERNO    |R:T,B:T,S:A,L:T|1          |FSpell     |0          |0          |0          |            |
+
+WAIT  |3000-4000  |           |           |           |           |           |           |           |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|           |
+DROP  |I          |1          |1          |Rspell     |1          |0          |100-200    |           |

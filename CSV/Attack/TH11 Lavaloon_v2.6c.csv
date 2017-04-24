@@ -1,0 +1,69 @@
+NOTE  |Author: Ahsan & Belmont -ver. 2.6c- (1 side) -External Edges-
+NOTE  |Attack: Lavaloon
+NOTE  |Troops and Spells supported: 2 lava, 28 Balloons,15 Minions,5 wbs,11 Haste
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|	  
+SIDE  |           |           |           |           |           |5          |10         |ADefence   |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |A          |FRONT-RIGHT|10         |1          |INT-EXT    |0          |1          |           |
+MAKE  |B          |FRONT-LEFT |10         |1          |INT-EXT    |0          |1          |           |
+MAKE  |C          |FRONT-LEFT |8          |1          |EXT-INT    |0          |1          |           |
+MAKE  |D          |FRONT-RIGHT|8          |1          |INT-EXT    |0          |1          |           |
+MAKE  |E          |FRONT-LEFT |10         |-8         |EXT-INT    |0          |0          |           |
+MAKE  |F          |FRONT-RIGHT|10         |-8         |EXT-INT    |0          |0          |           |
+MAKE  |G          |FRONT-RIGHT|10         |-15        |EXT-INT    |0          |0          |           |
+MAKE  |H          |FRONT-LEFT |10         |-15        |EXT-INT    |0          |0          |           |   
+MAKE  |I          |FRONT-LEFT |10         |-22        |EXT-INT    |0          |0          |           |
+MAKE  |J          |FRONT-RIGHT|10         |-22        |EXT-INT    |0          |0          |           |
+MAKE  |K          |FRONT-LEFT |10         |-27        |EXT-INT    |0          |0          |           |
+MAKE  |L          |FRONT-RIGHT|10         |-27        |EXT-INT    |0          |0          |           |
+MAKE  |M          |FRONT-LEFT |8          |1          |INT-EXT    |0          |1          |           |
+MAKE  |N          |FRONT-RIGHT|8          |1          |EXT-INT    |0          |1          |           |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
+DROP  |A-B        |6          |1          |Lava       |30-50      |30-70      |100-200    |           |
+DROP  |A          |1          |1          |castle     |0          |0          |100-200    |           |
+DROP  |C          |2-8        |7          |Ball       |20-30      |10-20      |0          |           |
+DROP  |D          |1-7        |7          |Ball       |20-30      |10-20      |100-200    |           |
+DROP  |N          |2-8        |7          |Ball       |20-30      |10-20      |0          |           |
+DROP  |M          |1-7        |7          |Ball       |20-30      |10-20      |100-200    |           |
+DROP  |E          |6          |1          |HaSpell    |0          |0          |100        |           |
+DROP  |E          |9          |1          |HaSpell    |0          |0          |100        |           |
+DROP  |F          |9          |1          |HaSpell    |0          |0          |100        |           |
+DROP  |F          |5          |1          |HaSpell    |0          |0          |100-200    |           |
+DROP  |A          |1          |1          |warden     |30-50      |0          |50-100     |           |
+
+       |DEFENSE____|OPTIONS________|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|
+DROPS  |EAGLE      |R:T,B:F,S:A,L:T|1          |FSpell     |0          |0          |0          |            |
+
+WAIT  |4000-4500  |           |           |           |           |           |           |           |
+DROP  |H          |6          |1          |HaSpell    |0          |0          |100        |           |
+DROP  |H          |9          |1          |HaSpell    |0          |0          |100        |           |
+DROP  |G          |9          |1          |HaSpell    |0          |0          |100        |           |
+DROP  |G          |5          |1          |HaSpell    |0          |0          |100        |           |
+
+      |DEFENSE____|OPTIONS________|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|
+DROPS |INFERNO    |R:T,B:F,S:A,L:T|1          |FSpell     |0          |0          |0          |            |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
+WAIT  |3500-4000  |           |           |           |           |           |           |           |
+DROP  |A          |1          |1          |warden     |30-50      |100        |50-100     |           | 
+DROP  |I          |9          |1          |HaSpell    |0          |0          |100        |           |
+RECALC|           |           |           |           |           |           |           |           | 
+DROP  |J          |9          |1          |HaSpell    |0          |0          |0          |           | 
+DROP  |I          |6          |1          |HaSpell    |0          |0          |100        |           |      
+RECALC|           |           |           |           |           |           |           |           | 
+DROP  |J          |5          |1          |RSpell     |0          |0          |100        |           | 
+DROP  |K          |10         |1          |HaSpell    |0          |0          |0          |           | 
+DROP  |L          |8          |1          |HaSpell    |0          |0          |100        |           |
+WAIT  |6500-7500  |           |           |           |           |           |           |           |
+DROP  |A          |5-10       |8          |Mini       |50-60      |0          |0          |           |
+DROP  |B          |5-10       |8          |Mini       |50-60      |0          |500-1000   |           |
+DROP  |A-B        |10         |1          |babyd      |30-50      |0          |500-800    |           |	
+DROP  |A          |1          |3          |wall       |0          |0          |2000-3000  |           |
+DROP  |A          |1          |1          |king       |30-50      |0          |50-100     |           |
+DROP  |A          |1          |3          |wall       |0          |0          |1200-1600  |           |
+DROP  |A          |1          |1          |queen      |30-50      |100        |50-100     |           | 
+DROP  |A          |1          |1          |babyd      |30-50      |0          |500-800    |           |
+DROP  |A-B        |1-10       |1          |REMAIN     |30-50      |100        |50-100     |           | 

@@ -1,0 +1,43 @@
+NOTE  |Author: RoroTiti - v0.2 - 02/11/2016
+NOTE  |
+NOTE  |Attack: J-GiWiVa (TH9 Only)
+NOTE  |TH Side Only - Trophy Push - CC Drop (Recomended troops : Golem or Giants) - Human Like Dropping
+NOTE  |
+NOTE  |Make These Troops: 12 Giants, 4 WBs, 14 Wizards, 12 Valkyries - Spells: 1 Rage, 1 Heal, 2 Jumps, 1 Haste
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |           |           |           |           |           |           |10         |           |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |A          |FRONT-LEFT |10         |2          |INT-EXT    |3          |3          |           |	Used for : Golem, Wizards (waves), WBs, Valyries, Castle, Heroes
+MAKE  |B          |FRONT-RIGHT|10         |2          |EXT-INT    |3          |3          |           |	Used for : Wizards (waves)
+MAKE  |C          |FRONT-LEFT |10         |3          |EXT-INT    |3          |3          |           |	Used for : Wizard (clean)
+MAKE  |D          |FRONT-RIGHT|10         |3          |EXT-INT    |3          |3          |           |	Used for : Wizard (clean)
+MAKE  |E          |FRONT-RIGHT|10         |-12        |INT-EXT    |3          |3          |           |	Used for : Rage spell
+MAKE  |F          |FRONT-RIGHT|10         |-15        |INT-EXT    |3          |3          |           |	Used for : Heal spell
+MAKE  |G          |FRONT-RIGHT|10         |-18        |INT-EXT    |3          |3          |           |	Used for : Haste spell
+MAKE  |H          |FRONT-RIGHT|10         |-10        |INT-EXT    |3          |3          |           |	Used for : Jump Spell
+MAKE  |I          |FRONT-RIGHT|10         |-14        |INT-EXT    |3          |3          |           |	Used for : Jump Spell
+MAKE  |J          |FRONT-RIGHT|10         |1          |INT-EXT    |3          |3          |           |	Used for : Wizards (waves)
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
+DROP  |A-J        |2          |6          |Giant      |0          |0          |300-500    |           |	Drop 12 Giants
+DROP  |A          |1          |1          |Castle     |0          |0          |500-800    |           |	Drop Castle (if available - Golem or Giants)
+
+DROP  |C-D        |2          |1          |Wiza       |0          |0          |300-500    |           |	Drop 2 Wizards at the edges of the front side to clean, +2 tiles
+DROP  |B          |5-10       |6          |Wiza       |0          |100-300    |100-300    |           |	Drop wave of 6 Wizards trough a line
+DROP  |A          |1-6        |6          |Wiza       |0          |100-300    |300-500    |           |	Drop wave of 6 Wizards trough a line
+DROP  |A          |1          |4          |Wall       |100-300    |0          |300-500    |           |	Drop 4 WBs
+
+DROP  |H          |1          |1          |JSpell     |0          |0          |300-500    |           |	Drop 1 Jump Spell
+DROP  |I          |1          |1          |JSpell     |0          |0          |500-800    |           |	Drop 1 Jump Spell
+
+DROP  |A          |1          |12         |Valk       |100-300    |0          |300-500    |           |	Drop 12 Valkyries on an only one spot
+DROP  |A          |1          |1          |King       |0          |0          |300-500    |           |	Drop King
+DROP  |A          |1          |1          |Queen      |0          |0          |500-800    |           | Drop Queen
+																																	   _
+DROP  |E          |1          |1          |Rspell     |0          |0          |4000-6000  |           |	Drop 1 Rage spell, -12 tiles	|
+DROP  |F          |1          |1          |Hspell     |0          |0          |3000-4000  |           |	Drop 1 Heal spell, -15 tiles	 > All spells are dropped on the same alignment
+DROP  |G          |1          |1          |Haspell    |0          |0          |4000-6000  |           |	Drop 1 Haste spell, -18 tiles  _|
+
+DROP  |A          |1          |10         |Remain     |0          |0          |0          |           |Drop Remain Troops

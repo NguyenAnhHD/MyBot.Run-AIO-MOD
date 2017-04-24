@@ -1,0 +1,61 @@
+NOTE  |Town Hall 9: 220 troops
+NOTE  |12 Gaints 70 Barbarians and 70 Archers
+NOTE  |(Random) Heroes and Castle if Droping
+NOTE  |
+NOTE  |By Rhinoceros Modified TheRevenor (05/2016) And Ahsan Iqbal (09/2016)
+NOTE  |Version 1.4 Fair Play
+
+      |70 troops = 27.5 (28) per side = 14 per slice
+      |drop points = 32 per side, 16 per slice
+      |drops from 3-30 on each side (leaving room for fingers to make realistic)
+      |adds 10 tiles from red line to drop at edge of diamond
+
+      |Note2: This attack will only drop Gaints, barbarians and archers (and selected heroes and castle).  
+      |Other available troops will not be dropped
+
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE |
+SIDE  |5          |5          |           |           |           |           |           |            |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|____________|MAKE VECTORS FOR BARBS AND ARCHS
+MAKE  |A          |FRONT-RIGHT|16         |10         |INT-EXT    |2          |2          |            |
+MAKE  |B          |RIGHT-FRONT|16         |10         |INT-EXT    |2          |2          |            |
+MAKE  |C          |LEFT-BACK  |16         |10         |INT-EXT    |2          |2          |            |
+MAKE  |D          |BACK-LEFT  |16         |10         |INT-EXT    |2          |2          |            |
+MAKE  |E          |FRONT-LEFT |16         |10         |EXT-INT    |2          |2          |            |
+MAKE  |F          |RIGHT-BACK |16         |10         |EXT-INT    |2          |2          |            |
+MAKE  |G          |LEFT-FRONT |16         |10         |EXT-INT    |2          |2          |            |
+MAKE  |H          |BACK-RIGHT |16         |10         |EXT-INT    |2          |2          |            |
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|____________|MAKE VECTORS TO DROP KING, QUEEN and CASTLE
+MAKE  |Q          |RANDOM     |70         |1          |INT-EXT    |2          |2          |            |random side to drop king, at 1 tile from redarea	  
+MAKE  |R          |RANDOM     |70         |2          |INT-EXT    |2          |2          |            |random side to drop queen and castle, at 2 tiles from redarea
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|SEQUENCE 1 LAUNCH GAINTS BARBS THEN ARCH
+DROP  |E-G        |1-10       |2-3        |giant      |30         |30-70      |0          |            |
+DROP  |A-C        |1-10       |2-3        |giant      |30         |30-70      |0          |            |
+
+DROP  |E-G        |3-16       |8-10       |barb       |30         |30-70      |0          |            | 
+DROP  |A-C        |1-14       |8-10       |barb       |30         |30-70      |1000       |            | 
+
+DROP  |E-G        |3-16       |8-10       |arch       |30         |30-70      |0          |            | 
+DROP  |A-C        |1-14       |8-10       |arch       |30         |30-70      |2000       |            | 
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|SEQUENCE 2 LAUNCH GAINTS BARBS THEN ARCH
+DROP  |F-H        |1-10       |2-3        |giant      |30         |30-70      |0          |            | 
+DROP  |B-D        |1-10       |2-3        |giant      |30         |30-70      |1000       |            | 
+
+DROP  |F-H        |3-16       |8-10       |barb       |30         |30-70      |0          |            | 
+DROP  |B-D        |1-14       |8-10       |barb       |30         |30-70      |1000       |            | 
+
+DROP  |F-H        |3-16       |8-10       |arch       |30         |30-70      |0          |            | 
+DROP  |B-D        |1-14       |8-10       |arch       |30         |30-70      |500        |            | 
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|SEQUENCE 3 LAUNCH GAINTS BARBS THEN ARCH IF REMAINING
+DROP  |E-G        |3-16       |5-6        |giant      |30         |30-70      |0          |            | 
+DROP  |E-G        |3-16       |10-26      |barb       |30         |30-70      |0          |            | 
+DROP  |E-G        |1-14       |10-26      |arch       |30         |30-70      |0          |            |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|SEQUENCE 5 DROP HEROES AND CC 
+DROP  |R          |3          |1          |castle     |500        |30-70      |500        |            |
+DROP  |Q          |3          |1          |king       |500        |30-70      |500        |            |
+DROP  |R          |3          |1          |queen      |0          |30-70      |800        |            |

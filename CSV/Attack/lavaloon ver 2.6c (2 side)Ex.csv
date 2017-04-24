@@ -1,0 +1,69 @@
+NOTE  |Author: Ahsan -ver. 2.6c- (2 side) External Edges
+NOTE  |Attack: lavaloonion
+NOTE  |Make Troops: 26-28 loon, 2 lava, 10-20 minions, 4 wb
+NOTE  |Make Spells: 11 Haste, 1 haste in CC
+
+      |-----------------------------------------------------------------------------------------------|
+      |                                                                                               |
+      |                                                                                               |
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |0          |0          |0          |0          |0          |0          |10         |ADefence   |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |A          |FRONT-LEFT |10         |1          |INT-EXT    |0          |1          |           |
+MAKE  |B          |FRONT-RIGHT|10         |1          |INT-EXT    |0          |1          |           |
+MAKE  |C          |RIGHT-FRONT|10         |1          |INT-EXT    |0          |1          |           |
+MAKE  |D          |RIGHT-BACK |10         |1          |INT-EXT    |0          |1          |           |
+MAKE  |E          |FRONT-RIGHT|7          |1          |EXT-INT    |0          |1          |           |
+MAKE  |F          |RIGHT-FRONT|7          |1          |EXT-INT    |0          |1          |           |
+MAKE  |G          |FRONT-LEFT |7          |1          |INT-EXT    |0          |1          |           |
+MAKE  |H          |RIGHT-BACK |7          |1          |INT-EXT    |0          |1          |           |
+MAKE  |I          |FRONT-LEFT |10         |-7         |INT-EXT    |0          |0          |           |
+MAKE  |J          |FRONT-RIGHT|10         |-7         |INT-EXT    |0          |0          |           |
+MAKE  |K          |RIGHT-FRONT|10         |-7         |INT-EXT    |0          |0          |           |
+MAKE  |L          |RIGHT-BACK |10         |-7         |INT-EXT    |0          |0          |           |
+MAKE  |M          |FRONT-LEFT |10         |-14        |INT-EXT    |0          |0          |           |
+MAKE  |N          |FRONT-RIGHT|10         |-14        |INT-EXT    |0          |0          |           |
+MAKE  |O          |RIGHT-FRONT|10         |-14        |INT-EXT    |0          |0          |           |
+MAKE  |P          |RIGHT-BACK |10         |-14        |INT-EXT    |0          |0          |           |
+MAKE  |Q          |FRONT-LEFT |10         |-21        |INT-EXT    |0          |0          |           |
+MAKE  |R          |RIGHT-BACK |10         |-21        |INT-EXT    |0          |0          |           |
+
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|           |
+DROP  |B          |1          |1          |Lava       |0          |0          |600-900    |           |
+DROP  |E          |1-7        |7          |Ball       |20-30      |10-20      |0          |           |
+DROP  |G          |1-7        |7          |Ball       |20-30      |10-20      |1000       |           |
+DROP  |I          |1          |1          |HaSpell    |0          |0          |0          |           |
+DROP  |I          |5          |1          |HaSpell    |10         |0          |100        |           |
+DROP  |J          |4          |1          |HaSpell    |10         |0          |100        |           |
+DROP  |C          |1          |1          |Lava       |0          |0          |600-900    |           |
+DROP  |F          |1-7        |7          |Ball       |20-30      |10-20      |0          |           |
+DROP  |H          |1-7        |7          |Ball       |20-30      |10-20      |1000       |           |
+DROP  |L          |1          |1          |HaSpell    |0          |0          |0          |           |
+DROP  |L          |5          |1          |HaSpell    |10         |0          |0          |           |
+DROP  |K          |4          |1          |HaSpell    |10         |0          |0          |           |
+DROP  |E          |1-7        |5          |Mini       |20-30      |10-20      |0          |           |
+DROP  |G          |1-7        |5          |Mini       |20-30      |10-20      |500        |           |
+DROP  |F          |1-7        |5          |Mini       |20-30      |10-20      |0          |           |
+DROP  |H          |1-7        |5          |Mini       |20-30      |10-20      |500        |           |
+DROP  |C          |4          |1          |castle     |0          |0          |0          |           |
+DROP  |C          |9          |1          |warden     |0          |0          |0          |           |
+DROP  |M          |4          |1          |HaSpell    |10         |0          |50         |           |
+DROP  |N          |1          |1          |HaSpell    |10         |0          |50         |           |
+DROP  |P          |4          |1          |HaSpell    |10         |0          |50         |           |
+DROP  |O          |1          |1          |HaSpell    |10         |0          |50         |           |
+DROP  |B          |10         |3          |Wall       |0          |0          |50         |           |
+DROP  |B          |10         |1          |king       |0          |0          |0          |           |
+DROP  |B          |10         |3          |Wall       |0          |0          |50         |           |
+DROP  |B          |10         |1          |queen      |0          |0          |50         |           |
+DROP  |E          |1-7        |5          |Mini       |20-30      |10-20      |500        |           |
+DROP  |F          |1-7        |5          |Mini       |20-30      |10-20      |500        |           |
+WAIT  |1000-2000  |           |           |           |           |           |           |           |
+DROP  |C          |1          |1          |warden     |0          |0          |50         |           |
+WAIT  |1000-1500  |           |           |           |           |           |           |           |
+DROP  |Q          |2          |1          |HaSpell    |0          |0          |100        |           |
+RECALC|           |           |           |           |0          |0          |0          |           | 
+DROP  |R          |1          |1          |HaSpell    |0          |0          |100        |           |
+DROP  |A          |1          |1          |Remain     |0          |0          |100-300    |           |

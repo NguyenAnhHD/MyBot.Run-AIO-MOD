@@ -1,0 +1,1057 @@
+; #FUNCTION# ====================================================================================================================
+; Name ..........: saveConfig.au3
+; Description ...: Saves all of the GUI values to the config.ini and building.ini files
+; Syntax ........: saveConfig()
+; Parameters ....: NA
+; Return values .: NA
+; Author ........:
+; Modified ......: CodeSlinger69 (01-2017)
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+;                  MyBot is distributed under the terms of the GNU GPL
+; Related .......:
+; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Example .......: No
+; ===============================================================================================================================
+
+Func saveConfig()
+	Local $t = __TimerInit()
+
+	Static $iSaveConfigCount = 0
+	$iSaveConfigCount += 1
+	SetDebugLog("saveConfig(), call number " & $iSaveConfigCount)
+
+	SaveWeakBaseStats()
+	;SetDebugLog("saveWeakBaseStats(), time = " & Round(__TimerDiff($t)/1000, 2) & " sec")
+
+	SaveBuildingConfig()
+	;SetDebugLog("SaveBuildingConfig(), time = " & Round(__TimerDiff($t)/1000, 2) & " sec")
+
+	SaveRegularConfig()
+	;SetDebugLog("SaveRegularConfig(), time = " & Round(__TimerDiff($t)/1000, 2) & " sec")
+
+	SetDebugLog("SaveConfig(), time = " & Round(__TimerDiff($t) / 1000, 2) & " sec")
+EndFunc   ;==>saveConfig
+
+Func SaveWeakBaseStats()
+	_Ini_Clear()
+
+	; Loop through the current stats
+	For $j = 0 To UBound($g_aiWeakBaseStats) - 1
+		; Write the new value to the stats file
+		_Ini_Add("WeakBase", $g_aiWeakBaseStats[$j][0], $g_aiWeakBaseStats[$j][1])
+	Next
+
+	_Ini_Save($g_sProfileWeakBasePath)
+EndFunc   ;==>SaveWeakBaseStats
+
+Func SaveBuildingConfig()
+	SetDebugLog("Save Building Config " & $g_sProfileBuildingPath)
+	_Ini_Clear()
+
+	_Ini_Add("general", "version", GetVersionNormalized($g_sBotVersion))
+
+	;Upgrades
+	_Ini_Add("upgrade", "LabPosX", $g_aiLaboratoryPos[0])
+	_Ini_Add("upgrade", "LabPosY", $g_aiLaboratoryPos[1])
+
+	_Ini_Add("other", "xTownHall", $g_aiTownHallPos[0])
+	_Ini_Add("other", "yTownHall", $g_aiTownHallPos[1])
+	_Ini_Add("other", "LevelTownHall", $g_iTownHallLevel)
+
+	_Ini_Add("other", "xCCPos", $g_aiClanCastlePos[0])
+	_Ini_Add("other", "yCCPos", $g_aiClanCastlePos[1])
+
+	_Ini_Add("other", "totalcamp", $g_iTotalCampSpace)
+
+	;_Ini_Add("other", "xspellfactory", $SFPos[0])
+	;_Ini_Add("other", "yspellfactory", $SFPos[1])
+
+	;_Ini_Add("other", "xDspellfactory", $DSFPos[0])
+	;_Ini_Add("other", "yDspellfactory", $DSFPos[1])
+
+	_Ini_Add("other", "xKingAltarPos", $g_aiKingAltarPos[0])
+	_Ini_Add("other", "yKingAltarPos", $g_aiKingAltarPos[1])
+
+	_Ini_Add("other", "xQueenAltarPos", $g_aiQueenAltarPos[0])
+	_Ini_Add("other", "yQueenAltarPos", $g_aiQueenAltarPos[1])
+
+	_Ini_Add("other", "xWardenAltarPos", $g_aiWardenAltarPos[0])
+	_Ini_Add("other", "yWardenAltarPos", $g_aiWardenAltarPos[1])
+
+	; <><><><> Village / Upgrade - Lab <><><><>
+	ApplyConfig_600_14("Save")
+	_Ini_Add("upgrade", "upgradetroops", $g_bAutoLabUpgradeEnable ? 1 : 0)
+	_Ini_Add("upgrade", "upgradetroopname", $g_iCmbLaboratory)
+	_Ini_Add("upgrade", "upgradelabtime", $g_sLabUpgradeTime)
+
+	; <><><><> Village / Upgrade - Buildings <><><><>
+	ApplyConfig_600_16("Save")
+	For $iz = 0 To UBound($g_avBuildingUpgrades, 1) - 1
+		_Ini_Add("upgrade", "xupgrade" & $iz, $g_avBuildingUpgrades[$iz][0])
+		_Ini_Add("upgrade", "yupgrade" & $iz, $g_avBuildingUpgrades[$iz][1])
+		_Ini_Add("upgrade", "upgradevalue" & $iz, $g_avBuildingUpgrades[$iz][2])
+		_Ini_Add("upgrade", "upgradetype" & $iz, $g_avBuildingUpgrades[$iz][3])
+		_Ini_Add("upgrade", "upgradename" & $iz, $g_avBuildingUpgrades[$iz][4])
+		_Ini_Add("upgrade", "upgradelevel" & $iz, $g_avBuildingUpgrades[$iz][5])
+		_Ini_Add("upgrade", "upgradetime" & $iz, $g_avBuildingUpgrades[$iz][6])
+		_Ini_Add("upgrade", "upgradeend" & $iz, $g_avBuildingUpgrades[$iz][7])
+		_Ini_Add("upgrade", "upgradechk" & $iz, $g_abBuildingUpgradeEnable[$iz] ? 1 : 0)
+		_Ini_Add("upgrade", "upgraderepeat" & $iz, $g_abUpgradeRepeatEnable[$iz] ? 1 : 0)
+		_Ini_Add("upgrade", "upgradestatusicon" & $iz, $g_aiPicUpgradeStatus[$iz])
+	Next
+
+	_Ini_Save($g_sProfileBuildingPath)
+EndFunc   ;==>SaveBuildingConfig
+
+Func SaveRegularConfig()
+	SetDebugLog("Save Config " & $g_sProfileConfigPath)
+	_Ini_Clear()
+
+	; General information
+	_Ini_Add("general", "version", GetVersionNormalized($g_sBotVersion))
+
+	_Ini_Add("general", "threads", $g_iThreads)
+	_Ini_add("general", "botDesignFlags", $g_iBotDesignFlags)
+
+	; Window positions
+	_Ini_Add("general", "cmbProfile", _GUICtrlComboBox_GetCurSel($g_hCmbProfile))
+	_Ini_Add("general", "frmBotPosX", $g_iFrmBotPosX)
+	_Ini_Add("general", "frmBotPosY", $g_iFrmBotPosY)
+	; read now android position again, as it might have changed
+	If $g_hAndroidWindow <> 0 Then WinGetAndroidHandle()
+	_Ini_Add("general", "AndroidPosX", $g_iAndroidPosX)
+	_Ini_Add("general", "AndroidPosY", $g_iAndroidPosY)
+	_Ini_Add("general", "frmBotDockedPosX", $g_iFrmBotDockedPosX)
+	_Ini_Add("general", "frmBotDockedPosY", $g_iFrmBotDockedPosY)
+
+	; Redraw mode
+	_Ini_Add("general", "RedrawBotWindowMode", $g_iRedrawBotWindowMode)
+
+	; <><><> Attack Plan / Train Army / Options <><><>
+	SaveConfig_Android()
+	; <><><><> Log window <><><><>
+	SaveConfig_600_1()
+	; <><><><> Village / Misc <><><><>
+	SaveConfig_600_6()
+	; <><><><> Village / Achievements <><><><>
+	SaveConfig_600_9()
+	; <><><><> Village / Donate - Request <><><><>
+	SaveConfig_600_11()
+	; <><><><> Village / Donate - Donate <><><><>
+	SaveConfig_600_12()
+	; <><><><> Village / Donate - Schedule <><><><>
+	SaveConfig_600_13()
+	; <><><><> Village / Upgrade - Heroes <><><><>
+	SaveConfig_600_15()
+	; <><><><> Village / Upgrade - Buildings <><><><>
+	SaveConfig_600_16()
+	; <><><><> Village / Upgrade - Walls <><><><>
+	SaveConfig_600_17()
+	; <><><><> Village / Notify <><><><>
+	SaveConfig_600_18()
+	; <><><><> Village / Notify <><><><>
+	SaveConfig_600_19()
+	; <><><> Attack Plan / Train Army / Boost <><><>
+	SaveConfig_600_22()
+	; <><><><> Attack Plan / Search & Attack / Bully <><><><>
+	SaveConfig_600_26()
+	; <><><><> Attack Plan / Search & Attack / Options / Search <><><><>
+	SaveConfig_600_28()
+	; <><><><> Attack Plan / Search & Attack / Deadbase / Search <><><><>
+	SaveConfig_600_28_DB()
+	; <><><><> Attack Plan / Search & Attack / Activebase / Search <><><><>
+	SaveConfig_600_28_LB()
+	; <><><><> Attack Plan / Search & Attack / TH Snipe / Search <><><><>
+	SaveConfig_600_28_TS()
+	; <><><><> Attack Plan / Search & Attack / Options / Attack <><><><>
+	SaveConfig_600_29()
+	; <><><><> Attack Plan / Search & Attack / Deadbase / Attack <><><><>
+	SaveConfig_600_29_DB()
+	; <><><><> Attack Plan / Search & Attack / Activebase / Attack <><><><>
+	SaveConfig_600_29_LB()
+	; <><><><> Attack Plan / Search & Attack / TH Snipe / Attack <><><><>
+	SaveConfig_600_29_TS()
+	; <><><><> Attack Plan / Search & Attack / Options / End Battle <><><><>
+	SaveConfig_600_30()
+	; <><><><> Attack Plan / Search & Attack / Deadbase / End Battle <><><><>
+	SaveConfig_600_30_DB()
+	; <><><><> Attack Plan / Search & Attack / Activebase / End Battle <><><><>
+	SaveConfig_600_30_LB()
+	; <><><><> Attack Plan / Search & Attack / TH Snipe / End Battle <><><><>
+	SaveConfig_600_30_TS()
+	; <><><><> Attack Plan / Search & Attack / Deadbase / Collectors <><><><>
+	SaveConfig_600_31()
+	; <><><><> Attack Plan / Search & Attack / Options / Trophy Settings <><><><>
+	SaveConfig_600_32()
+	; <><><><> Bot / Options <><><><>
+	SaveConfig_600_35()
+	; <><><> Attack Plan / Train Army / Troops/Spells <><><>
+	; Quick train
+	SaveConfig_600_52_1()
+	; troop/spell levels and counts
+	SaveConfig_600_52_2()
+	; <><><> Attack Plan / Train Army / Train Order <><><>
+	SaveConfig_600_54()
+	; <><><><> Attack Plan / Search & Attack / Options / SmartZap <><><><>
+	SaveConfig_600_56()
+	; <><><> Attack Plan / Train Army / Options <><><>
+	SaveConfig_641_1()
+	; <><><><> Bot / Debug <><><><>
+	SaveConfig_Debug()
+
+	; TeamVN MOD (NguyenAnhHD, Demen)
+	SaveConfig_MOD()
+	SaveConfig_SwitchAcc()
+
+	; <><><><> Attack Plan / Strategies <><><><>
+	; <<< nothing here >>>
+
+	; <><><><> Bot / Profiles <><><><>
+	; <<< nothing here >>>
+
+	; <><><><> Bot / Stats <><><><>
+	; <<< nothing here >>>
+
+	;SetDebugLog("saveConfig: Wrote " & $g_iIniLineCount & " ini lines.")
+	_Ini_Save($g_sProfileConfigPath)
+EndFunc   ;==>SaveRegularConfig
+
+Func SaveConfig_Android()
+	; <><><><> Bot / Android <><><><>
+	ApplyConfig_Android("Save")
+	_Ini_Add("android", "game.distributor", $g_sAndroidGameDistributor)
+	_Ini_Add("android", "game.package", $g_sAndroidGamePackage)
+	_Ini_Add("android", "game.class", $g_sAndroidGameClass)
+	_Ini_Add("android", "user.distributor", $g_sUserGameDistributor)
+	_Ini_Add("android", "user.package", $g_sUserGamePackage)
+	_Ini_Add("android", "user.class", $g_sUserGameClass)
+	_Ini_Add("android", "check.time.lag.enabled", ($g_bAndroidCheckTimeLagEnabled ? "1" : "0"))
+	_Ini_Add("android", "adb.screencap.timeout.min", $g_iAndroidAdbScreencapTimeoutMin)
+	_Ini_Add("android", "adb.screencap.timeout.max", $g_iAndroidAdbScreencapTimeoutMax)
+	_Ini_Add("android", "adb.screencap.timeout.dynamic", $g_iAndroidAdbScreencapTimeoutDynamic)
+	_Ini_Add("android", "adb.input.enabled", ($g_bAndroidAdbInputEnabled ? "1" : "0"))
+	_Ini_Add("android", "adb.click.enabled", ($g_bAndroidAdbClickEnabled ? "1" : "0"))
+	_Ini_Add("android", "adb.click.group", $g_iAndroidAdbClickGroup)
+	_Ini_Add("android", "adb.clicks.enabled", ($g_bAndroidAdbClicksEnabled ? "1" : "0"))
+	_Ini_Add("android", "adb.clicks.troop.deploy.size", $g_iAndroidAdbClicksTroopDeploySize)
+	_Ini_Add("android", "no.focus.tampering", ($g_bNoFocusTampering ? "1" : "0"))
+	_Ini_Add("android", "shield.color", Hex($g_iAndroidShieldColor, 6))
+	_Ini_Add("android", "shield.transparency", $g_iAndroidShieldTransparency)
+	_Ini_Add("android", "active.color", Hex($g_iAndroidActiveColor, 6))
+	_Ini_Add("android", "active.transparency", $g_iAndroidActiveTransparency)
+	_Ini_Add("android", "inactive.color", Hex($g_iAndroidInactiveColor, 6))
+	_Ini_Add("android", "inactive.transparency", $g_iAndroidInactiveTransparency)
+	_Ini_Add("android", "emulator", $g_sAndroidEmulator)
+	_Ini_Add("android", "instance", $g_sAndroidInstance)
+EndFunc   ;==>SaveConfig_Android
+
+Func SaveConfig_Debug()
+	; Debug
+	ApplyConfig_Debug("Save")
+	; <><><><> Bot / Debug <><><><>
+	; If $g_bDevMode = True Then
+		_Ini_Add("debug", "debugsetlog", $g_iDebugSetlog)
+		_Ini_Add("debug", "debugsetclick", $g_iDebugClick)
+		_Ini_Add("debug", "disablezoomout", $g_iDebugDisableZoomout)
+		_Ini_Add("debug", "disablevillagecentering", $g_iDebugDisableVillageCentering)
+		_Ini_Add("debug", "debugdeadbaseimage", $g_iDebugDeadBaseImage)
+		_Ini_Add("debug", "debugocr", $g_iDebugOcr)
+		_Ini_Add("debug", "debugimagesave", $g_iDebugImageSave)
+		_Ini_Add("debug", "debugbuildingpos", $g_iDebugBuildingPos)
+		_Ini_Add("debug", "debugtrain", $g_iDebugSetlogTrain)
+		_Ini_Add("debug", "debugresourcesoffset", $g_iDebugResourcesOffset)
+		_Ini_Add("debug", "continuesearchelixirdebug", $g_iDebugContinueSearchElixir)
+		_Ini_Add("debug", "debugMilkingIMGmake", $g_iDebugMilkingIMGmake)
+		_Ini_Add("debug", "debugOCRDonate", $g_iDebugOCRdonate)
+		_Ini_Add("debug", "debugAttackCSV", $g_iDebugAttackCSV)
+		_Ini_Add("debug", "debugmakeimgcsv", $g_iDebugMakeIMGCSV)
+	; Else
+		; _Ini_Delete("debug", "debugsetlog")
+		; _Ini_Delete("debug", "debugsetclick")
+		; _Ini_Delete("debug", "disablezoomout")
+		; _Ini_Delete("debug", "disablevillagecentering")
+		; _Ini_Delete("debug", "debugdeadbaseimage")
+		; _Ini_Delete("debug", "debugocr")
+		; _Ini_Delete("debug", "debugimagesave")
+		; _Ini_Delete("debug", "debugbuildingpos")
+		; _Ini_Delete("debug", "debugtrain")
+		; _Ini_Delete("debug", "debugresourcesoffset")
+		; _Ini_Delete("debug", "continuesearchelixirdebug")
+		; _Ini_Delete("debug", "debugMilkingIMGmake")
+		; _Ini_Delete("debug", "debugOCRDonate")
+		; _Ini_Delete("debug", "debugAttackCSV")
+		; _Ini_Delete("debug", "debugmakeimgcsv")
+	; EndIf
+EndFunc   ;==>SaveConfig_Debug
+
+Func SaveConfig_600_1()
+	; <><><><> Village / Misc <><><><>
+	ApplyConfig_600_1("Save")
+	; <><><><> Log window <><><><>
+	_Ini_Add("general", "logstyle", $g_iCmbLogDividerOption)
+	_Ini_Add("general", "LogDividerY", $g_iLogDividerY)
+	; <><><><> Bottom panel <><><><>
+	_Ini_Add("general", "Background", $g_bChkBackgroundMode ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_1
+
+Func SaveConfig_600_6()
+	; <><><><> Village / Misc <><><><>
+	ApplyConfig_600_6("Save")
+	_Ini_Add("general", "BotStop", $g_bChkBotStop ? 1 : 0)
+	_Ini_Add("general", "Command", $g_iCmbBotCommand)
+	_Ini_Add("general", "Cond", $g_iCmbBotCond)
+	_Ini_Add("general", "Hour", $g_iCmbHoursStop)
+	_Ini_Add("other", "minrestartgold", $g_iTxtRestartGold)
+	_Ini_Add("other", "minrestartelixir", $g_iTxtRestartElixir)
+	_Ini_Add("other", "minrestartdark", $g_iTxtRestartDark)
+	_Ini_Add("other", "chkTrap", $g_bChkTrap ? 1 : 0)
+	_Ini_Add("other", "chkCollect", $g_bChkCollect ? 1 : 0)
+	_Ini_Add("other", "chkTombstones", $g_bChkTombstones ? 1 : 0)
+	_Ini_Add("other", "chkCleanYard", $g_bChkCleanYard ? 1 : 0)
+	_Ini_Add("other", "chkGemsBox", $g_bChkGemsBox ? 1 : 0)
+	_Ini_Add("other", "ChkTreasuryCollect", $g_bChkTreasuryCollect ? 1 : 0)
+	_Ini_Add("other", "minTreasurygold", $g_iTxtTreasuryGold)
+	_Ini_Add("other", "minTreasuryelixir", $g_iTxtTreasuryElixir)
+	_Ini_Add("other", "minTreasurydark", $g_iTxtTreasuryDark)
+EndFunc   ;==>SaveConfig_600_6
+
+Func SaveConfig_600_9()
+	; <><><><> Village / Achievements <><><><>
+	ApplyConfig_600_9("Save")
+	_Ini_Add("Unbreakable", "chkUnbreakable", $g_iUnbrkMode)
+	_Ini_Add("Unbreakable", "UnbreakableWait", $g_iUnbrkWait)
+	_Ini_Add("Unbreakable", "minUnBrkgold", $g_iUnbrkMinGold)
+	_Ini_Add("Unbreakable", "minUnBrkelixir", $g_iUnbrkMinElixir)
+	_Ini_Add("Unbreakable", "minUnBrkdark", $g_iUnbrkMinDark)
+	_Ini_Add("Unbreakable", "maxUnBrkgold", $g_iUnbrkMaxGold)
+	_Ini_Add("Unbreakable", "maxUnBrkelixir", $g_iUnbrkMaxElixir)
+	_Ini_Add("Unbreakable", "maxUnBrkdark", $g_iUnbrkMaxDark)
+EndFunc   ;==>SaveConfig_600_9
+
+Func SaveConfig_600_11()
+	ApplyConfig_600_11("Save")
+	; <><><><> Village / Donate - Request <><><><>
+	_Ini_Add("planned", "RequestHoursEnable", $g_bRequestTroopsEnable ? 1 : 0)
+	_Ini_Add("donate", "txtRequest", $g_sRequestTroopsText)
+	Local $string = ""
+	For $i = 0 To 23
+		$string &= ($g_abRequestCCHours[$i] ? "1" : "0") & "|"
+	Next
+	_Ini_Add("planned", "RequestHours", $string)
+EndFunc   ;==>SaveConfig_600_11
+
+Func SaveConfig_600_12()
+	Local $t = __TimerInit()
+
+	; <><><><> Village / Donate - Donate <><><><>
+	ApplyConfig_600_12("Save")
+
+	_Ini_Add("donate", "Doncheck", $g_bChkDonate ? 1 : 0)
+
+	For $i = 0 To $eTroopCount - 1 + $g_iCustomDonateConfigs
+		Local $sIniName = ""
+		If $i >= $eTroopBarbarian And $i <= $eTroopBowler Then
+			$sIniName = StringReplace($g_asTroopNamesPlural[$i], " ", "")
+		ElseIf $i = $eCustomA Then
+			$sIniName = "CustomA"
+		ElseIf $i = $eCustomB Then
+			$sIniName = "CustomB"
+		EndIf
+
+		_Ini_Add("donate", "chkDonate" & $sIniName, $g_abChkDonateTroop[$i] ? 1 : 0)
+		_Ini_Add("donate", "chkDonateAll" & $sIniName, $g_abChkDonateAllTroop[$i] ? 1 : 0)
+		_Ini_Add("donate", "txtDonate" & $sIniName, StringReplace($g_asTxtDonateTroop[$i], @CRLF, "|"))
+		_Ini_Add("donate", "txtBlacklist" & $sIniName, StringReplace($g_asTxtBlacklistTroop[$i], @CRLF, "|"))
+	Next
+
+	For $i = 0 To $eSpellCount - 1
+		If $i <> $eSpellClone Then
+			Local $sIniName = $g_asSpellNames[$i] & "Spells"
+			_Ini_Add("donate", "chkDonate" & $sIniName, $g_abChkDonateSpell[$i] ? 1 : 0)
+			_Ini_Add("donate", "chkDonateAll" & $sIniName, $g_abChkDonateAllSpell[$i] ? 1 : 0)
+			_Ini_Add("donate", "txtDonate" & $sIniName, StringReplace($g_asTxtDonateSpell[$i], @CRLF, "|"))
+			_Ini_Add("donate", "txtBlacklist" & $sIniName, StringReplace($g_asTxtBlacklistSpell[$i], @CRLF, "|"))
+		EndIf
+	Next
+
+	For $i = 0 To 2
+		_Ini_Add("donate", "cmbDonateCustomA" & $i + 1, $g_aiDonateCustomTrpNumA[$i][0])
+		_Ini_Add("donate", "txtDonateCustomA" & $i + 1, $g_aiDonateCustomTrpNumA[$i][1])
+		_Ini_Add("donate", "cmbDonateCustomB" & $i + 1, $g_aiDonateCustomTrpNumB[$i][0])
+		_Ini_Add("donate", "txtDonateCustomB" & $i + 1, $g_aiDonateCustomTrpNumB[$i][1])
+	Next
+
+	_Ini_Add("donate", "chkExtraAlphabets", $g_bChkExtraAlphabets ? 1 : 0)
+	_Ini_Add("donate", "chkExtraChinese", $g_bChkExtraChinese ? 1 : 0)
+	_Ini_Add("donate", "chkExtraKorean", $g_bChkExtraKorean ? 1 : 0)
+	_Ini_Add("donate", "chkExtraPersian", $g_bChkExtraPersian ? 1 : 0)
+
+	_Ini_Add("donate", "txtBlacklist", StringReplace($g_sTxtGeneralBlacklist, @CRLF, "|"))
+EndFunc   ;==>SaveConfig_600_12
+
+Func SaveConfig_600_13()
+	; <><><><> Village / Donate - Schedule <><><><>
+	ApplyConfig_600_13("Save")
+	_Ini_Add("planned", "DonateHoursEnable", $g_bDonateHoursEnable ? 1 : 0)
+	Local $string = ""
+	For $i = 0 To 23
+		$string &= ($g_abDonateHours[$i] ? "1" : "0") & "|"
+	Next
+	_Ini_Add("planned", "DonateHours", $string)
+	_Ini_Add("donate", "cmbFilterDonationsCC", $g_iCmbDonateFilter)
+	_Ini_Add("donate", "SkipDonateNearFulLTroopsEnable", $g_bDonateSkipNearFullEnable ? 1 : 0)
+	_Ini_Add("donate", "SkipDonateNearFulLTroopsPercentual", $g_iDonateSkipNearFullPercent)
+EndFunc   ;==>SaveConfig_600_13
+
+Func SaveConfig_600_15()
+	; <><><><> Village / Upgrade - Heroes <><><><>
+	ApplyConfig_600_15("Save")
+	_Ini_Add("upgrade", "UpgradeKing", $g_bUpgradeKingEnable ? 1 : 0)
+	_Ini_Add("upgrade", "UpgradeQueen", $g_bUpgradeQueenEnable ? 1 : 0)
+	_Ini_Add("upgrade", "UpgradeWarden", $g_bUpgradeWardenEnable ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_15
+
+Func SaveConfig_600_16()
+	; <><><><> Village / Upgrade - Buildings <><><><>
+	_Ini_Add("upgrade", "minupgrgold", $g_iUpgradeMinGold)
+	_Ini_Add("upgrade", "minupgrelixir", $g_iUpgradeMinElixir)
+	_Ini_Add("upgrade", "minupgrdark", $g_iUpgradeMinDark)
+EndFunc   ;==>SaveConfig_600_16
+
+Func SaveConfig_600_17()
+	; <><><><> Village / Upgrade - Walls <><><><>
+	ApplyConfig_600_17("Save")
+	_Ini_Add("upgrade", "auto-wall", $g_bAutoUpgradeWallsEnable ? 1 : 0)
+	_Ini_Add("upgrade", "minwallgold", $g_iUpgradeWallMinGold)
+	_Ini_Add("upgrade", "minwallelixir", $g_iUpgradeWallMinElixir)
+	_Ini_Add("upgrade", "use-storage", $g_iUpgradeWallLootType)
+	_Ini_Add("upgrade", "savebldr", $g_bUpgradeWallSaveBuilder ? 1 : 0)
+	_Ini_Add("upgrade", "walllvl", $g_iCmbUpgradeWallsLevel)
+	For $i = 4 To 12
+		_Ini_Add("Walls", "Wall" & StringFormat("%02d", $i), $g_aiWallsCurrentCount[$i])
+	Next
+	_Ini_Add("upgrade", "WallCost", $g_iWallCost)
+EndFunc   ;==>SaveConfig_600_17
+
+Func SaveConfig_600_18()
+	; <><><><> Village / Notify <><><><>
+	ApplyConfig_600_18("Save")
+	; PushBullet / Telegram
+	_Ini_Add("notify", "PBEnabled", $g_bNotifyPBEnable ? 1 : 0)
+	_Ini_Add("notify", "TGEnabled", $g_bNotifyTGEnable ? 1 : 0)
+	_Ini_Add("notify", "PBToken", $g_sNotifyPBToken)
+	_Ini_Add("notify", "TGToken", $g_sNotifyTGToken)
+	;Remote Control
+	_Ini_Add("notify", "PBRemote", $g_bNotifyRemoteEnable ? 1 : 0)
+	_Ini_Add("notify", "DeleteAllPBPushes", $g_bNotifyDeleteAllPushesOnStart ? 1 : 0)
+	_Ini_Add("notify", "DeleteOldPBPushes", $g_bNotifyDeletePushesOlderThan ? 1 : 0)
+	_Ini_Add("notify", "HoursPushBullet", $g_iNotifyDeletePushesOlderThanHours)
+	_Ini_Add("notify", "Origin", $g_sNotifyOrigin)
+	;Alerts
+	_Ini_Add("notify", "AlertPBVMFound", $g_bNotifyAlertMatchFound ? 1 : 0)
+	_Ini_Add("notify", "AlertPBLastRaid", $g_bNotifyAlerLastRaidIMG ? 1 : 0)
+	_Ini_Add("notify", "AlertPBWallUpgrade", $g_bNotifyAlertUpgradeWalls ? 1 : 0)
+	_Ini_Add("notify", "AlertPBOOS", $g_bNotifyAlertOutOfSync ? 1 : 0)
+	_Ini_Add("notify", "AlertPBVBreak", $g_bNotifyAlertTakeBreak ? 1 : 0)
+	_Ini_Add("notify", "AlertPBOtherDevice", $g_bNotifyAlertAnotherDevice ? 1 : 0)
+	_Ini_Add("notify", "AlertPBLastRaidTxt", $g_bNotifyAlerLastRaidTXT ? 1 : 0)
+	_Ini_Add("notify", "AlertPBCampFull", $g_bNotifyAlertCampFull ? 1 : 0)
+	_Ini_Add("notify", "AlertPBVillage", $g_bNotifyAlertVillageReport ? 1 : 0)
+	_Ini_Add("notify", "AlertPBLastAttack", $g_bNotifyAlertLastAttack ? 1 : 0)
+	_Ini_Add("notify", "AlertBuilderIdle", $g_bNotifyAlertBulderIdle ? 1 : 0)
+	_Ini_Add("notify", "AlertPBMaintenance", $g_bNotifyAlertMaintenance ? 1 : 0)
+	_Ini_Add("notify", "AlertPBBAN", $g_bNotifyAlertBAN ? 1 : 0)
+	_Ini_Add("notify", "AlertPBUpdate", $g_bNotifyAlertBOTUpdate ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_18
+
+Func SaveConfig_600_19()
+	; <><><><> Village / Notify <><><><>
+	ApplyConfig_600_19("Save")
+	_Ini_Add("notify", "NotifyHoursEnable", $g_bNotifyScheduleHoursEnable ? 1 : 0)
+	Local $string = ""
+	For $i = 0 To 23
+		$string &= ($g_abNotifyScheduleHours[$i] ? "1" : "0") & "|"
+	Next
+	_Ini_Add("notify", "NotifyHours", $string)
+	_Ini_Add("notify", "NotifyWeekDaysEnable", $g_bNotifyScheduleWeekDaysEnable ? 1 : 0)
+	Local $string = ""
+	For $i = 0 To 6
+		$string &= ($g_abNotifyScheduleWeekDays[$i] ? "1" : "0") & "|"
+	Next
+	_Ini_Add("notify", "NotifyWeekDays", $string)
+EndFunc   ;==>SaveConfig_600_19
+
+Func SaveConfig_600_22()
+	; <><><> Attack Plan / Train Army / Boost <><><>
+	ApplyConfig_600_22("Save")
+	; Boost settings are not saved to ini, by design, to prevent automatic gem spending
+	Local $string = ""
+	For $i = 0 To 23
+		$string &= ($g_abBoostBarracksHours[$i] ? "1" : "0") & "|"
+	Next
+	_Ini_Add("planned", "BoostBarracksHours", $string)
+EndFunc   ;==>SaveConfig_600_22
+
+Func SaveConfig_600_26()
+	; <><><><> Attack Plan / Search & Attack / Bully <><><><>
+	ApplyConfig_600_26("Save")
+	_Ini_Add("search", "BullyMode", $g_abAttackTypeEnable[$TB] ? 1 : 0)
+	_Ini_Add("search", "ATBullyMode", $g_iAtkTBEnableCount)
+	_Ini_Add("search", "YourTH", $g_iAtkTBMaxTHLevel)
+	_Ini_Add("search", "THBullyAttackMode", $g_iAtkTBMode)
+EndFunc   ;==>SaveConfig_600_26
+
+Func SaveConfig_600_28()
+	; <><><><> Attack Plan / Search & Attack / Options / Search <><><><>
+	ApplyConfig_600_28("Save")
+	_Ini_Add("search", "reduction", $g_bSearchReductionEnable ? 1 : 0)
+	_Ini_Add("search", "reduceCount", $g_iSearchReductionCount)
+	_Ini_Add("search", "reduceGold", $g_iSearchReductionGold)
+	_Ini_Add("search", "reduceElixir", $g_iSearchReductionElixir)
+	_Ini_Add("search", "reduceGoldPlusElixir", $g_iSearchReductionGoldPlusElixir)
+	_Ini_Add("search", "reduceDark", $g_iSearchReductionDark)
+	_Ini_Add("search", "reduceTrophy", $g_iSearchReductionTrophy)
+	_Ini_Add("other", "VSDelay", $g_iSearchDelayMin)
+	_Ini_Add("other", "MaxVSDelay", $g_iSearchDelayMax)
+	_Ini_Add("general", "attacknow", $g_bSearchAttackNowEnable ? 1 : 0)
+	_Ini_Add("general", "attacknowdelay", $g_iSearchAttackNowDelay)
+	_Ini_Add("search", "ChkRestartSearchLimit", $g_bSearchRestartEnable ? 1 : 0)
+	_Ini_Add("search", "RestartSearchLimit", $g_iSearchRestartLimit)
+	_Ini_Add("general", "AlertSearch", $g_bSearchAlertMe ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_28
+
+Func SaveConfig_600_28_DB()
+	; <><><><> Attack Plan / Search & Attack / Deadbase / Search <><><><>
+	ApplyConfig_600_28_DB("Save")
+	_Ini_Add("search", "DBcheck", $g_abAttackTypeEnable[$DB] ? 1 : 0)
+	; Search - Start Search If
+	_Ini_Add("search", "ChkDBSearchSearches", $g_abSearchSearchesEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBEnableAfterCount", $g_aiSearchSearchesMin[$DB])
+	_Ini_Add("search", "DBEnableBeforeCount", $g_aiSearchSearchesMax[$DB])
+	_Ini_Add("search", "ChkDBSearchTropies", $g_abSearchTropiesEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBEnableAfterTropies", $g_aiSearchTrophiesMin[$DB])
+	_Ini_Add("search", "DBEnableBeforeTropies", $g_aiSearchTrophiesMax[$DB])
+	_Ini_Add("search", "ChkDBSearchCamps", $g_abSearchCampsEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBEnableAfterArmyCamps", $g_aiSearchCampsPct[$DB])
+	_Ini_Add("attack", "DBKingWait", $g_iHeroWaitAttackNoBit[$DB][0])
+	_Ini_Add("attack", "DBQueenWait", $g_iHeroWaitAttackNoBit[$DB][1])
+	_Ini_Add("attack", "DBWardenWait", $g_iHeroWaitAttackNoBit[$DB][2])
+	_Ini_Add("search", "ChkDBSpellsWait", $g_abSearchSpellsWaitEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "ChkDBCastleSpellWait", $g_abSearchCastleSpellsWaitEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "cmbDBWaitForCastleSpell", $g_aiSearchCastleSpellsWaitRegular[$DB])
+	_Ini_Add("search", "cmbDBWaitForCastleSpell2", $g_aiSearchCastleSpellsWaitDark[$DB])
+	_Ini_Add("search", "ChkDBCastleTroopsWait", $g_abSearchCastleTroopsWaitEnable[$DB] ? 1 : 0)
+	; Search - Filters
+	_Ini_Add("search", "DBMeetGE", $g_aiFilterMeetGE[$DB])
+	_Ini_Add("search", "DBsearchGold", $g_aiFilterMinGold[$DB])
+	_Ini_Add("search", "DBsearchElixir", $g_aiFilterMinElixir[$DB])
+	_Ini_Add("search", "DBsearchGoldPlusElixir", $g_aiFilterMinGoldPlusElixir[$DB])
+	_Ini_Add("search", "DBMeetDE", $g_abFilterMeetDEEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBsearchDark", $g_aiFilterMeetDEMin[$DB])
+	_Ini_Add("search", "DBMeetTrophy", $g_abFilterMeetTrophyEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBsearchTrophy", $g_aiFilterMeetTrophyMin[$DB])
+	_Ini_Add("search", "DBsearchTrophyMax", $g_aiFilterMeetTrophyMax[$DB])
+	_Ini_Add("search", "DBMeetTH", $g_abFilterMeetTH[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBTHLevel", $g_aiFilterMeetTHMin[$DB])
+	_Ini_Add("search", "DBMeetTHO", $g_abFilterMeetTHOutsideEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBCheckMortar", $g_abFilterMaxMortarEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBCheckWizTower", $g_abFilterMaxWizTowerEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBCheckAirDefense", $g_abFilterMaxAirDefenseEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBCheckXBow", $g_abFilterMaxXBowEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBCheckInferno", $g_abFilterMaxInfernoEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBCheckEagle", $g_abFilterMaxEagleEnable[$DB] ? 1 : 0)
+	_Ini_Add("search", "DBWeakMortar", $g_aiFilterMaxMortarLevel[$DB])
+	_Ini_Add("search", "DBWeakWizTower", $g_aiFilterMaxWizTowerLevel[$DB])
+	_Ini_Add("search", "DBWeakAirDefense", $g_aiFilterMaxAirDefenseLevel[$DB])
+	_Ini_Add("search", "DBWeakXBow", $g_aiFilterMaxXBowLevel[$DB])
+	_Ini_Add("search", "DBWeakInferno", $g_aiFilterMaxInfernoLevel[$DB])
+	_Ini_Add("search", "DBWeakEagle", $g_aiFilterMaxEagleLevel[$DB])
+	_Ini_Add("search", "DBMeetOne", $g_abFilterMeetOneConditionEnable[$DB] ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_28_DB
+
+Func SaveConfig_600_28_LB()
+	; <><><><> Attack Plan / Search & Attack / Activebase / Search <><><><>
+	ApplyConfig_600_28_LB("Save")
+	_Ini_Add("search", "ABcheck", $g_abAttackTypeEnable[$LB] ? 1 : 0)
+	; Search - Start Search If
+	_Ini_Add("search", "ChkABSearchSearches", $g_abSearchSearchesEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABEnableAfterCount", $g_aiSearchSearchesMin[$LB])
+	_Ini_Add("search", "ABEnableBeforeCount", $g_aiSearchSearchesMax[$LB])
+	_Ini_Add("search", "ChkABSearchTropies", $g_abSearchTropiesEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABEnableAfterTropies", $g_aiSearchTrophiesMin[$LB])
+	_Ini_Add("search", "ABEnableBeforeTropies", $g_aiSearchTrophiesMax[$LB])
+	_Ini_Add("search", "ChkABSearchCamps", $g_abSearchCampsEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABEnableAfterArmyCamps", $g_aiSearchCampsPct[$LB])
+	_Ini_Add("attack", "ABKingWait", $g_iHeroWaitAttackNoBit[$LB][0])
+	_Ini_Add("attack", "ABQueenWait", $g_iHeroWaitAttackNoBit[$LB][1])
+	_Ini_Add("attack", "ABWardenWait", $g_iHeroWaitAttackNoBit[$LB][2])
+	_Ini_Add("search", "ChkABSpellsWait", $g_abSearchSpellsWaitEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ChkABCastleSpellWait", $g_abSearchCastleSpellsWaitEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "cmbABWaitForCastleSpell", $g_aiSearchCastleSpellsWaitRegular[$LB])
+	_Ini_Add("search", "cmbABWaitForCastleSpell2", $g_aiSearchCastleSpellsWaitDark[$LB])
+	_Ini_Add("search", "ChkABCastleTroopsWait", $g_abSearchCastleTroopsWaitEnable[$LB] ? 1 : 0)
+	; Search - Filters
+	_Ini_Add("search", "ABMeetGE", $g_aiFilterMeetGE[$LB])
+	_Ini_Add("search", "ABsearchGold", $g_aiFilterMinGold[$LB])
+	_Ini_Add("search", "ABsearchElixir", $g_aiFilterMinElixir[$LB])
+	_Ini_Add("search", "ABsearchGoldPlusElixir", $g_aiFilterMinGoldPlusElixir[$LB])
+	_Ini_Add("search", "ABMeetDE", $g_abFilterMeetDEEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABsearchDark", $g_aiFilterMeetDEMin[$LB])
+	_Ini_Add("search", "ABMeetTrophy", $g_abFilterMeetTrophyEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABsearchTrophy", $g_aiFilterMeetTrophyMin[$LB])
+	_Ini_Add("search", "ABsearchTrophyMax", $g_aiFilterMeetTrophyMax[$LB])
+	_Ini_Add("search", "ABMeetTH", $g_abFilterMeetTH[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABTHLevel", $g_aiFilterMeetTHMin[$LB])
+	_Ini_Add("search", "ABMeetTHO", $g_abFilterMeetTHOutsideEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABCheckMortar", $g_abFilterMaxMortarEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABCheckWizTower", $g_abFilterMaxWizTowerEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABCheckAirDefense", $g_abFilterMaxAirDefenseEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABCheckXBow", $g_abFilterMaxXBowEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABCheckInferno", $g_abFilterMaxInfernoEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABCheckEagle", $g_abFilterMaxEagleEnable[$LB] ? 1 : 0)
+	_Ini_Add("search", "ABWeakMortar", $g_aiFilterMaxMortarLevel[$LB])
+	_Ini_Add("search", "ABWeakWizTower", $g_aiFilterMaxWizTowerLevel[$LB])
+	_Ini_Add("search", "ABWeakAirDefense", $g_aiFilterMaxAirDefenseLevel[$LB])
+	_Ini_Add("search", "ABWeakXBow", $g_aiFilterMaxXBowLevel[$LB])
+	_Ini_Add("search", "ABWeakInferno", $g_aiFilterMaxInfernoLevel[$LB])
+	_Ini_Add("search", "ABWeakEagle", $g_aiFilterMaxEagleLevel[$LB])
+	_Ini_Add("search", "ABMeetOne", $g_abFilterMeetOneConditionEnable[$LB] ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_28_LB
+
+Func SaveConfig_600_28_TS()
+	; <><><><> Attack Plan / Search & Attack / TH Snipe / Search <><><><>
+	ApplyConfig_600_28_TS("Save")
+	_Ini_Add("search", "TScheck", $g_abAttackTypeEnable[$TS] ? 1 : 0)
+	; Search - Start Search If
+	_Ini_Add("search", "ChkTSSearchSearches", $g_abSearchSearchesEnable[$TS] ? 1 : 0)
+	_Ini_Add("search", "TSEnableAfterCount", $g_aiSearchSearchesMin[$TS])
+	_Ini_Add("search", "TSEnableBeforeCount", $g_aiSearchSearchesMax[$TS])
+	_Ini_Add("search", "ChkTSSearchTropies", $g_abSearchTropiesEnable[$TS] ? 1 : 0)
+	_Ini_Add("search", "TSEnableAfterTropies", $g_aiSearchTrophiesMin[$TS])
+	_Ini_Add("search", "TSEnableBeforeTropies", $g_aiSearchTrophiesMax[$TS])
+	_Ini_Add("search", "ChkTSSearchCamps", $g_abSearchCampsEnable[$TS] ? 1 : 0)
+	_Ini_Add("search", "TSEnableAfterArmyCamps", $g_aiSearchCampsPct[$TS])
+	; Search - Filters
+	_Ini_Add("search", "TSMeetGE", $g_aiFilterMeetGE[$TS])
+	_Ini_Add("search", "TSsearchGold", $g_aiFilterMinGold[$TS])
+	_Ini_Add("search", "TSsearchElixir", $g_aiFilterMinElixir[$TS])
+	_Ini_Add("search", "TSsearchGoldPlusElixir", $g_aiFilterMinGoldPlusElixir[$TS])
+	_Ini_Add("search", "TSMeetDE", $g_abFilterMeetDEEnable[$TS] ? 1 : 0)
+	_Ini_Add("search", "TSsearchDark", $g_aiFilterMeetDEMin[$TS])
+	_Ini_Add("search", "SWTtiles", $g_iAtkTSAddTilesWhileTrain)
+	_Ini_Add("search", "THaddTiles", $g_iAtkTSAddTilesFullTroops)
+EndFunc   ;==>SaveConfig_600_28_TS
+
+Func SaveConfig_600_29()
+	; <><><><> Attack Plan / Search & Attack / Options / Attack <><><><>
+	ApplyConfig_600_29("Save")
+	_Ini_Add("attack", "ActivateKQ", $g_iActivateKQCondition)
+	_Ini_Add("attack", "delayActivateKQ", $g_iDelayActivateKQ)
+	_Ini_Add("attack", "ActivateWarden", $g_bActivateWardenCondition ? 1 : 0)
+	_Ini_Add("attack", "delayActivateW", $g_iDelayActivateW)
+	_Ini_Add("planned", "chkAttackPlannerEnable", $g_bAttackPlannerEnable ? 1 : 0)
+	_Ini_Add("planned", "chkAttackPlannerCloseCoC", $g_bAttackPlannerCloseCoC ? 1 : 0)
+	_Ini_Add("planned", "chkAttackPlannerCloseAll", $g_bAttackPlannerCloseAll ? 1 : 0)
+	_Ini_Add("planned", "chkAttackPlannerRandom", $g_bAttackPlannerRandomEnable ? 1 : 0)
+	_Ini_Add("planned", "cmbAttackPlannerRandom", $g_iAttackPlannerRandomTime)
+	_Ini_Add("planned", "chkAttackPlannerDayLimit", $g_bAttackPlannerDayLimit ? 1 : 0)
+	_Ini_Add("planned", "cmbAttackPlannerDayMin", $g_iAttackPlannerDayMin)
+	_Ini_Add("planned", "cmbAttackPlannerDayMax", $g_iAttackPlannerDayMax)
+	Local $string = ""
+	For $i = 0 To 6
+		$string &= ($g_abPlannedAttackWeekDays[$i] ? 1 : 0) & "|"
+	Next
+	_Ini_Add("planned", "attackDays", $string)
+	Local $string = ""
+	For $i = 0 To 23
+		$string &= ($g_abPlannedattackHours[$i] ? 1 : 0) & "|"
+	Next
+	_Ini_Add("planned", "attackHours", $string)
+	_Ini_Add("planned", "DropCCEnable", $g_bPlannedDropCCHoursEnable ? 1 : 0)
+	_Ini_Add("ClanClastle", "BalanceCC", $g_bUseCCBalanced ? 1 : 0)
+	_Ini_Add("ClanClastle", "BalanceCCDonated", $g_iCCDonated)
+	_Ini_Add("ClanClastle", "BalanceCCReceived", $g_iCCReceived)
+	Local $string = ""
+	For $i = 0 To 23
+		$string &= ($g_abPlannedDropCCHours[$i] ? 1 : 0) & "|"
+	Next
+	_Ini_Add("planned", "DropCCHours", $string)
+EndFunc   ;==>SaveConfig_600_29
+
+Func SaveConfig_600_29_DB()
+	; <><><><> Attack Plan / Search & Attack / Deadbase / Attack <><><><>
+	ApplyConfig_600_29_DB("Save")
+	_Ini_Add("attack", "DBAtkAlgorithm", $g_aiAttackAlgorithm[$DB])
+	_Ini_Add("attack", "DBSelectTroop", $g_aiAttackTroopSelection[$DB])
+	_Ini_Add("attack", "DBKingAtk", BitAND($g_aiAttackUseHeroes[$DB], $eHeroKing))
+	_Ini_Add("attack", "DBQueenAtk", BitAND($g_aiAttackUseHeroes[$DB], $eHeroQueen))
+	_Ini_Add("attack", "DBWardenAtk", BitAND($g_aiAttackUseHeroes[$DB], $eHeroWarden))
+	_Ini_Add("attack", "DBDropCC", $g_abAttackDropCC[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBLightSpell", $g_abAttackUseLightSpell[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBHealSpell", $g_abAttackUseHealSpell[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBRageSpell", $g_abAttackUseRageSpell[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBJumpSpell", $g_abAttackUseJumpSpell[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBFreezeSpell", $g_abAttackUseFreezeSpell[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBPoisonSpell", $g_abAttackUsePoisonSpell[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBEarthquakeSpell", $g_abAttackUseEarthquakeSpell[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBHasteSpell", $g_abAttackUseHasteSpell[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBCloneSpell", $g_abAttackUseCloneSpell[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBSkeletonSpell", $g_abAttackUseSkeletonSpell[$DB] ? 1 : 0)
+	_Ini_Add("attack", "THSnipeBeforeDBEnable", $g_bTHSnipeBeforeEnable[$DB] ? 1 : 0)
+	_Ini_Add("attack", "THSnipeBeforeDBTiles", $g_iTHSnipeBeforeTiles[$DB])
+	_Ini_Add("attack", "THSnipeBeforeDBScript", $g_iTHSnipeBeforeScript[$DB])
+
+	SaveConfig_600_29_DB_Standard()
+
+	SaveConfig_600_29_DB_Scripted()
+
+	SaveConfig_600_29_DB_Milking()
+
+EndFunc   ;==>SaveConfig_600_29_DB
+
+Func SaveConfig_600_29_DB_Standard()
+	; <><><><> Attack Plan / Search & Attack / Deadbase / Attack / Standard <><><><>
+	ApplyConfig_600_29_DB_Standard("Save")
+	_Ini_Add("attack", "DBStandardAlgorithm", $g_aiAttackStdDropOrder[$DB])
+	_Ini_Add("attack", "DBDeploy", $g_aiAttackStdDropSides[$DB])
+	_Ini_Add("attack", "DBUnitD", $g_aiAttackStdUnitDelay[$DB])
+	_Ini_Add("attack", "DBWaveD", $g_aiAttackStdWaveDelay[$DB])
+	_Ini_Add("attack", "DBRandomSpeedAtk", $g_abAttackStdRandomizeDelay[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBSmartAttackRedArea", $g_abAttackStdSmartAttack[$DB] ? 1 : 0)
+	_Ini_Add("attack", "DBSmartAttackDeploy", $g_aiAttackStdSmartDeploy[$DB])
+	_Ini_Add("attack", "DBSmartAttackGoldMine", $g_abAttackStdSmartNearCollectors[$DB][0] ? 1 : 0)
+	_Ini_Add("attack", "DBSmartAttackElixirCollector", $g_abAttackStdSmartNearCollectors[$DB][1] ? 1 : 0)
+	_Ini_Add("attack", "DBSmartAttackDarkElixirDrill", $g_abAttackStdSmartNearCollectors[$DB][2] ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_29_DB_Standard
+
+Func SaveConfig_600_29_DB_Scripted()
+	; <><><><> Attack Plan / Search & Attack / Deadbase / Attack / Scripted <><><><>
+	ApplyConfig_600_29_DB_Scripted("Save")
+	_Ini_Add("attack", "RedlineRoutineDB", $g_aiAttackScrRedlineRoutine[$DB])
+	_Ini_Add("attack", "DroplineEdgeDB", $g_aiAttackScrDroplineEdge[$DB])
+	_Ini_Add("attack", "ScriptDB", $g_sAttackScrScriptName[$DB])
+EndFunc   ;==>SaveConfig_600_29_DB_Scripted
+
+Func SaveConfig_600_29_DB_Milking()
+	; <><><><> Attack Plan / Search & Attack / Deadbase / Attack / Milking <><><><>
+	ApplyConfig_600_29_DB_Milking("Save")
+	_Ini_Add("MilkingAttack", "MilkAttackType", $g_iMilkAttackType)
+	; A. Structures
+	Local $string = ""
+	For $i = 0 To 8
+		$string &= $g_aiMilkFarmElixirParam[$i] & "|"
+	Next
+	_Ini_Add("MilkingAttack", "LocateElixirLevel", $string)
+	; B. Conditions
+	_Ini_Add("MilkingAttack", "LocateElixir", $g_bMilkFarmLocateElixir ? 1 : 0)
+	_Ini_Add("MilkingAttack", "LocateMine", $g_bMilkFarmLocateMine ? 1 : 0)
+	_Ini_Add("MilkingAttack", "MineParam", $g_iMilkFarmMineParam)
+	_Ini_Add("MilkingAttack", "LocateDrill", $g_bMilkFarmLocateDrill ? 1 : 0)
+	_Ini_Add("MilkingAttack", "DrillParam", $g_iMilkFarmDrillParam)
+	_Ini_Add("MilkingAttack", "MaxTiles", $g_iMilkFarmResMaxTilesFromBorder)
+	_Ini_Add("MilkingAttack", "AttackElixir", $g_bMilkFarmAttackElixirExtractors ? 1 : 0)
+	_Ini_Add("MilkingAttack", "AttackMine", $g_bMilkFarmAttackGoldMines ? 1 : 0)
+	_Ini_Add("MilkingAttack", "AttackDrill", $g_bMilkFarmAttackDarkDrills ? 1 : 0)
+	_Ini_Add("MilkingAttack", "LimitGold", $g_iMilkFarmLimitGold)
+	_Ini_Add("MilkingAttack", "LimitElixir", $g_iMilkFarmLimitElixir)
+	_Ini_Add("MilkingAttack", "LimitDark", $g_iMilkFarmLimitDark)
+	; C. Attack
+	_Ini_Add("MilkingAttack", "TroopForWaveMin", $g_iMilkFarmTroopForWaveMin)
+	_Ini_Add("MilkingAttack", "TroopForWaveMax", $g_iMilkFarmTroopForWaveMax)
+	_Ini_Add("MilkingAttack", "MaxWaves", $g_iMilkFarmTroopMaxWaves)
+	_Ini_Add("MilkingAttack", "DelayBetweenWavesMin", $g_iMilkFarmDelayFromWavesMin)
+	_Ini_Add("MilkingAttack", "DelayBetweenWavesMax", $g_iMilkFarmDelayFromWavesMax)
+	_Ini_Add("MilkingAttack", "DropRandomPlace", $g_iMilkingAttackDropGoblinAlgorithm)
+	_Ini_Add("MilkingAttack", "StructureOrder", $g_iMilkingAttackStructureOrder)
+	_Ini_Add("MilkingAttack", "CheckStructureDestroyedBeforeAttack", $g_bMilkingAttackCheckStructureDestroyedBeforeAttack ? 1 : 0)
+	_Ini_Add("MilkingAttack", "CheckStructureDestroyedAfterAttack", $g_bMilkingAttackCheckStructureDestroyedAfterAttack ? 1 : 0)
+	; D. After Milking
+	_Ini_Add("MilkingAttack", "MilkAttackAfterTHSnipe", $g_bMilkAttackAfterTHSnipeEnable ? 1 : 0)
+	_Ini_Add("MilkingAttack", "TownhallTiles", $g_iMilkFarmTHMaxTilesFromBorder)
+	_Ini_Add("MilkingAttack", "TownHallAlgorithm", $g_sMilkFarmAlgorithmTh)
+	_Ini_Add("MilkingAttack", "TownHallHitAnyway", $g_bMilkFarmSnipeEvenIfNoExtractorsFound ? 1 : 0)
+	_Ini_Add("MilkingAttack", "MilkAttackAfterScriptedAtk", $g_bMilkAttackAfterScriptedAtkEnable ? 1 : 0)
+	_Ini_Add("MilkingAttack", "MilkAttackCSVscript", $g_sMilkAttackCSVscript)
+	; Advanced
+	_Ini_Add("MilkingAttack", "MilkFarmForceTolerance", $g_bMilkFarmForceToleranceEnable ? 1 : 0)
+	_Ini_Add("MilkingAttack", "MilkFarmForcetolerancenormal", $g_iMilkFarmForceToleranceNormal)
+	_Ini_Add("MilkingAttack", "MilkFarmForcetoleranceboosted", $g_iMilkFarmForceToleranceBoosted)
+	_Ini_Add("MilkingAttack", "MilkFarmForcetolerancedestroyed", $g_iMilkFarmForceToleranceDestroyed)
+EndFunc   ;==>SaveConfig_600_29_DB_Milking
+
+Func SaveConfig_600_29_LB()
+	; <><><><> Attack Plan / Search & Attack / Activebase / Attack <><><><>
+	ApplyConfig_600_29_LB("Save")
+	_Ini_Add("attack", "ABAtkAlgorithm", $g_aiAttackAlgorithm[$LB])
+	_Ini_Add("attack", "ABSelectTroop", $g_aiAttackTroopSelection[$LB])
+	_Ini_Add("attack", "ABKingAtk", BitAND($g_aiAttackUseHeroes[$LB], $eHeroKing))
+	_Ini_Add("attack", "ABQueenAtk", BitAND($g_aiAttackUseHeroes[$LB], $eHeroQueen))
+	_Ini_Add("attack", "ABWardenAtk", BitAND($g_aiAttackUseHeroes[$LB], $eHeroWarden))
+	_Ini_Add("attack", "ABDropCC", $g_abAttackDropCC[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABLightSpell", $g_abAttackUseLightSpell[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABHealSpell", $g_abAttackUseHealSpell[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABRageSpell", $g_abAttackUseRageSpell[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABJumpSpell", $g_abAttackUseJumpSpell[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABFreezeSpell", $g_abAttackUseFreezeSpell[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABCloneSpell", $g_abAttackUseCloneSpell[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABPoisonSpell", $g_abAttackUsePoisonSpell[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABEarthquakeSpell", $g_abAttackUseEarthquakeSpell[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABHasteSpell", $g_abAttackUseHasteSpell[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABSkeletonSpell", $g_abAttackUseSkeletonSpell[$LB] ? 1 : 0)
+	_Ini_Add("attack", "THSnipeBeforeLBEnable", $g_bTHSnipeBeforeEnable[$LB] ? 1 : 0)
+	_Ini_Add("attack", "THSnipeBeforeLBTiles", $g_iTHSnipeBeforeTiles[$LB])
+	_Ini_Add("attack", "THSnipeBeforeLBScript", $g_iTHSnipeBeforeScript[$LB])
+
+	SaveConfig_600_29_LB_Standard()
+
+	SaveConfig_600_29_LB_Scripted()
+
+EndFunc   ;==>SaveConfig_600_29_LB
+
+Func SaveConfig_600_29_LB_Standard()
+	; <><><><> Attack Plan / Search & Attack / Activebase / Attack / Standard <><><><>
+	ApplyConfig_600_29_LB_Standard("Save")
+	_Ini_Add("attack", "LBStandardAlgorithm", $g_aiAttackStdDropOrder[$LB])
+	_Ini_Add("attack", "ABDeploy", $g_aiAttackStdDropSides[$LB])
+	_Ini_Add("attack", "ABUnitD", $g_aiAttackStdUnitDelay[$LB])
+	_Ini_Add("attack", "ABWaveD", $g_aiAttackStdWaveDelay[$LB])
+	_Ini_Add("attack", "ABRandomSpeedAtk", $g_abAttackStdRandomizeDelay[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABSmartAttackRedArea", $g_abAttackStdSmartAttack[$LB] ? 1 : 0)
+	_Ini_Add("attack", "ABSmartAttackDeploy", $g_aiAttackStdSmartDeploy[$LB])
+	_Ini_Add("attack", "ABSmartAttackGoldMine", $g_abAttackStdSmartNearCollectors[$LB][0] ? 1 : 0)
+	_Ini_Add("attack", "ABSmartAttackElixirCollector", $g_abAttackStdSmartNearCollectors[$LB][1] ? 1 : 0)
+	_Ini_Add("attack", "ABSmartAttackDarkElixirDrill", $g_abAttackStdSmartNearCollectors[$LB][2] ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_29_LB_Standard
+
+Func SaveConfig_600_29_LB_Scripted()
+	; <><><><> Attack Plan / Search & Attack / Activebase / Attack / Scripted <><><><>
+	ApplyConfig_600_29_LB_Scripted("Save")
+	_Ini_Add("attack", "RedlineRoutineAB", $g_aiAttackScrRedlineRoutine[$LB])
+	_Ini_Add("attack", "DroplineEdgeAB", $g_aiAttackScrDroplineEdge[$LB])
+	_Ini_Add("attack", "ScriptAB", $g_sAttackScrScriptName[$LB])
+EndFunc   ;==>SaveConfig_600_29_LB_Scripted
+
+Func SaveConfig_600_29_TS()
+	; <><><><> Attack Plan / Search & Attack / TH Snipe / Attack <><><><>
+	ApplyConfig_600_29_TS("Save")
+	_Ini_Add("attack", "TSSelectTroop", $g_aiAttackTroopSelection[$TS])
+	_Ini_Add("attack", "TSKingAtk", BitAND($g_aiAttackUseHeroes[$TS], $eHeroKing))
+	_Ini_Add("attack", "TSQueenAtk", BitAND($g_aiAttackUseHeroes[$TS], $eHeroQueen))
+	_Ini_Add("attack", "TSWardenAtk", BitAND($g_aiAttackUseHeroes[$TS], $eHeroWarden))
+	_Ini_Add("attack", "TSDropCC", $g_abAttackDropCC[$TS] ? 1 : 0)
+	_Ini_Add("attack", "TSLightSpell", $g_abAttackUseLightSpell[$TS] ? 1 : 0)
+	_Ini_Add("attack", "TSHealSpell", $g_abAttackUseHealSpell[$TS] ? 1 : 0)
+	_Ini_Add("attack", "TSRageSpell", $g_abAttackUseRageSpell[$TS] ? 1 : 0)
+	_Ini_Add("attack", "TSJumpSpell", $g_abAttackUseJumpSpell[$TS] ? 1 : 0)
+	_Ini_Add("attack", "TSFreezeSpell", $g_abAttackUseFreezeSpell[$TS] ? 1 : 0)
+	_Ini_Add("attack", "TSPoisonSpell", $g_abAttackUsePoisonSpell[$TS] ? 1 : 0)
+	_Ini_Add("attack", "TSEarthquakeSpell", $g_abAttackUseEarthquakeSpell[$TS] ? 1 : 0)
+	_Ini_Add("attack", "TSHasteSpell", $g_abAttackUseHasteSpell[$TS] ? 1 : 0)
+	_Ini_Add("attack", "AttackTHType", $g_sAtkTSType)
+EndFunc   ;==>SaveConfig_600_29_TS
+
+Func SaveConfig_600_30()
+	; <><><><> Attack Plan / Search & Attack / Options / End Battle <><><><>
+	ApplyConfig_600_30("Save")
+	_Ini_Add("shareattack", "ShareAttack", $g_bShareAttackEnable ? 1 : 0)
+	_Ini_Add("shareattack", "minGold", $g_iShareMinGold)
+	_Ini_Add("shareattack", "minElixir", $g_iShareMinElixir)
+	_Ini_Add("shareattack", "minDark", $g_iShareMinDark)
+	_Ini_Add("shareattack", "Message", StringReplace($g_sShareMessage, @CRLF, "|"))
+	_Ini_Add("attack", "TakeLootSnapShot", $g_bTakeLootSnapShot ? 1 : 0)
+	_Ini_Add("attack", "ScreenshotLootInfo", $g_bScreenshotLootInfo ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_30
+
+Func SaveConfig_600_30_DB()
+	; <><><><> Attack Plan / Search & Attack / Deadbase / End Battle <><><><>
+	ApplyConfig_600_30_DB("Save")
+	_Ini_Add("endbattle", "chkDBTimeStopAtk", $g_abStopAtkNoLoot1Enable[$DB] ? 1 : 0)
+	_Ini_Add("endbattle", "txtDBTimeStopAtk", $g_aiStopAtkNoLoot1Time[$DB])
+	_Ini_Add("endbattle", "chkDBTimeStopAtk2", $g_abStopAtkNoLoot2Enable[$DB] ? 1 : 0)
+	_Ini_Add("endbattle", "txtDBTimeStopAtk2", $g_aiStopAtkNoLoot2Time[$DB])
+	_Ini_Add("endbattle", "txtDBMinGoldStopAtk2", $g_aiStopAtkNoLoot2MinGold[$DB])
+	_Ini_Add("endbattle", "txtDBMinElixirStopAtk2", $g_aiStopAtkNoLoot2MinElixir[$DB])
+	_Ini_Add("endbattle", "txtDBMinDarkElixirStopAtk2", $g_aiStopAtkNoLoot2MinDark[$DB])
+	_Ini_Add("endbattle", "chkDBEndNoResources", $g_abStopAtkNoResources[$DB] ? 1 : 0)
+	_Ini_Add("endbattle", "chkDBEndOneStar", $g_abStopAtkOneStar[$DB] ? 1 : 0)
+	_Ini_Add("endbattle", "chkDBEndTwoStars", $g_abStopAtkTwoStars[$DB] ? 1 : 0)
+	_Ini_Add("endbattle", "chkDBPercentageHigher", $g_abStopAtkPctHigherEnable[$DB] ? 1 : 0)
+	_Ini_Add("endbattle", "txtDBPercentageHigher", $g_aiStopAtkPctHigherAmt[$DB])
+	_Ini_Add("endbattle", "chkDBPercentageChange", $g_abStopAtkPctNoChangeEnable[$DB] ? 1 : 0)
+	_Ini_Add("endbattle", "txtDBPercentageChange", $g_aiStopAtkPctNoChangeTime[$DB])
+EndFunc   ;==>SaveConfig_600_30_DB
+
+Func SaveConfig_600_30_LB()
+	; <><><><> Attack Plan / Search & Attack / Activebase / End Battle <><><><>
+	ApplyConfig_600_30_LB("Save")
+	_Ini_Add("endbattle", "chkABTimeStopAtk", $g_abStopAtkNoLoot1Enable[$LB] ? 1 : 0)
+	_Ini_Add("endbattle", "txtABTimeStopAtk", $g_aiStopAtkNoLoot1Time[$LB])
+	_Ini_Add("endbattle", "chkABTimeStopAtk2", $g_abStopAtkNoLoot2Enable[$LB] ? 1 : 0)
+	_Ini_Add("endbattle", "txtABTimeStopAtk2", $g_aiStopAtkNoLoot2Time[$LB])
+	_Ini_Add("endbattle", "txtABMinGoldStopAtk2", $g_aiStopAtkNoLoot2MinGold[$LB])
+	_Ini_Add("endbattle", "txtABMinElixirStopAtk2", $g_aiStopAtkNoLoot2MinElixir[$LB])
+	_Ini_Add("endbattle", "txtABMinDarkElixirStopAtk2", $g_aiStopAtkNoLoot2MinDark[$LB])
+	_Ini_Add("endbattle", "chkABEndNoResources", $g_abStopAtkNoResources[$LB] ? 1 : 0)
+	_Ini_Add("endbattle", "chkABEndOneStar", $g_abStopAtkOneStar[$LB] ? 1 : 0)
+	_Ini_Add("endbattle", "chkABEndTwoStars", $g_abStopAtkTwoStars[$LB] ? 1 : 0)
+	_Ini_Add("endbattle", "chkDESideEB", $g_bDESideEndEnable ? 1 : 0)
+	_Ini_Add("endbattle", "txtDELowEndMin", $g_iDESideEndMin)
+	_Ini_Add("endbattle", "chkDisableOtherEBO", $g_bDESideDisableOther ? 1 : 0)
+	_Ini_Add("endbattle", "chkDEEndAq", $g_bDESideEndAQWeak ? 1 : 0)
+	_Ini_Add("endbattle", "chkDEEndBk", $g_bDESideEndBKWeak ? 1 : 0)
+	_Ini_Add("endbattle", "chkDEEndOneStar", $g_bDESideEndOneStar ? 1 : 0)
+	_Ini_Add("endbattle", "chkABPercentageHigher", $g_abStopAtkPctHigherEnable[$LB] ? 1 : 0)
+	_Ini_Add("endbattle", "txtABPercentageHigher", $g_aiStopAtkPctHigherAmt[$LB])
+	_Ini_Add("endbattle", "chkABPercentageChange", $g_abStopAtkPctNoChangeEnable[$LB] ? 1 : 0)
+	_Ini_Add("endbattle", "txtABPercentageChange", $g_aiStopAtkPctNoChangeTime[$LB])
+EndFunc   ;==>SaveConfig_600_30_LB
+
+Func SaveConfig_600_30_TS()
+	; <><><><> Attack Plan / Search & Attack / TH Snipe / End Battle <><><><>
+	ApplyConfig_600_30_TS("Save")
+	_Ini_Add("search", "ChkTSSearchCamps2", $g_bEndTSCampsEnable ? 1 : 0)
+	_Ini_Add("search", "TSEnableAfterArmyCamps2", $g_iEndTSCampsPct)
+EndFunc   ;==>SaveConfig_600_30_TS
+
+Func SaveConfig_600_31()
+	; <><><><> Attack Plan / Search & Attack / Deadbase / Collectors <><><><>
+	ApplyConfig_600_31("Save")
+	For $i = 6 To 12
+		_Ini_Add("collectors", "lvl" & $i & "Enabled", $g_abCollectorLevelEnabled[$i] ? 1 : 0)
+		_Ini_Add("collectors", "lvl" & $i & "fill", $g_aiCollectorLevelFill[$i])
+	Next
+	_Ini_Add("search", "chkDisableCollectorsFilter", $g_bCollectorFilterDisable ? 1 : 0)
+	_Ini_Add("collectors", "minmatches", $g_iCollectorMatchesMin)
+	_Ini_Add("collectors", "tolerance", $g_iCollectorToleranceOffset)
+EndFunc   ;==>SaveConfig_600_31
+
+Func SaveConfig_600_32()
+	; <><><><> Attack Plan / Search & Attack / Options / Trophy Settings <><><><>
+	ApplyConfig_600_32("Save")
+	_Ini_Add("search", "TrophyRange", $g_bDropTrophyEnable ? 1 : 0)
+	_Ini_Add("search", "MaxTrophy", $g_iDropTrophyMax)
+	_Ini_Add("search", "MinTrophy", $g_iDropTrophyMin)
+	_Ini_Add("search", "chkTrophyHeroes", $g_bDropTrophyUseHeroes ? 1 : 0)
+	_Ini_Add("search", "cmbTrophyHeroesPriority", $g_iDropTrophyHeroesPriority)
+	_Ini_Add("search", "chkTrophyAtkDead", $g_bDropTrophyAtkDead ? 1 : 0)
+	_Ini_Add("search", "DTArmyMin", $g_iDropTrophyArmyMinPct)
+EndFunc   ;==>SaveConfig_600_32
+
+Func SaveConfig_600_35()
+	; <><><><> Bot / Options <><><><>
+	ApplyConfig_600_35("Save")
+	_Ini_Add("other", "language", $g_sLanguage)
+	_Ini_Add("General", "ChkDisableSplash", $g_bDisableSplash ? 1 : 0)
+	_Ini_Add("General", "ChkVersion", $g_bCheckVersion ? 1 : 0)
+	_Ini_Add("deletefiles", "DeleteLogs", $g_bDeleteLogs ? 1 : 0)
+	_Ini_Add("deletefiles", "DeleteLogsDays", $g_iDeleteLogsDays)
+	_Ini_Add("deletefiles", "DeleteTemp", $g_bDeleteTemp ? 1 : 0)
+	_Ini_Add("deletefiles", "DeleteTempDays", $g_iDeleteTempDays)
+	_Ini_Add("deletefiles", "DeleteLoots", $g_bDeleteLoots ? 1 : 0)
+	_Ini_Add("deletefiles", "DeleteLootsDays", $g_iDeleteLootsDays)
+	_Ini_Add("general", "AutoStart", $g_bAutoStart ? 1 : 0)
+	_Ini_Add("general", "AutoStartDelay", $g_iAutoStartDelay)
+	_Ini_Add("General", "ChkLanguage", $g_bCheckGameLanguage ? 1 : 0)
+	_Ini_Add("general", "DisposeWindows", $g_bAutoAlignEnable ? 1 : 0)
+	_Ini_Add("general", "DisposeWindowsPos", $g_iAutoAlignPosition)
+	_Ini_Add("other", "WAOffsetX", $g_iAutoAlignOffsetX)
+	_Ini_Add("other", "WAOffsetY", $g_iAutoAlignOffsetY)
+	_Ini_Add("general", "UpdatingWhenMinimized", $g_bUpdatingWhenMinimized ? 1 : 0)
+	_Ini_Add("general", "HideWhenMinimized", $g_bHideWhenMinimized ? 1 : 0)
+
+	_Ini_Add("other", "UseRandomClick", $g_bUseRandomClick ? 1 : 0)
+	_Ini_Add("other", "ScreenshotType", $g_bScreenshotPNGFormat ? 1 : 0)
+	_Ini_Add("other", "ScreenshotHideName", $g_bScreenshotHideName ? 1 : 0)
+	_Ini_Add("other", "txtTimeWakeUp", $g_iAnotherDeviceWaitTime)
+	_Ini_Add("other", "chkSinglePBTForced", $g_bForceSinglePBLogoff ? 1 : 0)
+	_Ini_Add("other", "ValueSinglePBTimeForced", $g_iSinglePBForcedLogoffTime)
+	_Ini_Add("other", "ValuePBTimeForcedExit", $g_iSinglePBForcedEarlyExitTime)
+	_Ini_Add("other", "ChkAutoResume", $g_bAutoResumeEnable ? 1 : 0)
+	_Ini_Add("other", "AutoResumeTime", $g_iAutoResumeTime)
+	_Ini_Add("other", "ChkFixClanCastle", $g_bForceClanCastleDetection ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_35
+
+Func SaveConfig_600_52_1()
+	; <><><> Attack Plan / Train Army / Troops/Spells <><><>
+	ApplyConfig_600_52_1("Save")
+	_Ini_Add("other", "ChkUseQTrain", $g_bQuickTrainEnable ? 1 : 0)
+	_Ini_Add("troop", "QuickTrainArmy1", $g_bQuickTrainArmy[0] ? 1 : 0)
+	_Ini_Add("troop", "QuickTrainArmy2", $g_bQuickTrainArmy[1] ? 1 : 0)
+	_Ini_Add("troop", "QuickTrainArmy3", $g_bQuickTrainArmy[2] ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_52_1
+
+Func SaveConfig_600_52_2()
+	; troop/spell levels and counts
+	ApplyConfig_600_52_2("Save")
+	For $t = 0 To $eTroopCount - 1
+		_Ini_Add("troop", $g_asTroopShortNames[$t], $g_aiArmyCompTroops[$t])
+		_Ini_Add("LevelTroop", $g_asTroopShortNames[$t], $g_aiTrainArmyTroopLevel[$t])
+	Next
+	For $s = 0 To $eSpellCount - 1
+		_Ini_Add("Spells", $g_asSpellShortNames[$s], $g_aiArmyCompSpells[$s])
+		_Ini_Add("LevelSpell", $g_asSpellShortNames[$s], $g_aiTrainArmySpellLevel[$s])
+	Next
+	; full & forced Total Camp values
+	_Ini_Add("troop", "fulltroop", $g_iTrainArmyFullTroopPct)
+	_Ini_Add("other", "ChkTotalCampForced", $g_bTotalCampForced ? 1 : 0)
+	_Ini_Add("other", "ValueTotalCampForced", $g_iTotalCampForcedValue)
+	; spell capacity and forced flag
+	_Ini_Add("Spells", "SpellFactory", $g_iTotalSpellValue)
+	_Ini_Add("other", "ChkForceBrewBeforeAttack", $g_bForceBrewSpells ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_52_2
+
+Func SaveConfig_600_54()
+	; <><><> Attack Plan / Train Army / Train Order <><><>
+	ApplyConfig_600_54("Save")
+	_Ini_Add("troop", "chkTroopOrder", $g_bCustomTrainOrderEnable ? 1 : 0)
+	For $z = 0 To UBound($g_aiCmbCustomTrainOrder) - 1
+		_Ini_Add("troop", "cmbTroopOrder" & $z, $g_aiCmbCustomTrainOrder[$z])
+	Next
+EndFunc   ;==>SaveConfig_600_54
+
+Func SaveConfig_600_56()
+	; <><><><> Attack Plan / Search & Attack / Options / SmartZap <><><><>
+	ApplyConfig_600_56("Save")
+	_Ini_Add("SmartZap", "UseSmartZap", $g_bSmartZapEnable ? 1 : 0)
+	_Ini_Add("SmartZap", "UseEarthQuakeZap", $g_bEarthQuakeZap ? 1 : 0)
+	_Ini_Add("SmartZap", "UseNoobZap", $g_bNoobZap ? 1 : 0)
+	_Ini_Add("SmartZap", "ZapDBOnly", $g_bSmartZapDB ? 1 : 0)
+	_Ini_Add("SmartZap", "THSnipeSaveHeroes", $g_bSmartZapSaveHeroes ? 1 : 0)
+	_Ini_Add("SmartZap", "MinDE", $g_iSmartZapMinDE)
+	_Ini_Add("SmartZap", "ExpectedDE", $g_iSmartZapExpectedDE)
+	_Ini_Add("SmartZap", "DebugSmartZap", $g_bDebugSmartZap ? 1 : 0)
+EndFunc   ;==>SaveConfig_600_56
+
+Func SaveConfig_641_1()
+	; <><><> Attack Plan / Train Army / Options <><><>
+	ApplyConfig_641_1("Save")
+	; Training idle time
+	_Ini_Add("other", "chkCloseWaitEnable", $g_bCloseWhileTrainingEnable ? 1 : 0)
+	_Ini_Add("other", "chkCloseWaitTrain", $g_bCloseWithoutShield ? 1 : 0)
+	_Ini_Add("other", "btnCloseWaitStop", $g_bCloseEmulator ? 1 : 0)
+	_Ini_Add("other", "btnCloseWaitStopRandom", $g_bCloseRandom ? 1 : 0)
+	_Ini_Add("other", "btnCloseWaitExact", $g_bCloseExactTime ? 1 : 0)
+	_Ini_Add("other", "btnCloseWaitRandom", $g_bCloseRandomTime ? 1 : 0)
+	_Ini_Add("other", "CloseWaitRdmPercent", $g_iCloseRandomTimePercent)
+	_Ini_Add("other", "MinimumTimeToClose", $g_iCloseMinimumTime)
+	; Train click timing
+	_Ini_Add("other", "TrainITDelay", $g_iTrainClickDelay)
+	; Training add random delay
+	_Ini_Add("other", "chkAddIdleTime", $g_bTrainAddRandomDelayEnable ? 1 : 0)
+	_Ini_Add("other", "txtAddDelayIdlePhaseTimeMin", $g_iTrainAddRandomDelayMin)
+	_Ini_Add("other", "txtAddDelayIdlePhaseTimeMax", $g_iTrainAddRandomDelayMax)
+EndFunc   ;==>SaveConfig_641_1
+
+Func IniWriteS($filename, $section, $key, $value)
+	;save in standard config files and also save settings in strategy ini file (save strategy button valorize variable $g_sProfileSecondaryOutputFileName )
+	Local $s = $section
+	Local $k = $key
+	IniWrite($filename, $section, $key, $value)
+	If $g_sProfileSecondaryOutputFileName <> "" Then
+		If $s = "search" Or $s = "attack" Or $s = "troop" Or $s = "spells" Or $s = "milkingattack" Or $s = "endbattle" Or $s = "collectors" Or ($s = "general" And $k = "version") Then
+			IniWrite($g_sProfileSecondaryOutputFileName, $section, $key, $value)
+		EndIf
+	EndIf
+EndFunc   ;==>IniWriteS
+
+

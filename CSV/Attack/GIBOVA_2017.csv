@@ -1,0 +1,64 @@
+NOTE  |Author: who iam
+NOTE  |gibova
+NOTE  |Make Troops: 16 Bowlers, 13 valk, 8 Giants, CC GIANT/golem
+NOTE  |Make Spell : 2 jump, 2 rage, 1 heal, 1 haste and rage on CC
+      |----------------------------------- Script: GIBOVA --------------------------------|
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|SIDE
+SIDE  |0          |0          |0          |0          |0          |0          |10         |           |TH
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|MAKE SIDE VECTORS
+MAKE  |A          |FRONT-LEFT |10         |3          |INT-EXT    |0          |1          |           |FRONT-LEFT
+MAKE  |B          |FRONT-RIGHT|10         |3          |INT-EXT    |0          |1          |           |FRONT-RIGHT
+MAKE  |D          |FRONT-LEFT |10         |3          |INT-EXT    |2          |1          |           |FRONT-LEFT
+
+MAKE  |I          |FRONT-LEFT |10         |-5         |INT-EXT    |0          |0          |           |FRONT-LEFT
+MAKE  |J          |FRONT-RIGHT|10         |-5         |INT-EXT    |0          |0          |           |FRONT-RIGHT
+MAKE  |Z          |FRONT-LEFT |10         |-8         |INT-EXT    |0          |0          |           |FRONT-LEFT
+
+MAKE  |K          |FRONT-LEFT |10         |-11        |INT-EXT    |0          |0          |           |FRONT-LEFT
+MAKE  |S          |FRONT-LEFT |10         |-6         |INT-EXT    |0          |0          |           |FRONT-LEFT
+MAKE  |E          |FRONT-LEFT |10         |-13        |INT-EXT    |0          |0          |           |FRONT-LEFT
+
+MAKE  |L          |FRONT-LEFT |10         |-15        |INT-EXT    |0          |0          |           |FRONT-LEFT
+MAKE  |H          |FRONT-LEFT |10         |-18        |INT-EXT    |0          |0          |           |FRONT-LEFT
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|           |DROP TROOPS
+DROP  |K          |1          |5          |Espell     |1000-1500  |0          |500-600    |           |Drop Espell
+DROP  |S          |1          |1          |Jspell     |50         |0          |500-600    |           |Drop Jspell
+DROP  |E          |1          |1          |Jspell     |50         |0          |500-600    |           |Drop Jspell
+
+DROP  |A          |7-9        |8          |Giant      |50         |0          |1000-1500  |           |Drop Giant
+DROP  |A          |7-9        |8          |Bowl       |100        |0          |50-100     |           |Drop Bowl
+DROP  |B          |3-4        |1          |castle     |50         |0          |1000-1500  |           |Drop Giant
+DROP  |B          |3-4        |8          |Bowl       |100        |0          |50-100     |           |Drop Bowl
+DROP  |I          |7-9        |1          |RSpell     |0          |0          |100-200    |           |Drop RSpell
+DROP  |J          |3-4        |1          |RSpell     |0          |0          |3000-5000  |           |Drop RSpell
+
+DROP  |D          |1          |1          |King       |20         |0          |0          |           |Drop King
+DROP  |D          |1          |1          |Queen      |20         |0          |0          |           |Drop Queen
+DROP  |D          |1          |1          |Warden     |20         |0          |200-400    |           |Drop Warden
+
+DROP  |Z          |1          |1          |Haspell    |50         |0          |500-600    |           |Drop HASPELL
+DROP  |D          |1-2        |13         |valk       |10-50      |0          |5-10       |           |Drop valk
+
+WAIT  |4000-6000  |           |           |           |           |           |           |           |Wait
+
+DROP  |D          |1          |1          |Warden     |20         |0          |200-400    |           |force ability Warden
+
+      |DEFENSE____|OPTIONS________|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|
+;DROPS |EAGLE      |R:T,B:F,S:A,L:T|1          |FSpell     |0          |0          |0          |            |
+
+      |DEFENSE____|OPTIONS________|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|
+;DROPS |EAGLE      |R:T,B:F,S:A    |1          |FSpell     |0          |0          |0          |            |
+
+
+      |DEFENSE____|OPTIONS________|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|
+DROPS |INFERNO    |R:T,B:T,S:A,L:T|1          |FSpell     |0          |0          |0          |            |
+
+      |DEFENSE____|OPTIONS________|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|
+DROPS |INFERNO    |R:T,B:F,S:A    |1          |FSpell     |0          |0          |0          |            |
+
+RECALC|           |           |           |           |           |           |           |           |drop spell from cc
+DROP  |L          |1          |1          |RSpell     |0          |0          |100-200    |           |Drop RSpell
+DROP  |H          |1          |1          |HSpell     |0          |0          |0          |           |Drop Heal
+
+DROP  |L          |1          |1          |PSpell     |0          |0          |0          |           |Drop POISON

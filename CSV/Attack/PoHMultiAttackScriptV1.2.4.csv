@@ -1,0 +1,86 @@
+Note |Author: PoH98-Ver.1.2.4 
+Note |Support troops limit: 20 Giant, 20 Wizard, 20 Valk, 10 Wallbreaker, 20 Bowler, 60 Barb, 60 Arch, 40 Goblins, 2 Golems, 5 Pekkas，12 drag, 6 balloons, 10 witches
+Note |Support King, Queen Warden 
+Note |Support spells limit: 2 Jump, 4 Earth, 3 Rage, 1 heal，1 Hastle (For Balloons only!)，1 Freeze(Not confirm on Inferno)
+Note |Support CC spells limit: 2 Earth
+Note |All in one script, use it whatever you like~
+Note |兵力支持最高上限：20巨人，20法师，20武神，10炸弹人，20投石，60野蛮人，60弓箭，40哥布林，2石头人，5皮卡，12龙，6气球，10女巫，蛮王，女王和大守护者
+Note |药水支持最高上限：2弹跳，4地震，1狂暴，1治疗，1加速（加速是给气球的！）,1冰冻（不保证下在地狱塔）
+Note |城堡药水支持上限：2地震
+,,,,,
+     |EXTR.GOLD|EXTR.ELIXIR|EXTR.DARK|DEPO.GOLD|DEPO.ELIXIR|DEPO.DARK|TOWNHALL|FORCED SIDE|,,,,,,
+SIDE |         |           |         |         |           |         |10      |           |,,,,,,
+,,,,,,
+     |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|,,,,,,
+MAKE|A           |FRONT-LEFT   |10       |2          |INT-EXT    |2          |2          |           |,,,,,,
+MAKE|B           |FRONT-RIGHT  |10       |2          |INT-EXT    |2          |2          |           |,,,,,,
+MAKE|C           |FRONT-LEFT   |10       |3          |INT-EXT    |1          |1          |           |,,,,,,
+MAKE|D           |FRONT-RIGHT  |10       |3          |INT-EXT    |1          |1          |           |,,,,,,
+MAKE|E           |FRONT-RIGHT  |10       |-9         |INT-EXT    |3          |3          |           |,,,,,,
+MAKE|F           |FRONT-RIGHT  |10       |-14        |INT-EXT    |3          |3          |           |,,,,,,
+MAKE|G           |FRONT-RIGHT  |10       |-6         |INT-EXT    |0          |1          |           |,,,,,,
+MAKE|H           |FRONT-RIGHT  |10       |-16        |INT-EXT    |0          |0          |           |,,,,,,
+MAKE|I           |FRONT-RIGHT  |10       |-20        |INT-EXT    |0          |0          |           |,,,,,,
+MAKE|J           |FRONT-RIGHT  |10       |-12        |INT-EXT    |0          |0          |           |,,,,,,
+MAKE|K           |FRONT-RIGHT  |10       |-23        |INT-EXT    |0          |0          |           |,,,,,,
+MAKE|L           |FRONT-RIGHT  |10       |-17        |INT-EXT    |0          |1          |           |,,,,,,
+
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|        |
+DROP  |E          |1          |4          |Espell     |10         |100-200    |100-200    |        |
+RECALC|           |           |           |           |           |           |           |        |
+DROP  |E          |1          |2          |Espell     |10         |100-200    |200-400    |        |
+DROP  |A-B        |3-8        |1          |Gole       |200        |100-200    |400-600    |        |
+DROP  |A          |2-8        |6          |Giant      |50         |100-200    |100-200    |        |
+DROP  |B          |2-8        |6          |Giant      |50         |100-200    |300-500    |        |
+DROP  |C          |1-6        |10         |Arch       |0          |100-200    |100-200    |        |
+DROP  |D          |1-6        |10         |Arch       |0          |100-200    |200-300    |        |
+DROP  |C          |1-6        |10         |Barb       |0          |100-200    |100-200    |        |
+DROP  |D          |1-6        |10         |Barb       |0          |100-200    |200-300    |        |
+DROP  |C          |1-2        |10         |Gobl       |0          |100-200    |100-200    |        |
+DROP  |D          |1-2        |10         |Gobl       |0          |100-200    |200-300    |        |
+DROP  |C          |2-6        |6          |Wiza       |50         |100-200    |100-200    |        |
+DROP  |D          |2-6        |6          |Wiza       |50         |100-200    |300-400    |        |
+DROP  |A          |1-2        |10         |Giant      |50         |100-200    |200-400    |        |
+DROP  |C          |1-2        |10         |Heal       |0          |0          |300-400    |        |
+DROP  |A          |1-2        |10         |wall       |150        |100-200    |500-600    |        |
+DROP  |A          |1-2        |10         |Pekk       |100        |0          |100-200    |        |
+DROP  |A          |1-2        |1          |Castle     |0          |0          |200-300    |        |
+DROP  |C          |1-2        |10         |Wiza       |50         |100-200    |200-300    |        |
+DROP  |C          |1-6        |10         |Arch       |0          |50-100     |100-200    |        |
+DROP  |D          |1-6        |10         |Arch       |0          |50-100     |100-300    |        |
+DROP  |C          |1-6        |10         |Barb       |0          |50-100     |100-200    |        |
+DROP  |D          |1-6        |10         |Barb       |0          |50-100     |100-300    |        |
+DROP  |C          |1-6        |10         |Arch       |0          |50-100     |100-200    |        |
+DROP  |D          |1-6        |10         |Arch       |0          |50-100     |100-300    |        |
+DROP  |C-D        |1-6        |10         |Barb       |0          |100-200    |100-200    |        |
+DROP  |C-D        |1-6        |10         |Arch       |0          |100-200    |100-200    |        |
+DROP  |C-D        |1-6        |10         |Barb       |0          |100-200    |100-200    |        |
+DROP  |C          |1-2        |10         |Gobl       |0          |50-100     |100-200    |        |
+DROP  |D          |1-2        |10         |Gobl       |0          |50-100     |200-300    |        |
+DROP  |E          |1          |1          |Jspell     |0          |0          |300-500    |        |
+DROP  |C-D        |1-2        |10         |Witc       |50         |100-200    |200-300    |        |
+DROP  |B          |1-2        |10         |Valk       |50         |100-200    |100-200    |        |
+DROP  |B          |1-2        |10         |Valk       |50         |100-200    |200-300    |        |
+DROP  |C-D        |1-4        |2          |Bowl       |50         |100-200    |200-300    |        |
+DROP  |C          |1-2        |10         |Bowl       |50         |100-200    |100-200    |        |
+DROP  |C          |1-2        |10         |Bowl       |50         |100-200    |200-300    |        |
+DROP  |A-B        |4-8        |2          |Babyd      |50         |100-200    |100-200    |        |
+DROP  |A          |1-2        |10         |Babyd      |100        |100-200    |100-200    |        |
+DROP  |B          |1-2        |10         |Babyd      |100        |100-200    |100-200    |        |
+DROP  |A-B        |3-8        |1          |Drag       |100        |100-200    |600-800    |        |
+DROP  |C-D        |1-3        |10         |Drag       |100        |100-200    |300-500    |        |
+DROP  |A-B        |1-2        |6          |Ball       |100        |100-200    |600-800    |        |
+DROP  |G          |1          |1          |Haspell    |0          |0          |100-300    |        |
+DROP  |A          |1          |1          |King       |0          |0          |100-300    |        |
+DROP  |A          |1          |1          |Queen      |0          |0          |100-300    |        |
+DROP  |A          |1          |1          |Warden     |0          |0          |100-300    |        |
+DROP  |G          |1          |1          |Rspell     |0          |0          |500-1000   |        |
+DROP  |L          |1          |1          |Fspell     |0          |0          |600-800    |        |
+DROP  |J          |1          |1          |Hspell     |0          |0          |1000-2000  |        |
+DROP  |F          |1          |1          |Jspell     |0          |0          |1000-2000  |        |
+DROP  |A          |1          |1          |Warden     |0          |0          |           |        |
+DROP  |H          |1          |1          |Rspell     |0          |0          |           |        |
+DROP  |K          |1          |1          |Rspell     |0          |0          |1000-2000  |        |
+RECAL |           |           |           |           |           |           |           |        |
+REMAIN|           |           |           |           |           |           |           |        |

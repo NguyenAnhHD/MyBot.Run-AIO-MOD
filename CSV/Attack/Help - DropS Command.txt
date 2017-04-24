@@ -1,0 +1,36 @@
+Command Example:
+ 
+ * DROPS
+      |DEFENSE____|OPTIONS________|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|____________|
+DROPS |INFERNO    |R:F,B:T,S:S,L:T|1          |FSpell     |0          |0          |0          |            |Drop Freeze Spell on Inferno Tower(s)
+
+NOTE: You must type DROPS not DROP
+
+(i). DEFENSE
+for now only selected buildings can be type (given below)
+INFERNO
+ADEFENCE
+EAGLE
+
+(ii). OPTIONS
+"R:F,B:T,S:S,L:T" ! Those Named as Options (Or Whatever you want to name/call it)! :
+ - Options should be entered in this Syntax: "PARAM:VALUE,ParamN:ValueN"
+ 
+ - Option Parameters Are: "R", "B", "S" and "L"
+ 
+ - Values T/F is Turn on/off or True/False
+ 
+ - Values For "R" Parameter! is To Randomize Drop Point with Low Values to be More Human Like! after fair play i suggest for always randomize
+   
+ - Values For "B" Parameter! is To Drop Spell Between Defense! Useful for Spells Like Freeze Spell, ONLY INFERNO TOWERS are Supported for this parameter if its FALSE, Don't Drop Spell Between Defense EVEN If it was possible to affect them with ONE Spell
+ 
+   
+ - Values For "S" Parameter!  is Side
+   * "S" Value is SameSide, where 
+    * "O" Value is OppositeSide, ONLY Drop IF The Defense Is Located In The Other Side (Opposite), If MainSide Detected as BOTTOM, Will Drop Spell ONLY IF The Defense Is Located in TOP
+
+    * "A" Value is AnySide, Drop Spell And Ignore Where it's Located And It's Side!
+
+  - Values For "L" Parameter! is Locate if its true then it will locate location at start (NOTE:it will drop on destroyed buildings if enabled)
+
+                   ------Doc.Oc------

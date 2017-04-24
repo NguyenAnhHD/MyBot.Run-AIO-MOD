@@ -1,0 +1,44 @@
+NOTE  |Authors: Swede - 2016.09.11
+NOTE  |Attack: DE Queen 1 sided Dark Elixir Attack Attack Live Base
+NOTE  |TH10 - 13 Giants, 5 Healers, 1 pekkas, 1 Go, 3 WB's, 17 Wiz., spells 3 Rage, 4 EQ
+NOTE  |This CSV is meant to be used for LB. Queen will do some cleaning and rest of troops will be released
+       to be tunneled to the core of the base. You can play with the troop composition by adding Giants, archers
+       and lowering amounts of foe Wizards. You can also loweror increase the wait time before the troops gets
+       released. The stronger opponent and weaker AQ you will need support sooner.	
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |           |           |           |           |           |10         |           |           |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |A          |FRONT-LEFT |10         |1          |INT-EXT    |0          |5          |           |
+MAKE  |B          |FRONT-RIGHT|10         |1          |INT-EXT    |0          |5          |           |
+MAKE  |C          |FRONT-RIGHT|10         |1          |EXT-INT    |0          |5          |           |  
+MAKE  |D          |FRONT-LEFT |10         |1          |EXT-INT    |0          |5          |           |
+MAKE  |E          |FRONT-LEFT |10         |-11        |EXT-INT    |0          |5          |           |   
+MAKE  |F          |FRONT-LEFT |10         |-14        |EXT-INT    |0          |5          |           |
+MAKE  |G          |FRONT-LEFT |10         |-9         |EXT-INT    |0          |5          |           |
+MAKE  |H          |FRONT-LEFT |10         |-18        |EXT-INT    |0          |5          |           |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
+DROP  |E          |10         |4          |Espell     |0          |0          |50         |           |
+DROP  |B          |1          |1          |queen      |0          |0          |100-300    |           | 
+DROP  |B          |1          |6          |heal       |600        |0          |100-300    |           | 
+RECALC|           |           |           |           |           |           |           |           |Recalculate remaining troops and then launch...
+WAIT  |14000-16000|           |           |           |           |           |           |           |Add a wait time; 
+DROP  |A          |1          |2          |pekk       |500        |0          |100        |           |
+DROP  |A          |1          |2          |gole       |500        |0          |100        |           |
+DROP  |B          |1          |1          |queen      |0          |0          |100-300    |           |Brute activate Queen
+DROP  |B          |1-2        |17         |giant      |200        |200        |500-700    |           |
+DROP  |B          |2          |5          |wall       |50         |0          |50         |           |
+DROP  |A-D        |2-10       |30         |arch       |0          |50         |100-300    |           |
+DROP  |B          |2          |1          |castle     |0          |0          |50-100     |           |
+DROP  |A-B        |1-9        |15         |barb       |010        |50         |50         |           |
+DROP  |B          |1          |16         |wiza       |0          |50         |100-300    |           |
+DROP  |A          |1          |1          |king       |0          |0          |100-300    |           |
+DROP  |A          |1          |1          |queen      |0          |0          |100-300    |           | 
+DROP  |G          |10         |1          |Rspell     |005        |005        |100        |           |
+DROP  |A-B        |1          |20         |arch       |005        |50         |6000-7000  |           |
+DROP  |F          |10         |1          |Rspell     |0          |0          |5000-6000  |           |
+DROP  |H          |10         |1          |Rspell     |0          |0          |50         |           |
+WAIT  |1000       |           |           |           |           |           |           |           |Add a wait time
+DROP  |A          |1          |1          |king       |0          |0          |100-300    |           |Brute activate King

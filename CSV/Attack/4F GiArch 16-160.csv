@@ -1,0 +1,43 @@
+NOTE  |GiArch FFF (Fast Four Fingers)
+NOTE  |Attack: FF GiArch, +2 tile from redline
+NOTE  |Make these Troops: Archers 160, 16 Giants
+NOTE  |Will drop Barb, Giants, Archs and finally All Heroes and Castle if enabled from GUI
+
+      |-------------------------------------- four fingers gibarch start -----------------------------|
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |           |           |           |           |           |1          |           |           |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|MAKE BARBARIAN VECTORS
+MAKE  |A          |FRONT-RIGHT|10         |1          |EXT-INT    |2          |2          |           |
+MAKE  |B          |RIGHT-FRONT|10         |1          |EXT-INT    |2          |2          |           |
+MAKE  |C          |BACK-LEFT  |10         |1          |EXT-INT    |2          |2          |           |
+MAKE  |D          |LEFT-BACK  |10         |1          |EXT-INT    |2          |2          |           |
+MAKE  |E          |FRONT-LEFT |10         |1          |INT-EXT    |2          |2          |           |
+MAKE  |F          |RIGHT-BACK |10         |1          |INT-EXT    |2          |2          |           |
+MAKE  |G          |LEFT-FRONT |10         |1          |INT-EXT    |2          |2          |           |
+MAKE  |H          |BACK-RIGHT |10         |1          |INT-EXT    |2          |2          |           |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|DROP BARB, ARCH, GIANT
+DROP  |A-B-C-D    |4          |1          |giant      |0          |0          |50         |           |Launch giants using all 4 vectors concurrently...             1 giant
+DROP  |A-B-C-D    |7          |1          |giant      |0          |0          |50         |           |Launch giants using all 4 vectors concurrently...             1 giant
+DROP  |E-F-G-H    |3          |1          |giant      |0          |0          |50         |           |Launch giants using all 4 vectors concurrently...             1 giant
+DROP  |E-F-G-H    |6          |1          |giant      |0          |0          |500        |           |Launch giants using all 4 vectors concurrently...             1 giant
+DROP  |A-B-C-D    |1-10       |20         |arch       |0          |50         |50         |           |Launch archs all 4 vectors concurrently...                    5 arch
+DROP  |E-F-G-H    |1-10       |20         |arch       |0          |50         |50         |           |Launch archs all 4 vectors concurrently...                    5 arch
+DROP  |E          |1          |1          |castle     |0          |0          |0          |           |Launch Castle                                                   castle
+DROP  |E          |1          |1          |king       |0          |0          |0          |           |Launch King                                                     king
+DROP  |E          |1          |1          |queen      |0          |0          |0          |           |Launch Queen                                                    queen
+DROP  |E          |1          |1          |Warden     |0          |0          |0          |           |Launch Grand Warden                                             warden
+
+RECALC|           |           |           |           |           |           |           |           |Recalculate remaining troops and then launch...
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|DROP BARB, ARCH, GIANT
+DROP  |A-B-C-D    |4          |1          |giant      |0          |0          |50         |           |Launch giants using all 4 vectors concurrently...             1 giant
+DROP  |A-B-C-D    |7          |1          |giant      |0          |0          |50         |           |Launch giants using all 4 vectors concurrently...             1 giant
+DROP  |E-F-G-H    |3          |1          |giant      |0          |0          |50         |           |Launch giants using all 4 vectors concurrently...             1 giant
+DROP  |E-F-G-H    |6          |1          |giant      |0          |0          |50         |           |Launch giants using all 4 vectors concurrently...             1 giant
+DROP  |A-B-C-D    |1-10       |10         |barb       |0          |50         |50         |           |Launch barbarians using all 4 vectors concurrently...         5 barb
+DROP  |E-F-G-H    |1-10       |10         |barb       |0          |50         |50         |           |Launch barbarians using all 4 vectors concurrently...         5 barb
+DROP  |A-B-C-D    |1-10       |10         |arch       |0          |50         |50         |           |Launch archs all 4 vectors concurrently...                    5 arch
+DROP  |E-F-G-H    |1-10       |10         |arch       |0          |50         |50         |           |Launch archs all 4 vectors concurrently...                    5 arch

@@ -1,0 +1,31 @@
+Command Example:
+ 
+ * SideP
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |___________|___________|___________|___________|___________|   
+SIDEP |           |1          |           |           |           |           |           |           |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |G          |FRONT-RIGHT|15         |1          |INT-EXT    |2          |2          |           |
+
+                                       -----------------
+ 
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |___________|___________|___________|___________|___________|     
+SIDEP |1          |           |           |           |           |           |           |           |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |G          |FRONT-RIGHT|15         |1          |INT-EXT    |2          |2          |           |
+
+                                        -------------------
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |___________|___________|___________|___________|___________|       
+SIDEP |           |           |1          |           |           |           |           |           |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |G          |FRONT-RIGHT|15         |1          |INT-EXT    |2          |2          |           |
+
+SideP ...you can say multi side or whatever and each side will calculate current/buildings, you can use this to determine a new side in csv several times, And SideP using Parallel Search and is more fast than default method
+AND Rewrite the 'MAKE' command after SIDEP commands are necessary (to update the drop positions)
+Only Elixir Collectors/Gold Mines/Dark Elixir Drills are Supported, 'Yet'
+
+                 ------Doc.Oc------

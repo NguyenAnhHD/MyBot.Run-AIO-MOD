@@ -1,0 +1,33 @@
+Command Example:
+ 
+ * ZAP
+ 
+     |Locate_____|MaxDrills__|MaxLSpell__|MaxESpell__|           |           |           |           |
+ZInit|True       |3          |2          |1          |           |           |           |           |
+
+- ZInit is just like MAKE (drop) command 
+
+- MAXDrills the number of drills to be searched and drop on
+
+- MaxLSpell is the number of max lightning spells for each drill
+
+- MaxESpell is the number of max earth spell for each drill
+
+NOTE: Is necessary to be used 'Before' Zap Command
+
+     |DeploySide_|Lightning__|LCount_____|EearthQuake|ECount_____|Check______|MinDE______|DELAY_DROP |
+ZAP  |Opposite   |True       |2          |True       |1          |A          |200        |250-500    |
+
+- ZAP is like DROP command
+
+- DeploySide i dont have to explain twise ;), Like DropS, BUT In Zap, It Also Support the Drill Index/Number, recommended to put Drill Index/Number, E.g: 1
+
+- Lightning and Earth is set to be true/fale or use/dont use
+
+- LCount and ECount max lightning
+
+- Check can be set A or Always for check if drill is there or not (destroyed) and N or No for dont check (can drop on destroyed drills)
+
+- MinDE minimum DE to check if
+
+                   ------Doc.Oc------
