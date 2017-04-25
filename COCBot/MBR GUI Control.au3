@@ -90,6 +90,7 @@ Func InitializeMainGUI()
 	  GUICtrlSetState($g_hChkDebugOCRDonate, $GUI_SHOW + $GUI_ENABLE)
 	  GUICtrlSetState($g_hChkMakeIMGCSV, $GUI_SHOW + $GUI_ENABLE)
 	  GUICtrlSetState($g_hChkdebugAttackCSV, $GUI_SHOW + $GUI_ENABLE)
+	  GUICtrlSetState($g_hChkDebugSmartZap, $GUI_SHOW + $GUI_ENABLE)
    EndIf
 
    ; GUI events and messages
@@ -762,7 +763,7 @@ Func CheckBotZOrder($bCheckOnly = False, $bForceZOrder = False)
 	If $g_iAndroidEmbedMode = 1 And $g_bBotDockedShrinked Then
 		; check if order is (front to bottom): URL -> buttons -> graphics -> shield -> bot, to URL is top...
 		Local $hWinBehindButtons = ($g_hFrmBotEmbeddedGraphics ? $g_hFrmBotEmbeddedGraphics : ($g_hFrmBotEmbeddedShield ? $g_hFrmBotEmbeddedShield : $g_hFrmBot))
-		Local $bCheck = $g_iAndroidEmbedMode = 1 And $g_bBotDockedShrinked And $hWinBehindButtons And ($bForceZOrder Or _WinAPI_GetWindow($g_hFrmBotLogoUrlSmall, $GW_HWNDNEXT) <> $g_hFrmBotButtons Or _WinAPI_GetWindow($g_hFrmBotButtons, $GW_HWNDNEXT) <> $hWinBehindButtons)
+		Local $bCheck = $hWinBehindButtons And ($bForceZOrder Or _WinAPI_GetWindow($g_hFrmBotLogoUrlSmall, $GW_HWNDNEXT) <> $g_hFrmBotButtons Or _WinAPI_GetWindow($g_hFrmBotButtons, $GW_HWNDNEXT) <> $hWinBehindButtons)
 		If $bCheckOnly Then Return $bCheck
 		If  $bCheck Then
 			SetDebugLog("CheckBotZOrder: Ajust windows Z Order for custom window")
@@ -781,11 +782,11 @@ Func CheckBotZOrder($bCheckOnly = False, $bForceZOrder = False)
 		EndIf
 		Return $bCheck
 	EndIf
-	; window classic style check
-	If $g_iAndroidEmbedMode = 1 And $g_bCustomTitleBarActive = False Then
+	If ($g_iAndroidEmbedMode = 1 And $g_bCustomTitleBarActive = False) Or $g_avAndroidShieldStatus[4] Then
+		; window classic style check or detached shield check
 		; check if order is (front to bottom): graphics -> shield -> bot, to URL is top...
 		Local $hTopWin = ($g_hFrmBotEmbeddedGraphics ? $g_hFrmBotEmbeddedGraphics : ($g_hFrmBotEmbeddedShield ? $g_hFrmBotEmbeddedShield : 0))
-		Local $bCheck = $g_iAndroidEmbedMode = 1 And $hTopWin And ($bForceZOrder Or _WinAPI_GetWindow($hTopWin, $GW_HWNDNEXT) <> $g_hFrmBot)
+		Local $bCheck = $hTopWin And ($bForceZOrder Or _WinAPI_GetWindow($hTopWin, $GW_HWNDNEXT) <> $g_hFrmBot)
 		If $bCheckOnly Then Return $bCheck
 		If  $bCheck Then
 			SetDebugLog("CheckBotZOrder: Ajust windows Z Order for standard window")
@@ -925,7 +926,6 @@ Func BotShrinkExpandToggle()
 EndFunc   ;==>BotShrinkExpandToggle
 
 Func BotShrinkExpandToggleExecute()
-	;Local $bHasFocus = WinActive($g_hFrmBot) <> 0
 	If $g_hFrmBotButtons = 0 Then Return False
 	If $g_iBotAction = $eBotClose Then Return False
 	If $g_bAndroidEmbedded = False Then
@@ -943,12 +943,8 @@ Func BotShrinkExpandToggleExecute()
 	Local $aPosCtl = $g_aiAndroidEmbeddedCtrlTarget[6]
 	$aPos[2] = (($g_bBotDockedShrinked) ? ($aPosCtl[2] + 2) : ($g_aFrmBotPosInit[2] + $aPosCtl[2] + 2))
 	$aPos[3] = $g_aFrmBotPosInit[3] + $g_iFrmBotAddH + $g_aFrmBotPosInit[7]
-	;Local $wasCritical = SetCriticalMessageProcessing(True)
 	Local $bAndroidShieldEnabled = $g_bAndroidShieldEnabled
-	;Local $shieldActive = $g_hProcShieldInput[3]
-	;$g_hProcShieldInput[3] = True
 	$g_bAndroidShieldEnabled = False ; disable should to prevent flickering
-	;Local $bDetached = $g_iAndroidEmbedMode = 1 And $g_bBotDockedShrinked
 	$g_bBotDockedShrinked = (($g_bBotDockedShrinked) ? (False) : (True)) ; set new shrink mode
 	If Not $g_bBotDockedShrinked Then GUISetState(@SW_HIDE, $g_hFrmBotLogoUrlSmall)
 
@@ -962,17 +958,15 @@ Func BotShrinkExpandToggleExecute()
 	EndIf
 	Local $iMode = (($g_bBotDockedShrinked) ? (1) : (-1))
 	Local $aPosBtn = ControlGetPos($g_hFrmBot, "", $g_hFrmBotButtons)
-	;Local $aPosBtn = WinGetPos($g_hFrmBotButtons)
-	;_SendMessage($g_aiAndroidEmbeddedCtrlTarget[0], $WM_SETREDRAW, False, 0)
-	;WinMove2($g_aiAndroidEmbeddedCtrlTarget[0], "", -1, -1, -1, -1, $HWND_TOPMOST, 0, False)
-	;WinMove2($g_aiAndroidEmbeddedCtrlTarget[0], "", -1, -1, -1, -1, $HWND_NOTOPMOST, 0, False)
 	If $bAndroidShieldEnabled And $g_bAndroidShieldPreWin8 Then
 		 ; disable should to prevent flickering
 		If $g_hFrmBotEmbeddedShield Then GUISetState(@SW_HIDE, $g_hFrmBotEmbeddedShield)
 		If $g_hFrmBotEmbeddedMouse Then GUISetState(@SW_HIDE, $g_hFrmBotEmbeddedMouse)
 	EndIf
-	_SendMessage($g_hFrmBotEx, $WM_SETREDRAW, False, 0)
-	_SendMessage($g_hFrmBotBottom, $WM_SETREDRAW, False, 0)
+	;_SendMessage($g_hFrmBotEx, $WM_SETREDRAW, False, 0)
+	;_SendMessage($g_hFrmBotBottom, $WM_SETREDRAW, False, 0)
+	GUISetState(@SW_HIDE, $g_hFrmBotEx)
+	GUISetState(@SW_HIDE, $g_hFrmBotBottom)
 	Local $iSteps = 10
 	Local $fStep = $_GUI_MAIN_WIDTH / $iSteps
 	Local $bGetAnimationSpeed = True
@@ -982,10 +976,9 @@ Func BotShrinkExpandToggleExecute()
 		Local $iChange = $iWidth - $aPos[2]
 		If $bGetAnimationSpeed Then	Local $hTimer = __TimerInit()
 		WinMove2($g_hFrmBot, "", -1, -1, $iWidth, $aPos[3], 0, 0, False)
-		;WinMove($g_hFrmBotButtons, "", $iAndroidWIdth + 2 - $aBtnSize[0] * 3 + $iChange + (($g_bBotDockedShrinked) ? ($_GUI_MAIN_WIDTH) : (0)), 0)
 		WinMove2($g_hFrmBotButtons, "", $iAndroidWIdth + 2 - $aBtnSize[0] * 3 + $iChange + (($g_bBotDockedShrinked) ? ($_GUI_MAIN_WIDTH) : (0)), $aPosBtn[1], -1, -1, 0, 0, False)
 		If $bGetAnimationSpeed Then
-			$iAnimationDelay = 200 / $iSteps - __TimerDiff($hTimer)
+			$iAnimationDelay = 100 / $iSteps - __TimerDiff($hTimer)
 		EndIf
 		If $iAnimationDelay > 0 Then _SleepMilli($iAnimationDelay)
 	Next
@@ -993,30 +986,25 @@ Func BotShrinkExpandToggleExecute()
 	GUICtrlSetState($g_hLblBotShrink, (($g_bBotDockedShrinked) ? ($GUI_HIDE) : ($GUI_SHOW)))
 	GUICtrlSetState($g_hLblBotExpand, (($g_bBotDockedShrinked) ? ($GUI_SHOW) : ($GUI_HIDE)))
 	WinSetTrans($g_hFrmBotButtons, "", (($g_bBotDockedShrinked) ? (210) : (254))) ; trick to hide buttons from Android Screen that is not always refreshing
-	;WinMove($g_hFrmBotButtons, "", $iAndroidWIdth + 2 + (($g_bBotDockedShrinked) ? (-$aBtnSize[0] * 3) : ($_GUI_MAIN_WIDTH - $aBtnSize[0] * 3)), 0)
 	WinMove2($g_hFrmBotButtons, "", $iAndroidWIdth + 2 + (($g_bBotDockedShrinked) ? (-$aBtnSize[0] * 3) : ($_GUI_MAIN_WIDTH - $aBtnSize[0] * 3)), $aPosBtn[1], -1, -1, 0, 0, False)
 	If $g_bBotDockedShrinked Then
 		WinMove2($g_hFrmBotLogoUrlSmall, "", $iAndroidWIdth + 2 + (($g_bBotDockedShrinked) ? (-$aBtnSize[0] * 3) : ($_GUI_MAIN_WIDTH - $aBtnSize[0] * 3)) - 290, $aPosBtn[1], -1, -1, 0, 0, False)
 		GUISetState(@SW_SHOWNOACTIVATE, $g_hFrmBotLogoUrlSmall)
 	EndIf
-	;_SendMessage($g_aiAndroidEmbeddedCtrlTarget[0], $WM_SETREDRAW, True, 0)
-	_SendMessage($g_hFrmBotEx, $WM_SETREDRAW, True, 0)
-	_SendMessage($g_hFrmBotBottom, $WM_SETREDRAW, True, 0)
-	; also move controls
-	;WinMove2($g_hFrmBotEx, "", $iAndroidWIdth + 2 + (($g_bBotDockedShrinked) ? (-$_GUI_MAIN_WIDTH) : (0)), 0, -1, -1, $g_aiAndroidEmbeddedCtrlTarget[0], 0, False)
-	;WinMove2($g_hFrmBotBottom, "", $iAndroidWIdth + 2 + (($g_bBotDockedShrinked) ? (-$_GUI_MAIN_WIDTH) : (0)), -1, -1, -1, $g_aiAndroidEmbeddedCtrlTarget[0], 0, False)
-	_WinAPI_RedrawWindow($g_hFrmBotEx, 0, 0, BitOR($RDW_INVALIDATE, $RDW_ALLCHILDREN, $RDW_ERASE))
-	_WinAPI_UpdateWindow($g_hFrmBotEx)
-	_WinAPI_RedrawWindow($g_hFrmBotBottom, 0, 0, BitOR($RDW_INVALIDATE, $RDW_ALLCHILDREN, $RDW_ERASE))
-	_WinAPI_UpdateWindow($g_hFrmBotBottom)
+	;_SendMessage($g_hFrmBotEx, $WM_SETREDRAW, True, 0)
+	;_SendMessage($g_hFrmBotBottom, $WM_SETREDRAW, True, 0)
+	;_WinAPI_RedrawWindow($g_hFrmBotEx, 0, 0, BitOR($RDW_INVALIDATE, $RDW_ALLCHILDREN, $RDW_ERASE))
+	;_WinAPI_UpdateWindow($g_hFrmBotEx)
+	;_WinAPI_RedrawWindow($g_hFrmBotBottom, 0, 0, BitOR($RDW_INVALIDATE, $RDW_ALLCHILDREN, $RDW_ERASE))
+	;_WinAPI_UpdateWindow($g_hFrmBotBottom)
+	GUISetState(@SW_SHOWNOACTIVATE, $g_hFrmBotEx)
+	GUISetState(@SW_SHOWNOACTIVATE, $g_hFrmBotBottom)
 	If $bAndroidShieldEnabled And $g_bAndroidShieldPreWin8 Then
 		If $g_hFrmBotEmbeddedShield Then GUISetState(@SW_SHOWNOACTIVATE, $g_hFrmBotEmbeddedShield)
 		If $g_hFrmBotEmbeddedMouse Then GUISetState(@SW_SHOWNOACTIVATE, $g_hFrmBotEmbeddedMouse)
 	EndIf
 	If $g_bBotDockedShrinked Then CheckBotShrinkExpandButton()
 	SetDebugLog("BotShrinkExpandToggle: Bot " & (($g_bBotDockedShrinked) ? ("collapsed") : ("expanded")))
-	;SetCriticalMessageProcessing($wasCritical)
-	;$g_hProcShieldInput[3] = $shieldActive
 	$g_bAndroidShieldEnabled = $bAndroidShieldEnabled
 	$g_bBotShrinkExpandToggleRequested = False
 	Return True
@@ -1842,7 +1830,7 @@ Func Bind_ImageList($nCtrl)
 	Switch $nCtrl
 		Case $g_hTabMain
 			; the icons for main tab
-			Local $aIconIndex[6] = [$eIcnHourGlass, $eIcnTH11, $eIcnAttack, $eIcnGUI, $eIcnMods, $eIcnInfo]
+			Local $aIconIndex[6] = [$eIcnHourGlass, $eIcnTH11, $eIcnAttack, $eIcnGUI, $eIcnInfo]
 
 		Case $g_hGUI_VILLAGE_TAB
 			; the icons for village tab
@@ -1858,7 +1846,7 @@ Func Bind_ImageList($nCtrl)
 
 		Case $g_hGUI_UPGRADE_TAB
 			; the icons for upgrade tab
-			Local $aIconIndex[5] = [$eIcnLaboratory, $eIcnHeroes, $eIcnMortar, $eIcnWall, $eIcnUpgrade]
+			Local $aIconIndex[5] = [$eIcnLaboratory, $eIcnHeroes, $eIcnMortar, $eIcnWall]
 
 		Case $g_hGUI_NOTIFY_TAB
 			; the icons for NOTIFY tab
@@ -1890,12 +1878,12 @@ Func Bind_ImageList($nCtrl)
 
 		Case $g_hGUI_BOT_TAB
 			; the icons for Bot tab
-			Local $aIconIndex[4] = [$eIcnOptions, $eIcnAndroid, $eIcnDebug, $eIcnGold]
+			Local $aIconIndex[4] = [$eIcnOptions, $eIcnAndroid, $eIcnProfile, $eIcnGold]
 			; The Android Robot is a Google Trademark and follows Creative Common Attribution 3.0
 
-		Case $g_hGUI_MOD_TAB
-			; the icons for Mods tab
-			Local $aIconIndex[4] = [$eIcnOptions, $eIcnReload2, $eIcnProfile2, $eIcnStats]
+;~		Case $g_hGUI_MOD_TAB
+;~			; the icons for Mods tab
+;~			Local $aIconIndex[4] = [$eIcnOptions, $eIcnReload2, $eIcnProfile2, $eIcnStats]
 
 		Case $g_hGUI_STRATEGIES_TAB
 			; the icons for strategies tab

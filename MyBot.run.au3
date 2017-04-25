@@ -23,20 +23,16 @@
 #pragma compile(Icon, "Images\MyBot.ico")
 #pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
 #pragma compile(ProductName, My Bot)
-#pragma compile(ProductVersion, 7.1.2)
-#pragma compile(FileVersion, 7.1.2)
+#pragma compile(ProductVersion, 7.1.3)
+#pragma compile(FileVersion, 7.1.3)
 #pragma compile(LegalCopyright, © https://mybot.run)
 #pragma compile(Out, MyBot.run.exe) ; Required
 
 ; Enforce variable declarations
 Opt("MustDeclareVars", 1)
 
-Global $g_sBotVersion = "v7.1.2" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
-<<<<<<< HEAD
+Global $g_sBotVersion = "v7.1.3" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
 Global $g_sModversion = "v1.6.1" ;<== Just Change This to Version Number
-=======
-Global $g_sModversion = "v1.6" ;<== Just Change This to Version Number
->>>>>>> fad6909671536ca5122cbcb8008c3e6253ca3d87
 Global $g_sModSupportUrl = "https://mybot.run/forums/index.php?/topic/29141-mods-mbr-v701-dococ-aio-mod-v092-update-2103/" ;<== Our Website Link Support Or Link Download
 Global $g_sModDownloadUrl = "https://github.com/NguyenAnhHD/MyBot.Run-Official-MOD/releases" ;<== Our Website Link Download
 Global $g_sBotTitle = "" ;~ Don't assign any title here, use Func UpdateBotTitle()
@@ -164,9 +160,6 @@ Func InitializeBot()
 	FinalInitialization($sAndroidInfo)
 
 	;ProcessSetPriority(@AutoItPID, $iBotProcessPriority) ;~ Restore process priority
-
-	; AutoStart Bot if requested
-	AutoStart()
 
 EndFunc   ;==>InitializeBot
 
@@ -555,12 +548,20 @@ EndFunc   ;==>FinalInitialization
 ; Example .......: No
 ; ===============================================================================================================================
 Func MainLoop()
+	Local $iStartDelay = 0
+	If $g_bAutoStart Or $g_bRestarted = True Then
+		Local $iDelay = $g_iAutoStartDelay
+		If $g_bRestarted = True Then $iDelay = 0
+		$iStartDelay = $iDelay * 1000
+		$g_iBotAction = $eBotStart
+	EndIf
+
 	While 1
 		_Sleep($DELAYSLEEP, True, False)
 
 		Switch $g_iBotAction
 			Case $eBotStart
-				BotStart()
+				BotStart($iStartDelay)
 				If $g_iBotAction = $eBotStart Then $g_iBotAction = $eBotNoAction
 			Case $eBotStop
 				BotStop()
