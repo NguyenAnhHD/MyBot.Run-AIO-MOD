@@ -77,10 +77,12 @@ Func createProfile($bCreateNew = False)
 	If $bCreateNew = True Then
 		; create new profile (recursive call from setupProfile() and selectProfile() !!!)
 		setupProfileComboBox()
+		setupProfileComboBoxswitch()
 		setupProfile()
 		saveConfig()
 		; applyConfig()
 		setupProfileComboBox()
+		setupProfileComboBoxswitch()
 		selectProfile()
 		Return
 	EndIf

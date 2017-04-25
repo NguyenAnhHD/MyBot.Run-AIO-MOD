@@ -475,7 +475,7 @@ Global Enum $eIcnArcher = 1, $eIcnDonArcher, $eIcnBalloon, $eIcnDonBalloon, $eIc
 		$eWall04, $eWall05, $eWall06, $eWall07, $eWall08, $eWall09, $eWall10, $eWall11, $eIcnPBNotify, $eIcnCCTroops, _
 		$eIcnCCSpells, $eIcnSpellsGroup, $eBahasaIND, $eChinese_S, $eChinese_T, $eEnglish, $eFrench, $eGerman, $eItalian, $ePersian, _
 		$eRussian, $eSpanish, $eTurkish, $eMissingLangIcon, $eWall12, $ePortuguese, $eIcnDonPoisonSpell, $eIcnDonEarthQuakeSpell, $eIcnDonHasteSpell, $eIcnDonSkeletonSpell, $eVietnamese, $eKorean, $eAzerbaijani, _
-		$eArabic ;, $eIcnUpgrade, $eIcnDebug, $eIcnReload2, $eIcnProfile2, $eIcnStats, $eIcnMods
+		$eArabic, $eIcnChat, $eIcnSwords, $eIcnLoop, $eIcnRepeat, $eIcnClan ;, $eIcnUpgrade, $eIcnDebug, $eIcnReload2, $eIcnProfile2, $eIcnStats, $eIcnMods
 
 Global $eIcnDonBlank = $eIcnDonBlacklist
 Global $eIcnOptions = $eIcnDonBlacklist
@@ -1374,5 +1374,5 @@ Global Enum $eWeakEagle = 1, $eWeakInferno, $eWeakXBow, $eWeakWizard, $eWeakMort
 Global $g_aWeakDefenseNames = ["None", "Eagle Artillery", "Inferno Tower", "XBow", "Wizard Tower", "Mortar", "Air Defense"]
 Global $g_aWeakDefenseMaxLevels = [0, 2, 4, 4, 9, 9, 8]
 
-; Team_AIO MOD
-#include "MOD_TeamAIO\Globals_TeamAIO.au3"
+; Team++ AIO MOD
+#include "MOD_Team++AIO\Globals_Team++AIO.au3"

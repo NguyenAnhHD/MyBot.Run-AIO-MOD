@@ -16,7 +16,7 @@
 #include-once
 #include <WinAPISys.au3>
 
-Func Click($x, $y, $times = 1, $speed = 0, $debugtxt = "")
+Func FClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 	If $g_iDebugClick = 1 Or TestCapture() Then
 		Local $txt = _DecodeDebug($debugtxt)
 		SetLog("Click " & $x & "," & $y & "," & $times & "," & $speed & " " & $debugtxt & $txt, $COLOR_ACTION, "Verdana", "7.5", 0)
@@ -105,7 +105,7 @@ Func BuildingClickP($point, $debugtxt = "")
 	Return BuildingClick($x, $y, $debugtxt)
 EndFunc   ;==>BuildingClickP
 
-Func PureClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
+Func FPureClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 	If $g_iDebugClick = 1 Then
 		Local $txt = _DecodeDebug($debugtxt)
 		SetLog("PureClick " & $x & "," & $y & "," & $times & "," & $speed & " " & $debugtxt & $txt, $COLOR_ACTION, "Verdana", "7.5", 0)
@@ -139,7 +139,7 @@ Func PureClickP($point, $howMuch = 1, $speed = 0, $debugtxt = "")
 	PureClick($point[0], $point[1], $howMuch, $speed, $debugtxt)
 EndFunc   ;==>PureClickP
 
-Func GemClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
+Func FGemClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 	If $g_iDebugClick = 1 Then
 		Local $txt = _DecodeDebug($debugtxt)
 		SetLog("GemClick " & $x & "," & $y & "," & $times & "," & $speed & " " & $debugtxt & $txt, $COLOR_ACTION, "Verdana", "7.5", 0)

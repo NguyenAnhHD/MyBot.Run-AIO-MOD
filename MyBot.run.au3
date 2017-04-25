@@ -72,7 +72,7 @@ InitializeBot()
 MainLoop()
 
 Func UpdateBotTitle()
-	Local $sTitle = "My Bot " & $g_sBotVersion & " - TeamVN - " & "AIO MOD " & $g_sModversion & " "
+	Local $sTitle = "My Bot " & $g_sBotVersion & " - Team++ - " & "AIO MOD " & $g_sModversion & " "
 	If $g_sBotTitle = "" Then
 		$g_sBotTitle = $sTitle
 	Else
@@ -780,6 +780,8 @@ Func Idle() ;Sequence that runs until Full Army
 		Local $hTimer = __TimerInit()
 		Local $iReHere = 0
 		;PrepareDonateCC()
+
+		BotHumanization()
 
 		;If $g_bDonateSkipNearFullEnable = True Then getArmyCapacity(true,true)
 		If $g_iActiveDonate And $g_bChkDonate Then

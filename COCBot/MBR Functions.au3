@@ -273,8 +273,8 @@
 #include "functions\Other\Api.au3"
 #include "functions\Other\ApiClient.au3"
 
-; Team_AIO MOD
-#include "MOD_TeamAIO\Functions_TeamAIO.au3"
+; Team++ AIO MOD
+#include "MOD_Team++AIO\Functions_Team++AIO.au3"
 
 ; OLD CODE
 
