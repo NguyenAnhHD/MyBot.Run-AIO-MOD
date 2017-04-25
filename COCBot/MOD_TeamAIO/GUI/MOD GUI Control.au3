@@ -4,7 +4,7 @@
 ; Syntax ........:
 ; Parameters ....: None
 ; Return values .: None
-; Author ........: NguyenAnhHD, Demen
+; Author ........: Team_AIO
 ; Modified ......:
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
 ;                  MyBot is distributed under the terms of the GNU GPL
@@ -105,7 +105,7 @@ Func cmbCSVSpeed()
 
 EndFunc   ;==>cmbCSVSpeed
 
-; Attack Now Button MR.ViPeR) - Added by NguyenAnhHD
+; Attack Now Button (MR.ViPeR) - Added by NguyenAnhHD
 Func AttackNowLB()
 	SetLog("Begin Live Base Attack TEST")
 	$g_iMatchMode = $LB			; Select Live Base As Attack Type

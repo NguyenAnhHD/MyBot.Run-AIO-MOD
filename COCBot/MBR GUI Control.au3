@@ -48,8 +48,8 @@ Global $g_hFrmBot_WNDPROC_ptr = 0
 #include "GUI\MBR GUI Control Android.au3"
 #include "MBR GUI Action.au3"
 
-; TeamVN MOD (NguyenAnhHD, Demen)
-#include "MOD_TeamVN\GUI\MOD GUI Control.au3"
+; Team_AIO MOD
+#include "MOD_TeamAIO\GUI\MOD GUI Control.au3"
 
 Func InitializeMainGUI()
    InitializeControlVariables()

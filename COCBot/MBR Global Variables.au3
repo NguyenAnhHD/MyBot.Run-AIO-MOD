@@ -1374,5 +1374,5 @@ Global Enum $eWeakEagle = 1, $eWeakInferno, $eWeakXBow, $eWeakWizard, $eWeakMort
 Global $g_aWeakDefenseNames = ["None", "Eagle Artillery", "Inferno Tower", "XBow", "Wizard Tower", "Mortar", "Air Defense"]
 Global $g_aWeakDefenseMaxLevels = [0, 2, 4, 4, 9, 9, 8]
 
-; TeamVN MOD (NguyenAnhHD, Demen)
-#include "MOD_TeamVN\Globals_TeamVN.au3"
+; Team_AIO MOD
+#include "MOD_TeamAIO\Globals_TeamAIO.au3"

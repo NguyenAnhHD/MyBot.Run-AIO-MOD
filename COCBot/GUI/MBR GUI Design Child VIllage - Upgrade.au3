@@ -45,7 +45,7 @@ Global $g_ahPicWallsLevel[13] = [-1,-1,-1,-1,0,0,0,0,0,0,0,0,0] ; elements 0 to 
 ; Upgrade Management (MMHK) - Added by NguyenAnhHD
 Global $g_hChkUpgradeAllOrNone = 0, $g_hChkUpgradeRepeatAllOrNone = 0, $g_hChkUpdateNewUpgradesOnly = 0, $g_hBtnTop = 0, $g_hBtnBottom = 0, $g_hBtnUp = 0, $g_hBtnDown = 0
 
-#include "..\MOD_TeamVN\GUI\MOD GUI Design - SmartUpgrade.au3"
+#include "..\MOD_TeamAIO\GUI\MOD GUI Design - SmartUpgrade.au3"
 
 Func CreateVillageUpgrade()
    $g_hGUI_UPGRADE = _GUICreate("", $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_VILLAGE)

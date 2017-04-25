@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 
 Func ApplyConfig_MOD($TypeReadSave)
-	; <><><> TeamVN MOD (NguyenAnhHD, Demen) <><><>
+	; <><><> Team_AIO MOD <><><>
 	Switch $TypeReadSave
 		Case "Read"
 

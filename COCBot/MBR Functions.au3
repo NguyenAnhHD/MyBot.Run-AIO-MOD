@@ -273,8 +273,8 @@
 #include "functions\Other\Api.au3"
 #include "functions\Other\ApiClient.au3"
 
-; TeamVN MOD (NguyenAnhHD, Demen)
-#include "MOD_TeamVN\Functions_TeamVN.au3"
+; Team_AIO MOD
+#include "MOD_TeamAIO\Functions_TeamAIO.au3"
 
 ; OLD CODE
 

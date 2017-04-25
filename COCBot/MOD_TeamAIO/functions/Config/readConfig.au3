@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 
 Func ReadConfig_MOD()
-	; <><><> TeamVN MOD (NguyenAnhHD, Demen) <><><>
+	; <><><> Team_AIO MOD <><><>
 
 	; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 	IniReadS($ichkAutoHide, $g_sProfileConfigPath, "general", "AutoHide", 0, "int")

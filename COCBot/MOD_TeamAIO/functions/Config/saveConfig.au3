@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 
 Func SaveConfig_MOD()
-	; <><><> TeamVN MOD (NguyenAnhHD, Demen) <><><>
+	; <><><> Team_AIO MOD <><><>
 	ApplyConfig_MOD("Save")
 	; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 	_Ini_Add("general", "AutoHide", $ichkAutoHide ? 1 : 0)
