@@ -36,7 +36,7 @@ Global $DebugSideP = 0
 Global $dGoldMines = @ScriptDir & "\imgxml\Storages\SideP\GoldMines", $dDarkDrills = @ScriptDir & "\imgxml\Storages\SideP\Drills", $dElixirCollectors = @ScriptDir & "\imgxml\Storages\SideP\Collectors"
 Global $allMinesFound[7][3], $allCollectorsFound[7][3], $allDrillsFound[3][3]
 
-; Bot Humanization
+; Bot Humanization (Roro-Titi) - Added by NguyenAnhHD
 Global $g_iMinimumPriority, $g_iMaxActionsNumber, $g_iActionToDo
 Global $g_aSetActionPriority[13] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
@@ -59,6 +59,10 @@ Global $g_bOnReplayWindow, $g_iReplayToPause
 
 Global $g_iQuickMISX = 0, $g_iQuickMISY = 0
 Global $g_iLastLayout = 0
+
+; GoblinXP (Roro-Titi) - Added by NguyenAnhHD
+Global $ichkEnableSuperXP = 0, $irbSXTraining = 1, $ichkSXBK = 0, $ichkSXAQ = 0, $ichkSXGW = 0, $iStartXP = 0, $iCurrentXP = 0, $iGainedXP = 0, $iGainedXPHour = 0, $itxtMaxXPtoGain = 500
+Global $DebugSX = 0
 
 ; Attack Settings [Dec 2016] used on Classic Attack
 Global Const $g_aaiTopLeftDropPoints[5][2] = [[62, 306], [156, 238], [221, 188], [288, 142], [383, 76]]

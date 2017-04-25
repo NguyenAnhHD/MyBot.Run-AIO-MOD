@@ -34,8 +34,8 @@ Func cmbStandardDropSidesDB() ; avoid conflict between FourFinger and SmartAttac
 	EndIf
 	chkSmartAttackRedAreaDB()
 EndFunc   ;==>g_hCmbStandardDropSidesDB
-#cs
-; Goblin XP
+
+; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
 Func DisableSX()
 	GUICtrlSetState($chkEnableSuperXP, $GUI_UNCHECKED)
 	$ichkEnableSuperXP = 0
@@ -87,7 +87,7 @@ Func chkEnableSuperXP2()
 	$itxtMaxXPtoGain = Int(GUICtrlRead($txtMaxXPtoGain))
 
 EndFunc   ;==>chkEnableSuperXP2
-#ce
+
 ; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 Func chkAutoHide()
 	GUICtrlSetState($g_hTxtAutohideDelay, GUICtrlRead($g_hChkAutoHide) = $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)

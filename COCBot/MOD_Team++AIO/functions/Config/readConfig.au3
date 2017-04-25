@@ -90,7 +90,7 @@ Func ReadConfig_MOD()
 	IniReadS($ichkCoCStats, $g_sProfileConfigPath, "Stats", "chkCoCStats", 0, "int")
 	IniReadS($MyApiKey, $g_sProfileConfigPath, "Stats", "txtAPIKey", "")
 
-	; Bot Humanization - Added by NguyenAnhHD
+	; Bot Humanization (Roro-Titi) - Added by NguyenAnhHD
 	IniReadS($g_ichkUseBotHumanization, $g_sProfileConfigPath, "Humanization", "chkUseBotHumanization", 0, "int")
 	IniReadS($g_ichkUseAltRClick, $g_sProfileConfigPath, "Humanization", "chkUseAltRClick", 0, "int")
 	IniReadS($g_ichkCollectAchievements, $g_sProfileConfigPath, "Humanization", "chkCollectAchievements", 0, "int")
@@ -108,6 +108,14 @@ Func ReadConfig_MOD()
 		$g_iahumanMessage[$i] = IniRead($g_sProfileConfigPath, "Humanization", "humanMessage[" & $i & "]", "")
 	Next
 	IniReadS($g_icmbMaxActionsNumber, "Humanization", "cmbMaxActionsNumber", 1, "int")
+
+	; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
+	IniReadS($ichkEnableSuperXP, $g_sProfileConfigPath, "Attack", "EnableSuperXP", 0, "int")
+	IniReadS($irbSXTraining, $g_sProfileConfigPath, "Attack", "SXTraining", 1, "int")
+	IniReadS($itxtMaxXPtoGain, $g_sProfileConfigPath, "Attack", "MaxXptoGain", 500, "int")
+	IniReadS($ichkSXBK, $g_sProfileConfigPath, "Attack", "SXBK", $eHeroNone)
+	IniReadS($ichkSXAQ, $g_sProfileConfigPath, "Attack", "SXAQ", $eHeroNone)
+	IniReadS($ichkSXGW, $g_sProfileConfigPath, "Attack", "SXGW", $eHeroNone)
 
 	; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~	IniReadS($g_bNotifyAlertBOTSleep, $g_sProfileConfigPath, "notify", "AlertPBSleep", False, "Bool")

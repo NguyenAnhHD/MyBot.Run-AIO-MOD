@@ -364,7 +364,7 @@ Func DropAQSuperXP($bActivateASAP = True)
 				$ActivatedHeroes[0] = True
 			EndIf
 		EndIf
-		If _Sleep($iDelayDropSuperXP3) Then Return False
+		If _Sleep($DELAYDROPSuperXP3) Then Return False
 	EndIf
 EndFunc   ;==>DropAQSuperXP
 

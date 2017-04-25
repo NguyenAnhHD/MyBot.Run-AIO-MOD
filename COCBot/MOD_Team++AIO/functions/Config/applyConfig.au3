@@ -104,7 +104,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 			GUICtrlSetData($g_hTxtAPIKey, $MyApiKey)
 			chkCoCStats()
 
-			; Bot Humanization - Added by NguyenAnhHD
+			; Bot Humanization (Roro-Titi) - Added by NguyenAnhHD
 			GUICtrlSetState($chkUseBotHumanization, $g_ichkUseBotHumanization = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($chkUseAltRClick, $g_ichkUseAltRClick = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($chkCollectAchievements, $g_ichkCollectAchievements = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -125,6 +125,20 @@ Func ApplyConfig_MOD($TypeReadSave)
 			_GUICtrlComboBox_SetCurSel($g_icmbMaxActionsNumber, $g_icmbMaxActionsNumber)
 			cmbStandardReplay()
 			cmbWarReplay()
+
+			; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
+			GUICtrlSetState($chkEnableSuperXP, $ichkEnableSuperXP = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+
+			chkEnableSuperXP()
+
+			GUICtrlSetState($rbSXTraining, ($irbSXTraining = 1) ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($rbSXIAttacking, ($irbSXTraining = 2) ? $GUI_CHECKED : $GUI_UNCHECKED)
+
+			GUICtrlSetData($txtMaxXPtoGain, $itxtMaxXPtoGain)
+
+			GUICtrlSetState($chkSXBK, $ichkSXBK = $eHeroKing ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($chkSXAQ, $ichkSXAQ = $eHeroQueen ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($chkSXGW, $ichkSXGW = $eHeroWarden ? $GUI_CHECKED : $GUI_UNCHECKED)
 
 			; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~			GUICtrlSetState($g_hChkNotifyBOTSleep, $g_bNotifyAlertBOTSleep ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -210,7 +224,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$ichkCoCStats = GUICtrlRead($g_hChkCoCStats) = $GUI_CHECKED ? 1 : 0
 			$MyApiKey = GUICtrlRead($g_hTxtAPIKey)
 
-			; Bot Humanization - Added by NguyenAnhHD
+			; Bot Humanization (Roro-Titi) - Added by NguyenAnhHD
 			$g_ichkUseBotHumanization = GUICtrlRead($chkUseBotHumanization) = $GUI_CHECKED ? 1 : 0
 			$g_ichkUseAltRClick = GUICtrlRead($chkUseAltRClick) = $GUI_CHECKED ? 1 : 0
 			$g_ichkCollectAchievements = GUICtrlRead($chkCollectAchievements) = $GUI_CHECKED ? 1 : 0
@@ -228,6 +242,14 @@ Func ApplyConfig_MOD($TypeReadSave)
 				$g_iahumanMessage[$i] = GUICtrlRead($g_ahumanMessage[$i])
 			Next
 			$g_icmbMaxActionsNumber = _GUICtrlComboBox_GetCurSel($g_icmbMaxActionsNumber)
+
+			; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
+			$ichkEnableSuperXP = GUICtrlRead($chkEnableSuperXP) = $GUI_CHECKED ? 1 : 0
+			$irbSXTraining = GUICtrlRead($rbSXTraining) = $GUI_CHECKED ? 1 : 2
+			$ichkSXBK = (GUICtrlRead($chkSXBK) = $GUI_CHECKED) ? $eHeroKing : $eHeroNone
+			$ichkSXAQ = (GUICtrlRead($chkSXAQ) = $GUI_CHECKED) ? $eHeroQueen : $eHeroNone
+			$ichkSXGW = (GUICtrlRead($chkSXGW) = $GUI_CHECKED) ? $eHeroWarden : $eHeroNone
+			$itxtMaxXPtoGain = Int(GUICtrlRead($txtMaxXPtoGain))
 
 			; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~			$g_bNotifyAlertBOTSleep = (GUICtrlRead($g_hChkNotifyBOTSleep) = $GUI_CHECKED)

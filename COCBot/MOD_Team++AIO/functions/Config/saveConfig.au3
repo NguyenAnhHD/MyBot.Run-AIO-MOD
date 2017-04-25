@@ -90,7 +90,7 @@ Func SaveConfig_MOD()
 	_Ini_Add("Stats", "chkCoCStats", $ichkCoCStats ? 1 : 0)
 	_Ini_Add("Stats", "txtAPIKey", $MyApiKey)
 
-	; Bot Humanization - Added by NguyenAnhHD
+	; Bot Humanization (Roro-Titi) - Added by NguyenAnhHD
 	_Ini_Add("Humanization", "chkUseBotHumanization", $g_ichkUseBotHumanization)
 	_Ini_Add("Humanization", "chkUseAltRClick", $g_ichkUseAltRClick)
 	_Ini_Add("Humanization", "chkCollectAchievements", $g_ichkCollectAchievements)
@@ -108,6 +108,14 @@ Func SaveConfig_MOD()
 		_Ini_Add("Humanization", "humanMessage[" & $i & "]", GUICtrlRead($g_ahumanMessage[$i]))
 	Next
 	_Ini_Add("Humanization", "cmbMaxActionsNumber", _GUICtrlComboBox_GetCurSel($g_icmbMaxActionsNumber))
+
+	; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
+	_Ini_Add("Attack", "EnableSuperXP", $ichkEnableSuperXP)
+	_Ini_Add("Attack", "SXTraining", $irbSXTraining)
+	_Ini_Add("Attack", "SXBK", $ichkSXBK)
+	_Ini_Add("Attack", "SXAQ", $ichkSXAQ)
+	_Ini_Add("Attack", "SXGW", $ichkSXGW)
+	_Ini_Add("Attack", "MaxXptoGain", GUICtrlRead($txtMaxXPtoGain))
 
 	; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~	_Ini_Add("notify", "AlertPBSleep", $g_bNotifyAlertBOTSleep ? 1 : 0)

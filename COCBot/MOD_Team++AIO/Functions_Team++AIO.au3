@@ -37,13 +37,16 @@
 #include "functions\Other\ArrayFunctions.au3"
 #include "functions\Search\multiSearch.au3"
 
-; Bot Humanization
+; Bot Humanization (Roro-Titi) - Added by NguyenAnhHD
 #include "functions\BotHumanization\BotHumanization.au3"
 #include "functions\BotHumanization\AttackNDefenseActions.au3"
 #include "functions\BotHumanization\BestClansNPlayersActions.au3"
 #include "functions\BotHumanization\ChatActions.au3"
 #include "functions\BotHumanization\ClanActions.au3"
 #include "functions\BotHumanization\ClanWarActions.au3"
+
+; GoblinXP (Roro-Titi) - Added by NguyenAnhHD
+#include "functions\Mod's\GoblinXP.au3"
 
 ; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 #include "functions\Mod's\AutoHide.au3"
