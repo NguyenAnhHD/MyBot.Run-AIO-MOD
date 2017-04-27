@@ -98,6 +98,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 			GUICtrlSetData($g_htxtFillArcher, $iFillArcher)
 			GUICtrlSetState($g_hchkFillEQ, $ichkFillEQ = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			chkSimpleTrain()
+			chkPreciseTroops()
 
 			; CoC Stats - Added by NguyenAnhHD
 			GUICtrlSetState($g_hChkCoCStats, $ichkCoCStats = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)

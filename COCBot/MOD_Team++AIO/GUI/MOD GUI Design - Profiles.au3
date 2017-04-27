@@ -14,6 +14,8 @@
 ; ===============================================================================================================================
 #include-once
 
+Global $g_hGUI_MOD_SWITCH = 0, $g_hGUI_MOD_SWITCH_TAB = 0, $g_hGUI_MOD_SWITCH_TAB_ITEM1 = 0, $g_hGUI_MOD_SWITCH_TAB_ITEM2 = 0
+
 ; Profiles & SwitchAccount
 Global $g_hCmbProfile = 0, $g_hTxtVillageName = 0, $g_hBtnAddProfile = 0, $g_hBtnConfirmAddProfile = 0, $g_hBtnConfirmRenameProfile = 0, _
 	   $g_hBtnDeleteProfile = 0, $g_hBtnCancelProfileChange = 0, $g_hBtnRenameProfile = 0, $g_hBtnRecycle = 0
@@ -26,11 +28,25 @@ Global $g_hChkGoldSwitchMax = 0, $g_hCmbGoldMaxProfile = 0, $g_hTxtMaxGoldAmount
 
 #include "MOD GUI Design - SwitchAcc.au3"
 
+Func CreateModProfiles()
+
+	$g_hGUI_MOD_SWITCH = GUICreate("", $_GUI_MAIN_WIDTH - 28, $_GUI_MAIN_HEIGHT - 255 - 28, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_MOD)
+
+	GUISwitch($g_hGUI_MOD_SWITCH)
+    $g_hGUI_MOD_SWITCH_TAB = GUICtrlCreateTab(0, 0, $_GUI_MAIN_WIDTH - 30, $_GUI_MAIN_HEIGHT - 255 - 30, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))
+    $g_hGUI_MOD_SWITCH_TAB_ITEM1 = GUICtrlCreateTabItem("Switch Accounts")
+		CreateSwitchAccount()
+	$g_hGUI_MOD_SWITCH_TAB_ITEM2 = GUICtrlCreateTabItem("Switch Profiles")
+		CreateModSwitchProfile()
+	GUICtrlCreateTabItem("")
+
+EndFunc
+
 #Region Profiles Subtab
 Func CreateSwitchAccount()
 
-    Local $x = 25, $y = 45
-	GUICtrlCreateGroup(GetTranslated(637,1, "Switch Profiles"), $x - 20, $y - 20, 440, 360)
+	Local $x = 22, $y = 45
+	GUICtrlCreateGroup(GetTranslated(637,1, "Switch Profiles"), $x - 20, $y - 20, 435, 360)
 		$x -= 5
 		$g_hCmbProfile = GUICtrlCreateCombo("", $x - 3, $y + 1, 130, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			_GUICtrlSetTip(-1, GetTranslated(637,2, "Use this to switch to a different profile")& @CRLF & _
@@ -132,7 +148,7 @@ Func CreateSwitchAccount()
 
 	CreateBotSwitchAcc()
 
-EndFunc
+EndFunc   ;==>CreateSwitchAccount
 #EndRegion
 
 #Region Profiles Subtab
@@ -141,7 +157,7 @@ Func CreateModSwitchProfile()
 	Local $sTxtTip = ""
 	Local $x = 25, $y = 45
 
-	GUICtrlCreateGroup(GetTranslated(655,1, "Gold Switch Profile Conditions"), $x - 20, $y - 20, 438, 75) ;Gold Switch
+	GUICtrlCreateGroup(GetTranslated(655,1, "Gold Switch Profile Conditions"), $x - 20, $y - 20, 430, 75) ;Gold Switch
 		$g_hChkGoldSwitchMax = GUICtrlCreateCheckbox(GetTranslated(655,2, "Switch To"), $x - 10, $y - 5, -1, -1)
 			$sTxtTip = GetTranslated(655,3, "Enable this to switch profiles when gold is above amount.")
 			_GUICtrlSetTip(-1, $sTxtTip)
@@ -166,10 +182,10 @@ Func CreateModSwitchProfile()
 			$sTxtTip = GetTranslated(655,6, "Set the amount of Gold to trigger switching Profile.")
 			_GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetLimit(-1, 7)
-		GUICtrlCreatePic(@ScriptDir & "\Images\GoldStorage.jpg", $x + 350, $y - 40, 60, 60)
+		GUICtrlCreatePic(@ScriptDir & "\Images\GoldStorage.jpg", $x + 340, $y - 40, 60, 60)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 	$y += 48
-	GUICtrlCreateGroup(GetTranslated(655,9, "Elixir Switch Profile Conditions"), $x - 20, $y - 20, 438, 75) ; Elixir Switch
+	GUICtrlCreateGroup(GetTranslated(655,9, "Elixir Switch Profile Conditions"), $x - 20, $y - 20, 430, 75) ; Elixir Switch
 		$g_hChkElixirSwitchMax = GUICtrlCreateCheckbox(GetTranslated(655,2, "Switch To"), $x - 10, $y - 5, -1, -1)
 			$sTxtTip = GetTranslated(655,10, "Enable this to switch profiles when Elixir is above amount.")
 			_GUICtrlSetTip(-1, $sTxtTip)
@@ -194,10 +210,10 @@ Func CreateModSwitchProfile()
 			$sTxtTip = GetTranslated(655,12, "Set the amount of Elixir to trigger switching Profile.")
 			_GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetLimit(-1, 7)
-		GUICtrlCreatePic(@ScriptDir & "\Images\ElixirStorage.jpg", $x + 350, $y - 40, 60, 60)
+		GUICtrlCreatePic(@ScriptDir & "\Images\ElixirStorage.jpg", $x + 340, $y - 40, 60, 60)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 	$y += 48
-	GUICtrlCreateGroup(GetTranslated(655,15, "Dark Elixir Switch Profile Conditions"), $x - 20, $y - 20, 438, 75) ;DE Switch
+	GUICtrlCreateGroup(GetTranslated(655,15, "Dark Elixir Switch Profile Conditions"), $x - 20, $y - 20, 430, 75) ;DE Switch
 		$g_hChkDESwitchMax = GUICtrlCreateCheckbox(GetTranslated(655,2, "Switch To"), $x - 10, $y - 5, -1, -1)
 			$sTxtTip = GetTranslated(655,16, "Enable this to switch profiles when Dark Elixir is above amount.")
 			_GUICtrlSetTip(-1, $sTxtTip)
@@ -221,10 +237,10 @@ Func CreateModSwitchProfile()
 			$sTxtTip = GetTranslated(655,18, "Set the amount of Dark Elixir to trigger switching Profile.")
 			_GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetLimit(-1, 6)
-		GUICtrlCreatePic(@ScriptDir & "\Images\DEStorage.jpg", $x + 350, $y - 40, 60, 60)
+		GUICtrlCreatePic(@ScriptDir & "\Images\DEStorage.jpg", $x + 340, $y - 40, 60, 60)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 	$y += 48
-	GUICtrlCreateGroup(GetTranslated(655,21, "Trophy Switch Profile Conditions"), $x - 20, $y - 20, 438, 75) ; Trophy Switch
+	GUICtrlCreateGroup(GetTranslated(655,21, "Trophy Switch Profile Conditions"), $x - 20, $y - 20, 430, 75) ; Trophy Switch
 		$g_hChkTrophySwitchMax = GUICtrlCreateCheckbox(GetTranslated(655,2, "Switch To"), $x - 10, $y - 5, -1, -1)
 			$sTxtTip = GetTranslated(655,22, "Enable this to switch profiles when Trophies are above amount.")
 			_GUICtrlSetTip(-1, $sTxtTip)
@@ -248,8 +264,8 @@ Func CreateModSwitchProfile()
 			$sTxtTip = GetTranslated(655,24, "Set the amount of Trophies to trigger switching Profile.")
 			_GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetLimit(-1, 4)
-		GUICtrlCreatePic(@ScriptDir & "\Images\TrophyLeague.jpg", $x + 350, $y - 40, 60, 60)
+		GUICtrlCreatePic(@ScriptDir & "\Images\TrophyLeague.jpg", $x + 340, $y - 40, 60, 60)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 		setupProfileComboBoxswitch()
-EndFunc
+EndFunc   ;==>CreateModSwitchProfile
 #EndRegion

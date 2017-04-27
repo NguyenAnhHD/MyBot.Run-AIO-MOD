@@ -680,7 +680,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 		Case $g_hGUI_BOT_TAB
 			tabBot()
 		Case $g_hGUI_MOD_TAB
-;			tabMod()
+			tabMod()
 		Case Else
 			$bCheckEmbeddedShield = False
 	EndSwitch
@@ -1439,14 +1439,14 @@ Func tabMain()
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_BOT)
 				tabBot()
 
-			Case $tabidx = 4 ; MOD
+			Case $tabidx = 4 ; Mods
 				GUISetState(@SW_HIDE, $g_hGUI_LOG)
 				GUISetState(@SW_HIDE, $g_hGUI_VILLAGE)
 				GUISetState(@SW_HIDE, $g_hGUI_ATTACK)
 				GUISetState(@SW_HIDE, $g_hGUI_BOT)
 				GUISetState(@SW_HIDE, $g_hGUI_ABOUT)
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_MOD)
-;				tabMod()
+				tabMod()
 
 			Case $tabidx = 5 ; About
 				GUISetState(@SW_HIDE, $g_hGUI_LOG)
@@ -1671,17 +1671,17 @@ Func tabBot()
 				ControlHide("","",$g_hCmbGUILanguage)
 		EndSelect
 EndFunc   ;==>tabBot
-#cs
+
 Func tabMod()
 	Local $tabidx = GUICtrlRead($g_hGUI_MOD_TAB)
 	Select
-		Case $tabidx = 3 ; Profile tab
+		Case $tabidx = 0 ; Profile tab
 			GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_MOD_SWITCH)
 		Case Else
 			GUISetState(@SW_HIDE, $g_hGUI_MOD_SWITCH)
 	EndSelect
 EndFunc   ;==>tabMod
-#ce
+
 Func tabDeadbase()
 	Local $tabidx = GUICtrlRead($g_hGUI_DEADBASE_TAB)
 		Select

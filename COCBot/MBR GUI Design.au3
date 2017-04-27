@@ -303,7 +303,7 @@ Func CreateMainGUIControls()
    Bind_ImageList($g_hGUI_BOT_TAB)
 
    Bind_ImageList($g_hGUI_MOD_TAB)
-;	  Bind_ImageList($g_hGUI_MOD_SWITCH_TAB)
+	  Bind_ImageList($g_hGUI_MOD_SWITCH_TAB)
 
    Bind_ImageList($g_hGUI_STATS_TAB)
 

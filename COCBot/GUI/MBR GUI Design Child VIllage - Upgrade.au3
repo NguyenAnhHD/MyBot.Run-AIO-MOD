@@ -61,7 +61,7 @@ Func CreateVillageUpgrade()
    CreateBuildingsSubTab()
    $g_hGUI_UPGRADE_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslated(600,17,"Walls"))
    CreateWallsSubTab()
-   $g_hGUI_UPGRADE_TAB_ITEM5 = GUICtrlCreateTabItem("SmartUpgarde")
+   $g_hGUI_UPGRADE_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslated(600,100,"SmartUpgarde"))
    CreateSmartUpgradeGUI()
    GUICtrlCreateTabItem("")
 EndFunc

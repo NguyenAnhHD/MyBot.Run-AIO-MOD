@@ -42,6 +42,9 @@ Global $g_hLblDonTroop[$eTroopCount] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 Global $g_hLblDonSpell[$eSpellCount] = [0,0,0,0,0,0,0,0,0,0]
 Global $g_hLblTotalTroopsQ = 0, $g_hLblTotalTroopsXP = 0, $g_hLblTotalSpellsQ = 0, $g_hLblTotalSpellsXP = 0
 
+; CoC Stats
+Global $g_hChkCoCStats = 0, $g_hTxtAPIKey = 0
+
 Func CreateBotStats()
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_STATS)
 
@@ -388,6 +391,23 @@ Func CreateGainSubTab()
 		GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Arial", $CLEARTYPE_QUALITY)
 		GUICtrlSetColor(-1, $COLOR_BLACK)
 		_GUICtrlSetTip(-1, $sTxtTip)
+	GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+	Local $x = 28, $y = 330
+	Local $Group4 = GUICtrlCreateGroup("", $x - 20, $y, 423, 35)
+
+	   $y += 10
+	   $x += -12
+		   $g_hChkCoCStats = GUICtrlCreateCheckbox(GetTranslated(657,1, "CoCStats Activate"), $x, $y, -1, -1)
+		   $sTxtTip = GetTranslated(657,2, "Activate sending raid results to CoCStats.com")
+		   GUICtrlSetTip(-1, $sTxtTip)
+		   GUICtrlSetOnEvent(-1, "chkCoCStats")
+
+	   $x += 135
+		   GUICtrlCreateLabel(GetTranslated(657,3, "API Key:"), $x - 23, $y + 4, -1, 21, $SS_LEFT)
+		   $g_hTxtAPIKey = GUICtrlCreateInput("", $x + 25, $y, 250, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
+		   $sTxtTip = GetTranslated(657,4, "Join in CoCStats.com and input API Key here")
+		   GUICtrlSetTip(-1, $sTxtTip)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
 #EndRegion
