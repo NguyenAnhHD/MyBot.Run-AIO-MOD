@@ -17,7 +17,7 @@
 ;                  $debug               - [optional] Default is False.
 ; Return values .: None
 ; Author ........: MR.ViPER
-; Modified ......: MR.ViPER (19-9-2016), MR.ViPER (2-12-2016)
+; Modified ......: MR.ViPER (19-9-2016), MR.ViPER (2-12-2016), MR.ViPER (27-4-2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -46,9 +46,9 @@ Func DropSpellFromINIOnDefense($Defense, $options, $qtaMin, $qtaMax, $troopName,
 	; Get the integer index of the troop name specified
 	Local $iTroopIndex = TroopIndexLookup($troopName)
 	If $iTroopIndex = -1 Then
-	   Setlog("CSV troop name '" & $troopName & "' is unrecognized.")
-	   Return
-    EndIf
+		Setlog("CSV troop name '" & $troopName & "' is unrecognized.")
+		Return
+	EndIf
 
 	;search slot where is the troop...
 	Local $troopPosition = -1
@@ -97,7 +97,7 @@ Func DropSpellFromINIOnDefense($Defense, $options, $qtaMin, $qtaMax, $troopName,
 		SelectDropTroop($troopPosition) ; select the troop...
 		;drop
 
-		Local $tempquant = 0 , $delayDrop = $delayDropMin
+		Local $tempquant = 0, $delayDrop = $delayDropMin
 
 		If $delayDropMin <> $delayDropMax Then
 			$delayDrop = Random($delayDropMin, $delayDropMax, 1)
@@ -186,6 +186,8 @@ Func GetFullDefenseName($Defense)
 			Return "Inferno Tower"
 		Case $Defense = "ADEFENSE"
 			Return "Air Defense"
+		Case $Defense = "TH"
+			Return "Town Hall"
 		Case Else
 			Return "Unknown Defense"
 	EndSelect
@@ -212,6 +214,9 @@ Func AssignPixelOfDefense($Defense, $options, $forceReLocate = False)
 		Case "ADEFENSE"
 			_ArrayMerge($LocateResult, $PixelADefensePos) ; Merging Arrays To Keep Return 1D Array And More Clear, [4] = $X  AND [5] = $Y
 			Return $LocateResult
+		Case "TH"
+			_ArrayMerge($LocateResult, $PixelTHPos) ; Merging Arrays To Keep Return 1D Array And More Clear, [4] = $X  AND [5] = $Y
+			Return $LocateResult
 	EndSwitch
 EndFunc   ;==>AssignPixelOfDefense
 
@@ -225,6 +230,8 @@ Func ResetDefensesLocation($Defense = "")
 			$PixelInfernoPos[1] = -1
 			$PixelADefensePos[0] = -1
 			$PixelADefensePos[1] = -1
+			$PixelTHPos[0] = -1
+			$PixelTHPos[1] = -1
 		Case "EAGLE"
 			$PixelEaglePos[0] = -1
 			$PixelEaglePos[1] = -1
@@ -234,6 +241,9 @@ Func ResetDefensesLocation($Defense = "")
 		Case "ADEFENSE"
 			$PixelADefensePos[0] = -1
 			$PixelADefensePos[1] = -1
+		Case "TH"
+			$PixelTHPos[0] = -1
+			$PixelTHPos[1] = -1
 		Case "STORED"
 			; Eagle
 			$storedEaglePos = ""
@@ -241,6 +251,8 @@ Func ResetDefensesLocation($Defense = "")
 			$storedInfernoPos = ""
 			; Air Defense
 			$storedADefensePos = ""
+			; Town Hall
+			$storedTHPos = ""
 	EndSwitch
 EndFunc   ;==>ResetDefensesLocation
 
@@ -619,6 +631,117 @@ Func LocateDefense($Defense, $options)
 					EndIf
 			EndSwitch
 			Return $Result
+		Case "TH"
+			Local $xdirectory = "imglocth-bundle"
+			Local $xdirectoryb = "imglocth2-bundle"
+			Local $directory = $xdirectory
+			If $useStoredPosition = True Then
+				$return = GetStoredPositions($Defense)
+			Else
+				If $g_iDebugSetLog = 1 Then SetLog("DROPS Trying to Find TownHall", $COLOR_DEBUG)
+				$return = returnAllMatchesDefense($directory)
+				If $return = "" Then
+					$directory = $xdirectoryb
+					$return = returnAllMatchesDefense($directory)
+				EndIf
+			EndIf
+			$reLocated = True
+			Local $splitedPositions = StringSplit($return, "|", 2)
+			If Not (UBound($splitedPositions) >= 1 And StringLen($splitedPositions[0]) > 2) Then DebugImageSave("DropSTHDetection_NotDetected_", True)
+			Local $theTHSide = ""
+			Local $NotdetectedTH = True
+			For $eachPos In $splitedPositions
+				Local $splitedEachPos = StringSplit($eachPos, ",", 2)
+				If IsArray($splitedEachPos) And UBound($splitedEachPos) > 1 Then
+					$Counter += 1
+					If $debugDropSCommand = 1 Then SetLog("$SideCondition = " & $SideCondition, $COLOR_DEBUG) ;Debug
+					Select
+						Case $SideCondition = "AnySide"
+							$PixelTHPos[0] = $splitedEachPos[0]
+							$PixelTHPos[1] = $splitedEachPos[1]
+							$NotdetectedTH = False
+							ExitLoop
+						Case $SideCondition = "SameSide" Or $SideCondition = "OtherSide"
+							Local $sliced = Slice8($splitedEachPos)
+							If $debugDropSCommand = 1 Then SetLog("$sliced = " & $sliced, $COLOR_BLUE)
+							Switch StringLeft($sliced, 1)
+								Case 1, 2
+									$theTHSide = "BOTTOM"
+								Case 3, 4
+									$theTHSide = "TOP"
+								Case 5, 6
+									$theTHSide = "TOP"
+								Case 7, 8
+									$theTHSide = "BOTTOM"
+							EndSwitch
+							If $debugDropSCommand = 1 Then SetLog("$curMainSide = " & $curMainSide, $COLOR_ORANGE)
+							If $debugDropSCommand = 1 Then SetLog("$theTHSide = " & $theTHSide, $COLOR_ORANGE)
+							If $SideCondition = "SameSide" Then
+								If $theTHSide = $curMainSide Then
+									$PixelTHPos[0] = $splitedEachPos[0]
+									$PixelTHPos[1] = $splitedEachPos[1]
+									$NotdetectedTH = False
+									ExitLoop
+								EndIf
+							Else
+								If $theTHSide <> $curMainSide Then
+									$PixelTHPos[0] = $splitedEachPos[0]
+									$PixelTHPos[1] = $splitedEachPos[1]
+									$NotdetectedTH = False
+									ExitLoop
+								EndIf
+							EndIf
+					EndSelect
+				Else
+					$PixelTHPos[0] = -1
+					$PixelTHPos[1] = -1
+				EndIf
+			Next
+			If $NotdetectedTH = False Then
+				Local $rToDecreaseX = 4
+				Local $rToIncreaseY = 11
+				If $RandomizeDropPoint = True Then
+					$rToDecreaseX = Random(0, 8, 1)
+					$rToIncreaseY = Random(0, 19, 1)
+				EndIf
+				If $debugDropSCommand = 1 Then SetLog("$rToDecreaseX = " & $rToDecreaseX)
+				If $debugDropSCommand = 1 Then SetLog("$rToDecreaseY = " & $rToIncreaseY)
+				$PixelTHPos[0] -= $rToDecreaseX
+				$PixelTHPos[1] += $rToIncreaseY
+			EndIf
+			If UBound($splitedPositions) >= 1 And StringLen($splitedPositions[0]) > 2 Then
+				$Result[0] = True
+				Setlog(" »» DROPS: TH located in " & Round(TimerDiff($hTimer) / 1000, 2) & " seconds")
+			Else
+				FlagAsUnDetected($Result)
+			EndIf
+			Switch $SideCondition
+				Case "SameSide"
+					If $NotdetectedTH = False Then
+						$Result[1] = True
+						SetLog("TH Detected in Same Side")
+					Else
+						FlagAsUnDetected($Result)
+						SetLog("No TH Detected in same side", $COLOR_ORANGE)
+					EndIf
+				Case "OtherSide"
+					If $NotdetectedTH = False Then
+						$Result[1] = True
+						SetLog("TH Detected in the Other Side")
+					Else
+						FlagAsUnDetected($Result)
+						SetLog("No TH Detected in the other side", $COLOR_ORANGE)
+					EndIf
+				Case "AnySide"
+					If $NotdetectedTH = False Then
+						$Result[1] = True
+						SetLog("TH Detected")
+					Else
+						FlagAsUnDetected($Result)
+						SetLog("No TH Detected at all", $COLOR_ORANGE)
+					EndIf
+			EndSwitch
+			Return $Result
 	EndSwitch
 	Return $Result
 EndFunc   ;==>LocateDefense
@@ -732,6 +855,7 @@ Func checkForDropSInCSV($sFilePath)
 		If _ArraySearch($AvailableDropS, "EAGLE") > -1 Then SetLog("x" & IIf(StringInStr($storedEaglePos, "|") > 0, UBound(StringSplit($storedEaglePos, "|", 2)), UBound(_StringEqualSplit($storedEaglePos))) & " Eagle(s) located", $COLOR_BLUE)
 		If _ArraySearch($AvailableDropS, "INFERNO") > -1 Then SetLog("x" & IIf(StringInStr($storedInfernoPos, "|") > 0, UBound(StringSplit($storedInfernoPos, "|", 2)), UBound(_StringEqualSplit($storedInfernoPos))) & " Inferno Tower(s) located", $COLOR_BLUE)
 		If _ArraySearch($AvailableDropS, "ADEFENSE") > -1 Then SetLog("x" & IIf(StringInStr($storedADefensePos, "|") > 0, UBound(StringSplit($storedADefensePos, "|", 2)), UBound(_StringEqualSplit($storedADefensePos))) & " Air Defense(s) located", $COLOR_BLUE)
+		If _ArraySearch($AvailableDropS, "TH") > -1 Then SetLog("x" & IIf(StringInStr($storedTHPos, "|") > 0, UBound(StringSplit($storedTHPos, "|", 2)), UBound(_StringEqualSplit($storedTHPos))) & " Town Hall located", $COLOR_BLUE)
 	EndIf
 EndFunc   ;==>checkForDropSInCSV
 
@@ -755,7 +879,7 @@ EndFunc   ;==>CheckDropSCommands
 
 Func GetDropSCommands($Mode, $sFilePath)
 	Local $ToReturn = ""
-	Local $filename = ""
+	Local $fileName = ""
 	If $g_bRunState = False Then Return
 
 	Local $rownum = 0
@@ -794,6 +918,8 @@ Func IsObjLocatedDropS($Obj)
 			Return VerifyMMPOResult($storedInfernoPos)
 		Case "ADEFENSE"
 			Return VerifyMMPOResult($storedADefensePos)
+		Case "TH"
+			Return VerifyMMPOResult($storedTHPos)
 		Case Else
 			Return False
 	EndSwitch
@@ -807,12 +933,16 @@ Func GetStoredPositions($Defense)
 			Return $storedInfernoPos
 		Case "ADEFENSE"
 			Return $storedADefensePos
+		Case "TH"
+			Return $storedTHPos
 	EndSwitch
 EndFunc   ;==>GetStoredPositions
 
 Func GetAndStorePositions($Defense)
 	Local $imgSearchResult = ""
 	Local $directory
+	Local $xdirectory = "imglocth-bundle"
+	Local $xdirectoryb = "imglocth2-bundle"
 	Switch $Defense
 		Case "EAGLE"
 			$directory = @ScriptDir & "\imgxml\WeakBase\Eagle"
@@ -826,5 +956,13 @@ Func GetAndStorePositions($Defense)
 			$directory = @ScriptDir & "\imgxml\WeakBase\ADefense"
 			$imgSearchResult = returnAllMatchesDefense($directory)
 			$storedADefensePos = $imgSearchResult
+		Case "TH"
+			$directory = $xdirectory
+			$imgSearchResult = returnAllMatchesDefense($directory)
+			If $imgSearchResult = "" Then
+				$directory = $xdirectoryb
+				$imgSearchResult = returnAllMatchesDefense($directory)
+			EndIf
+			$storedTHPos = $imgSearchResult
 	EndSwitch
 EndFunc   ;==>GetAndStorePositions
