@@ -110,12 +110,12 @@ Func ReadConfig_MOD()
 	IniReadS($g_icmbMaxActionsNumber, "Humanization", "cmbMaxActionsNumber", 1, "int")
 
 	; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
-	IniReadS($ichkEnableSuperXP, $g_sProfileConfigPath, "Attack", "EnableSuperXP", 0, "int")
-	IniReadS($irbSXTraining, $g_sProfileConfigPath, "Attack", "SXTraining", 1, "int")
-	IniReadS($itxtMaxXPtoGain, $g_sProfileConfigPath, "Attack", "MaxXptoGain", 500, "int")
-	IniReadS($ichkSXBK, $g_sProfileConfigPath, "Attack", "SXBK", $eHeroNone)
-	IniReadS($ichkSXAQ, $g_sProfileConfigPath, "Attack", "SXAQ", $eHeroNone)
-	IniReadS($ichkSXGW, $g_sProfileConfigPath, "Attack", "SXGW", $eHeroNone)
+	IniReadS($ichkEnableSuperXP, $g_sProfileConfigPath, "attack", "EnableSuperXP", 0, "int")
+	IniReadS($irbSXTraining, $g_sProfileConfigPath, "attack", "SXTraining", 1, "int")
+	IniReadS($itxtMaxXPtoGain, $g_sProfileConfigPath, "attack", "MaxXptoGain", 500, "int")
+	IniReadS($ichkSXBK, $g_sProfileConfigPath, "attack", "SXBK", $eHeroNone)
+	IniReadS($ichkSXAQ, $g_sProfileConfigPath, "attack", "SXAQ", $eHeroNone)
+	IniReadS($ichkSXGW, $g_sProfileConfigPath, "attack", "SXGW", $eHeroNone)
 
 	; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~	IniReadS($g_bNotifyAlertBOTSleep, $g_sProfileConfigPath, "notify", "AlertPBSleep", False, "Bool")

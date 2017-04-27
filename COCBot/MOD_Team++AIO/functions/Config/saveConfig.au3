@@ -110,12 +110,12 @@ Func SaveConfig_MOD()
 	_Ini_Add("Humanization", "cmbMaxActionsNumber", _GUICtrlComboBox_GetCurSel($g_icmbMaxActionsNumber))
 
 	; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
-	_Ini_Add("Attack", "EnableSuperXP", $ichkEnableSuperXP)
-	_Ini_Add("Attack", "SXTraining", $irbSXTraining)
-	_Ini_Add("Attack", "SXBK", $ichkSXBK)
-	_Ini_Add("Attack", "SXAQ", $ichkSXAQ)
-	_Ini_Add("Attack", "SXGW", $ichkSXGW)
-	_Ini_Add("Attack", "MaxXptoGain", GUICtrlRead($txtMaxXPtoGain))
+	_Ini_Add("attack", "EnableSuperXP", $ichkEnableSuperXP)
+	_Ini_Add("attack", "SXTraining", $irbSXTraining)
+	_Ini_Add("attack", "SXBK", $ichkSXBK)
+	_Ini_Add("attack", "SXAQ", $ichkSXAQ)
+	_Ini_Add("attack", "SXGW", $ichkSXGW)
+	_Ini_Add("attack", "MaxXptoGain", GUICtrlRead($txtMaxXPtoGain))
 
 	; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~	_Ini_Add("notify", "AlertPBSleep", $g_bNotifyAlertBOTSleep ? 1 : 0)

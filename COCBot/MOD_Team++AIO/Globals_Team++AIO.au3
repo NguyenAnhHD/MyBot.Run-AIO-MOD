@@ -1,5 +1,5 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Globals_TeamVN
+; Name ..........: Globals_Team++AIO
 ; Description ...: This file Includes several files in the current script and all Declared variables, constant, or create an array.
 ; Syntax ........: #include , Global
 ; Parameters ....: None
@@ -60,7 +60,7 @@ Global $g_bOnReplayWindow, $g_iReplayToPause
 Global $g_iQuickMISX = 0, $g_iQuickMISY = 0
 Global $g_iLastLayout = 0
 
-; GoblinXP (Roro-Titi) - Added by NguyenAnhHD
+; Goblin XP (Mr.Viper) - Added by NguyenAnhHD
 Global $ichkEnableSuperXP = 0, $irbSXTraining = 1, $ichkSXBK = 0, $ichkSXAQ = 0, $ichkSXGW = 0, $iStartXP = 0, $iCurrentXP = 0, $iGainedXP = 0, $iGainedXPHour = 0, $itxtMaxXPtoGain = 500
 Global $DebugSX = 0
 

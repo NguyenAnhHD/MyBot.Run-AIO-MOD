@@ -35,7 +35,7 @@ Func cmbStandardDropSidesDB() ; avoid conflict between FourFinger and SmartAttac
 	chkSmartAttackRedAreaDB()
 EndFunc   ;==>g_hCmbStandardDropSidesDB
 
-; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
+; Goblin XP (MR.ViPeR) - Added by NguyenAnhHD
 Func DisableSX()
 	GUICtrlSetState($chkEnableSuperXP, $GUI_UNCHECKED)
 	$ichkEnableSuperXP = 0

@@ -1,5 +1,5 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Functions_TeamVN
+; Name ..........: Functions_Team++AIO
 ; Description ...: This file Includes several files in the current script.
 ; Syntax ........: #include
 ; Parameters ....: None
@@ -15,7 +15,6 @@
 
 ; <><><><><><><><><><><><><><><> Team++ AIO MOD <><><><><><><><><><><><><><><>
 
-; Config (NguyenAnhHD, Demen)
 #include "functions\Config\saveConfig.au3"
 #include "functions\Config\readConfig.au3"
 #include "functions\Config\applyConfig.au3"
@@ -45,7 +44,7 @@
 #include "functions\BotHumanization\ClanActions.au3"
 #include "functions\BotHumanization\ClanWarActions.au3"
 
-; GoblinXP (Roro-Titi) - Added by NguyenAnhHD
+; Goblin XP (Mr.Viper) - Added by NguyenAnhHD
 #include "functions\Mod's\GoblinXP.au3"
 
 ; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
