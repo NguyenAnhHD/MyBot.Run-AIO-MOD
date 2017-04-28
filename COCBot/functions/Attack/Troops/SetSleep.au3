@@ -21,6 +21,11 @@ Func SetSleep($type)
 		$factor0 = 10
 		$factor1 = 100
 	EndIf
+	
+	; ============================================== UNIT WAVE FACTOR MOD ================================================
+	If  _GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 5 and $iChkUnitFactor = 1 Then $factor0 = $iTxtUnitFactor
+	If  _GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 5 and $iChkWaveFactor = 1 Then $factor1 = $iTxtWaveFactor
+	
 	Switch $type
 		Case 0
 			If $g_abAttackStdRandomizeDelay[$g_iMatchMode] Then

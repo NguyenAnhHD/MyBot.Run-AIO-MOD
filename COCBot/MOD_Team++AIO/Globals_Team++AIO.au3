@@ -143,5 +143,48 @@ Global $g_abRCheckWrongTroops[2] = [False, False] ; Result of checking wrong tro
 Global $ichkCoCStats = 0
 Global $MyApiKey = ""
 
-; ClanHop (Rhinoceros) - Added by NguyenAnhHD
-;Global $ichkClanHop
+; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
+Global $g_bChkClanHop = False
+
+; Multi finger - Added By Eloy
+Global $LblDBMultiFinger = 0, $TxtUnitFactor = 0, $TxtWaveFactor = 0
+Global $CmbDBMultiFinger = 0, $ChkUnitFactor = 0, $ChkWaveFactor = 0
+
+Global Enum $directionLeft, $directionRight
+Global Enum $sideBottomRight, $sideTopLeft, $sideBottomLeft, $sideTopRight
+Global Enum $mfRandom, $mfFFStandard, $mfFFSpiralLeft, $mfFFSpiralRight, $mf8FBlossom, $mf8FImplosion, $mf8FPinWheelLeft, $mf8FPinWheelRight
+
+Global $iMultiFingerStyle = 1
+Global Enum $eCCSpell = $eHaSpell + 1
+
+; Unit and Wave Factor - Added By Eloy
+Global $ChkUnitFactor
+Global $TxtUnitFactor
+Global $ChkWaveFactor
+Global $TxtWaveFactor
+Global $iChkUnitFactor = 0
+Global $iTxtUnitFactor = 10
+Global $iChkWaveFactor = 0
+Global $iTxtWaveFactor = 100
+
+Global $ChkGiantSlot = 0, $iChkGiantSlot = 0, $CmbGiantSlot = 0, $iCmbGiantSlot = 0, $SlotsGiantsVN = 1
+
+; Forecast - Added By Eloy
+Global Const $COLOR_DEEPPINK = 0xFF1493
+Global Const $COLOR_DARKGREEN = 0x006400
+Global $oIE = ObjCreate("Shell.Explorer.2")
+Global $grpForecast
+Global $ieForecast
+Global $dtStamps[0]
+Global $lootMinutes[0]
+Global $timeOffset = 0
+Global $TimerForecast = 0
+Global $lootIndexScaleMarkers
+Global $currentForecast
+Global $chkForecastBoost = 0, $txtForecastBoost = 0
+Global $iChkForecastBoost = 0, $iTxtForecastBoost = 6
+Global $cmbForecastHopingSwitchMax = 0, $cmbForecastHopingSwitchMin = 0
+Global $chkForecastHopingSwitchMax = 0, $lblForecastHopingSwitchMax = 0, $txtForecastHopingSwitchMax = 2, $chkForecastHopingSwitchMin = 0, $lblForecastHopingSwitchMin = 0, $txtForecastHopingSwitchMin = 0
+Global $ichkForecastHopingSwitchMax = 0, $icmbForecastHopingSwitchMax = 0 , $itxtForecastHopingSwitchMax = 2, $ichkForecastHopingSwitchMin = 0, $icmbForecastHopingSwitchMin = 0, $itxtForecastHopingSwitchMin = 2
+Global $icmbSwLang = 0
+Global $cmbSwLang = 0

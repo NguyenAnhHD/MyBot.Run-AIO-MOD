@@ -16,6 +16,20 @@
 Func SaveConfig_MOD()
 	; <><><> Team++ AIO MOD <><><>
 	ApplyConfig_MOD("Save")
+
+	; Multi Finger (LunaEclipse) - Added by Eloy
+	_Ini_Add("MultiFinger", "Select", $iMultiFingerStyle)
+
+	; Unit/Wave Factor (rulesss & kychera) - Added by Eloy
+	_Ini_Add("SetSleep", "EnableUnitFactor", $iChkUnitFactor ? 1 : 0)
+	_Ini_Add("SetSleep", "EnableWaveFactor", $iChkWaveFactor ? 1 : 0)
+
+    _Ini_Add("SetSleep", "UnitFactor", GUICtrlRead($TxtUnitFactor))
+	_Ini_Add("SetSleep", "WaveFactor", GUICtrlRead($TxtWaveFactor))
+
+	_Ini_Add("SetSleep", "EnableGiantSlot", $iChkGiantSlot ? 1 : 0)
+	_Ini_Add("SetSleep", "CmbGiantSlot", _GUICtrlComboBox_GetCurSel($CmbGiantSlot))
+
 	; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 	_Ini_Add("general", "AutoHide", $ichkAutoHide ? 1 : 0)
 	_Ini_Add("general", "AutoHideDelay", $ichkAutoHideDelay)
@@ -109,7 +123,7 @@ Func SaveConfig_MOD()
 	Next
 	_Ini_Add("Humanization", "cmbMaxActionsNumber", _GUICtrlComboBox_GetCurSel($g_icmbMaxActionsNumber))
 
-	; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
+	; Goblin XP (Mr.Viper) - Added by NguyenAnhHD
 	_Ini_Add("attack", "EnableSuperXP", $ichkEnableSuperXP)
 	_Ini_Add("attack", "SXTraining", $irbSXTraining)
 	_Ini_Add("attack", "SXBK", $ichkSXBK)
@@ -117,11 +131,11 @@ Func SaveConfig_MOD()
 	_Ini_Add("attack", "SXGW", $ichkSXGW)
 	_Ini_Add("attack", "MaxXptoGain", GUICtrlRead($txtMaxXPtoGain))
 
+	; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
+	_Ini_Add("donate", "chkClanHop", $g_bChkClanHop ? 1 : 0)
+
 	; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~	_Ini_Add("notify", "AlertPBSleep", $g_bNotifyAlertBOTSleep ? 1 : 0)
-
-	; ClanHop (Rhinoceros) - Added by NguyenAnhHD
-;~	_Ini_Add("Others", "ClanHop", $ichkClanHop ? 1 : 0)
 
 EndFunc
 
@@ -142,3 +156,18 @@ Func SaveConfig_SwitchAcc()
 		IniWriteS($profile, "SwitchAcc", "ProfileType." & $i, _GUICtrlComboBox_GetCurSel($cmbProfileType[$i - 1]) + 1) ; 1 = Active, 2 = Donate, 3 = Idle
 	Next
 EndFunc   ;==>SaveConfig_SwitchAcc
+
+; Forecast - Added By Eloy
+Func SaveConfig_Forecast()
+
+	_Ini_Add("forecast", "txtForecastBoost", GUICtrlRead($txtForecastBoost))
+	_Ini_Add("profiles", "cmbForecastHopingSwitchMax", _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMax))
+	_Ini_Add("profiles", "txtForecastHopingSwitchMax", GUICtrlRead($txtForecastHopingSwitchMax))
+	_Ini_Add("profiles", "cmbForecastHopingSwitchMin", _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMin))
+	_Ini_Add("profiles", "txtForecastHopingSwitchMin", GUICtrlRead($txtForecastHopingSwitchMin))
+	_Ini_Add("forecast", "chkForecastBoost", $iChkForecastBoost ? 1 : 0)
+	_Ini_Add("profiles", "chkForecastHopingSwitchMax", $ichkForecastHopingSwitchMax ? 1 : 0)
+	_Ini_Add("profiles", "chkForecastHopingSwitchMin", $ichkForecastHopingSwitchMin ? 1 : 0)
+	_Ini_Add("Lang", "cmbSwLang", _GUICtrlComboBox_GetCurSel($cmbSwLang))
+
+EndFunc   ;==>SaveConfig_Forecast

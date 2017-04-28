@@ -214,6 +214,7 @@ Func ReadRegularConfig()
 	;  <><><> Team++ AIO MOD <><><>
 	ReadConfig_MOD()
 	ReadConfig_SwitchAcc()
+	ReadConfig_Forecast()
 
 	; <><><><> Attack Plan / Strategies <><><><>
 	; <<< nothing here >>>

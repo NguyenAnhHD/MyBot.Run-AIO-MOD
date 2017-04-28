@@ -72,5 +72,19 @@
 ; CoCStats - Added by NguyenAnhHD
 #include "functions\Mod's\CoCStats.com.au3"
 
-; ClanHop (Rhinoceros) - Added by NguyenAnhHD
-;#include "functions\Mod's\ClanHop.au3"
+; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
+#include "functions\Mod's\ClanHop.au3"
+
+; Multi Fingers Vectors - (LunaEclipse) - Added by Eloy
+#include "functions\Attack\Multi Fingers\Vectors\4FingerStandard.au3"
+#include "functions\Attack\Multi Fingers\Vectors\4FingerSpiralLeft.au3"
+#include "functions\Attack\Multi Fingers\Vectors\4FingerSpiralRight.au3"
+#include "functions\Attack\Multi Fingers\Vectors\8FingerPinWheelLeft.au3"
+#include "functions\Attack\Multi Fingers\Vectors\8FingerPinWheelRight.au3"
+#include "functions\Attack\Multi Fingers\Vectors\8FingerBlossom.au3"
+#include "functions\Attack\Multi Fingers\Vectors\8FingerImplosion.au3"
+; Multi Fingers Profile - (LunaEclipse) - Added by Eloy
+#include "functions\Attack\Multi Fingers\4Fingers.au3"
+#include "functions\Attack\Multi Fingers\8Fingers.au3"
+#include "functions\Attack\Multi Fingers\MultiFinger.au3"
+#include "functions\Attack\Multi Fingers\UnitInfo.au3"

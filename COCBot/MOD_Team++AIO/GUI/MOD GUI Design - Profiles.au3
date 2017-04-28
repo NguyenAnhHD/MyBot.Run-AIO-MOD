@@ -34,9 +34,9 @@ Func CreateModProfiles()
 
 	GUISwitch($g_hGUI_MOD_SWITCH)
     $g_hGUI_MOD_SWITCH_TAB = GUICtrlCreateTab(0, 0, $_GUI_MAIN_WIDTH - 30, $_GUI_MAIN_HEIGHT - 255 - 30, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))
-    $g_hGUI_MOD_SWITCH_TAB_ITEM1 = GUICtrlCreateTabItem("Switch Accounts")
+    $g_hGUI_MOD_SWITCH_TAB_ITEM1 = GUICtrlCreateTabItem(GetTranslated(600,65,"Switch Accounts"))
 		CreateSwitchAccount()
-	$g_hGUI_MOD_SWITCH_TAB_ITEM2 = GUICtrlCreateTabItem("Switch Profiles")
+	$g_hGUI_MOD_SWITCH_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslated(600,66,"Switch Profiles"))
 		CreateModSwitchProfile()
 	GUICtrlCreateTabItem("")
 

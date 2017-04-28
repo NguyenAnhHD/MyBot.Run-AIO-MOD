@@ -561,3 +561,26 @@ Func btnClearAccLocation()
 	Setlog(GetTranslated(110, 16, "Position of all accounts cleared"))
 	SaveConfig_SwitchAcc()
 EndFunc   ;==>btnClearAccLocation
+
+; Forecast Switch Language Control - Added By Eloy
+Func cmbSwLang()
+	Switch GUICtrlRead($cmbSwLang)
+
+		Case "EN"
+			setForecast2()
+		Case "RU"
+			setForecast3()
+		Case "FR"
+			setForecast4()
+		Case "DE"
+			setForecast5()
+		Case "ES"
+			setForecast6()
+		Case "FA"
+			setForecast7()
+		Case "PT"
+			setForecast8()
+		Case "IN"
+			setForecast9()
+	EndSwitch
+EndFunc

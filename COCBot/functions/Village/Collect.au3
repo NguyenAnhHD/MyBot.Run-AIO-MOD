@@ -100,7 +100,7 @@ Func Collect($Treasury = True)
 		Else
 			Local $expRet = StringSplit($res[0], "|", $STR_NOCOUNT)
 			;$expret contains 2 positions; 0 is the total objects; 1 is the point in X,Y format
-			If UBound($expRet) > 1 Then 
+			If UBound($expRet) > 1 Then
 				Local $posPoint = StringSplit($expRet[1], ",", $STR_NOCOUNT)
 				If UBound($posPoint) > 1 Then
 					$LootCartX = Int($posPoint[0])

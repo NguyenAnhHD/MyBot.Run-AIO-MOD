@@ -22,6 +22,8 @@ Global $g_hChkRequestCCHoursE1 = 0, $g_hChkRequestCCHoursE2 = 0
 Global $g_hGrpRequestCC = 0, $g_hLblRequestCCHoursAM = 0, $g_hLblRequestCCHoursPM = 0
 Global $g_hLblRequestCChour = 0, $g_ahLblRequestCChoursE = 0
 GLobal $g_hLblRequestCChours[12] = [0,0,0,0,0,0,0,0,0,0,0,0]
+Global $g_hchkGTFO
+Global $cmbgtfo
 
 ; Donate
 Global $g_hChkExtraAlphabets = 0, $g_hChkExtraChinese = 0, $g_hChkExtraKorean = 0, $g_hChkExtraPersian = 0
@@ -49,6 +51,7 @@ Global $g_hLblDonateTroopTBD1 = 0, $g_hLblDonateTroopTBD2 = 0, $g_hLblDonateTroo
 	   $g_hLblDonateTroopCustomI = 0, $g_hLblDonateTroopCustomJ = 0, $g_hLblDonateSpellTBD1 = 0
 
 Global $g_hGrpDonateGeneralBlacklist = 0, $g_hTxtGeneralBlacklist = 0
+Global $g_hGrpDonateOptions = 0, $g_hChkClanHop = 0
 Global $lblBtnCustomE = 0
 
 ; Schedule
@@ -210,6 +213,25 @@ Func CreateRequestSubTab()
 		$g_hLblRequestCCHoursPM = GUICtrlCreateLabel(GetTranslated(603,4, "PM"), $x + 5, $y)
 		 GUICtrlSetState(-1, $GUI_DISABLE)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+   ; === KICK MOD ===================================
+   $x = $xStart
+   $y += 191
+   GUICtrlCreateGroup(GetTranslated(634,13,"        G.T.F.O"), $x - 20, $y, $g_iSizeWGrpTab3, 40)
+	$g_hchkGTFO = GUICtrlCreateCheckbox("KICK Members:", $x + 2, $y + 15, 85, 17)
+;~			   GUICtrlSetState(-1, $GUI_CHECKED)
+			   GUICtrlSetState(-1, $GUI_UNCHECKED)
+            GUICtrlSetTip(-1, "Kick New Donated Members Or Already Full")
+            GUICtrlCreateIcon($g_sLibIconPath, $eIcnKick, $x - 13, $y - 9, 24, 24)
+    GUICtrlCreateLabel("Kicks In a Single Loop: ", $x + 112, $y + 17, -1, -1)
+    $cmbgtfo = GUICtrlCreateCombo("", $x + 225, $y + 12, 35, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+            GUICtrlSetTip(-1, "Number of New Members You Want To Kick"& @CRLF & _
+			" "& @CRLF & _
+			" »  Use [1 -  3] For Normal Kicking"& @CRLF & _
+			" »  Use [4 -  6] For Massive Donating"& @CRLF & _
+			" »  Use [7 - 10] For Forced Kicking")
+            GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9|10", "5")
+   GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
 #EndRegion
 
@@ -612,13 +634,12 @@ Func CreateDonateSubTab()
 			  GUICtrlSetState(-1, $GUI_DISABLE)
 
 		  GUICtrlCreateButton("", $x + 2, $y, $Offx - 2, $Offx - 2, $BS_ICON)
-			  GUICtrlSetState(-1, $GUI_DISABLE)
-	  ;		GUICtrlSetImage (-1, $g_sLibIconPath, $eIcnTroops, 0)
-	  ;		GUICtrlSetOnEvent(-1, "btnDonateCustomD")
-      $x += $Offx
-	   GUICtrlCreateButton("", $x + 2, $y, $Offx - 2, $Offx - 2, $BS_ICON)
-		   GUICtrlSetImage (-1, $g_sLibIconPath, $eIcnDonBlacklist, 1)
-		   GUICtrlSetOnEvent(-1, "btnDonateBlacklist")
+			  GUICtrlSetImage (-1, $g_sLibIconPath, $eIcnDonBlacklist, 1)
+			  GUICtrlSetOnEvent(-1, "btnDonateBlacklist")
+	  $x += $Offx
+		  GUICtrlCreateButton("", $x + 2, $y, $Offx - 2, $Offx - 2, $BS_ICON)
+			  GUICtrlSetImage (-1, $g_sLibIconPath, $eIcnClanHop, 1)
+			  GUICtrlSetOnEvent(-1, "btnDonateOptions")
 
 	   Local $Offy = $yStart + 185
 	   $x = $xStart
@@ -1679,6 +1700,17 @@ Func CreateDonateSubTab()
 			   GUICtrlSetData(-1, StringFormat(GetTranslated(612,79, "clan war\r\nwar\r\ncw")))
 			   _GUICtrlSetTip(-1, GetTranslated(612,80, "General Blacklist for donation requests"))
 	   GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+	   $x = $xStart
+	   $y = $Offy
+	   $g_hGrpDonateOptions = GUICtrlCreateGroup("Donate Options", $x - 20, $y - 20, $g_iSizeWGrpTab3, 169)
+	   $x -= 10
+	   $y -= 4
+		   GUICtrlSetState(-1, $GUI_HIDE)
+		   $g_hChkClanHop = GUICtrlCreateCheckbox("Clan Hop", $x, $y)
+			   GUICtrlSetState(-1,$GUI_HIDE)
+	   GUICtrlCreateGroup("", -99, -99, 1, 1)
+
 EndFunc
 #EndRegion
 

@@ -202,6 +202,7 @@ Func SaveRegularConfig()
 	;  <><><> Team++ AIO MOD <><><>
 	SaveConfig_MOD()
 	SaveConfig_SwitchAcc()
+	SaveConfig_Forecast()
 
 	; <><><><> Attack Plan / Strategies <><><><>
 	; <<< nothing here >>>
@@ -1049,6 +1050,11 @@ Func IniWriteS($filename, $section, $key, $value)
 	Local $s = $section
 	Local $k = $key
 	IniWrite($filename, $section, $key, $value)
+	If $g_sProfileSecondaryOutputFileName <> "" Then
+		If $s = "search" Or $s = "attack" Or $s = "troop" Or $s = "spells" Or $s = "milkingattack" Or $s = "endbattle" Or $s = "collectors" Or ($s = "general" And $k = "version") Then
+			IniWrite($g_sProfileSecondaryOutputFileName, $section, $key, $value)
+		EndIf
+	EndIf
 EndFunc   ;==>IniWriteS
 
 

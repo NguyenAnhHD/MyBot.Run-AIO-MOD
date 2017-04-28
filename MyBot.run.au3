@@ -658,6 +658,18 @@ Func runBot() ;Bot that runs everything in order
 			AddIdleTime()
 			If $g_bRunState = False Then Return
 			If $g_bRestart = True Then ContinueLoop
+			If $iChkForecastBoost = 1 Then
+				$currentForecast = readCurrentForecast()
+					If $currentForecast >= Number($iTxtForecastBoost, 3) Then
+						If _GUICtrlComboBox_GetCurSel($g_hCmbBoostBarracks) > 0 Then
+							SetLog("Boost Time !", $COLOR_GREEN)
+						Else
+							SetLog("Boost barracks disabled!", $COLOR_GREEN)
+						EndIf
+					Else
+					SetLog("Forecast index is below the required value, no boost !", $COLOR_RED)
+					EndIf
+ 			EndIf
 			If IsSearchAttackEnabled() Then ; if attack is disabled skip reporting, requesting, donating, training, and boosting
 				Local $aRndFuncList = ['ReplayShare', 'NotifyReport', 'DonateCC,Train', 'BoostBarracks', 'BoostSpellFactory', 'BoostKing', 'BoostQueen', 'BoostWarden', 'RequestCC']
 				While 1
@@ -697,11 +709,12 @@ Func runBot() ;Bot that runs everything in order
 				EndIf
 				If checkAndroidReboot() = True Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
 			WEnd
+			ClanHop()
 			If $g_bRunState = False Then Return
 			If $g_bRestart = True Then ContinueLoop
 			If IsSearchAttackEnabled() Then ; If attack scheduled has attack disabled now, stop wall upgrades, and attack.
 				$g_iNbrOfWallsUpped = 0
-				UpgradeWall()
+				If Not $g_bChkClanHop Then UpgradeWall()
 				If _Sleep($DELAYRUNBOT3) Then Return
 				If $g_bRestart = True Then ContinueLoop
 				If $ichkSwitchAcc = 1 And $aProfileType[$nCurProfile - 1] = $eDonate Then	; SwitchAcc Demen
@@ -715,6 +728,9 @@ Func runBot() ;Bot that runs everything in order
 						checkSwitchAcc() ;  Switching to active account after donation
 					EndIf
 				EndIf																		; SwitchAcc Demen
+				GTFO()
+					If _Sleep($DELAYRUNBOT3) Then Return
+					If $g_bRestart = True Then ContinueLoop
 				Idle()
 				;$g_bFullArmy1 = $g_bFullArmy
 				If _Sleep($DELAYRUNBOT3) Then Return
@@ -770,6 +786,8 @@ Func Idle() ;Sequence that runs until Full Army
 	Local $TimeIdle = 0 ;In Seconds
 	If $g_iDebugSetlog = 1 Then SetLog("Func Idle ", $COLOR_DEBUG)
 
+	If $g_bChkClanHop Then Return
+
 	While $g_bIsFullArmywithHeroesAndSpells = False
 
 		checkAndroidReboot()
@@ -787,7 +805,7 @@ Func Idle() ;Sequence that runs until Full Army
 		;If $g_bDonateSkipNearFullEnable = True Then getArmyCapacity(true,true)
 		If $g_iActiveDonate And $g_bChkDonate Then
 			Local $aHeroResult = CheckArmyCamp(True, True, True)
-			While $iReHere < 7
+			While $iReHere < 10
 				$iReHere += 1
 				If $iReHere = 1 And SkipDonateNearFullTroops(True, $aHeroResult) = False And BalanceDonRec(True) Then
 					DonateCC(True)
@@ -857,6 +875,7 @@ Func Idle() ;Sequence that runs until Full Army
 			If Not ($g_bFullArmy) Then
 				If $g_iActualTrainSkip < $g_iMaxTrainSkip Then
 					If CheckNeedOpenTrain($g_sTimeBeforeTrain) Then TrainRevamp()
+						GTFO()
 					If $g_bRestart = True Then ExitLoop
 					If _Sleep($DELAYIDLE1) Then ExitLoop
 					checkMainScreen(False)
@@ -963,6 +982,7 @@ Func AttackMain() ;Main control for attack functions
 			If _Sleep($DELAYATTACKMAIN2) Then Return
 			Return True
 		Else
+			If Not $g_bChkClanHop Then
 			Setlog("No one of search condition match:", $COLOR_WARNING)
 			Setlog("Waiting on troops, heroes and/or spells according to search settings", $COLOR_WARNING)
 			If $ichkSwitchAcc = 1 Then ; SwitchAcc Demen
@@ -973,6 +993,9 @@ Func AttackMain() ;Main control for attack functions
 			$g_bIsSearchLimit = False
 			$g_bIsClientSyncError = False
 			$g_bQuickAttack = False
+			Else
+				SetLog("Skipping Attack because Clan Hop is enabled!", $COLOR_INFO)
+			EndIf
 		EndIf
 	Else
 		SetLog("Attacking Not Planned, Skipped..", $COLOR_WARNING)
@@ -1052,18 +1075,22 @@ Func _RunFunction($action)
 			ReArm()
 			_Sleep($DELAYRUNBOT3)
 		Case "ReplayShare"
+			If $g_bChkClanHop Then Return
 			ReplayShare($g_bShareAttackEnableNow)
 			_Sleep($DELAYRUNBOT3)
 		Case "NotifyReport"
+			If $g_bChkClanHop Then Return
 			NotifyReport()
 			_Sleep($DELAYRUNBOT3)
 		Case "DonateCC"
+			If $g_bChkClanHop Then Return
 			If $g_iActiveDonate And $g_bChkDonate Then
 				;If $g_bDonateSkipNearFullEnable = True and $g_bFirstStart = False Then getArmyCapacity(True, True)
 				If SkipDonateNearFullTroops(True) = False And BalanceDonRec(True) Then DonateCC()
 				If _Sleep($DELAYRUNBOT1) = False Then checkMainScreen(False)
 			EndIf
 		Case "DonateCC,Train"
+			If $g_bChkClanHop Then Return
 			If $g_iActiveDonate And $g_bChkDonate Then
 				If $g_bFirstStart Then
 					getArmyCapacity(True, False)
@@ -1095,21 +1122,28 @@ Func _RunFunction($action)
 		Case "BoostSpellFactory"
 			BoostSpellFactory()
 		Case "BoostKing"
+			If $g_bChkClanHop Then Return
 			BoostKing()
 		Case "BoostQueen"
+			If $g_bChkClanHop Then Return
 			BoostQueen()
 		Case "BoostWarden"
+			If $g_bChkClanHop Then Return
 			BoostWarden()
 		Case "RequestCC"
+			If $g_bChkClanHop Then Return
 			RequestCC()
 			If _Sleep($DELAYRUNBOT1) = False Then checkMainScreen(False)
 		Case "Laboratory"
+			If $g_bChkClanHop Then Return
 			Laboratory()
 			If _Sleep($DELAYRUNBOT3) = False Then checkMainScreen(False)
 		Case "UpgradeHeroes"
+			If $g_bChkClanHop Then Return
 			UpgradeHeroes()
 			_Sleep($DELAYRUNBOT3)
 		Case "UpgradeBuilding"
+			If $g_bChkClanHop Then Return
 			UpgradeBuilding()
 			_Sleep($DELAYRUNBOT3)
 		Case "SuperXP"

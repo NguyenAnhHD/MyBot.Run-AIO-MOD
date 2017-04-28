@@ -17,15 +17,18 @@
 Global $g_hGUI_MOD = 0
 Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0 , $g_hGUI_MOD_TAB_ITEM2 = 0 ,$g_hGUI_MOD_TAB_ITEM3 = 0, $g_hGUI_MOD_TAB_ITEM4 = 0, $g_hGUI_MOD_TAB_ITEM5 = 0, $g_hGUI_MOD_TAB_ITEM6 = 0
 
+; Switch Account & Profiles
+#include "MOD GUI Design - Profiles.au3"
+#include "MOD GUI Design - ProfileStats.au3"
+
 ; Bot Humanization
 #include "MOD GUI Design - Humanization.au3"
 
 ; Goblin XP
 #include "MOD GUI Design - GoblinXP.au3"
 
-; Switch Account & Profiles
-#include "MOD GUI Design - Profiles.au3"
-#include "MOD GUI Design - ProfileStats.au3"
+; Forecast
+#include "MOD GUI Design - Forecast.au3"
 
 Func CreateMODTab()
 
@@ -34,16 +37,17 @@ Func CreateMODTab()
 	CreateModProfiles()
 	GUISwitch($g_hGUI_MOD)
 	$g_hGUI_MOD_TAB = GUICtrlCreateTab(0, 0, $_GUI_MAIN_WIDTH - 20, $_GUI_MAIN_HEIGHT - 255, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))
-		$g_hGUI_MOD_TAB_ITEM1 = GUICtrlCreateTabItem("Switch Option")
-		$g_hGUI_MOD_TAB_ITEM2 = GUICtrlCreateTabItem("Humanization")
+		$g_hGUI_MOD_TAB_ITEM1 = GUICtrlCreateTabItem(GetTranslated(600,60,"Switch Option"))
+		$g_hGUI_MOD_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslated(600,61,"Humanization"))
 			HumanizationGUI()
-		$g_hGUI_MOD_TAB_ITEM3 = GUICtrlCreateTabItem("Goblin XP")
+		$g_hGUI_MOD_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslated(600,62,"Goblin XP"))
 			GoblinXPGUI()
-		$g_hGUI_MOD_TAB_ITEM4 = GUICtrlCreateTabItem("Stat's") ; Has to be outside of the Last Control to hide
+		$g_hGUI_MOD_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslated(600,63,"Stat's")) ; Has to be outside of the Last Control to hide
 			$g_hLastControlToHide = GUICtrlCreateDummy()
 			ReDim $g_aiControlPrevState[$g_hLastControlToHide + 1]
 			CreateProfileStats()
-		$g_hGUI_MOD_TAB_ITEM5 = GUICtrlCreateTabItem("Forecast")
+		$g_hGUI_MOD_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslated(600,64,"Forecast"))
+			ForecastGUI()
 
 	GUICtrlCreateTabItem("")
 EndFunc   ;==>CreateMODTab

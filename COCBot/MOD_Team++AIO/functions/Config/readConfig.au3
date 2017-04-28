@@ -16,6 +16,19 @@
 Func ReadConfig_MOD()
 	; <><><> Team++ AIO MOD <><><>
 
+	; Multi Finger (LunaEclipse) - Added by Eloy
+	IniReadS($iMultiFingerStyle, $g_sProfileConfigPath, "MultiFinger", "Select", 2, "int")
+
+	; Unit/Wave Factor (rulesss & kychera) - Added by Eloy
+	IniReadS($iChkUnitFactor, $g_sProfileConfigPath, "SetSleep", "EnableUnitFactor", 0, "Int")
+	IniReadS($iTxtUnitFactor, $g_sProfileConfigPath, "SetSleep", "UnitFactor", 10 ,"Int")
+
+	IniReadS($iChkWaveFactor, $g_sProfileConfigPath, "SetSleep", "EnableWaveFactor", 0, "Int")
+	IniReadS($iTxtWaveFactor, $g_sProfileConfigPath, "SetSleep", "WaveFactor", 100 ,"Int")
+
+	IniReadS($iChkGiantSlot, $g_sProfileConfigPath, "SetSleep", "EnableGiantSlot", 0, "Int")
+	IniReadS($iCmbGiantSlot , $g_sProfileConfigPath, "SetSleep", "CmbGiantSlot", 0 ,"Int")
+
 	; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 	IniReadS($ichkAutoHide, $g_sProfileConfigPath, "general", "AutoHide", 0, "int")
 	IniReadS($ichkAutoHideDelay, $g_sProfileConfigPath, "general", "AutoHideDelay", 10, "int")
@@ -109,7 +122,7 @@ Func ReadConfig_MOD()
 	Next
 	IniReadS($g_icmbMaxActionsNumber, "Humanization", "cmbMaxActionsNumber", 1, "int")
 
-	; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
+	; Goblin XP (Mr.Viper) - Added by NguyenAnhHD
 	IniReadS($ichkEnableSuperXP, $g_sProfileConfigPath, "attack", "EnableSuperXP", 0, "int")
 	IniReadS($irbSXTraining, $g_sProfileConfigPath, "attack", "SXTraining", 1, "int")
 	IniReadS($itxtMaxXPtoGain, $g_sProfileConfigPath, "attack", "MaxXptoGain", 500, "int")
@@ -117,11 +130,11 @@ Func ReadConfig_MOD()
 	IniReadS($ichkSXAQ, $g_sProfileConfigPath, "attack", "SXAQ", $eHeroNone)
 	IniReadS($ichkSXGW, $g_sProfileConfigPath, "attack", "SXGW", $eHeroNone)
 
+	; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
+	$g_bChkClanHop = (IniRead($g_sProfileConfigPath, "donate", "chkClanHop", "0") = "1")
+
 	; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~	IniReadS($g_bNotifyAlertBOTSleep, $g_sProfileConfigPath, "notify", "AlertPBSleep", False, "Bool")
-
-	; ClanHop (Rhinoceros) - Added by NguyenAnhHD
-;~	IniReadS($ichkClanHop, $g_sProfileConfigPath, "Others", "ClanHop", 0, "int")
 
 EndFunc
 
@@ -140,4 +153,19 @@ Func ReadConfig_SwitchAcc()
 		IniReadS($aProfileType[$i], $profile, "SwitchAcc", "ProfileType." & $i + 1, "-1")
 		IniReadS($aAccPosY[$i], $profile, "SwitchAcc", "AccLocation." & $i + 1, "-1")
 	Next
-EndFunc   ;==>ReadConfig_SwitchAcc
+EndFunc ;==>ReadConfig_SwitchAcc
+
+; Forecast - Added By Eloy
+Func ReadConfig_Forecast()
+
+	IniReadS($iChkForecastBoost, $g_sProfileConfigPath, "forecast", "chkForecastBoost", 0, "Int")
+	IniReadS($iTxtForecastBoost, $g_sProfileConfigPath, "forecast", "txtForecastBoost", 6, "Int")
+	IniReadS($ichkForecastHopingSwitchMax, $g_sProfileConfigPath, "profiles", "chkForecastHopingSwitchMax", 0, "Int")
+	IniReadS($icmbForecastHopingSwitchMax, $g_sProfileConfigPath, "profiles", "cmbForecastHopingSwitchMax", 0, "Int")
+	IniReadS($itxtForecastHopingSwitchMax, $g_sProfileConfigPath, "profiles", "txtForecastHopingSwitchMax", 2, "Int")
+	IniReadS($ichkForecastHopingSwitchMin, $g_sProfileConfigPath, "profiles", "chkForecastHopingSwitchMin", 0, "Int")
+	IniReadS($icmbForecastHopingSwitchMin, $g_sProfileConfigPath, "profiles", "cmbForecastHopingSwitchMin", 0, "Int")
+	IniReadS($itxtForecastHopingSwitchMin, $g_sProfileConfigPath, "profiles", "txtForecastHopingSwitchMin", 2, "Int")
+	IniReadS($icmbSwLang, $g_sProfileConfigPath, "Lang", "cmbSwLang", 1, "int")
+
+EndFunc ;==>ReadConfig_Forecast

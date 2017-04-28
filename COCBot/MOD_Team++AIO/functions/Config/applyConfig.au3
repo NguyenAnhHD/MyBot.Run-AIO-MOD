@@ -18,9 +18,21 @@ Func ApplyConfig_MOD($TypeReadSave)
 	Switch $TypeReadSave
 		Case "Read"
 
-			; Classic Four Finger (Demen) - Added by NguyenAnhHD
-			cmbStandardDropSidesDB()
+			; Classic Four Finger (Demen) & Multi Finger (LunaEclipse) - Added by NguyenAnhHD & Eloy
+			_GUICtrlComboBox_SetCurSel($cmbDBMultiFinger, $iMultiFingerStyle)
+			Bridge()
 			cmbStandardDropSidesAB()
+
+			; Unit/Wave Factor (rulesss & kychera) - Added by Eloy
+			GUICtrlSetState($ChkUnitFactor, $iChkUnitFactor ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($TxtUnitFactor, $iTxtUnitFactor)
+			chkUnitFactor()
+			GUICtrlSetState($ChkWaveFactor, $iChkWaveFactor ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($TxtWaveFactor, $iTxtWaveFactor)
+			chkWaveFactor()
+			GUICtrlSetState($ChkGiantSlot, $iChkGiantSlot ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($CmbGiantSlot,$iCmbGiantSlot)
+			ChkGiantSlot()
 
 			; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 			GUICtrlSetState($g_hChkAutohide, $ichkAutoHide = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -126,7 +138,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 			cmbStandardReplay()
 			cmbWarReplay()
 
-			; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
+			; Goblin XP (Mr.Viper) - Added by NguyenAnhHD
 			GUICtrlSetState($chkEnableSuperXP, $ichkEnableSuperXP = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 
 			chkEnableSuperXP()
@@ -140,14 +152,24 @@ Func ApplyConfig_MOD($TypeReadSave)
 			GUICtrlSetState($chkSXAQ, $ichkSXAQ = $eHeroQueen ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($chkSXGW, $ichkSXGW = $eHeroWarden ? $GUI_CHECKED : $GUI_UNCHECKED)
 
+			; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
+			GUICtrlSetState($g_hChkClanHop, $g_bChkClanHop ? $GUI_CHECKED : $GUI_UNCHECKED)
+
 			; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~			GUICtrlSetState($g_hChkNotifyBOTSleep, $g_bNotifyAlertBOTSleep ? $GUI_CHECKED : $GUI_UNCHECKED)
 
-
-			; ClanHop (Rhinoceros) - Added by NguyenAnhHD
-;~			GUICtrlSetState($g_hChkClanHop, $ichkClanHop = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-
 		Case "Save"
+			; Multi Finger - Added by Eloy
+			$iMultiFingerStyle = _GUICtrlComboBox_GetCurSel($CmbDBMultiFinger)
+
+			; Unit/Wave Factor (rulesss & kychera) - Added by Eloy
+			$iChkUnitFactor = (GUICtrlRead($ChkUnitFactor) = $GUI_CHECKED)
+			$iChkWaveFactor = (GUICtrlRead($ChkWaveFactor) = $GUI_CHECKED)
+			$iTxtUnitFactor = GUICtrlRead($TxtUnitFactor)
+			$iTxtWaveFactor = GUICtrlRead($TxtWaveFactor)
+			$iChkGiantSlot = (GUICtrlRead($ChkGiantSlot) = $GUI_CHECKED)
+			$iCmbGiantSlot = _GUICtrlComboBox_GetCurSel($CmbGiantSlot)
+
 			; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 			$ichkAutoHide = GUICtrlRead($g_hChkAutohide) = $GUI_CHECKED ? 1 : 0
 			$ichkAutoHideDelay = GUICtrlRead($g_hTxtAutohideDelay)
@@ -243,7 +265,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 			Next
 			$g_icmbMaxActionsNumber = _GUICtrlComboBox_GetCurSel($g_icmbMaxActionsNumber)
 
-			; Goblin XP (Roro-Titi) - Added by NguyenAnhHD
+			; Goblin XP (Mr.Viper) - Added by NguyenAnhHD
 			$ichkEnableSuperXP = GUICtrlRead($chkEnableSuperXP) = $GUI_CHECKED ? 1 : 0
 			$irbSXTraining = GUICtrlRead($rbSXTraining) = $GUI_CHECKED ? 1 : 2
 			$ichkSXBK = (GUICtrlRead($chkSXBK) = $GUI_CHECKED) ? $eHeroKing : $eHeroNone
@@ -251,12 +273,11 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$ichkSXGW = (GUICtrlRead($chkSXGW) = $GUI_CHECKED) ? $eHeroWarden : $eHeroNone
 			$itxtMaxXPtoGain = Int(GUICtrlRead($txtMaxXPtoGain))
 
+			; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
+			$g_bChkClanHop = (GUICtrlRead($g_hChkClanHop) = $GUI_CHECKED)
+
 			; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~			$g_bNotifyAlertBOTSleep = (GUICtrlRead($g_hChkNotifyBOTSleep) = $GUI_CHECKED)
-
-			; ClanHop (Rhinoceros) - Added by NguyenAnhHD
-;~			$ichkClanHop = GUICtrlRead($g_hChkClanHop) = $GUI_CHECKED ? 1 : 0
-
 
 	EndSwitch
 EndFunc
@@ -309,3 +330,33 @@ Func ApplyConfig_SwitchAcc($TypeReadSave)
 			EndIf
 	EndSwitch
 EndFunc   ;==>ApplyConfig_SwitchAcc
+
+; Forecast - Added by Eloy
+Func ApplyConfig_Forecast($TypeReadSave)
+	Switch $TypeReadSave
+		Case "Read"
+			GUICtrlSetState($chkForecastBoost, $iChkForecastBoost = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($txtForecastBoost, $iTxtForecastBoost)
+			chkForecastBoost()
+			GUICtrlSetState($chkForecastHopingSwitchMax, $ichkForecastHopingSwitchMax = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($cmbForecastHopingSwitchMax, $icmbForecastHopingSwitchMax)
+			GUICtrlSetData($txtForecastHopingSwitchMax, $itxtForecastHopingSwitchMax)
+			chkForecastHopingSwitchMax()
+			GUICtrlSetState($chkForecastHopingSwitchMin, $ichkForecastHopingSwitchMin = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($cmbForecastHopingSwitchMin, $icmbForecastHopingSwitchMin)
+			GUICtrlSetData($txtForecastHopingSwitchMin, $itxtForecastHopingSwitchMin)
+			chkForecastHopingSwitchMin()
+			_GUICtrlComboBox_SetCurSel($cmbSwLang, $icmbSwLang)
+
+		Case "Save"
+			$iChkForecastBoost = (GUICtrlRead($chkForecastBoost) = $GUI_UNCHECKED)
+			$iTxtForecastBoost = GUICtrlRead($txtForecastBoost)
+			$ichkForecastHopingSwitchMax = (GUICtrlRead($chkForecastHopingSwitchMax) = $GUI_UNCHECKED)
+			$icmbForecastHopingSwitchMax = _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMax)
+			$itxtForecastHopingSwitchMax = GUICtrlRead($txtForecastHopingSwitchMax)
+			$ichkForecastHopingSwitchMin = (GUICtrlRead($chkForecastHopingSwitchMin) = $GUI_UNCHECKED)
+			$icmbForecastHopingSwitchMin = _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMin)
+			$itxtForecastHopingSwitchMin = GUICtrlRead($txtForecastHopingSwitchMin)
+			$icmbSwLang = _GUICtrlComboBox_GetCurSel($cmbSwLang)
+	EndSwitch
+EndFunc   ;==>ApplyConfig_Forecast

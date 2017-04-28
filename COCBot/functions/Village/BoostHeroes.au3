@@ -17,7 +17,7 @@
 Func BoostKing()
 	; Verifying existent Variables to run this routine
 	If AllowBoosting("Barbarian King", $g_iCmbBoostBarbarianKing) = False Then Return
-
+	If $iChkForecastBoost = 1 And $currentForecast <= Number($iTxtForecastBoost, 3) Then Return
 	SetLog("Boost Barbarian King...", $COLOR_INFO)
 	If $g_aiKingAltarPos[0] = "" Or $g_aiKingAltarPos[0] = -1 Then
 		LocateKingAltar()
@@ -35,7 +35,7 @@ EndFunc   ;==>BoostKing
 Func BoostQueen()
 	; Verifying existent Variables to run this routine
 	If AllowBoosting("Archer Queen", $g_iCmbBoostArcherQueen) = False Then Return
-
+	If $iChkForecastBoost = 1 And $currentForecast <= Number($iTxtForecastBoost, 3) Then Return
 	SetLog("Boost Archer Queen...", $COLOR_INFO)
 	If $g_aiQueenAltarPos[0] = "" Or $g_aiQueenAltarPos[0] = -1 Then
 		LocateQueenAltar()
@@ -52,7 +52,7 @@ EndFunc   ;==>BoostQueen
 Func BoostWarden()
 	; Verifying existent Variables to run this routine
 	If AllowBoosting("Grand Warden", $g_iCmbBoostWarden) = False Then Return
-
+	If $iChkForecastBoost = 1 And $currentForecast <= Number($iTxtForecastBoost, 3) Then Return
 	SetLog("Boost Grand Warden...", $COLOR_INFO)
 	If $g_aiWardenAltarPos[0] = "" Or $g_aiWardenAltarPos[0] = -1 Then
 		LocateWardenAltar()
