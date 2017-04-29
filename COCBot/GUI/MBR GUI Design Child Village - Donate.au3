@@ -217,19 +217,18 @@ Func CreateRequestSubTab()
    ; === KICK MOD ===================================
    $x = $xStart
    $y += 191
-   GUICtrlCreateGroup(GetTranslated(634,13,"        G.T.F.O"), $x - 20, $y, $g_iSizeWGrpTab3, 40)
-	$g_hchkGTFO = GUICtrlCreateCheckbox("KICK Members:", $x + 2, $y + 15, 85, 17)
-;~			   GUICtrlSetState(-1, $GUI_CHECKED)
-			   GUICtrlSetState(-1, $GUI_UNCHECKED)
-            GUICtrlSetTip(-1, "Kick New Donated Members Or Already Full")
+   GUICtrlCreateGroup(GetTranslated(634,50, "____G.T.F.O"), $x - 20, $y, $g_iSizeWGrpTab3, 40)
+	$g_hchkGTFO = GUICtrlCreateCheckbox(GetTranslated(634,51, "KICK Members:"), $x + 2, $y + 15, 85, 17)
+            GUICtrlSetState(-1, $GUI_UNCHECKED)
+            GUICtrlSetTip(-1, GetTranslated(634,52, "Kick New Donated Members Or Already Full"))
             GUICtrlCreateIcon($g_sLibIconPath, $eIcnKick, $x - 13, $y - 9, 24, 24)
-    GUICtrlCreateLabel("Kicks In a Single Loop: ", $x + 112, $y + 17, -1, -1)
-    $cmbgtfo = GUICtrlCreateCombo("", $x + 225, $y + 12, 35, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-            GUICtrlSetTip(-1, "Number of New Members You Want To Kick"& @CRLF & _
-			" "& @CRLF & _
-			" »  Use [1 -  3] For Normal Kicking"& @CRLF & _
-			" »  Use [4 -  6] For Massive Donating"& @CRLF & _
-			" »  Use [7 - 10] For Forced Kicking")
+    GUICtrlCreateLabel(GetTranslated(634,53, "Kicks In a Single Loop: "), $x + 112, $y + 17, -1, -1)
+    $cmbgtfo = GUICtrlCreateCombo("", $x + 260, $y + 12, 35, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+            GUICtrlSetTip(-1, GetTranslated(634,54, "Number of New Members You Want To Kick") & @CRLF & _
+			" " & @CRLF & _
+			GetTranslated(634,55, " »  Use [1 -  3] For Normal Kicking") & @CRLF & _
+			GetTranslated(634,56, " »  Use [4 -  6] For Massive Donating") & @CRLF & _
+			GetTranslated(634,57, " »  Use [7 - 10] For Forced Kicking"))
             GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9|10", "5")
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
