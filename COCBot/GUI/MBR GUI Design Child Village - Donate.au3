@@ -110,7 +110,15 @@ Func CreateRequestSubTab()
 		$g_hTxtRequestCC = GUICtrlCreateInput(GetTranslated(611,3, "Anything please"), $x +40+30 , $y + 15, 214, 20,  BitOR($SS_CENTER, $ES_AUTOHSCROLL))
 			GUICtrlSetState(-1, $GUI_DISABLE)
 			_GUICtrlSetTip(-1, GetTranslated(611,4, "This text is used on your request for troops in the Clan chat."))
-
+        ; MOD ; MMHK - added rulesss ; move the Request CC Troops function to the beginning of the run loop
+		$y += 20
+		$chkReqCCFirst = GUICtrlCreateCheckbox("", $x + 294, $y - 4, 13, 13)
+			GUICtrlSetTip(-1, GetTranslated(611,6,"Request troops at the beginning of the run loop"))
+     		GUICtrlSetState(-1, $GUI_DISABLE)
+			GUICtrlSetOnEvent(-1, "chkReqCCFirst")
+			GUICtrlCreateLabel(GetTranslated(611,5,"Early"), $x + 311, $y - 4, -1, -1)
+		    GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
+			
 		$x += 29 + 30
 		$y += 60
 		GUICtrlCreateLabel(GetTranslated(603,30,"Only during these hours of day"), $x + 30, $y, 300, 20, $BS_MULTILINE)
@@ -216,7 +224,7 @@ Func CreateRequestSubTab()
 
    ; === KICK MOD ===================================
    $x = $xStart
-   $y += 191
+   $y += 170
    GUICtrlCreateGroup(GetTranslated(634,50, "____G.T.F.O"), $x - 20, $y, $g_iSizeWGrpTab3, 40)
 	$g_hchkGTFO = GUICtrlCreateCheckbox(GetTranslated(634,51, "KICK Members:"), $x + 2, $y + 15, 85, 17)
             GUICtrlSetState(-1, $GUI_UNCHECKED)

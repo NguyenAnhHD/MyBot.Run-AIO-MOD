@@ -136,6 +136,9 @@ Func SaveConfig_MOD()
 
 	; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~	_Ini_Add("notify", "AlertPBSleep", $g_bNotifyAlertBOTSleep ? 1 : 0)
+    
+	; Move the Request CC Troops - Added by rulesss
+	_Ini_Add("planned", "ReqCCFirst", $g_bReqCCFirst ? 1 : 0)
 
 EndFunc
 

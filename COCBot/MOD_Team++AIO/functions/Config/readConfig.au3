@@ -135,7 +135,10 @@ Func ReadConfig_MOD()
 
 	; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~	IniReadS($g_bNotifyAlertBOTSleep, $g_sProfileConfigPath, "notify", "AlertPBSleep", False, "Bool")
-
+    
+	; Move the Request CC Troops - Added By rulesss
+	$g_bReqCCFirst = (IniRead($g_sProfileConfigPath, "planned", "ReqCCFirst", 0) = 1)
+	
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen

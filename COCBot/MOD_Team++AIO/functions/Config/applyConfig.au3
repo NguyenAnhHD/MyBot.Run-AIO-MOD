@@ -157,7 +157,9 @@ Func ApplyConfig_MOD($TypeReadSave)
 
 			; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~			GUICtrlSetState($g_hChkNotifyBOTSleep, $g_bNotifyAlertBOTSleep ? $GUI_CHECKED : $GUI_UNCHECKED)
-
+            
+			;Move the Request CC Troops - Added by rulesss
+			GUICtrlSetState($chkReqCCFirst, $g_bReqCCFirst = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 		Case "Save"
 			; Multi Finger - Added by Eloy
 			$iMultiFingerStyle = _GUICtrlComboBox_GetCurSel($CmbDBMultiFinger)
@@ -278,7 +280,10 @@ Func ApplyConfig_MOD($TypeReadSave)
 
 			; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~			$g_bNotifyAlertBOTSleep = (GUICtrlRead($g_hChkNotifyBOTSleep) = $GUI_CHECKED)
-
+            
+			;Move the Request CC Troops - Added By rulesss
+			$g_bReqCCFirst = GUICtrlRead($chkReqCCFirst) = $GUI_CHECKED ? 1 : 0
+			
 	EndSwitch
 EndFunc
 
