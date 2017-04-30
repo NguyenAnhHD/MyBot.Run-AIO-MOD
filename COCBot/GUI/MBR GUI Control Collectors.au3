@@ -53,6 +53,22 @@ Func chkDBCollector()
 	checkCollectors()
 EndFunc   ;==>chkDBCollector
 
+Func ChkDBDisableCollectorsFilter() ;modification by rulesss
+    For $i = 7 To 12
+       If GUICtrlRead($g_hChkDBDisableCollectorsFilter) = $GUI_CHECKED Then
+	      $g_bCollectorFilterDisable = True
+		  GUICtrlSetState($g_ahChkDBCollectorLevel[$i], $GUI_UNCHECKED)
+		  GUICtrlSetState($g_ahChkDBCollectorLevel[$i], $GUI_DISABLE)
+		  GUICtrlSetState($g_ahCmbDBCollectorLevel[$i], $GUI_DISABLE)
+       Else
+	      $g_bCollectorFilterDisable = False
+		  GUICtrlSetState($g_ahChkDBCollectorLevel[$i], $GUI_CHECKED)
+	      GUICtrlSetState($g_ahChkDBCollectorLevel[$i], $GUI_ENABLE)
+		  GUICtrlSetState($g_ahCmbDBCollectorLevel[$i], $GUI_ENABLE)
+	   EndIf
+    Next
+	checkCollectors()
+EndFunc
 Func cmbDBCollector()
    	For $i = 6 To 12
 	   If $g_ahCmbDBCollectorLevel[$i] = @GUI_CtrlId Then
