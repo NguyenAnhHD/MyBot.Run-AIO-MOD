@@ -67,6 +67,7 @@ Func checkMainScreen($Check = True) ;Checks if in main screen
 			$g_bRestart = True
 		EndIf
 		waitMainScreen() ; Due to differeneces in PC speed, let waitMainScreen test for CoC restart
+		_ConnectTime2(); fix kychera	   		
 		If Not $g_bRunState Then Return
 		If @extended Then Return SetError(1, 1, -1)
 		If @error Then $iCount += 1
@@ -90,4 +91,5 @@ Func checkMainScreen($Check = True) ;Checks if in main screen
 
 	;Execute Notify Pending Actions
 	NotifyPendingActions()
+	$TimerConnect = False ; fix kychera
 EndFunc   ;==>checkMainScreen

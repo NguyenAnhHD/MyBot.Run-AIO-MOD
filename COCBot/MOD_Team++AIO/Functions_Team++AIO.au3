@@ -93,3 +93,5 @@
 #include "functions\Chatbot\Chatbot.au3"
 ;Multi lang by Kychera
 #include "functions\Other\Multy Lang.au3"
+;Contol function by kychera
+#include "functions\Other\Control.au3"

@@ -387,3 +387,27 @@ sleep(300)
 		   
 	EndSwitch
 EndFunc   ;==>ApplyConfig_AndroidSettings
+
+Func ApplyConfig_RK_MOD_ruRequest($TypeReadSave); by kychera
+	Switch $TypeReadSave
+		Case "Read"
+          GUICtrlSetState($chkRusLang2, $ichkRusLang2 = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+           chkRusLang2()
+		Case "Save"
+		   $ichkRusLang2 = GUICtrlRead($chkRusLang2) = $GUI_CHECKED ? 1 : 0
+
+	EndSwitch
+EndFunc   ;==>ApplyConfig_RK_ruRequest
+
+Func ApplyConfig_RK_MOD_NotifyBotSleep($TypeReadSave); by kychera
+	Switch $TypeReadSave
+		Case "Read"
+		  GUICtrlSetState($ChkNotifyAlertConnect, $iNotifyAlertConnect = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+		  ChkNotifyConnect()
+		  GUICtrlSetState($ChkNotifyAlertBOTSleep, $iNotifyAlertBOTSleep = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+          ChkNotifyAlertBOTSleep()
+		Case "Save"
+		   $iNotifyAlertConnect = GUICtrlRead($ChkNotifyAlertConnect) = $GUI_CHECKED ? 1 : 0
+		   $iNotifyAlertBOTSleep = GUICtrlRead($ChkNotifyAlertBOTSleep) = $GUI_CHECKED ? 1 : 0
+	EndSwitch
+EndFunc   ;==>ApplyConfig_RK_ruRequest
