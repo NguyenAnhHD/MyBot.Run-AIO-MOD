@@ -276,6 +276,8 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 	If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 And $g_iMatchMode = $DB Then
 		SetLog(_PadStringCenter("Multi Finger Attack", 50, "="), $COLOR_BLUE)
 		launchMultiFinger($listInfoDeploy, $g_iClanCastleSlot, $g_iKingSlot, $g_iQueenSlot, $g_iWardenSlot)
+		chkUnitFactor()
+		chkWaveFactor()
 	Else
 		SetLog(_PadStringCenter("Standard Attack", 50, "="), $COLOR_BLUE)
 		LaunchTroop2($listInfoDeploy, $g_iClanCastleSlot, $g_iKingSlot, $g_iQueenSlot, $g_iWardenSlot)
