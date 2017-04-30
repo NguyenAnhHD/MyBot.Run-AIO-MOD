@@ -133,9 +133,6 @@ Func SaveConfig_MOD()
 
 	; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 	_Ini_Add("donate", "chkClanHop", $g_bChkClanHop ? 1 : 0)
-
-	; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
-;~	_Ini_Add("notify", "AlertPBSleep", $g_bNotifyAlertBOTSleep ? 1 : 0)
     
 	; Move the Request CC Troops - Added by rulesss
 	_Ini_Add("planned", "ReqCCFirst", $g_bReqCCFirst ? 1 : 0)
@@ -143,6 +140,12 @@ Func SaveConfig_MOD()
 	 ; Android Settings (LunaEclipse)- modification (rulesss,kychera)
 	_Ini_Add("Android", "Emulator", GUICtrlRead($CmbAndroid))
     _Ini_Add("Android", "Instance", GUICtrlRead($TxtAndroidInstance))
+	;request  cyrillic by kychera
+	_Ini_Add("Lang", "chkRusLang2", $ichkRusLang2 ? 1 : 0)	
+	;Notify alert bot sleep by kychera
+	 _Ini_Add("notify", "AlertConnect", $iNotifyAlertConnect ? 1 : 0)
+	 _Ini_Add("notify", "AlertPBVMFound", $iNotifyAlertBOTSleep ? 1 : 0)
+	
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen
