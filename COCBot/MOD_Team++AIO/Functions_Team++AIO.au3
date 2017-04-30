@@ -88,3 +88,8 @@
 #include "functions\Attack\Multi Fingers\8Fingers.au3"
 #include "functions\Attack\Multi Fingers\MultiFinger.au3"
 #include "functions\Attack\Multi Fingers\UnitInfo.au3"
+;=============================================================================
+; Chatbot - Added Kychera
+#include "functions\Chatbot\Chatbot.au3"
+;Multi lang by Kychera
+#include "functions\Other\Multy Lang.au3"

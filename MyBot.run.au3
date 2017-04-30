@@ -295,7 +295,8 @@ EndFunc   ;==>InitializeAndroid
 ; ===============================================================================================================================
 Func SetupProfileFolder()
 	$g_sProfileConfigPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\config.ini"
-	$g_sProfileWeakBasePath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\stats_chkweakbase.INI"
+	$chatIni = $g_sProfilePath & "\" & $g_sProfileCurrentName &  "\chat.ini"
+    $g_sProfileWeakBasePath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\stats_chkweakbase.INI"
 	$g_sProfileBuildingPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\building.ini"
 	$g_sProfileLogsPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\Logs\"
 	$g_sProfileLootsPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\Loots\"
@@ -558,6 +559,10 @@ Func MainLoop()
 
 	While 1
 		_Sleep($DELAYSLEEP, True, False)
+		
+		If $g_bRunState = False and $g_bNotifyRemoteEnable = True Then
+	      NotifyRemoteControl2(); remote control when stopped the bot by kychera
+	    EndIf
 
 		Switch $g_iBotAction
 			Case $eBotStart
@@ -802,6 +807,11 @@ Func Idle() ;Sequence that runs until Full Army
 		NotifyPendingActions()
 		If _Sleep($DELAYIDLE1) Then Return
 		If $g_iCommandStop = -1 Then SetLog("====== Waiting for full army ======", $COLOR_SUCCESS)
+
+		If $ChatbotChatGlobal = True Or $ChatbotChatClan = True Then
+              ChatbotMessage()
+		EndIf
+
 		Local $hTimer = __TimerInit()
 		Local $iReHere = 0
 		;PrepareDonateCC()
@@ -974,6 +984,9 @@ Func AttackMain() ;Main control for attack functions
 				SetLog(_PadStringCenter(" Hero status check" & BitAND($g_aiAttackUseHeroes[$LB], $g_aiSearchHeroWaitEnable[$LB], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$LB] & "|" & $g_iHeroAvailable, 54, "="), $COLOR_DEBUG)
 				;Setlog("BullyMode: " & $g_abAttackTypeEnable[$TB] & ", Bully Hero: " & BitAND($g_aiAttackUseHeroes[$g_iAtkTBMode], $g_aiSearchHeroWaitEnable[$g_iAtkTBMode], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$g_iAtkTBMode] & "|" & $g_iHeroAvailable, $COLOR_DEBUG)
 			EndIf
+			If $ChatbotChatGlobal = true or $ChatbotChatClan = true Then
+               ChatbotMessage()	
+	        EndIf	
 			PrepareSearch()
 			If $g_bOutOfGold = True Then Return ; Check flag for enough gold to search
 			If $g_bRestart = True Then Return
