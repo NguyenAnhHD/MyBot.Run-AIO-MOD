@@ -95,3 +95,5 @@
 #include "functions\Other\Multy Lang.au3"
 ;Contol function by kychera
 #include "functions\Other\Control.au3"
+;function break connection by kychera
+#include "functions\Other\DetectConnection.au3"
