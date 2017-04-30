@@ -1377,3 +1377,11 @@ Global $g_aWeakDefenseMaxLevels = [0, 2, 4, 4, 9, 9, 8]
 
 ; Team++ AIO MOD
 #include "MOD_Team++AIO\Globals_Team++AIO.au3"
+
+; Android Settings (LunaEclipse)- modification (rulesss,kychera)
+Global $sAndroid = "<No Emulators>"
+Global $sAndroidInstance = ""
+Global $g_sBotTitle, $g_sOldTitle 
+Global $CmbAndroid  
+Global $TxtAndroidInstance 
+Global $LblAndroidInstance

@@ -584,3 +584,25 @@ Func cmbSwLang()
 			setForecast9()
 	EndSwitch
 EndFunc
+
+; Android Settings (LunaEclipse)- modification (rulesss,kychera)
+Func setupAndroidComboBox()
+	Local $androidString = ""
+	Local $aAndroid = getInstalledEmulators()
+
+	; Convert the array into a string
+	$androidString = _ArrayToString($aAndroid, "|")
+
+	; Set the new data of valid Emulators
+	GUICtrlSetData($CmbAndroid, $androidString, $aAndroid[0])
+EndFunc   ;==>setupAndroidComboBox
+
+Func CmbAndroid()
+	$sAndroid = GUICtrlRead($CmbAndroid)
+	modifyAndroid()
+EndFunc   ;==>cmbAndroid
+
+Func TxtAndroidInstance()
+	$sAndroidInstance = GUICtrlRead($TxtAndroidInstance)
+	modifyAndroid()
+EndFunc   ;==>$txtAndroidInstance

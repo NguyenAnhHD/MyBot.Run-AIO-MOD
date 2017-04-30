@@ -160,6 +160,7 @@ Func ApplyConfig_MOD($TypeReadSave)
             
 			;Move the Request CC Troops - Added by rulesss
 			GUICtrlSetState($chkReqCCFirst, $g_bReqCCFirst = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			
 		Case "Save"
 			; Multi Finger - Added by Eloy
 			$iMultiFingerStyle = _GUICtrlComboBox_GetCurSel($CmbDBMultiFinger)
@@ -365,3 +366,24 @@ Func ApplyConfig_Forecast($TypeReadSave)
 			$icmbSwLang = _GUICtrlComboBox_GetCurSel($cmbSwLang)
 	EndSwitch
 EndFunc   ;==>ApplyConfig_Forecast
+
+; Android Settings (LunaEclipse)- modification (rulesss,kychera) 
+Func ApplyConfig_AndroidSettings($TypeReadSave)  
+	Switch $TypeReadSave
+		Case "Read"
+		If _GUICtrlComboBox_FindStringExact($CmbAndroid, String($sAndroid)) <> -1 Then
+		_GUICtrlComboBox_SelectString($CmbAndroid, String($sAndroid))
+	    Else		  
+		_GUICtrlComboBox_SetCurSel($CmbAndroid, 0)
+		EndIf		
+	      modifyAndroid()
+sleep(300)		  
+		  GUICtrlSetData($TxtAndroidInstance, $sAndroidInstance)		 
+         
+		Case "Save"
+		$sAndroid = _GUICtrlComboBox_GetCurSel($CmbAndroid)     
+		   
+		   $sAndroidInstance = GUICtrlRead($TxtAndroidInstance)
+		   
+	EndSwitch
+EndFunc   ;==>ApplyConfig_AndroidSettings

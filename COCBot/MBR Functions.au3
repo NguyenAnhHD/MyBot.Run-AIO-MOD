@@ -157,6 +157,7 @@
 #include "functions\Android\getBSPos.au3"
 #include "functions\Android\UniversalCloseWaitOpenCoC.au3"
 #include "functions\Android\AndroidEmbed.au3"
+#include "functions\Android\modifyAndroid.au3"
 
 #include "functions\Other\WerFaultClose.au3"
 #include "functions\Other\_NumberFormat.au3"

@@ -18,7 +18,7 @@ Global $g_hCmbCOCDistributors
 
 Func CreateBotAndroid()
    Local $x = 25, $y = 45
-   GUICtrlCreateGroup(GetTranslated(642, 1, "Distributors"), $x - 20, $y - 20, $g_iSizeWGrpTab2, $g_iSizeHGrpTab2)
+   GUICtrlCreateGroup(GetTranslated(642, 1, "Distributors"), $x - 20, $y - 20, 438, 50)
 	   $y -=2
 	   $g_hCmbCOCDistributors = GUICtrlCreateCombo("", $x - 8 , $y, 185, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 	   _GUICtrlSetTip(-1, GetTranslated(642, 2, "Allow bot to launch COC based on the distribution chosen"))
@@ -26,4 +26,18 @@ Func CreateBotAndroid()
 	   SetCurSelCmbCOCDistributors()
 	   GUICtrlSetOnEvent(-1, "cmbCOCDistributors")
    GUICtrlCreateGroup("", -99, -99, 1, 1)
+   ; Android Settings (LunaEclipse)- modification (rulesss,kychera)
+    Local $x = 25, $y = 95
+	GUICtrlCreateGroup(GetTranslated(91,2,"Android Options"), $x - 20, $y - 20, 438, 50)
+		$CmbAndroid = GUICtrlCreateCombo("", $x - 10, $y - 5, 130, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			GUICtrlSetTip($CmbAndroid, GetTranslated(91,3,"Use this to select the Android Emulator to use with this profile."))
+			setupAndroidComboBox()
+			GUICtrlSetState(-1, $GUI_SHOW)
+			GUICtrlSetOnEvent(-1, "CmbAndroid")
+		$LblAndroidInstance = GUICtrlCreateLabel(GetTranslated(91,4,"Instance:"), $x + 130, $y - 2 , 60, 21, $SS_RIGHT)
+		$TxtAndroidInstance = GUICtrlCreateInput("", $x + 200, $y - 5, 210, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
+			GUICtrlSetTip($TxtAndroidInstance, GetTranslated(91,5,"Enter the Instance to use with this profile."))
+			GUICtrlSetOnEvent(-1, "TxtAndroidInstance")
+			
 EndFunc
+

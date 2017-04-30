@@ -139,7 +139,10 @@ Func SaveConfig_MOD()
     
 	; Move the Request CC Troops - Added by rulesss
 	_Ini_Add("planned", "ReqCCFirst", $g_bReqCCFirst ? 1 : 0)
-
+    
+	 ; Android Settings (LunaEclipse)- modification (rulesss,kychera)
+	_Ini_Add("Android", "Emulator", GUICtrlRead($CmbAndroid))
+    _Ini_Add("Android", "Instance", GUICtrlRead($TxtAndroidInstance))
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen

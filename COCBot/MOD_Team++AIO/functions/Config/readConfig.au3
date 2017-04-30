@@ -139,6 +139,9 @@ Func ReadConfig_MOD()
 	; Move the Request CC Troops - Added By rulesss
 	$g_bReqCCFirst = (IniRead($g_sProfileConfigPath, "planned", "ReqCCFirst", 0) = 1)
 	
+	; Android Settings (LunaEclipse)- modification (rulesss,kychera)
+     $sAndroid = IniRead($g_sProfileConfigPath, "Android", "Emulator", "<No Emulators>")
+     $sAndroidInstance = IniRead($g_sProfileConfigPath, "Android", "Instance", "")
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen
