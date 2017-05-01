@@ -144,7 +144,7 @@ Func SaveConfig_MOD()
 	_Ini_Add("Lang", "chkRusLang2", $ichkRusLang2 ? 1 : 0)	
 	;Notify alert bot sleep by kychera
 	 _Ini_Add("notify", "AlertConnect", $iNotifyAlertConnect ? 1 : 0)
-	 _Ini_Add("notify", "AlertPBVMFound", $iNotifyAlertBOTSleep ? 1 : 0)
+	 _Ini_Add("notify", "AlertPBSleep", $iNotifyAlertBOTSleep ? 1 : 0)
 	
 EndFunc
 

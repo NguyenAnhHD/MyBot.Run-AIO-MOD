@@ -146,7 +146,7 @@ Func ReadConfig_MOD()
 	IniReadS($ichkRusLang2, $g_sProfileConfigPath, "Lang", "chkRusLang2", 0, "int")	
 	 ;Notify alert bot sleep by kychera
 	 IniReadS($iNotifyAlertConnect, $g_sProfileConfigPath, "notify", "AlertConnect", 0, "int")
-	 IniReadS($iNotifyAlertBOTSleep, $g_sProfileConfigPath, "notify", "AlertPBVMFound", 0, "int")
+	 IniReadS($iNotifyAlertBOTSleep, $g_sProfileConfigPath, "notify", "AlertPBSleep", 0, "int")
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen
