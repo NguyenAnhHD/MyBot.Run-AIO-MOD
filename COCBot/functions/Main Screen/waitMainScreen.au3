@@ -95,6 +95,7 @@ Func waitMainScreenMini()
 	Local $hTimer = __TimerInit()
 	SetDebugLog("waitMainScreenMini")
 	If TestCapture() = False Then getBSPos() ; Update Android Window Positions
+	_ConnectTime2(); fix kychera
 	SetLog("Waiting for Main Screen after " & $g_sAndroidEmulator & " restart", $COLOR_INFO)
 	For $i = 0 To 60 ;30*2000 = 1 Minutes
 		If Not $g_bRunState Then Return

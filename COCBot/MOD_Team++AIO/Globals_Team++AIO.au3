@@ -195,3 +195,9 @@ Global $cmbSwLang = 0
 ; move the Request CC Troops (MMHK) - Added rulesss
 Global $g_bReqCCFirst = False
 Global $chkReqCCFirst = 0
+; Request russian by kychera
+Global $ichkRusLang2 = 0
+Global $chkRusLang2 = 0
+;Notify alert botsleep and break connect by kychera
+Global $ChkNotifyAlertBOTSleep = 0, $iNotifyAlertBOTSleep = 0
+Global $TimerConnect, $DiffConnect, $iNotifyAlertConnect = 0, $ChkNotifyAlertConnect = 0 

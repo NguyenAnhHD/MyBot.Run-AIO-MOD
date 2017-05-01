@@ -295,6 +295,7 @@ Func ApplyConfig_600_11($TypeReadSave)
 				$g_abRequestCCHours[$i] = (GUICtrlRead($g_ahChkRequestCCHours[$i]) = $GUI_CHECKED)
 			Next
 	EndSwitch
+ApplyConfig_RK_MOD_ruRequest($TypeReadSave)
 EndFunc   ;==>ApplyConfig_600_11
 
 Func ApplyConfig_600_12($TypeReadSave)
@@ -612,6 +613,7 @@ Func ApplyConfig_600_18($TypeReadSave)
 			$g_bNotifyAlertBAN = (GUICtrlRead($g_hChkNotifyAlertBAN) = $GUI_CHECKED)
 			$g_bNotifyAlertBOTUpdate = (GUICtrlRead($g_hChkNotifyBOTUpdate) = $GUI_CHECKED)
 	EndSwitch
+ ApplyConfig_RK_MOD_NotifyBotSleep($TypeReadSave)
 EndFunc   ;==>ApplyConfig_600_18
 
 Func ApplyConfig_600_19($TypeReadSave)

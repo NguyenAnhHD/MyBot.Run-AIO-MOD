@@ -148,7 +148,12 @@ Func CreatePushBulletTelegramSubTab()
 		$g_hChkNotifyAlertAnotherDevice = GUICtrlCreateCheckbox(GetTranslated(619,43, "Another device"), $x + 210, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,44, "Send an Alert when your village is connected to from another device."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-
+		;============Modified Kychera=========	
+		$ChkNotifyAlertConnect = GUICtrlCreateCheckbox(GetTranslated(619,73, "Break connection"), $x + 315, $y, -1, -1) 	
+             _GUICtrlSetTip(-1, GetTranslated(619,74, "Send the message after the connection is restored, with the time."))
+			 GUICtrlSetState(-1, $GUI_DISABLE)
+		GUICtrlSetOnEvent(-1, "ChkNotifyConnect")
+		;=====================================
 		$y += 20
 		$g_hChkNotifyAlertMaintenance = GUICtrlCreateCheckbox(GetTranslated(619,45, "Maintenance"), $x + 10, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,46, "Send an Alert when CoC is under maintenance by SuperCell"))
@@ -159,6 +164,12 @@ Func CreatePushBulletTelegramSubTab()
 		$g_hChkNotifyBOTUpdate = GUICtrlCreateCheckbox(GetTranslated(619,49, "BOT Update"), $x + 210, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,50, "Send an Alert when there is a new version of the bot."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
+		;============Modified Kychera=========
+		$ChkNotifyAlertBOTSleep = GUICtrlCreateCheckbox(GetTranslated(619,71, "BOT Sleep"), $x + 315, $y, -1, -1)
+			_GUICtrlSetTip(-1, GetTranslated(619,72, "Send an Alert when Sleep."))
+			GUICtrlSetState(-1, $GUI_DISABLE)
+			GUICtrlSetOnEvent(-1, "ChkNotifyAlertBOTSleep")
+	   ;=====================================	
 		GUICtrlCreateLabel(GetTranslated(619,69,"Help ?"), $x + 197, $y + 93, 220, 24, $SS_RIGHT)
 			GUICtrlSetOnEvent(-1, "NotifyHelp")
 			GUICtrlSetCursor(-1, 0)

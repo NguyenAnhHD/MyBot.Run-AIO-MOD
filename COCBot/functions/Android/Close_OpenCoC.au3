@@ -22,6 +22,7 @@ Func CloseCoC($ReOpenCoC = False)
 	Local $Adb = ""
 	If $ReOpenCoC Then
 		SetLog("Please wait for CoC restart......", $COLOR_ERROR) ; Let user know we need time...
+		_ConnectTime()
 	Else
 		SetLog("Closing CoC......", $COLOR_ERROR) ; Let user know what we do...
 	EndIf
@@ -98,7 +99,7 @@ Func WaitnOpenCoC($iWaitTime, $bFullRestart = False, $bSuspendComputer = False)
 	If Not $g_bRunState Then Return
 
 	Local $RunApp = ""
-	Local $sWaitTime = ""
+	Global $sWaitTime = ""
 	Local $iMin, $iSec, $iHour, $iWaitSec
 	WinGetAndroidHandle()
 	;AndroidHomeButton()
@@ -109,6 +110,7 @@ Func WaitnOpenCoC($iWaitTime, $bFullRestart = False, $bSuspendComputer = False)
 	If $iHour > 0 Then $sWaitTime &= $iHour & " hours "
 	If $iMin > 0 Then $sWaitTime &= $iMin & " minutes "
 	If $iSec > 0 Then $sWaitTime &= $iSec & " seconds "
+	PushMsg("SleepBot")
 	SetLog("Waiting " & $sWaitTime & "before starting CoC", $COLOR_SUCCESS)
 	ReduceBotMemory()
 	Local $hTimer = __TimerInit()
@@ -121,10 +123,11 @@ Func WaitnOpenCoC($iWaitTime, $bFullRestart = False, $bSuspendComputer = False)
 	If $g_iDebugSetlog = 1 Then setlog("CoC Restarted, Waiting for completion", $COLOR_DEBUG)
 
 	If $bFullRestart = True Then
-		checkMainScreen() ; Use checkMainScreen to restart CoC, and waitMainScreen to handle Take A Break wait, or other errors.
-		$g_bRestart = True
+		checkMainScreen() ; Use checkMainScreen to restart CoC, and waitMainScreen to handle Take A Break wait, or other errors.		
+        $g_bRestart = True
 	Else
-		waitMainScreen()
+		waitMainScreen()		
+		PushMsg("WakeUpBot")
 	EndIf
 
 EndFunc   ;==>WaitnOpenCoC
