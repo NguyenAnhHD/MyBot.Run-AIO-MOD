@@ -135,10 +135,10 @@ Func ReadConfig_MOD()
 
 	; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
 ;~	IniReadS($g_bNotifyAlertBOTSleep, $g_sProfileConfigPath, "notify", "AlertPBSleep", False, "Bool")
-    
+
 	; Move the Request CC Troops - Added By rulesss
 	$g_bReqCCFirst = (IniRead($g_sProfileConfigPath, "planned", "ReqCCFirst", 0) = 1)
-	
+
 	; Android Settings (LunaEclipse)- modification (rulesss,kychera)
      $sAndroid = IniRead($g_sProfileConfigPath, "Android", "Emulator", "<No Emulators>")
      $sAndroidInstance = IniRead($g_sProfileConfigPath, "Android", "Instance", "")
@@ -161,11 +161,13 @@ Func ReadConfig_SwitchAcc()
 	Next
 EndFunc ;==>ReadConfig_SwitchAcc
 
-; Forecast - Added By Eloy
+; Forecast - Added By Eloy (modification rulesss,kychera)
 Func ReadConfig_Forecast()
 
 	IniReadS($iChkForecastBoost, $g_sProfileConfigPath, "forecast", "chkForecastBoost", 0, "Int")
+	IniReadS($iChkForecastPause, $g_sProfileConfigPath, "forecast", "chkForecastPause", 0, "Int")
 	IniReadS($iTxtForecastBoost, $g_sProfileConfigPath, "forecast", "txtForecastBoost", 6, "Int")
+	IniReadS($iTxtForecastPause, $g_sProfileConfigPath, "forecast", "txtForecastPause", 2, "Int")
 	IniReadS($ichkForecastHopingSwitchMax, $g_sProfileConfigPath, "profiles", "chkForecastHopingSwitchMax", 0, "Int")
 	IniReadS($icmbForecastHopingSwitchMax, $g_sProfileConfigPath, "profiles", "cmbForecastHopingSwitchMax", 0, "Int")
 	IniReadS($itxtForecastHopingSwitchMax, $g_sProfileConfigPath, "profiles", "txtForecastHopingSwitchMax", 2, "Int")

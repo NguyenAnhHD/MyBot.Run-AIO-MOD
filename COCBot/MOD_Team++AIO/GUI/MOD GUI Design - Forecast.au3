@@ -2,7 +2,7 @@
 ; Name ..........: FORECAST GUI Design
 ; Description ...: This file contains the Sequence that runs all MBR Bot
 ; Author ........: AwesomeGamer 2015
-; Modified ......: Eloy 2016
+; Modified ......: rulesss,Eloy
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -25,14 +25,14 @@ Func ForecastGUI()
 		$sTxtTip = GetTranslated(107,13, "Boost Barracks,Heroes, when the loot index.")
 		GUICtrlSetTip(-1, $sTxtTip)
 		GUICtrlSetOnEvent(-1, "chkForecastBoost")
-	$txtForecastBoost = GUICtrlCreateInput("6.0", $x + 90, $y, 30, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
+	$txtForecastBoost = GUICtrlCreateInput("6.0", $x + 100, $y, 30, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
 		$sTxtTip = GetTranslated(107,7, "Minimum loot index for boosting.")
 		GUICtrlSetLimit(-1, 3)
 		GUICtrlSetTip(-1, $sTxtTip)
 		_GUICtrlEdit_SetReadOnly(-1, True)
 		GUICtrlSetState(-1, $GUI_DISABLE)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
-
+	
 	$y += - 27
 	$chkForecastHopingSwitchMax = GUICtrlCreateCheckbox("", $x + 150, $y + 27, 13, 13)
 		$sTxtTip = "" ; Information
@@ -73,7 +73,18 @@ Func ForecastGUI()
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 	setupProfileComboBox()
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
-	$cmbSwLang = GUICtrlCreateCombo("", $x, $y + 50, 45, 45, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+	$chkForecastPause = GUICtrlCreateCheckbox(GetTranslated(107,20, "Halt when below"), $x, $y + 50, -1, -1)
+		$sTxtTip = GetTranslated(107,21, "Halt attacks when the loot index is below the specified value.")
+		GUICtrlSetTip(-1, $sTxtTip)
+		GUICtrlSetOnEvent(-1, "chkForecastPause")
+	$txtForecastPause = GUICtrlCreateInput("2.0", $x + 100, $y + 50, 30, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
+		$sTxtTip = GetTranslated(107,22, "Minimum loot index for halting attacks.")
+		GUICtrlSetLimit(-1, 3)
+		GUICtrlSetTip(-1, $sTxtTip)
+		_GUICtrlEdit_SetReadOnly(-1, True)
+		GUICtrlSetState(-1, $GUI_DISABLE)
+	GUICtrlCreateGroup("", -99, -99, 1, 1)
+	$cmbSwLang = GUICtrlCreateCombo("", $x, $y + 75, 45, 45, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 		GUICtrlSetData(-1, "EN" & "|" & "RU" & "|" & "FR" & "|" & "DE" & "|" & "ES" & "|" & "FA" & "|" & "PT" & "|" & "IN", "EN")
 		GUICtrlSetOnEvent(-1, "cmbSwLang")
 	GUICtrlCreateGroup("", -99, -99, 1, 1)

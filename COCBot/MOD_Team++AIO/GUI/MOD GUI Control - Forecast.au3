@@ -31,6 +31,20 @@ Func chkForecastBoost()
 	EndIf
 EndFunc
 
+Func chkForecastPause()
+    $iChkForecastPause = 1
+	If GUICtrlRead($chkForecastPause) = $GUI_CHECKED Then
+		_GUICtrlEdit_SetReadOnly($txtForecastPause, False)
+		GUICtrlSetState($txtForecastPause, $GUI_ENABLE)
+		GUICtrlSetState($txtForecastPause, $GUI_SHOW)
+	Else
+	$iChkForecastPause = 0    
+		_GUICtrlEdit_SetReadOnly($txtForecastPause, True)
+		GUICtrlSetState($txtForecastPause, $GUI_DISABLE)
+		GUICtrlSetState($txtForecastPause, $GUI_HIDE)
+	EndIf
+EndFunc
+
 Func chkForecastHopingSwitchMax()
 	If GUICtrlRead($chkForecastHopingSwitchMax) = $GUI_CHECKED Then
 	$ichkForecastHopingSwitchMax = 1
@@ -296,6 +310,20 @@ Func nowTicksUTC()
 
 	$nowUTC = StringMid($nowUTC, 7, 4) & "/" & StringMid($nowUTC, 1, 2) & "/" & StringMid($nowUTC, 4, 2) & StringMid($nowUTC, 11)
 	Return _DateDiff('s', "1970/01/01 00:00:00", $nowUTC)
+EndFunc
+
+
+Func checkForecastPause($forecast)
+	Local $return = False
+	If $iChkForecastPause = 1 Then
+		If $currentForecast <= Number($iTxtForecastPause, 3) Then
+			SetLog("Halting attacks: forecast:" & StringFormat("%.1f", $forecast) & " <= setting:" & $iTxtForecastPause, $COLOR_RED)
+			$return = True
+		Else
+			SetLog("Not Halting attacks: forecast:" & StringFormat("%.1f", $forecast) & " > setting:" & $iTxtForecastPause, $COLOR_BLUE)
+		EndIf
+	EndIf
+	Return $return
 EndFunc
 
 Func ForecastSwitch()

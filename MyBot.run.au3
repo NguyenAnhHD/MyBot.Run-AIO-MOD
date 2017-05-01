@@ -676,6 +676,9 @@ Func runBot() ;Bot that runs everything in order
 					SetLog("Forecast index is below the required value, no boost !", $COLOR_RED)
 					EndIf
  			EndIf
+			If $iChkForecastPause = 1 Then
+				$currentForecast = readCurrentForecast()
+			EndIf
 			If IsSearchAttackEnabled() Then ; if attack is disabled skip reporting, requesting, donating, training, and boosting
 				Local $aRndFuncList = ['ReplayShare', 'NotifyReport', 'DonateCC,Train', 'BoostBarracks', 'BoostSpellFactory', 'BoostKing', 'BoostQueen', 'BoostWarden', 'RequestCC']
 				While 1
@@ -941,6 +944,7 @@ Func AttackMain() ;Main control for attack functions
 		MainSuperXPHandler()
 		Return
 	EndIf
+	If checkForecastPause($currentForecast) = True Then Return
 	getArmyCapacity(True, True)
 	If IsSearchAttackEnabled() Then
 		If (IsSearchModeActive($DB) And checkCollectors(True, False)) Or IsSearchModeActive($LB) Or IsSearchModeActive($TS) Then
