@@ -194,7 +194,7 @@ Func SimpleTrain()
 			Case 1 To $SpellCamp[1] - 1 ; 21/11
 				If $ichkFillEQ = 0 Or $SpellCamp[0] - $SpellCamp[1] < $SpellCamp[1] - 1 Then
 					SetLog(" »» Not full queue, Delete queued spells")
-					If Not $g_bForceBrewSpells Then	DeleteQueue(True)				
+					If Not $g_bForceBrewSpells Then	DeleteQueue(True) ; fix kychera					
 					If CheckBlockTroops(True) = False Then ; check if spell camp is not full after delete queue
 						$eBrewMethod = $g_eFull
 					Else
