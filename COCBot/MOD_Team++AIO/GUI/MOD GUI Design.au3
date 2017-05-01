@@ -30,13 +30,16 @@ Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0 , $g_hGUI_MOD_TAB_ITEM2 = 
 ; Forecast
 #include "MOD GUI Design - Forecast.au3"
 
+; Chatbot
+#include "MOD GUI Design - Chatbot.au3"
+
 Func CreateMODTab()
 
 	$g_hGUI_MOD = GUICreate("", $_GUI_MAIN_WIDTH - 20, $_GUI_MAIN_HEIGHT - 255, $_GUI_CHILD_LEFT, $_GUI_CHILD_TOP, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hFrmBotEx)
 
 	CreateModProfiles()
 	GUISwitch($g_hGUI_MOD)
-	$g_hGUI_MOD_TAB = GUICtrlCreateTab(0, 0, $_GUI_MAIN_WIDTH - 20, $_GUI_MAIN_HEIGHT - 255, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))
+	$g_hGUI_MOD_TAB = GUICtrlCreateTab(0, 0, $_GUI_MAIN_WIDTH - 20, $_GUI_MAIN_HEIGHT - 255, BitOR($TCS_SINGLELINE, $TCS_RIGHTJUSTIFY))
 		$g_hGUI_MOD_TAB_ITEM1 = GUICtrlCreateTabItem(GetTranslated(600,60,"Switch Option"))
 		$g_hGUI_MOD_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslated(600,61,"Humanization"))
 			HumanizationGUI()
@@ -48,6 +51,7 @@ Func CreateMODTab()
 			CreateProfileStats()
 		$g_hGUI_MOD_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslated(600,64,"Forecast"))
 			ForecastGUI()
-
+        $g_hGUI_MOD_TAB_ITEM6 = GUICtrlCreateTabItem(GetTranslated(106,1,"Chat"))
+              ChatbotGUI()			
 	GUICtrlCreateTabItem("")
 EndFunc   ;==>CreateMODTab
