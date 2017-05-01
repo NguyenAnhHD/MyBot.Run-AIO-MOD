@@ -166,15 +166,17 @@ Func SaveConfig_SwitchAcc()
 	Next
 EndFunc   ;==>SaveConfig_SwitchAcc
 
-; Forecast - Added By Eloy
+; Forecast - Added By Eloy (modification rulesss,kychera)
 Func SaveConfig_Forecast()
 
 	_Ini_Add("forecast", "txtForecastBoost", GUICtrlRead($txtForecastBoost))
+	_Ini_Add("forecast", "txtForecastPause", GUICtrlRead($txtForecastPause))
 	_Ini_Add("profiles", "cmbForecastHopingSwitchMax", _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMax))
 	_Ini_Add("profiles", "txtForecastHopingSwitchMax", GUICtrlRead($txtForecastHopingSwitchMax))
 	_Ini_Add("profiles", "cmbForecastHopingSwitchMin", _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMin))
 	_Ini_Add("profiles", "txtForecastHopingSwitchMin", GUICtrlRead($txtForecastHopingSwitchMin))
 	_Ini_Add("forecast", "chkForecastBoost", $iChkForecastBoost ? 1 : 0)
+	_Ini_Add("forecast", "chkForecastPause", $iChkForecastPause ? 1 : 0)
 	_Ini_Add("profiles", "chkForecastHopingSwitchMax", $ichkForecastHopingSwitchMax ? 1 : 0)
 	_Ini_Add("profiles", "chkForecastHopingSwitchMin", $ichkForecastHopingSwitchMin ? 1 : 0)
 	_Ini_Add("Lang", "cmbSwLang", _GUICtrlComboBox_GetCurSel($cmbSwLang))

@@ -337,13 +337,16 @@ Func ApplyConfig_SwitchAcc($TypeReadSave)
 	EndSwitch
 EndFunc   ;==>ApplyConfig_SwitchAcc
 
-; Forecast - Added by Eloy
+; Forecast - Added by Eloy (modification rulesss,kychera)
 Func ApplyConfig_Forecast($TypeReadSave)
 	Switch $TypeReadSave
 		Case "Read"
 			GUICtrlSetState($chkForecastBoost, $iChkForecastBoost = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetData($txtForecastBoost, $iTxtForecastBoost)
 			chkForecastBoost()
+			GUICtrlSetState($chkForecastPause, $iChkForecastPause = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($txtForecastPause, $iTxtForecastPause)
+			chkForecastPause()
 			GUICtrlSetState($chkForecastHopingSwitchMax, $ichkForecastHopingSwitchMax = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			_GUICtrlComboBox_SetCurSel($cmbForecastHopingSwitchMax, $icmbForecastHopingSwitchMax)
 			GUICtrlSetData($txtForecastHopingSwitchMax, $itxtForecastHopingSwitchMax)
@@ -357,6 +360,8 @@ Func ApplyConfig_Forecast($TypeReadSave)
 		Case "Save"
 			$iChkForecastBoost = (GUICtrlRead($chkForecastBoost) = $GUI_UNCHECKED)
 			$iTxtForecastBoost = GUICtrlRead($txtForecastBoost)
+			$iChkForecastPause = (GUICtrlRead($chkForecastPause) = $GUI_UNCHECKED)
+			$iTxtForecastPause = GUICtrlRead($txtForecastPause)
 			$ichkForecastHopingSwitchMax = (GUICtrlRead($chkForecastHopingSwitchMax) = $GUI_UNCHECKED)
 			$icmbForecastHopingSwitchMax = _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMax)
 			$itxtForecastHopingSwitchMax = GUICtrlRead($txtForecastHopingSwitchMax)

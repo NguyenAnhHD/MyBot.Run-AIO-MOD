@@ -169,7 +169,7 @@ Global $iTxtWaveFactor = 100
 
 Global $ChkGiantSlot = 0, $iChkGiantSlot = 0, $CmbGiantSlot = 0, $iCmbGiantSlot = 0, $SlotsGiantsVN = 1
 
-; Forecast - Added By Eloy
+; Forecast - Added By Eloy (modification rulesss,kychera)
 Global Const $COLOR_DEEPPINK = 0xFF1493
 Global Const $COLOR_DARKGREEN = 0x006400
 Global $oIE = ObjCreate("Shell.Explorer.2")
@@ -183,11 +183,14 @@ Global $lootIndexScaleMarkers
 Global $currentForecast
 Global $chkForecastBoost = 0, $txtForecastBoost = 0
 Global $iChkForecastBoost = 0, $iTxtForecastBoost = 6
+Global $chkForecastPause = 0, $txtForecastPause = 0
+Global $iChkForecastPause = 0, $iTxtForecastPause = 2
 Global $cmbForecastHopingSwitchMax = 0, $cmbForecastHopingSwitchMin = 0
 Global $chkForecastHopingSwitchMax = 0, $lblForecastHopingSwitchMax = 0, $txtForecastHopingSwitchMax = 2, $chkForecastHopingSwitchMin = 0, $lblForecastHopingSwitchMin = 0, $txtForecastHopingSwitchMin = 0
 Global $ichkForecastHopingSwitchMax = 0, $icmbForecastHopingSwitchMax = 0 , $itxtForecastHopingSwitchMax = 2, $ichkForecastHopingSwitchMin = 0, $icmbForecastHopingSwitchMin = 0, $itxtForecastHopingSwitchMin = 2
 Global $icmbSwLang = 0
 Global $cmbSwLang = 0
+
 
 ; move the Request CC Troops (MMHK) - Added rulesss
 Global $g_bReqCCFirst = False
