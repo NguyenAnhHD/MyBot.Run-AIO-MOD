@@ -141,7 +141,7 @@ $y = 140
 GUICtrlCreateGroup(GetTranslated(671, 100, "Settings"), $x, $y, 180, 105)
 
 $y += 5
-$ChkGiantSlot = GUICtrlCreateCheckbox(GetTranslated(671, 101, "GiantSlot"), $x+10, $y + 10, 89, 25)
+$ChkGiantSlot = _GUICtrlCreateCheckbox(GetTranslated(671, 101, "GiantSlot"), $x+10, $y, 89, 25)
 	$sTxtTip = GetTranslated(671, 102, "perimeter (> = 12, recommended)") & @CRLF & _
 			   GetTranslated(671, 103, "two points on each side (> = 8, recommended)")
 	_GUICtrlSetTip(-1, $sTxtTip)
@@ -153,7 +153,7 @@ GUICtrlSetData(-1,  GetTranslated(671, 104, "Perimeter") & "|" & _
 					GUICtrlSetOnEvent(-1, "CmbGiantSlot")
 ; ==========================================================================================================================
 $y += 34
-$ChkUnitFactor = _GUICtrlCreateCheckbox(GetTranslated(671, 106, "Modify Unit Factor"), $x + 10, $y + 10, 130, 25)
+$ChkUnitFactor = _GUICtrlCreateCheckbox(GetTranslated(671, 106, "Modify Unit Factor"), $x + 10, $y - 7, 130, 25)
 	$sTxtTip = GetTranslated(671, 107, "Unit deploy delay = Unit setting x Unit Factor (millisecond)")
 	_GUICtrlSetTip(-1, $sTxtTip)
 	GUICtrlSetOnEvent(-1, "chkUnitFactor")
@@ -166,7 +166,7 @@ $TxtUnitFactor = GUICtrlCreateInput("10", $x + 140, $y + 6, 31, 20, BitOR($GUI_S
 	GUICtrlSetData(-1, 10)
 	GUICtrlSetOnEvent(-1, "chkUnitFactor")
 $y += 30
-$ChkWaveFactor = _GUICtrlCreateCheckbox(GetTranslated(671, 109, "Modify Wave Factor"), $x + 10, $y + 10, 130, 25)
+$ChkWaveFactor = _GUICtrlCreateCheckbox(GetTranslated(671, 109, "Modify Wave Factor"), $x + 10, $y - 9, 130, 25)
 	$sTxtTip = GetTranslated(671, 108, "Switch troop delay = Wave setting x Wave Factor (millisecond)")
 	_GUICtrlSetTip(-1, $sTxtTip)
 	GUICtrlSetOnEvent(-1, "chkWaveFactor")
