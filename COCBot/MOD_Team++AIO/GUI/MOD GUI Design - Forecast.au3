@@ -12,7 +12,7 @@
 
 ; ======================================================== FORECAST =============================================================
 Func ForecastGUI()
-$37 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$37 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
 	Local $sTxtTip = ""
 	Local $xStart = 0, $yStart = 0
 	Local $x = $xStart + 10, $y = $yStart + 25

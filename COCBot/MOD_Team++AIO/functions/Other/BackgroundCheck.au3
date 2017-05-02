@@ -31,15 +31,15 @@ EndFunc   ;==>chkPic
      Local $iKey
         For $i = 1 To 42
             $iKey = StringRight(GUICtrlRead($BackGr), 1)
-            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\Images\' & $iKey & '.jpg')			
+            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\COCBot\MOD_Team++AIO\Images\' & $iKey & '.jpg')			
         Next
 		 For $i = 43 To 47
             $iKey = StringRight(GUICtrlRead($BackGr), 1)
-            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\Images2\' & $iKey & '.jpg')			
+            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\COCBot\MOD_Team++AIO\Images2\' & $iKey & '.jpg')			
         Next		
 		 For $i = 49 To 50
             $iKey = StringRight(GUICtrlRead($BackGr), 1)
-            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\Images3\' & $iKey & '.jpg')			
+            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\COCBot\MOD_Team++AIO\Images3\' & $iKey & '.jpg')			
         Next		
 EndFunc   ;==>BackGr
 ;================================

@@ -25,7 +25,7 @@ Func CreateSmartUpgradeGUI()
 	Local $x = 25, $y = 45
 
 	GUICtrlCreateGroup(GetTranslated(671,1, "SmartUpgrade"), $x - 20, $y - 20, 430, 335)
-	$g_hChkSmartUpgrade = GUICtrlCreateCheckbox(GetTranslated(671,2, "Enable SmartUpgrade"), $x - 5, $y, -1, -1)
+	$g_hChkSmartUpgrade = _GUICtrlCreateCheckbox(GetTranslated(671,2, "Enable SmartUpgrade"), $x - 5, $y, -1, -1)
 		Local $sTxtTip = GetTranslated(671,3, "Check box to enable automatically starting Upgrades from builders menu")
 		_GUICtrlSetTip(-1, $sTxtTip)
 		GUICtrlSetOnEvent(-1, "chkSmartUpgrade")

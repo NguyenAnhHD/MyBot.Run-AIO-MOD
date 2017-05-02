@@ -21,7 +21,7 @@ Global $g_hLblNotesScriptDB = 0
 Func CreateAttackSearchDeadBaseScripted()
    $g_hGUI_DEADBASE_ATTACK_SCRIPTED = _GUICreate("", $_GUI_MAIN_WIDTH - 195, $g_iSizeHGrpTab4, 150, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DEADBASE)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
-   $45 = GUICtrlCreatePic(@ScriptDir & "\Images2\1.jpg", 0, -5, 280, 352, $WS_CLIPCHILDREN)
+   $45 = GUICtrlCreatePic(@ScriptDir & "\COCBot\MOD_Team++AIO\Images2\1.jpg", 0, -5, 280, 352, $WS_CLIPCHILDREN)
    Local $x = 25, $y = 20
 	   GUICtrlCreateGroup(GetTranslated(607,1,"Deploy"), $x - 20, $y - 20, 270, $g_iSizeHGrpTab4)
 
