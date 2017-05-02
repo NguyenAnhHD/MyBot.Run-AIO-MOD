@@ -139,9 +139,6 @@ Func ReadConfig_MOD()
 	; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 	$g_bChkClanHop = (IniRead($g_sProfileConfigPath, "donate", "chkClanHop", "0") = "1")
 
-	; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
-;~	IniReadS($g_bNotifyAlertBOTSleep, $g_sProfileConfigPath, "notify", "AlertPBSleep", False, "Bool")
-
 	; Move the Request CC Troops - Added By rulesss
 	$g_bReqCCFirst = (IniRead($g_sProfileConfigPath, "planned", "ReqCCFirst", 0) = 1)
 
@@ -149,10 +146,14 @@ Func ReadConfig_MOD()
      $sAndroid = IniRead($g_sProfileConfigPath, "Android", "Emulator", "<No Emulators>")
      $sAndroidInstance = IniRead($g_sProfileConfigPath, "Android", "Instance", "")
 	 ;Request russian by kychera
-	IniReadS($ichkRusLang2, $g_sProfileConfigPath, "Lang", "chkRusLang2", 0, "int")	
+	 IniReadS($ichkRusLang2, $g_sProfileConfigPath, "Lang", "chkRusLang2", 0, "int")	
+	
 	 ;Notify alert bot sleep by kychera
 	 IniReadS($iNotifyAlertConnect, $g_sProfileConfigPath, "notify", "AlertConnect", 0, "int")
 	 IniReadS($iNotifyAlertBOTSleep, $g_sProfileConfigPath, "notify", "AlertPBSleep", 0, "int")
+	 
+	 ; Misc Battle Settings - Added by rulesss
+	 IniReadS($g_bAndroidAdbClicksEnabled , $g_sProfileConfigPath, "Fast Clicks", "UseADBFastClicks", 0, "int")
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen

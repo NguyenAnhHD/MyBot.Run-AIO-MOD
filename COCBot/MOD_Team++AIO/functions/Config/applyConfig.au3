@@ -166,6 +166,10 @@ Func ApplyConfig_MOD($TypeReadSave)
 			;Move the Request CC Troops - Added by rulesss
 			GUICtrlSetState($chkReqCCFirst, $g_bReqCCFirst = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			
+			; Misc Battle Settings Added by rulesss
+			GUICtrlSetState($chkFastADBClicks, $g_bAndroidAdbClicksEnabled = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+            chkFastADBClicks()
+			
 		Case "Save"
 			; Multi Finger - Added by Eloy
 			$iMultiFingerStyle = _GUICtrlComboBox_GetCurSel($CmbDBMultiFinger)
@@ -288,12 +292,11 @@ Func ApplyConfig_MOD($TypeReadSave)
 
 			; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 			$g_bChkClanHop = (GUICtrlRead($g_hChkClanHop) = $GUI_CHECKED)
-
-			; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
-;~			$g_bNotifyAlertBOTSleep = (GUICtrlRead($g_hChkNotifyBOTSleep) = $GUI_CHECKED)
             
-			;Move the Request CC Troops - Added By rulesss
+			;Move the Request CC Troops - Added by rulesss
 			$g_bReqCCFirst = GUICtrlRead($chkReqCCFirst) = $GUI_CHECKED ? 1 : 0
+			
+			
 			
 	EndSwitch
 EndFunc
