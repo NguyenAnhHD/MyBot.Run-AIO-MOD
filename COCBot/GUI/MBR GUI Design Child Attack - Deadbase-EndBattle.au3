@@ -24,11 +24,12 @@ Global $g_hGrpDBEndBattle = 0, $g_hLblStopAtkDBNoLoot1a = 0, $g_hLblStopAtkDBNoL
 	   $g_hLblDBPercentHigher = 0, $g_hLblDBPercentHigherSec = 0, $g_hLblDBPercentChange = 0, $g_hLblDBPercentChangeSec = 0
 
 Func CreateAttackSearchDeadBaseEndBattle()
+   $14 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 10, $y = 45
 	   $g_hGrpDBEndBattle = GUICtrlCreateGroup(GetTranslated(606,1, "Exit Battle"),  $x - 5, $y - 20, $g_iSizeWGrpTab4, $g_iSizeHGrpTab4)
 	   $y -=5
-		   $g_hChkStopAtkDBNoLoot1 = GUICtrlCreateCheckbox(GetTranslated(606,2, "When no New loot") ,$x, $y, -1, -1)
+		   $g_hChkStopAtkDBNoLoot1 = _GUICtrlCreateCheckbox(GetTranslated(606,2, "When no New loot") ,$x, $y, -1, -1)
 			   $sTxtTip = GetTranslated(606,3, "End Battle if there is no extra loot raided within this No. of seconds.") & @CRLF & _
 						  GetTranslated(606,4, "Countdown is started after all Troops and Royals are deployed in battle.")
 			   _GUICtrlSetTip(-1, $sTxtTip)
@@ -42,7 +43,7 @@ Func CreateAttackSearchDeadBaseEndBattle()
 		   $g_hLblStopAtkDBNoLoot1b = GUICtrlCreateLabel(GetTranslated(603,6, "sec."), $x + 120, $y + 3, -1, -1)
 
 	  $y += 20
-		   $g_hChkStopAtkDBNoLoot2 = GUICtrlCreateCheckbox(GetTranslated(606,2, -1) ,$x, $y, -1, -1)
+		   $g_hChkStopAtkDBNoLoot2 = _GUICtrlCreateCheckbox(GetTranslated(606,2, -1) ,$x, $y, -1, -1)
 			   $sTxtTip = GetTranslated(606,3, -1) & @CRLF & GetTranslated(606,4, -1)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 			   GUICtrlSetOnEvent(-1, "chkStopAtkDBNoLoot2")
@@ -82,19 +83,19 @@ Func CreateAttackSearchDeadBaseEndBattle()
 		   $g_hPicDBMinDarkElixirStopAtk2 = GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 117, $y, 16, 16)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 	   $y += 21
-		   $g_hChkDBEndNoResources = GUICtrlCreateCheckbox(GetTranslated(606,9, "When no Resources left"), $x , $y , -1, -1)
+		   $g_hChkDBEndNoResources = _GUICtrlCreateCheckbox(GetTranslated(606,9, "When no Resources left"), $x , $y , -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(606,10, "End Battle when all Gold, Elixir and Dark Elixir = 0"))
 			   GUICtrlSetState(-1, $GUI_ENABLE)
 	   $y += 21
-		   $g_hChkDBEndOneStar = GUICtrlCreateCheckbox(GetTranslated(606,11, "When One Star is won") , $x, $y , -1, -1)
+		   $g_hChkDBEndOneStar = _GUICtrlCreateCheckbox(GetTranslated(606,11, "When One Star is won") , $x, $y , -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(606,12, "Will End the Battle if 1 star is won in battle"))
 			   GUICtrlSetState(-1, $GUI_ENABLE)
 	   $y += 21
-		   $g_hChkDBEndTwoStars = GUICtrlCreateCheckbox(GetTranslated(606,13, "When Two Stars are won") , $x, $y, -1, -1)
+		   $g_hChkDBEndTwoStars = _GUICtrlCreateCheckbox(GetTranslated(606,13, "When Two Stars are won") , $x, $y, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(606,14, "Will End the Battle if 2 stars are won in battle"))
 			   GUICtrlSetState(-1, $GUI_ENABLE)
 		$y += 21
-			$g_hChkDBEndPercentHigher = GUICtrlCreateCheckbox(GetTranslated(606,30, "When Percentage is"), $x, $y, -1, -1)
+			$g_hChkDBEndPercentHigher = _GUICtrlCreateCheckbox(GetTranslated(606,30, "When Percentage is"), $x, $y, -1, -1)
 				_GUICtrlSetTip(-1, GetTranslated(606,31, "End Battle if Overall Damage Percentage is above"))
 				GUICtrlSetState(-1, $GUI_ENABLE)
 		$y +=20
@@ -104,7 +105,7 @@ Func CreateAttackSearchDeadBaseEndBattle()
 				GUICtrlSetLimit(-1, 3)
 			$g_hLblDBPercentHigherSec = GUICtrlCreateLabel("%", $x + 120, $y + 3, -1, -1)
 		$y += 21
-			$g_hChkDBEndPercentChange = GUICtrlCreateCheckbox(GetTranslated(606,33,"When Percentage doesn't") , $x, $y, -1, -1)
+			$g_hChkDBEndPercentChange = _GUICtrlCreateCheckbox(GetTranslated(606,33,"When Percentage doesn't") , $x, $y, -1, -1)
 				_GUICtrlSetTip(-1, GetTranslated(606, 34,"End Battle when Percentage doesn't change in"))
 				GUICtrlSetState(-1, $GUI_ENABLE)
 		$y +=20

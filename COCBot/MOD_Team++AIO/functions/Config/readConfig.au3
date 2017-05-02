@@ -28,7 +28,13 @@ Func ReadConfig_MOD()
 
 	IniReadS($iChkGiantSlot, $g_sProfileConfigPath, "SetSleep", "EnableGiantSlot", 0, "Int")
 	IniReadS($iCmbGiantSlot , $g_sProfileConfigPath, "SetSleep", "CmbGiantSlot", 0 ,"Int")
-
+	
+    ; Background by Kychera
+    IniReadS($iBackGr, $g_sProfileConfigPath, "background", "BackGr", 0, "Int")
+    IniReadS($ichkPic, $g_sProfileConfigPath, "background", "chkPic", 1, "Int")
+    ; Transparent Gui by Kychera
+    IniReadS($iSldTransLevel, $g_sProfileConfigPath, "TransLevel", "Level", 0, "Int")
+	
 	; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 	IniReadS($ichkAutoHide, $g_sProfileConfigPath, "general", "AutoHide", 0, "int")
 	IniReadS($ichkAutoHideDelay, $g_sProfileConfigPath, "general", "AutoHideDelay", 10, "int")

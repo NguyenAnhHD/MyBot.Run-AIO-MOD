@@ -33,6 +33,11 @@ Func ApplyConfig_MOD($TypeReadSave)
 			GUICtrlSetState($ChkGiantSlot, $iChkGiantSlot ? $GUI_CHECKED : $GUI_UNCHECKED)
 			_GUICtrlComboBox_SetCurSel($CmbGiantSlot,$iCmbGiantSlot)
 			ChkGiantSlot()
+            ; Disable background by kychera
+		    GUICtrlSetState($chkPic, $ichkPic = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+		    chkPic()
+		    ; Transparent Gui by kychera
+	        GUICtrlSetData($SldTransLevel, $iSldTransLevel)        
 
 			; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 			GUICtrlSetState($g_hChkAutohide, $ichkAutoHide = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -172,7 +177,12 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$iTxtWaveFactor = GUICtrlRead($TxtWaveFactor)
 			$iChkGiantSlot = (GUICtrlRead($ChkGiantSlot) = $GUI_CHECKED)
 			$iCmbGiantSlot = _GUICtrlComboBox_GetCurSel($CmbGiantSlot)
-
+			
+            ; Disable background by kychera
+			$ichkPic = (GUICtrlRead($chkPic) = $GUI_CHECKED)
+			; Transparent Gui by kychera
+            $iSldTransLevel = GUICtrlRead($SldTransLevel)
+			
 			; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 			$ichkAutoHide = GUICtrlRead($g_hChkAutohide) = $GUI_CHECKED ? 1 : 0
 			$ichkAutoHideDelay = GUICtrlRead($g_hTxtAutohideDelay)

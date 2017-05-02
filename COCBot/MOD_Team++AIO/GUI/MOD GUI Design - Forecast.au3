@@ -12,7 +12,7 @@
 
 ; ======================================================== FORECAST =============================================================
 Func ForecastGUI()
-
+$37 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
 	Local $sTxtTip = ""
 	Local $xStart = 0, $yStart = 0
 	Local $x = $xStart + 10, $y = $yStart + 25
@@ -20,12 +20,12 @@ Func ForecastGUI()
 
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-	$y += + 318
-	$chkForecastBoost = GUICtrlCreateCheckbox(GetTranslated(107,11, "Boost When >"), $x, $y, -1, -1)
+$y += + 318
+	$chkForecastBoost = _GUICtrlCreateCheckbox(GetTranslated(107,11, "Boost When >"), $x, $y, -1, -1)
 		$sTxtTip = GetTranslated(107,13, "Boost Barracks,Heroes, when the loot index.")
 		GUICtrlSetTip(-1, $sTxtTip)
 		GUICtrlSetOnEvent(-1, "chkForecastBoost")
-	$txtForecastBoost = GUICtrlCreateInput("6.0", $x + 100, $y, 30, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
+	$txtForecastBoost = GUICtrlCreateInput("6.0", $x + 87, $y + 2, 30, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
 		$sTxtTip = GetTranslated(107,7, "Minimum loot index for boosting.")
 		GUICtrlSetLimit(-1, 3)
 		GUICtrlSetTip(-1, $sTxtTip)
@@ -73,7 +73,7 @@ Func ForecastGUI()
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 	setupProfileComboBox()
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
-	$chkForecastPause = GUICtrlCreateCheckbox(GetTranslated(107,20, "Halt when below"), $x, $y + 50, -1, -1)
+	$chkForecastPause = _GUICtrlCreateCheckbox(GetTranslated(107,20, "Halt when below"), $x, $y + 50, -1, -1)
 		$sTxtTip = GetTranslated(107,21, "Halt attacks when the loot index is below the specified value.")
 		GUICtrlSetTip(-1, $sTxtTip)
 		GUICtrlSetOnEvent(-1, "chkForecastPause")

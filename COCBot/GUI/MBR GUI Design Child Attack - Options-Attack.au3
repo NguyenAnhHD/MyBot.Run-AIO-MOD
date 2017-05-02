@@ -31,6 +31,7 @@ GLobal $g_hLblDropCChours[12] = [0,0,0,0,0,0,0,0,0,0,0,0]
 Global $g_ahChkDropCCHoursE1 = 0, $g_ahChkDropCCHoursE2 = 0
 
 Func CreateAttackSearchOptionsAttack()
+$17 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
 
    Local $sTxtTip = ""
    Local $x = 25, $y = 45
@@ -72,16 +73,16 @@ Func CreateAttackSearchOptionsAttack()
     Local $x = 25, $y = 145
     GUICtrlCreateGroup(GetTranslated(634,20, "Attack Schedule"), $x - 20, $y - 20, $g_iSizeWGrpTab4, 138)
 	$x -= 5
-		$g_hChkAttackPlannerEnable = GUICtrlCreateCheckbox(GetTranslated(634,21, "Enable Schedule"), $x, $y-5, -1, -1)
+		$g_hChkAttackPlannerEnable = _GUICtrlCreateCheckbox(GetTranslated(634,21, "Enable Schedule"), $x, $y-5, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(634,22, "This option will allow you to schedule attack times") & @CRLF & _
 							   GetTranslated(634,23, "Bot continues to run and will attack only when schedule allows"))
 			GUICtrlSetOnEvent(-1, "chkAttackPlannerEnable")
-		$g_hChkAttackPlannerCloseCoC = GUICtrlCreateCheckbox(GetTranslated(634,24, "Close CoC"), $x, $y+14, -1, -1)
+		$g_hChkAttackPlannerCloseCoC = _GUICtrlCreateCheckbox(GetTranslated(634,24, "Close CoC"), $x, $y+14, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(634,25, "This option will close CoC app when not scheduled to Search & Attack!") & @CRLF & _
 							   GetTranslated(634,26, "Bot Continues to run and will restart when schedule allows"))
 			GUICtrlSetState(-1, $GUI_DISABLE)
 			GUICtrlSetOnEvent(-1, "chkAttackPlannerCloseCoC")
-		$g_hChkAttackPlannerCloseAll = GUICtrlCreateCheckbox(GetTranslated(634,27, "Close emulator"), $x, $y+33, -1, -1)
+		$g_hChkAttackPlannerCloseAll = _GUICtrlCreateCheckbox(GetTranslated(634,27, "Close emulator"), $x, $y+33, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(634,28, "This option will close emulator when not scheduled to Search & Attack!") & @CRLF & _
 							   GetTranslated(634,26, -1))
 			GUICtrlSetState(-1, $GUI_DISABLE)
@@ -91,7 +92,7 @@ Func CreateAttackSearchOptionsAttack()
 							   GetTranslated(634,26, -1))
 			GUICtrlSetState(-1, $GUI_DISABLE)
 			GUICtrlSetOnEvent(-1, "chkAttackPlannerSuspendComputer")
-		$g_hChkAttackPlannerRandom = GUICtrlCreateCheckbox(GetTranslated(634,29, "Random Disable"), $x, $y+71, -1, -1)
+		$g_hChkAttackPlannerRandom = _GUICtrlCreateCheckbox(GetTranslated(634,29, "Random Disable"), $x, $y+71, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(634,30, "This option will randomly stop attacking") & @CRLF & _
 							   GetTranslated(634,26, -1))
 			GUICtrlSetState(-1, $GUI_DISABLE)
@@ -103,7 +104,7 @@ Func CreateAttackSearchOptionsAttack()
 			GUICtrlSetOnEvent(-1, "cmbAttackPlannerRandom")
 		$g_hLbAttackPlannerRandom = GUICtrlCreateLabel(GetTranslated(603,37, "hrs"), $x+148, $y+73, -1,-1)
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hChkAttackPlannerDayLimit = GUICtrlCreateCheckbox(GetTranslated(634,35, "Daily Limit"), $x, $y+90, -1, -1)
+		$g_hChkAttackPlannerDayLimit = _GUICtrlCreateCheckbox(GetTranslated(634,35, "Daily Limit"), $x, $y+90, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(634,36, "Will randomly stop attacking when exceed random number of attacks between range selected") & @CRLF & _
 							   GetTranslated(634,26, -1))
 			GUICtrlSetState(-1, $GUI_DISABLE)

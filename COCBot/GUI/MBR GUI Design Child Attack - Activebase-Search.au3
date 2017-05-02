@@ -37,6 +37,7 @@ Global $g_hGrpABFilter = 0, $g_hPicABMinGold = 0, $g_hPicABMinElixir = 0, $g_hPi
 Global $g_ahPicABMaxTH[12]
 
 Func CreateAttackSearchActiveBaseSearch()
+     $6 = GUICtrlCreatePic(@ScriptDir & "\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)   
    Local $sTxtLightningSpells = GetTranslated(605,15,"Lightning")
    Local $sTxtHealSpells = GetTranslated(605,16,"Heal")
    Local $sTxtRageSpells = GetTranslated(605,17,"Rage")
@@ -51,7 +52,7 @@ Func CreateAttackSearchActiveBaseSearch()
    Local $x = 25, $y = 45
 	GUICtrlCreateGroup(GetTranslated(625,0, -1), $x - 20, $y - 20, 190, $g_iSizeHGrpTab4)
 		$x -= 15
-		$g_hChkABActivateSearches = GUICtrlCreateCheckbox(GetTranslated(625,1, -1), $x, $y, 68, 18)
+		$g_hChkABActivateSearches = _GUICtrlCreateCheckbox(GetTranslated(625,1, -1), $x, $y - 10, 68, 18)
 			_GUICtrlSetTip(-1, GetTranslated(625,68, -1) & @CRLF & _
 							   GetTranslated(625,69, -1))
 			GUICtrlSetState(-1,$GUI_UNCHECKED)
@@ -70,7 +71,7 @@ Func CreateAttackSearchActiveBaseSearch()
 		GUICtrlCreateIcon($g_sLibIconPath, $eIcnMagnifier, $x + 163, $y + 1, 16, 16)
 
     $y +=21
-		$g_hChkABActivateTropies = GUICtrlCreateCheckbox(GetTranslated(625,4, -1), $x, $y, 68, 18)
+		$g_hChkABActivateTropies = _GUICtrlCreateCheckbox(GetTranslated(625,4, -1), $x, $y - 10, 68, 18)
 			_GUICtrlSetTip(-1, GetTranslated(625,68, -1) & @CRLF & GetTranslated(625,70,-1))
 			GUICtrlSetOnEvent(-1, "chkABActivateTropies")
 		$g_hTxtABTropiesMin = GUICtrlCreateInput("0", $x + 70, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
@@ -88,7 +89,7 @@ Func CreateAttackSearchActiveBaseSearch()
 		GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrophy, $x + 163, $y + 1, 16, 16)
 
 	$y +=21
-		$g_hChkABActivateCamps = GUICtrlCreateCheckbox(GetTranslated(625,7, -1), $x, $y, 110, 18)
+		$g_hChkABActivateCamps = _GUICtrlCreateCheckbox(GetTranslated(625,7, -1), $x, $y - 10, 110, 18)
 			$sTxtTip = GetTranslated(625,8, -1)
 			_GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetOnEvent(-1, "chkABActivateCamps")
@@ -154,12 +155,12 @@ Func CreateAttackSearchActiveBaseSearch()
 	$y += 22
 	$x = 10
 	$x = 10
-	    $g_hChkABSpellsWait = GUICtrlCreateCheckbox(GetTranslated(625,71, -1), $x, $y, -1, -1)
+	    $g_hChkABSpellsWait = _GUICtrlCreateCheckbox(GetTranslated(625,71, -1), $x, $y, -1, -1)
  			_GUICtrlSetTip(-1, GetTranslated(625,72, -1) & @CRLF & _
 							   GetTranslated(625,73, -1))
  			GUICtrlSetOnEvent(-1, "chkABSpellsWait")
 
-		$g_hChkABWaitForCastleSpell = GUICtrlCreateCheckbox(GetTranslated(625,74, -1), $x, $y + 25, -1, -1)
+		$g_hChkABWaitForCastleSpell = _GUICtrlCreateCheckbox(GetTranslated(625,74, -1), $x, $y + 25, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(625,75, -1))
 			GUICtrlSetOnEvent(-1, "chkABWaitForCCSpell")
 
@@ -172,7 +173,7 @@ Func CreateAttackSearchActiveBaseSearch()
 			GUICtrlSetData(-1, $sTxtPoisonSpells & "|" & $sTxtEarthquakeSpells & "|" & $sTxtHasteSpells & "|" & $sTxtSkeletonSpells)
 			_GUICtrlSetTip(-1, GetTranslated(625,75, -1))
 
-		$g_hChkABWaitForCastleTroops = GUICtrlCreateCheckbox(GetTranslated(625,78, -1), $x, $y + 75, -1, -1)
+		$g_hChkABWaitForCastleTroops = _GUICtrlCreateCheckbox(GetTranslated(625,78, -1), $x, $y + 75, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(625,79, -1))
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
@@ -212,7 +213,7 @@ Func CreateAttackSearchActiveBaseSearch()
  			GUICtrlSetState (-1, $GUI_HIDE)
 
 		$y += 34
-		$g_hChkABMeetDE = GUICtrlCreateCheckbox(GetTranslated(625,26, -1), $x, $y, -1, -1)
+		$g_hChkABMeetDE = _GUICtrlCreateCheckbox(GetTranslated(625,26, -1), $x, $y, -1, -1)
 			GUICtrlSetOnEvent(-1, "chkABMeetDE")
 			_GUICtrlSetTip(-1, GetTranslated(625,27, -1))
 		$g_hTxtABMinDarkElixir = GUICtrlCreateInput("0", $x + 85, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
@@ -224,10 +225,10 @@ Func CreateAttackSearchActiveBaseSearch()
 			_GUICtrlSetTip(-1, $sTxtTip)
 
 		$y += 24
-		$g_hChkABMeetTrophy = GUICtrlCreateCheckbox(GetTranslated(625,4, -1), $x, $y, -1, -1)
+		$g_hChkABMeetTrophy = _GUICtrlCreateCheckbox(GetTranslated(625,4, -1), $x, $y, -1, -1)
 			GUICtrlSetOnEvent(-1, "chkABMeetTrophy")
 			_GUICtrlSetTip(-1, GetTranslated(625,29, -1))
-		$g_hTxtABMinTrophy = GUICtrlCreateInput("0", $x + 85, $y, 20, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+		$g_hTxtABMinTrophy = GUICtrlCreateInput("0", $x + 85, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			$sTxtTip = GetTranslated(625,30, -1)
 			_GUICtrlSetTip(-1, $sTxtTip)
 			_GUICtrlEdit_SetReadOnly(-1, True)
@@ -242,7 +243,7 @@ Func CreateAttackSearchActiveBaseSearch()
 			_GUICtrlSetTip(-1, $sTxtTip)
 
 		$y += 24
-		$g_hChkABMeetTH = GUICtrlCreateCheckbox(GetTranslated(625,31, -1), $x, $y, -1, -1)
+		$g_hChkABMeetTH = _GUICtrlCreateCheckbox(GetTranslated(625,31, -1), $x, $y, -1, -1)
 			GUICtrlSetOnEvent(-1, "chkABMeetTH")
 			_GUICtrlSetTip(-1, GetTranslated(625,32, -1))
 		$g_hCmbABTH = GUICtrlCreateCombo("", $x + 85, $y - 1, 50, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
@@ -271,7 +272,7 @@ Func CreateAttackSearchActiveBaseSearch()
 			GUICtrlSetState (-1, $GUI_HIDE)
 
 		$y += 24
-		$g_hChkABMeetTHO = GUICtrlCreateCheckbox(GetTranslated(625,34, -1), $x, $y, -1, -1)
+		$g_hChkABMeetTHO = _GUICtrlCreateCheckbox(GetTranslated(625,34, -1), $x, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(625,35, -1))
 		$y += 24
 
@@ -353,7 +354,7 @@ Func CreateAttackSearchActiveBaseSearch()
 
 		$y += 44
 		$x = $xStartColumn
-		$g_ahChkMeetOne[$LB] = GUICtrlCreateCheckbox(GetTranslated(625,40, -1), $x, $y, -1, -1)
+		$g_ahChkMeetOne[$LB] = _GUICtrlCreateCheckbox(GetTranslated(625,40, -1), $x, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(625,41, -1))
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 

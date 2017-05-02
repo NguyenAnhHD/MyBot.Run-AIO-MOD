@@ -21,7 +21,7 @@ Global $g_hLblNotesScriptAB = 0
 Func CreateAttackSearchActiveBaseScripted()
    $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED = _GUICreate("", $_GUI_MAIN_WIDTH - 195, $g_iSizeHGrpTab4, 150, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_ACTIVEBASE)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED)
-
+   $47 = GUICtrlCreatePic (@ScriptDir & "\Images2\1.jpg", 0, -5, 280, 352, $WS_CLIPCHILDREN)
    Local $x = 25, $y = 20
 	   GUICtrlCreateGroup(GetTranslated(607,1, -1), $x - 20, $y - 20, 270, $g_iSizeHGrpTab4)
 
@@ -42,6 +42,7 @@ Func CreateAttackSearchActiveBaseScripted()
 
 		   $y +=25
 		   $g_hLblNotesScriptAB =  GUICtrlCreateLabel("", $x, $y + 5, 200, 140)
+		   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 		   $g_hCmbScriptRedlineImplAB = GUICtrlCreateCombo("", $x, $y + 195, 230, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   GUICtrlSetData(-1, GetTranslated(607,9, "ImgLoc Raw Redline (default)|ImgLoc Redline Drop Points|Original Redline|External Edges"))
 			   _GUICtrlComboBox_SetCurSel(-1, $g_aiAttackScrRedlineRoutine[$LB])
@@ -76,6 +77,7 @@ Func CreateAttackSearchActiveBaseScripted()
 		   Local $x = 55, $y = 233
 
 		   GUICtrlCreateLabel(GetTranslated(607, 35, -1), $x - 2, $y, -1, -1)
+		   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 		   $g_hCmbCSVSpeed[$LB] = GUICtrlCreateCombo("", $x + 122, $y - 5, 50, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   GUICtrlSetData(-1, "0.5x|0.75x|1x|1.25x|1.5x|2x|3x", "1x")
 

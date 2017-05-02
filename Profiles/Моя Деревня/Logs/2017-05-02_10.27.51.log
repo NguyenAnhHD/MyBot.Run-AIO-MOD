@@ -1,0 +1,464 @@
+D [2017-05-02 10:27:51.080] Created log file: C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3\Profiles\Моя Деревня\Logs\2017-05-02_10.27.51.log
+L [2017-05-02 10:27:51.080] ====================== BOT LOG ======================
+D [2017-05-02 10:27:51.080] @AutoItExe: C:\Program Files (x86)\AutoIt3\AutoIt3.exe
+D [2017-05-02 10:27:51.080] @ScriptFullPath: C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3\MyBot.run.au3
+D [2017-05-02 10:27:51.080] @WorkingDir: C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3
+D [2017-05-02 10:27:51.080] @AutoItPID: 9428
+D [2017-05-02 10:27:51.080] @OSArch: X64
+D [2017-05-02 10:27:51.080] @OSVersion: WIN_81
+D [2017-05-02 10:27:51.080] @OSBuild: 9600
+D [2017-05-02 10:27:51.095] @OSServicePack: 
+D [2017-05-02 10:27:51.095] Primary Display: 1600 x 900 - 32bit
+D [2017-05-02 10:27:51.095] Bot title updated to: My Bot v7.1.3 - Team++ AIO MOD v1.6.2 - 
+D [2017-05-02 10:27:51.095] readConfig(), call number 1
+D [2017-05-02 10:27:51.127] Read Building Config C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3\Profiles\Моя Деревня\building.ini
+D [2017-05-02 10:27:51.158] Read Config C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3\Profiles\Моя Деревня\config.ini
+L [2017-05-02 10:27:51.455] Watchdog launched
+D [2017-05-02 10:27:51.548] SplashStep 1 of 10: Initializing Android...(0.09 sec)
+D [2017-05-02 10:27:51.548] SplashStep 2 of 10: Detecting Android...(0.09 sec)
+D [2017-05-02 10:27:51.548] DetectRunningAndroid()
+D [2017-05-02 10:27:51.564] UpdateAndroidConfig("MEmu")
+D [2017-05-02 10:27:51.564] InitAndroid(False): MEmu
+D [2017-05-02 10:27:52.002] New Bot Host Window Handle registered: 0x00331BC0
+D [2017-05-02 10:27:52.564] MEmu phone_layout is 2
+D [2017-05-02 10:27:52.564] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:27:52.564] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:52.705] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:27:52.705] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:52.814] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:27:52.814] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:27:52.814] Android Emulator not launched
+D [2017-05-02 10:27:52.830] Using Window sizes of MEmu 2.6.2
+D [2017-05-02 10:27:52.830] MEmu Tool Bar state is undetermined as treated as visible
+D [2017-05-02 10:27:52.830] MEmu Window Width updated from 911 to 908
+D [2017-05-02 10:27:52.830] MEmu Window Height updated from 768 to 770
+D [2017-05-02 10:27:52.830] Android: MEmu
+D [2017-05-02 10:27:52.830] Android Config: 0
+D [2017-05-02 10:27:52.830] Android Version: 2.6.6
+D [2017-05-02 10:27:52.845] Android Instance: MEmu
+D [2017-05-02 10:27:52.845] Android Window Title: MEmu 
+D [2017-05-02 10:27:52.845] Android Program Path: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:27:52.845] Android Program Parameter: MEmu
+D [2017-05-02 10:27:52.845] Android Program FileVersionInfo: not available
+D [2017-05-02 10:27:52.845] Android SecureME setting: 3
+D [2017-05-02 10:27:52.845] Android ADB Path: D:\Program Files\Microvirt\MEmu\adb.exe
+D [2017-05-02 10:27:52.845] Android ADB Device: 127.0.0.1:21503
+D [2017-05-02 10:27:52.845] Android ADB Shared Folder: /mnt/shell/emulated/0/Pictures/
+D [2017-05-02 10:27:52.861] Android ADB Shared Folder on Host: C:\Users\DM\Pictures\MEmu Фото\
+D [2017-05-02 10:27:52.861] Android ADB Shared SubFolder: 
+D [2017-05-02 10:27:52.861] Android Mouse Device: Microvirt Virtual Input
+D [2017-05-02 10:27:52.861] Android ADB screencap command enabled: True
+D [2017-05-02 10:27:52.861] Android ADB input command enabled: True
+D [2017-05-02 10:27:52.861] Android ADB Mouse Click enabled: False
+D [2017-05-02 10:27:52.861] Android ADB Click Drag enabled: True
+D [2017-05-02 10:27:52.861] Bot Background Mode for screen capture: enabled
+D [2017-05-02 10:27:52.861] No Focus Tampering: False
+D [2017-05-02 10:27:52.861] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:27:52.861] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:52.986] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:27:52.986] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:53.095] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:27:53.095] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:27:53.095] Android Emulator not launched
+D [2017-05-02 10:27:53.095] InitAndroid(False): MEmu END, initialization successful = True, result = True
+D [2017-05-02 10:27:53.095] UpdateAndroidConfig("MEmu") END
+D [2017-05-02 10:27:53.095] GetAndroidRunningInstance: Try to find "D:\Program Files\Microvirt\MEmu\MEmu.exe"
+D [2017-05-02 10:27:53.095] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:53.205] No process found by CommandLine: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:27:53.220] UpdateAndroidConfig("")
+D [2017-05-02 10:27:53.220] InitAndroid(False): BlueStacks2
+L [2017-05-02 10:27:53.220] Serious error has occurred: Cannot find BlueStacks2:
+L [2017-05-02 10:27:53.220] C:\Program Files (x86)\BlueStacks\HD-Frontend.exe
+D [2017-05-02 10:27:53.220] InitAndroid(False): BlueStacks2 END, initialization successful = True, result = False
+D [2017-05-02 10:27:53.220] UpdateAndroidConfig("") END
+D [2017-05-02 10:27:53.220] UpdateAndroidConfig("")
+D [2017-05-02 10:27:53.220] InitAndroid(False): BlueStacks
+L [2017-05-02 10:27:53.236] Serious error has occurred: Cannot find BlueStacks:
+L [2017-05-02 10:27:53.236] C:\Program Files (x86)\BlueStacks\HD-Frontend.exe
+D [2017-05-02 10:27:53.236] InitAndroid(False): BlueStacks END, initialization successful = True, result = False
+D [2017-05-02 10:27:53.236] UpdateAndroidConfig("") END
+D [2017-05-02 10:27:53.236] UpdateAndroidConfig("KOPLAYER")
+D [2017-05-02 10:27:53.236] InitAndroid(False): KOPLAYER
+L [2017-05-02 10:27:53.236] Serious error has occurred: Cannot find KOPLAYER:
+L [2017-05-02 10:27:53.236] C:\Program Files (x86)\KOPLAYER\KOPLAYER.exe
+L [2017-05-02 10:27:53.252] Android support for KOPLAYER is not available
+D [2017-05-02 10:27:53.252] InitAndroid(False): KOPLAYER END, initialization successful = True, result = False
+D [2017-05-02 10:27:53.252] UpdateAndroidConfig("KOPLAYER") END
+D [2017-05-02 10:27:53.252] UpdateAndroidConfig("vm1")
+D [2017-05-02 10:27:53.252] InitAndroid(False): LeapDroid
+L [2017-05-02 10:27:53.252] Serious error has occurred: Cannot find LeapDroid
+L [2017-05-02 10:27:53.252] installation directory
+L [2017-05-02 10:27:53.267] Android support for LeapDroid is not available
+D [2017-05-02 10:27:53.267] InitAndroid(False): LeapDroid END, initialization successful = True, result = False
+D [2017-05-02 10:27:53.267] UpdateAndroidConfig("vm1") END
+D [2017-05-02 10:27:53.267] UpdateAndroidConfig("iToolsVM")
+D [2017-05-02 10:27:53.267] InitAndroid(False): iTools
+L [2017-05-02 10:27:53.267] Serious error has occurred: Cannot find iTools
+L [2017-05-02 10:27:53.267] installation directory
+L [2017-05-02 10:27:53.267] Android support for iTools is not available
+D [2017-05-02 10:27:53.283] InitAndroid(False): iTools END, initialization successful = True, result = False
+D [2017-05-02 10:27:53.283] UpdateAndroidConfig("iToolsVM") END
+D [2017-05-02 10:27:53.283] UpdateAndroidConfig("droid4x")
+D [2017-05-02 10:27:53.283] InitAndroid(False): Droid4X
+L [2017-05-02 10:27:53.283] Serious error has occurred: Cannot find Droid4X:
+L [2017-05-02 10:27:53.283] C:\Program Files (x86)\Droid4X\Droid4X.exe
+L [2017-05-02 10:27:53.283] Android support for Droid4X is not available
+D [2017-05-02 10:27:53.283] InitAndroid(False): Droid4X END, initialization successful = True, result = False
+D [2017-05-02 10:27:53.283] UpdateAndroidConfig("droid4x") END
+D [2017-05-02 10:27:53.283] UpdateAndroidConfig("nox")
+D [2017-05-02 10:27:53.283] InitAndroid(False): Nox
+L [2017-05-02 10:27:53.283] Serious error has occurred: Cannot find Nox file:
+L [2017-05-02 10:27:53.298] Nox.exe
+L [2017-05-02 10:27:53.298] Android support for Nox is not available
+D [2017-05-02 10:27:53.298] InitAndroid(False): Nox END, initialization successful = True, result = False
+D [2017-05-02 10:27:53.298] UpdateAndroidConfig("nox") END
+D [2017-05-02 10:27:53.298] UpdateAndroidConfig("MEmu")
+D [2017-05-02 10:27:53.298] InitAndroid(False): MEmu
+D [2017-05-02 10:27:53.830] MEmu phone_layout is 2
+D [2017-05-02 10:27:53.845] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:27:53.845] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:53.955] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:27:53.955] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:54.064] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:27:54.064] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:27:54.064] Android Emulator not launched
+D [2017-05-02 10:27:54.064] Using Window sizes of MEmu 2.6.2
+D [2017-05-02 10:27:54.080] MEmu Tool Bar state is undetermined as treated as visible
+D [2017-05-02 10:27:54.080] MEmu Window Width updated from 911 to 908
+D [2017-05-02 10:27:54.080] MEmu Window Height updated from 768 to 770
+D [2017-05-02 10:27:54.080] Android: MEmu
+D [2017-05-02 10:27:54.080] Android Config: 0
+D [2017-05-02 10:27:54.080] Android Version: 2.6.6
+D [2017-05-02 10:27:54.080] Android Instance: MEmu
+D [2017-05-02 10:27:54.080] Android Window Title: MEmu 
+D [2017-05-02 10:27:54.080] Android Program Path: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:27:54.080] Android Program Parameter: MEmu
+D [2017-05-02 10:27:54.080] Android Program FileVersionInfo: not available
+D [2017-05-02 10:27:54.080] Android SecureME setting: 3
+D [2017-05-02 10:27:54.080] Android ADB Path: D:\Program Files\Microvirt\MEmu\adb.exe
+D [2017-05-02 10:27:54.080] Android ADB Device: 127.0.0.1:21503
+D [2017-05-02 10:27:54.080] Android ADB Shared Folder: /mnt/shell/emulated/0/Pictures/
+D [2017-05-02 10:27:54.095] Android ADB Shared Folder on Host: C:\Users\DM\Pictures\MEmu Фото\
+D [2017-05-02 10:27:54.095] Android ADB Shared SubFolder: 
+D [2017-05-02 10:27:54.095] Android Mouse Device: Microvirt Virtual Input
+D [2017-05-02 10:27:54.095] Android ADB screencap command enabled: True
+D [2017-05-02 10:27:54.095] Android ADB input command enabled: True
+D [2017-05-02 10:27:54.095] Android ADB Mouse Click enabled: False
+D [2017-05-02 10:27:54.095] Android ADB Click Drag enabled: True
+D [2017-05-02 10:27:54.095] Bot Background Mode for screen capture: enabled
+D [2017-05-02 10:27:54.095] No Focus Tampering: False
+D [2017-05-02 10:27:54.095] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:27:54.095] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:54.189] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:27:54.189] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:54.267] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:27:54.267] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:27:54.267] Android Emulator not launched
+D [2017-05-02 10:27:54.267] InitAndroid(False): MEmu END, initialization successful = True, result = True
+D [2017-05-02 10:27:54.283] UpdateAndroidConfig("MEmu") END
+D [2017-05-02 10:27:54.283] Found no running Android Emulator
+D [2017-05-02 10:27:54.283] DetectInstalledAndroid()
+D [2017-05-02 10:27:54.283] UpdateAndroidConfig("MEmu")
+D [2017-05-02 10:27:54.283] InitAndroid(False): MEmu
+D [2017-05-02 10:27:54.970] MEmu phone_layout is 2
+D [2017-05-02 10:27:54.970] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:27:54.970] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:55.095] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:27:55.095] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:55.236] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:27:55.236] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:27:55.236] Android Emulator not launched
+D [2017-05-02 10:27:55.236] Using Window sizes of MEmu 2.6.2
+D [2017-05-02 10:27:55.252] MEmu Tool Bar state is undetermined as treated as visible
+D [2017-05-02 10:27:55.252] MEmu Window Width updated from 911 to 908
+D [2017-05-02 10:27:55.252] MEmu Window Height updated from 768 to 770
+D [2017-05-02 10:27:55.252] Android: MEmu
+D [2017-05-02 10:27:55.267] Android Config: 0
+D [2017-05-02 10:27:55.267] Android Version: 2.6.6
+D [2017-05-02 10:27:55.267] Android Instance: MEmu
+D [2017-05-02 10:27:55.267] Android Window Title: MEmu 
+D [2017-05-02 10:27:55.267] Android Program Path: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:27:55.267] Android Program Parameter: MEmu
+D [2017-05-02 10:27:55.267] Android Program FileVersionInfo: not available
+D [2017-05-02 10:27:55.267] Android SecureME setting: 3
+D [2017-05-02 10:27:55.267] Android ADB Path: D:\Program Files\Microvirt\MEmu\adb.exe
+D [2017-05-02 10:27:55.267] Android ADB Device: 127.0.0.1:21503
+D [2017-05-02 10:27:55.267] Android ADB Shared Folder: /mnt/shell/emulated/0/Pictures/
+D [2017-05-02 10:27:55.283] Android ADB Shared Folder on Host: C:\Users\DM\Pictures\MEmu Фото\
+D [2017-05-02 10:27:55.283] Android ADB Shared SubFolder: 
+D [2017-05-02 10:27:55.283] Android Mouse Device: Microvirt Virtual Input
+D [2017-05-02 10:27:55.283] Android ADB screencap command enabled: True
+D [2017-05-02 10:27:55.283] Android ADB input command enabled: True
+D [2017-05-02 10:27:55.283] Android ADB Mouse Click enabled: False
+D [2017-05-02 10:27:55.283] Android ADB Click Drag enabled: True
+D [2017-05-02 10:27:55.283] Bot Background Mode for screen capture: enabled
+D [2017-05-02 10:27:55.298] No Focus Tampering: False
+D [2017-05-02 10:27:55.298] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:27:55.298] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:55.408] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:27:55.408] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:27:55.533] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:27:55.533] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:27:55.533] Android Emulator not launched
+D [2017-05-02 10:27:55.533] InitAndroid(False): MEmu END, initialization successful = True, result = True
+D [2017-05-02 10:27:55.533] UpdateAndroidConfig("MEmu") END
+D [2017-05-02 10:27:55.533] Found installed MEmu 2.6.6
+D [2017-05-02 10:27:55.533] Retrieving CoC distributors
+D [2017-05-02 10:27:55.533] C:\Users\DM\Pictures\MEmu Фото\ exists
+D [2017-05-02 10:27:56.658] Bot title updated to: My Bot v7.1.3 - Team++ AIO MOD v1.6.2 - (MEmu)
+D [2017-05-02 10:27:56.658] UpdateSplashTitle: My Bot v7.1.3 - Team++ AIO MOD v1.6.2 - (MEmu), Profile: Моя Деревня
+D [2017-05-02 10:27:56.673] My Bot is the only running instance
+D [2017-05-02 10:27:56.673] SplashStep 3 of 10: Loading Main GUI...(5.22 sec)
+D [2017-05-02 10:27:56.720] SplashStep 4 of 10: Loading GUI Bottom...(5.27 sec)
+D [2017-05-02 10:27:56.845] SplashStep 5 of 10: Loading General tab...(5.39 sec)
+D [2017-05-02 10:27:57.455] SplashStep 6 of 10: Loading Village tab...(5.98 sec)
+D [2017-05-02 10:28:00.439] SplashStep 7 of 10: Loading Attack tab...(8.98 sec)
+D [2017-05-02 10:28:06.035] SplashStep 8 of 10: Loading Bot tab...(14.58 sec)
+D [2017-05-02 10:28:06.332] Retrieving CoC distributors
+D [2017-05-02 10:28:06.332] C:\Users\DM\Pictures\MEmu Фото\ exists
+D [2017-05-02 10:28:07.207] 1 running bot instances detected
+D [2017-05-02 10:28:07.488] UpdateAndroidConfig("MEmu")
+D [2017-05-02 10:28:07.488] InitAndroid(False): MEmu
+D [2017-05-02 10:28:08.378] MEmu phone_layout is 2
+D [2017-05-02 10:28:08.378] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:28:08.378] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:08.488] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:28:08.488] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:08.597] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:08.597] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:28:08.597] Android Emulator not launched
+D [2017-05-02 10:28:08.597] Using Window sizes of MEmu 2.6.2
+D [2017-05-02 10:28:08.613] MEmu Tool Bar state is undetermined as treated as visible
+D [2017-05-02 10:28:08.613] MEmu Window Width updated from 911 to 908
+D [2017-05-02 10:28:08.613] MEmu Window Height updated from 768 to 770
+D [2017-05-02 10:28:08.613] Android: MEmu
+D [2017-05-02 10:28:08.613] Android Config: 0
+D [2017-05-02 10:28:08.613] Android Version: 2.6.6
+D [2017-05-02 10:28:08.613] Android Instance: MEmu
+D [2017-05-02 10:28:08.613] Android Window Title: MEmu 
+D [2017-05-02 10:28:08.613] Android Program Path: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:08.613] Android Program Parameter: MEmu
+D [2017-05-02 10:28:08.613] Android Program FileVersionInfo: not available
+D [2017-05-02 10:28:08.628] Android SecureME setting: 3
+D [2017-05-02 10:28:08.628] Android ADB Path: D:\Program Files\Microvirt\MEmu\adb.exe
+D [2017-05-02 10:28:08.628] Android ADB Device: 127.0.0.1:21503
+D [2017-05-02 10:28:08.628] Android ADB Shared Folder: /mnt/shell/emulated/0/Pictures/
+D [2017-05-02 10:28:08.628] Android ADB Shared Folder on Host: C:\Users\DM\Pictures\MEmu Фото\
+D [2017-05-02 10:28:08.628] Android ADB Shared SubFolder: 
+D [2017-05-02 10:28:08.628] Android Mouse Device: Microvirt Virtual Input
+D [2017-05-02 10:28:08.628] Android ADB screencap command enabled: True
+D [2017-05-02 10:28:08.628] Android ADB input command enabled: True
+D [2017-05-02 10:28:08.628] Android ADB Mouse Click enabled: False
+D [2017-05-02 10:28:08.628] Android ADB Click Drag enabled: True
+D [2017-05-02 10:28:08.644] Bot Background Mode for screen capture: enabled
+D [2017-05-02 10:28:08.644] No Focus Tampering: False
+D [2017-05-02 10:28:08.644] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:28:08.644] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:08.738] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:28:08.738] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:08.832] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:08.832] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:28:08.832] Android Emulator not launched
+D [2017-05-02 10:28:08.832] InitAndroid(False): MEmu END, initialization successful = True, result = True
+D [2017-05-02 10:28:08.832] UpdateAndroidConfig("MEmu") END
+D [2017-05-02 10:28:08.832] UpdateAndroidConfig("")
+D [2017-05-02 10:28:08.832] InitAndroid(False): BlueStacks2
+L [2017-05-02 10:28:08.832] Serious error has occurred: Cannot find BlueStacks2:
+L [2017-05-02 10:28:08.832] C:\Program Files (x86)\BlueStacks\HD-Frontend.exe
+D [2017-05-02 10:28:08.832] InitAndroid(False): BlueStacks2 END, initialization successful = True, result = False
+D [2017-05-02 10:28:08.832] UpdateAndroidConfig("") END
+D [2017-05-02 10:28:08.832] UpdateAndroidConfig("")
+D [2017-05-02 10:28:08.847] InitAndroid(False): BlueStacks
+L [2017-05-02 10:28:08.847] Serious error has occurred: Cannot find BlueStacks:
+L [2017-05-02 10:28:08.847] C:\Program Files (x86)\BlueStacks\HD-Frontend.exe
+D [2017-05-02 10:28:08.847] InitAndroid(False): BlueStacks END, initialization successful = True, result = False
+D [2017-05-02 10:28:08.847] UpdateAndroidConfig("") END
+D [2017-05-02 10:28:08.847] UpdateAndroidConfig("KOPLAYER")
+D [2017-05-02 10:28:08.847] InitAndroid(False): KOPLAYER
+L [2017-05-02 10:28:08.847] Serious error has occurred: Cannot find KOPLAYER:
+L [2017-05-02 10:28:08.863] C:\Program Files (x86)\KOPLAYER\KOPLAYER.exe
+L [2017-05-02 10:28:08.863] Android support for KOPLAYER is not available
+D [2017-05-02 10:28:08.863] InitAndroid(False): KOPLAYER END, initialization successful = True, result = False
+D [2017-05-02 10:28:08.863] UpdateAndroidConfig("KOPLAYER") END
+D [2017-05-02 10:28:08.863] UpdateAndroidConfig("vm1")
+D [2017-05-02 10:28:08.863] InitAndroid(False): LeapDroid
+L [2017-05-02 10:28:08.863] Serious error has occurred: Cannot find LeapDroid
+L [2017-05-02 10:28:08.863] installation directory
+L [2017-05-02 10:28:08.863] Android support for LeapDroid is not available
+D [2017-05-02 10:28:08.863] InitAndroid(False): LeapDroid END, initialization successful = True, result = False
+D [2017-05-02 10:28:08.863] UpdateAndroidConfig("vm1") END
+D [2017-05-02 10:28:08.878] UpdateAndroidConfig("iToolsVM")
+D [2017-05-02 10:28:08.878] InitAndroid(False): iTools
+L [2017-05-02 10:28:08.878] Serious error has occurred: Cannot find iTools
+L [2017-05-02 10:28:08.878] installation directory
+L [2017-05-02 10:28:08.878] Android support for iTools is not available
+D [2017-05-02 10:28:08.878] InitAndroid(False): iTools END, initialization successful = True, result = False
+D [2017-05-02 10:28:08.878] UpdateAndroidConfig("iToolsVM") END
+D [2017-05-02 10:28:08.878] UpdateAndroidConfig("droid4x")
+D [2017-05-02 10:28:08.894] InitAndroid(False): Droid4X
+L [2017-05-02 10:28:08.894] Serious error has occurred: Cannot find Droid4X:
+L [2017-05-02 10:28:08.894] C:\Program Files (x86)\Droid4X\Droid4X.exe
+L [2017-05-02 10:28:08.894] Android support for Droid4X is not available
+D [2017-05-02 10:28:08.894] InitAndroid(False): Droid4X END, initialization successful = True, result = False
+D [2017-05-02 10:28:08.894] UpdateAndroidConfig("droid4x") END
+D [2017-05-02 10:28:08.894] UpdateAndroidConfig("nox")
+D [2017-05-02 10:28:08.894] InitAndroid(False): Nox
+L [2017-05-02 10:28:08.910] Serious error has occurred: Cannot find Nox file:
+L [2017-05-02 10:28:08.910] Nox.exe
+L [2017-05-02 10:28:08.910] Android support for Nox is not available
+D [2017-05-02 10:28:08.910] InitAndroid(False): Nox END, initialization successful = True, result = False
+D [2017-05-02 10:28:08.910] UpdateAndroidConfig("nox") END
+D [2017-05-02 10:28:08.910] UpdateAndroidConfig("MEmu")
+D [2017-05-02 10:28:08.910] InitAndroid(False): MEmu
+D [2017-05-02 10:28:09.597] MEmu phone_layout is 2
+D [2017-05-02 10:28:09.597] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:28:09.597] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:09.707] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:28:09.707] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:09.816] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:09.816] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:28:09.816] Android Emulator not launched
+D [2017-05-02 10:28:09.816] Using Window sizes of MEmu 2.6.2
+D [2017-05-02 10:28:09.816] MEmu Tool Bar state is undetermined as treated as visible
+D [2017-05-02 10:28:09.816] MEmu Window Width updated from 911 to 908
+D [2017-05-02 10:28:09.816] MEmu Window Height updated from 768 to 770
+D [2017-05-02 10:28:09.832] Android: MEmu
+D [2017-05-02 10:28:09.832] Android Config: 0
+D [2017-05-02 10:28:09.832] Android Version: 2.6.6
+D [2017-05-02 10:28:09.832] Android Instance: MEmu
+D [2017-05-02 10:28:09.832] Android Window Title: MEmu 
+D [2017-05-02 10:28:09.832] Android Program Path: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:09.832] Android Program Parameter: MEmu
+D [2017-05-02 10:28:09.832] Android Program FileVersionInfo: not available
+D [2017-05-02 10:28:09.832] Android SecureME setting: 3
+D [2017-05-02 10:28:09.832] Android ADB Path: D:\Program Files\Microvirt\MEmu\adb.exe
+D [2017-05-02 10:28:09.832] Android ADB Device: 127.0.0.1:21503
+D [2017-05-02 10:28:09.847] Android ADB Shared Folder: /mnt/shell/emulated/0/Pictures/
+D [2017-05-02 10:28:09.847] Android ADB Shared Folder on Host: C:\Users\DM\Pictures\MEmu Фото\
+D [2017-05-02 10:28:09.847] Android ADB Shared SubFolder: 
+D [2017-05-02 10:28:09.847] Android Mouse Device: Microvirt Virtual Input
+D [2017-05-02 10:28:09.847] Android ADB screencap command enabled: True
+D [2017-05-02 10:28:09.847] Android ADB input command enabled: True
+D [2017-05-02 10:28:09.847] Android ADB Mouse Click enabled: False
+D [2017-05-02 10:28:09.847] Android ADB Click Drag enabled: True
+D [2017-05-02 10:28:09.847] Bot Background Mode for screen capture: enabled
+D [2017-05-02 10:28:09.847] No Focus Tampering: False
+D [2017-05-02 10:28:09.847] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:28:09.863] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:09.972] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:28:09.972] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:10.082] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:10.082] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:28:10.082] Android Emulator not launched
+D [2017-05-02 10:28:10.082] InitAndroid(False): MEmu END, initialization successful = True, result = True
+D [2017-05-02 10:28:10.082] UpdateAndroidConfig("MEmu") END
+D [2017-05-02 10:28:11.175] SplashStep 9 of 10: Loading MOD tab...(19.72 sec)
+D [2017-05-02 10:28:13.285] SplashStep 10 of 10: Loading About Us tab...(21.83 sec)
+D [2017-05-02 10:28:13.300] SplashStep 11 of 10: Initializing GUI...(21.84 sec)
+D [2017-05-02 10:28:13.488] Redraw MyBot ControlIds (forced): 0x00221F02, 0x00242072
+D [2017-05-02 10:28:13.488] Control ID 0x00221F02 handle: 0x00221F02 parent: 0x00351F0E $g_hFrmBot: 0x00291234 $g_hFrmBotEx: 0x002219E2 Pos: 10, 133, 452, 297
+D [2017-05-02 10:28:13.488] Control ID 0x00221F02 RedrawWindow Pos: 10, 133, 462, 430
+D [2017-05-02 10:28:13.488] Control ID 0x00242072 handle: 0x00242072 parent: 0x00351F0E $g_hFrmBot: 0x00291234 $g_hFrmBotEx: 0x002219E2 Pos: 10, 434, 452, 107
+D [2017-05-02 10:28:13.488] Control ID 0x00242072 RedrawWindow Pos: 10, 434, 462, 541
+D [2017-05-02 10:28:13.504] $g_hFrmBot=0x00291234
+D [2017-05-02 10:28:13.504] $g_hFrmBotEx=0x002219E2
+D [2017-05-02 10:28:13.504] $g_hFrmBotBottom=0x00200A20
+D [2017-05-02 10:28:13.504] $g_hFrmBotEmbeddedShield=0
+D [2017-05-02 10:28:13.504] $g_hFrmBotEmbeddedShieldInput=17
+D [2017-05-02 10:28:13.504] $g_hFrmBotEmbeddedGraphics=0
+D [2017-05-02 10:28:13.519] Created attack log file: C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3\Profiles\Моя Деревня\Logs\AttackLog-2017-05.log
+D [2017-05-02 10:28:13.535] readConfig(), call number 2
+D [2017-05-02 10:28:13.566] Read Building Config C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3\Profiles\Моя Деревня\building.ini
+D [2017-05-02 10:28:13.613] Read Config C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3\Profiles\Моя Деревня\config.ini
+D [2017-05-02 10:28:14.004] applyConfig(), call number 1
+D [2017-05-02 10:28:14.004] Disable MyBot Window Redraw: applyConfig
+D [2017-05-02 10:28:14.004] Bot title updated to: My Bot v7.1.3 - Team++ AIO MOD v1.6.2 - (MEmu)
+D [2017-05-02 10:28:14.894] Bot title updated to: My Bot v7.1.3 - Team++ AIO MOD v1.6.2 - (MEmu)
+D [2017-05-02 10:28:14.894] UpdateAndroidConfig("MEmu")
+D [2017-05-02 10:28:14.910] InitAndroid(False): MEmu
+D [2017-05-02 10:28:15.692] MEmu phone_layout is 2
+D [2017-05-02 10:28:15.692] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:28:15.692] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:15.801] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:28:15.801] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:15.926] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:15.926] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:28:15.926] Android Emulator not launched
+D [2017-05-02 10:28:15.926] Using Window sizes of MEmu 2.6.2
+D [2017-05-02 10:28:15.926] MEmu Tool Bar state is undetermined as treated as visible
+D [2017-05-02 10:28:15.926] MEmu Window Width updated from 911 to 908
+D [2017-05-02 10:28:15.926] MEmu Window Height updated from 768 to 770
+D [2017-05-02 10:28:15.942] Android: MEmu
+D [2017-05-02 10:28:15.942] Android Config: 0
+D [2017-05-02 10:28:15.942] Android Version: 2.6.6
+D [2017-05-02 10:28:15.942] Android Instance: MEmu
+D [2017-05-02 10:28:15.942] Android Window Title: MEmu 
+D [2017-05-02 10:28:15.942] Android Program Path: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:15.942] Android Program Parameter: MEmu
+D [2017-05-02 10:28:15.942] Android Program FileVersionInfo: not available
+D [2017-05-02 10:28:15.942] Android SecureME setting: 3
+D [2017-05-02 10:28:15.942] Android ADB Path: D:\Program Files\Microvirt\MEmu\adb.exe
+D [2017-05-02 10:28:15.942] Android ADB Device: 127.0.0.1:21503
+D [2017-05-02 10:28:15.942] Android ADB Shared Folder: /mnt/shell/emulated/0/Pictures/
+D [2017-05-02 10:28:15.957] Android ADB Shared Folder on Host: C:\Users\DM\Pictures\MEmu Фото\
+D [2017-05-02 10:28:15.957] Android ADB Shared SubFolder: 
+D [2017-05-02 10:28:15.957] Android Mouse Device: Microvirt Virtual Input
+D [2017-05-02 10:28:15.957] Android ADB screencap command enabled: True
+D [2017-05-02 10:28:15.957] Android ADB input command enabled: True
+D [2017-05-02 10:28:15.957] Android ADB Mouse Click enabled: False
+D [2017-05-02 10:28:15.957] Android ADB Click Drag enabled: True
+D [2017-05-02 10:28:15.957] Bot Background Mode for screen capture: enabled
+D [2017-05-02 10:28:15.957] No Focus Tampering: False
+D [2017-05-02 10:28:15.957] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:28:15.957] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:16.067] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:28:16.082] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:16.160] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:16.160] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:28:16.160] Android Emulator not launched
+D [2017-05-02 10:28:16.160] InitAndroid(False): MEmu END, initialization successful = True, result = True
+D [2017-05-02 10:28:16.160] UpdateAndroidConfig("MEmu") END
+D [2017-05-02 10:28:16.473] Redraw MyBot Window: applyConfig
+D [2017-05-02 10:28:16.551] $g_sProfilePath = C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3\Profiles
+D [2017-05-02 10:28:16.551] $g_sProfileCurrentName = Моя Деревня
+D [2017-05-02 10:28:16.567] $g_sProfileLogsPath = C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3\Profiles\Моя Деревня\Logs\
+D [2017-05-02 10:28:16.567] Restore bot window to 961, 60, caller: GUIControl_WM_NCACTIVATE
+D [2017-05-02 10:28:16.754] MyBot.run.dll opened.
+D [2017-05-02 10:28:16.754] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:28:16.770] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:16.879] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:28:16.879] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:16.988] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:16.988] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:28:16.988] Android Emulator not launched
+D [2017-05-02 10:28:17.004] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:17.098] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:28:17.098] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:17.192] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:17.192] MEmu (MEmu) process not found
+D [2017-05-02 10:28:17.192] setAndroidPID: $pid=0
+D [2017-05-02 10:28:17.817] Android PID=0 initialized: , Idle
+D [2017-05-02 10:28:17.817] debugMBRFunctions: $g_iDebugSearchArea=0, $g_iDebugRedArea=0, $g_iDebugOcr=0
+L [2017-05-02 10:28:18.364] Found installed MEmu 2.6.6
+L [2017-05-02 10:28:18.410] Android Emulator Configuration: MEmu (instance MEmu)
+L [2017-05-02 10:28:19.895] WELCOME CHIEF, YOU HAVE THE LATEST MOD VERSION
+L [2017-05-02 10:28:19.926]  
+L [2017-05-02 10:28:19.926] TEAM++AIO MOD: NguyenAnhHD, Demen, Eloy, ahsan iqbal
+L [2017-05-02 10:28:19.926] CHEEERS..
+L [2017-05-02 10:28:19.926] 
+D [2017-05-02 10:28:19.926] MyBot.run launch time 28938 ms.
+L [2017-05-02 10:28:36.676] Closing My Bot v7.1.3 - Team++ AIO MOD v1.6.2 - (MEmu), please wait ...
+L [2017-05-02 10:28:36.676] Closing My Bot v7.1.3 - Team++ AIO MOD v1.6.2 - (MEmu) now ...
+D [2017-05-02 10:28:36.676] Searching MEmu Window: Title = 'MEmu ', Class = '[CLASS:subWin; INSTANCE:1]', Text = ''
+D [2017-05-02 10:28:36.692] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:36.801] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe MEmu
+D [2017-05-02 10:28:36.801] WMI Query: Select Handle,ExecutablePath,CommandLine from Win32_Process where ExecutablePath like '%D:\\Program Files\\Microvirt\\MEmu\\MEmu.exe%'
+D [2017-05-02 10:28:36.911] Process by CommandLine not found: D:\Program Files\Microvirt\MEmu\MEmu.exe
+D [2017-05-02 10:28:36.911] MEmu (MEmu) Window not found in list
+D [2017-05-02 10:28:36.911] Android Emulator not launched
+D [2017-05-02 10:28:36.926] Android Emulator not launched
+D [2017-05-02 10:28:36.958] saveConfig(), call number 1
+D [2017-05-02 10:28:36.989] Save Building Config C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3\Profiles\Моя Деревня\building.ini
+D [2017-05-02 10:28:37.067] Save Config C:\Users\DM\Documents\MyBot.Run-AIO-MOD7.1.3\Profiles\Моя Деревня\config.ini
+D [2017-05-02 10:28:37.551] SaveConfig(), time = 0.59 sec
+D [2017-05-02 10:28:38.481] Bot Host Window Handle un-registered: 0x00331BC0

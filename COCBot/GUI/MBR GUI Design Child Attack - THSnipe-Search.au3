@@ -27,11 +27,12 @@ Global $g_hGrpTSFilter = 0, $g_hPicTSMinGold = 0, $g_hPicTSMinElixir = 0, $g_hPi
 Global $g_hLblAddTiles = 0, $g_hLblAddTiles2 = 0, $g_hLblSWTTiles = 0, $g_hLblTHadd = 0
 
 Func CreateAttackSearchTHSnipeSearch()
+   $25 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 0, 23, 430, 350, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 25, $y = 45
 	GUICtrlCreateGroup(GetTranslated(625,0, -1), $x - 20, $y - 20, 190, $g_iSizeHGrpTab4)
 		$x -= 15
-		$g_hChkTSActivateSearches = GUICtrlCreateCheckbox(GetTranslated(603,5, -1), $x, $y, 68, 18)
+		$g_hChkTSActivateSearches = _GUICtrlCreateCheckbox(GetTranslated(603,5, -1), $x, $y - 10, 68, 18)
 			_GUICtrlSetTip(-1, GetTranslated(625,68, -1) & @CRLF & GetTranslated(625,69, -1))
 			GUICtrlSetState(-1,$GUI_UNCHECKED)
 			GUICtrlSetOnEvent(-1, "chkTSActivateSearches")
@@ -49,7 +50,7 @@ Func CreateAttackSearchTHSnipeSearch()
 		GUICtrlCreateIcon($g_sLibIconPath, $eIcnMagnifier, $x + 163, $y + 1, 16, 16)
 
 	$y +=21
-		$g_hChkTSActivateTropies = GUICtrlCreateCheckbox(GetTranslated(625,4, -1), $x, $y, 68, 18)
+		$g_hChkTSActivateTropies = _GUICtrlCreateCheckbox(GetTranslated(625,4, -1), $x, $y - 10, 68, 18)
 			_GUICtrlSetTip(-1, GetTranslated(625,68, -1) & @CRLF & GetTranslated(625,70,-1))
 			GUICtrlSetOnEvent(-1, "chkTSActivateTropies")
 		$g_hTxtTSTropiesMin = GUICtrlCreateInput("0", $x + 70, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
@@ -69,7 +70,7 @@ Func CreateAttackSearchTHSnipeSearch()
 		GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrophy, $x + 163, $y + 1, 16, 16)
 
 	$y +=21
-		$g_hChkTSActivateCamps = GUICtrlCreateCheckbox(GetTranslated(625,7, -1), $x, $y, 110, 18)
+		$g_hChkTSActivateCamps = _GUICtrlCreateCheckbox(GetTranslated(625,7, -1), $x, $y - 10, 110, 18)
 			$sTxtTip = GetTranslated(625,8, -1)
 			_GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetOnEvent(-1, "chkTSActivateCamps")
@@ -118,7 +119,7 @@ Func CreateAttackSearchTHSnipeSearch()
  			GUICtrlSetState (-1, $GUI_HIDE)
 
 		$y += 34
-		$g_hChkTSMeetDE = GUICtrlCreateCheckbox(GetTranslated(625,26, -1), $x, $y, -1, -1)
+		$g_hChkTSMeetDE = _GUICtrlCreateCheckbox(GetTranslated(625,26, -1), $x, $y, -1, -1)
 			$sTxtTip = GetTranslated(625,27, -1)
 			GUICtrlSetOnEvent(-1, "chkTSMeetDE")
 			_GUICtrlSetTip(-1, $sTxtTip)

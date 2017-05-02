@@ -160,6 +160,10 @@ Func InitializeBot()
 	FinalInitialization($sAndroidInfo)
 
 	;ProcessSetPriority(@AutoItPID, $iBotProcessPriority) ;~ Restore process priority
+    ;===============================================
+	;transparent gui
+      Slider()
+	;===============================================  
 
 EndFunc   ;==>InitializeBot
 

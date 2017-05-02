@@ -24,13 +24,14 @@ Func CreateAttackSearchActiveBaseStandard()
 
    $g_hGUI_ACTIVEBASE_ATTACK_STANDARD = _GUICreate("", $_GUI_MAIN_WIDTH - 195, $g_iSizeHGrpTab4, 150, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_ACTIVEBASE)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_ACTIVEBASE_ATTACK_STANDARD)
-
+   $46 = GUICtrlCreatePic (@ScriptDir & "\Images2\1.jpg", 0, -5, 280, 352, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 25, $y = 20
 
    GUICtrlCreateGroup(GetTranslated(608,1, -1), $x - 20, $y - 20, 270, $g_iSizeHGrpTab4)
    ;$x -= 15
 	  GUICtrlCreateLabel(GetTranslated(608,2, -1),$x, $y, 143,18,$SS_LEFT)
+	  GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
    $y += 15
 	   $g_hCmbStandardDropOrderAB = GUICtrlCreateCombo("", $x, $y, 150, Default, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   GUICtrlSetData(-1, GetTranslated(608,25, -1)&"|Barch/BAM/BAG|GiBarch", GetTranslated(608,25, -1))
@@ -38,6 +39,7 @@ Func CreateAttackSearchActiveBaseStandard()
 	   $y += 25
 	   ;95)
 		   GUICtrlCreateLabel(GetTranslated(608,3, "Attack on")&":", $x, $y + 5, -1, -1)
+		   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 		   $g_hCmbStandardDropSidesAB = GUICtrlCreateCombo("", $x + 55, $y, 120, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   _GUICtrlSetTip(-1, GetTranslated(608,4, -1) & @CRLF & GetTranslated(608,5, -1) & @CRLF & GetTranslated(608,6, -1) & @CRLF & GetTranslated(608,40, -1) & @CRLF & _
 								  GetTranslated(608,29, "Attack on the single side closest to the Dark Elixir Storage") & @CRLF & _
@@ -49,30 +51,33 @@ Func CreateAttackSearchActiveBaseStandard()
 
 		   $y += 25
 		   GUICtrlCreateLabel(GetTranslated(608,12, -1) & ":", $x, $y + 5, -1, -1)
+		   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 			   $sTxtTip = GetTranslated(608,13, -1) & @CRLF & GetTranslated(608,14, -1)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hCmbStandardUnitDelayAB = GUICtrlCreateCombo("", $x + 55, $y, 36, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   _GUICtrlSetTip(-1, $sTxtTip)
 			   GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9|10", "4")
 		   GUICtrlCreateLabel(GetTranslated(608,15, -1) & ":", $x + 100, $y + 5, -1, -1)
+		   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hCmbStandardWaveDelayAB = GUICtrlCreateCombo("", $x + 140, $y, 36, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   _GUICtrlSetTip(-1, $sTxtTip)
 			   GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9|10", "4")
 
 		   $y += 22
-		   $g_hChkRandomSpeedAtkAB = GUICtrlCreateCheckbox(GetTranslated(608,16, -1), $x, $y, -1, -1)
+		   $g_hChkRandomSpeedAtkAB = _GUICtrlCreateCheckbox(GetTranslated(608,16, -1), $x, $y, -1, -1)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 			   GUICtrlSetOnEvent(-1, "chkRandomSpeedAtkAB")
 
 		   $y +=22
-		   $g_hChkSmartAttackRedAreaAB = GUICtrlCreateCheckbox(GetTranslated(608,17, -1), $x, $y, -1, -1)
+		   $g_hChkSmartAttackRedAreaAB = _GUICtrlCreateCheckbox(GetTranslated(608,17, -1), $x, $y, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(608,18, -1))
 			   GUICtrlSetState(-1, $GUI_CHECKED)
 			   GUICtrlSetOnEvent(-1, "chkSmartAttackRedAreaAB")
 
 		   $y += 22
 		   $g_hLblSmartDeployAB = GUICtrlCreateLabel(GetTranslated(608,19, -1) & ":", $x, $y + 5, -1, -1)
+			   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 			   $sTxtTip = GetTranslated(608,20, -1) & @CRLF & GetTranslated(608,21, -1) & @CRLF & GetTranslated(608,22, -1)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hCmbSmartDeployAB = GUICtrlCreateCombo("", $x + 55, $y, 120, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
@@ -80,21 +85,21 @@ Func CreateAttackSearchActiveBaseStandard()
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $y += 26
-		   $g_hChkAttackNearGoldMineAB = GUICtrlCreateCheckbox("", $x + 20, $y, 17, 17)
+		   $g_hChkAttackNearGoldMineAB = GUICtrlCreateCheckbox("", $x + 20, $y, 13, 13)
 			   $sTxtTip = GetTranslated(608,26, -1)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   GUICtrlCreateIcon($g_sLibIconPath, $eIcnMine, $x + 40 , $y - 3 , 24, 24)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $x += 75
-		   $g_hChkAttackNearElixirCollectorAB = GUICtrlCreateCheckbox("", $x, $y, 17, 17)
+		   $g_hChkAttackNearElixirCollectorAB = GUICtrlCreateCheckbox("", $x, $y, 13, 13)
 			   $sTxtTip = GetTranslated(608,27, -1)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   GUICtrlCreateIcon($g_sLibIconPath, $eIcnCollector, $x + 20 , $y - 3 , 24, 24)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $x += 55
-		   $g_hChkAttackNearDarkElixirDrillAB = GUICtrlCreateCheckbox("", $x, $y, 17, 17)
+		   $g_hChkAttackNearDarkElixirDrillAB = GUICtrlCreateCheckbox("", $x, $y, 13, 13)
 			   $sTxtTip = GetTranslated(608,28, -1)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hPicAttackNearDarkElixirDrillAB = GUICtrlCreateIcon($g_sLibIconPath, $eIcnDrill, $x + 20 , $y - 3, 24, 24)

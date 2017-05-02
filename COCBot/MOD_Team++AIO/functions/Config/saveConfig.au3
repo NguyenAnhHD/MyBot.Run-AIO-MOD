@@ -29,7 +29,13 @@ Func SaveConfig_MOD()
 
 	_Ini_Add("SetSleep", "EnableGiantSlot", $iChkGiantSlot ? 1 : 0)
 	_Ini_Add("SetSleep", "CmbGiantSlot", _GUICtrlComboBox_GetCurSel($CmbGiantSlot))
-
+	
+     ;Background by Kychera
+	_Ini_Add("background", "chkPic", $ichkPic ? 1 : 0)
+	_Ini_Add("background", "BackGr", $iBackGr)
+    ;Transparent Gui (Modified Kychera)
+	_Ini_Add("TransLevel", "Level", $iSldTransLevel)
+	
 	; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 	_Ini_Add("general", "AutoHide", $ichkAutoHide ? 1 : 0)
 	_Ini_Add("general", "AutoHideDelay", $ichkAutoHideDelay)

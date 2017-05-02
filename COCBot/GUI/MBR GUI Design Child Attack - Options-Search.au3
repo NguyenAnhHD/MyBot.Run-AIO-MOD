@@ -22,12 +22,13 @@ Global $g_hChkAttackNow = 0, $g_hCmbAttackNowDelay = 0, $g_hChkRestartSearchLimi
 Global $g_hLblVSDelay = 0, $g_hLblTextVSDelay = 0, $g_hLblMaxVSDelay = 0, $g_hLblTextMaxVSDelay = 0, $g_hLblAttackNow = 0, $g_hLblAttackNowSec = 0
 
 Func CreateAttackSearchOptionsSearch()
+   $19 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 25, $y = 45
 
 	GUICtrlCreateGroup(GetTranslated(630,1, "Search Reduction"), $x - 20, $y - 20, 223, 165)
 	$x -=13
-		$g_hChkSearchReduction = GUICtrlCreateCheckbox(GetTranslated(630,2, "Enable Search Reduction") , $x , $y-4, -1, -1)
+		$g_hChkSearchReduction = _GUICtrlCreateCheckbox(GetTranslated(630,2, "Enable Search Reduction") , $x , $y-4, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(630,3, "Check this if you want the search values to automatically be lowered after a certain amount of searches."))
 			GUICtrlSetState(-1, $GUI_UNCHECKED)
 			GUICtrlSetOnEvent(-1, "chkSearchReduction")
@@ -134,7 +135,7 @@ Func CreateAttackSearchOptionsSearch()
 	$y = 45
 	GUICtrlCreateGroup(GetTranslated(630,16, "Search Options"), $x - 20, $y - 20, 189, 165)
 	$x -= 5
-	   $g_hChkAttackNow = GUICtrlCreateCheckbox(GetTranslated(630,17, "Attack Now! option."), $x-5, $y -4, -1, -1)
+	   $g_hChkAttackNow = _GUICtrlCreateCheckbox(GetTranslated(630,17, "Attack Now! option."), $x-5, $y -4, -1, -1)
 			$sTxtTip = GetTranslated(630,18, "Check this if you want the option to have an 'Attack Now!' button next to") & @CRLF & GetTranslated(630,25, "the Start and Pause buttons to bypass the dead base or all base search values.") & @CRLF & GetTranslated(630,26, "The Attack Now! button will only appear when searching for villages to Attack.")
 			_GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetOnEvent(-1, "chkAttackNow")
@@ -151,7 +152,7 @@ Func CreateAttackSearchOptionsSearch()
 			GUICtrlSetState(-1, $GUI_DISABLE)
 
 	  $y += 49
-		$g_hChkRestartSearchLimit = GUICtrlCreateCheckbox( GetTranslated(630,21, "Restart every") & ":", $x-5, $y-8, -1, -1)
+		$g_hChkRestartSearchLimit = _GUICtrlCreateCheckbox( GetTranslated(630,21, "Restart every") & ":", $x-5, $y-8, -1, -1)
 			$sTxtTip = GetTranslated(630,22, "Return To Base after x searches and restart to search enemy villages.")
 			_GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetState(-1, $GUI_CHECKED)
@@ -163,7 +164,7 @@ Func CreateAttackSearchOptionsSearch()
 		GUICtrlCreateLabel( GetTranslated(603,11, -1), $x + 47, $y + 17, -1, -1)
 
 	$y += 45
-		$g_hChkAlertSearch = GUICtrlCreateCheckbox(GetTranslated(630,23, "Alert me when Village found"), $x-5, $y , -1, -1)
+		$g_hChkAlertSearch = _GUICtrlCreateCheckbox(GetTranslated(630,23, "Alert me when Village found"), $x-5, $y , -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(630,24, "Check this if you want an Audio alarm & a Balloon Tip when a Base to attack is found."))
 			GUICtrlSetState(-1, $GUI_CHECKED)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
