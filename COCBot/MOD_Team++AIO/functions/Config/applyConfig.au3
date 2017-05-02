@@ -159,9 +159,6 @@ Func ApplyConfig_MOD($TypeReadSave)
 
 			; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 			GUICtrlSetState($g_hChkClanHop, $g_bChkClanHop ? $GUI_CHECKED : $GUI_UNCHECKED)
-
-			; Notify Bot Speep (Kychera) - Added By NguyenAnhHD
-;~			GUICtrlSetState($g_hChkNotifyBOTSleep, $g_bNotifyAlertBOTSleep ? $GUI_CHECKED : $GUI_UNCHECKED)
             
 			;Move the Request CC Troops - Added by rulesss
 			GUICtrlSetState($chkReqCCFirst, $g_bReqCCFirst = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -169,6 +166,10 @@ Func ApplyConfig_MOD($TypeReadSave)
 			; Misc Battle Settings Added by rulesss
 			GUICtrlSetState($chkFastADBClicks, $g_bAndroidAdbClicksEnabled = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
             chkFastADBClicks()
+			
+			;Enabele\Disabele Watchdog by rulesss,kychera
+			GUICtrlSetState($ChkLaunchWatchdog, $iChkLaunchWatchdog = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkLaunchWatchdog()
 			
 		Case "Save"
 			; Multi Finger - Added by Eloy
@@ -184,6 +185,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 			
             ; Disable background by kychera
 			$ichkPic = (GUICtrlRead($chkPic) = $GUI_CHECKED)
+			
 			; Transparent Gui by kychera
             $iSldTransLevel = GUICtrlRead($SldTransLevel)
 			
@@ -296,7 +298,8 @@ Func ApplyConfig_MOD($TypeReadSave)
 			;Move the Request CC Troops - Added by rulesss
 			$g_bReqCCFirst = GUICtrlRead($chkReqCCFirst) = $GUI_CHECKED ? 1 : 0
 			
-			
+			;Enabele\Disabele Watchdog by rulesss,kychera
+			$iChkLaunchWatchdog = (GUICtrlRead($ChkLaunchWatchdog) = $GUI_CHECKED)
 			
 	EndSwitch
 EndFunc

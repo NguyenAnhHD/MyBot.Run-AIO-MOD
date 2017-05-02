@@ -154,6 +154,9 @@ Func ReadConfig_MOD()
 	 
 	 ; Misc Battle Settings - Added by rulesss
 	 IniReadS($g_bAndroidAdbClicksEnabled , $g_sProfileConfigPath, "Fast Clicks", "UseADBFastClicks", 0, "int")
+	 
+	 ;Enabele\Disabele Watchdog by rulesss,kychera
+	 IniReadS($iChkLaunchWatchdog, $g_sProfileConfigPath, "Other", "chkLaunchWatchdog", 1, "Int")
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen

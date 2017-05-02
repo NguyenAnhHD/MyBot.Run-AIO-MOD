@@ -157,6 +157,9 @@ Func SaveConfig_MOD()
 	 ; Misc Battle Settings - Added by rulesss
 	_Ini_Add("Fast Clicks", "UseADBFastClicks", $g_bAndroidAdbClicksEnabled ? 1 : 0)
 	
+	;Enabele\Disabele Watchdog by rulesss,kychera
+	_Ini_Add("Other", "chkLaunchWatchdog", $iChkLaunchWatchdog ? 1 : 0)
+	
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen

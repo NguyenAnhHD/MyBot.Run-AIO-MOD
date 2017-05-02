@@ -217,3 +217,7 @@ Global $SldTransLevel = 0
 
 ; Misc Battle Settings added by rulesss
 Global $chkFastADBClicks = 0
+
+;Enabele\Disabele Watchdog by rulesss,kychera
+Global $iChkLaunchWatchdog = 1
+Global $ChkLaunchWatchdog = 0
