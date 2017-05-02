@@ -932,7 +932,7 @@ Func NotifyRemoteControlProc()
 		If $g_iDebugSetlog Then Setlog("Telegram | NotifyRemoteControlProc $g_sTGLast_UID : " & $g_sTGLast_UID)
 		If ($TGActionMSG = "/START" Or $TGActionMSG = "KEYB") And $g_iTGLastRemote <> $g_sTGLast_UID Then
 			$g_iTGLastRemote = $g_sTGLast_UID
-			NotifyActivateKeyboardOnTelegram($g_sBotTitle & " \uD83D\uDE0E \u270C " & $g_sNotifyVersion & " by AiO MoD ")
+			NotifyActivateKeyboardOnTelegram($g_sBotTitle & " \uD83D\uDE0E \u270C " & $g_sNotifyVersion)
 		Else
 			If $g_iTGLastRemote <> $g_sTGLast_UID Then
 				$g_iTGLastRemote = $g_sTGLast_UID

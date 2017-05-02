@@ -901,8 +901,10 @@ Func RestartAndroidCoC($bInitAndroid = True, $bRestart = True)
 	If $bRestart = True Then
 		SetLog("Please wait for CoC restart......", $COLOR_INFO) ; Let user know we need time...
 		$sRestart = "-S "
+		_ConnectTime();fix kychera
 	Else
 		SetLog("Launch Clash of Clans now...", $COLOR_SUCCESS)
+		_ConnectTime();fix kychera
 	EndIf
 	ConnectAndroidAdb()
 	If Not $g_bRunState Then Return False
