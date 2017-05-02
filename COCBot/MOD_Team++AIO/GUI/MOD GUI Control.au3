@@ -606,3 +606,12 @@ Func TxtAndroidInstance()
 	$sAndroidInstance = GUICtrlRead($TxtAndroidInstance)
 	modifyAndroid()
 EndFunc   ;==>$txtAndroidInstance
+
+; Misc Battle Settings added by rulesss
+Func chkFastADBClicks()
+	If GUICtrlRead($chkFastADBClicks) = $GUI_CHECKED Then
+		$g_bAndroidAdbClicksEnabled = 1
+	Else
+		$g_bAndroidAdbClicksEnabled = 0
+	EndIf
+EndFunc   ;==>chkFastADBClicks
