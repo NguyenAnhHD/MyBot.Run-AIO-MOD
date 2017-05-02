@@ -34,6 +34,7 @@ Func CreateAttackSearchTHSnipe()
    CreateAttackSearchTHSnipeSearch()
 
    $g_hGUI_THSNIPE_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslated(600,29,"Attack"))
+   $23 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 0, 23, 430, 350, $WS_CLIPCHILDREN)
    CreateAttackSearchTHSnipeAttack()
 
    $g_hGUI_THSNIPE_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslated(600,30,"End Battle"))

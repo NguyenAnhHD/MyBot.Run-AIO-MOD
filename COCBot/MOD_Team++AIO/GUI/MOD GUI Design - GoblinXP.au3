@@ -19,19 +19,20 @@ Global $DocXP1 = 0 , $DocXP2 = 0 , $DocXP3 = 0 ,$DocXP4 = 0
 Global $lblXPatStart = 0 , $lblXPCurrent = 0 , $lblXPSXWon = 0 , $lblXPSXWonHour = 0
 
 Func GoblinXPGUI()
-	Local $x = 25, $y = 55, $xStart = 25, $yStart = 55
+$12 = GUICtrlCreatePic(@ScriptDir & '\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
+	Local $x = 25, $y = 50, $xStart = 25, $yStart = 50
 
 	$grpSuperXP = GUICtrlCreateGroup(GetTranslated(700, 1, "Goblin XP"), $x - 20, $y - 20, 440, 340)
-		$chkEnableSuperXP = GUICtrlCreateCheckbox(GetTranslated(700, 2, "Enable Goblin XP"), $x, $y - 1, 102, 17, -1, -1)
+		$chkEnableSuperXP = _GUICtrlCreateCheckbox(GetTranslated(700, 2, "Enable Goblin XP"), $x, $y - 1, 102, 17, -1, -1)
 		GUICtrlSetOnEvent(-1, "chkEnableSuperXP")
-			$rbSXTraining = GUICtrlCreateRadio(GetTranslated(700, 3, "Farm XP during troops Training"), $x, $y + 25, 175, 17)
+			$rbSXTraining = _GUICtrlCreateRadio(GetTranslated(700, 3, "Farm XP during troops Training"), $x, $y + 25, 175, 17)
 			GUICtrlSetState(-1, $GUI_CHECKED)
 			GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
 			$lblLOCKEDSX = GUICtrlCreateLabel(GetTranslated(700, 13, "LOCKED"), $x + 210, $y + 35, 173, 50)
 			GUICtrlSetFont(-1, 30, 800, 0, "Arial")
 			GUICtrlSetColor(-1, 0xFF0000)
 			GUICtrlSetState(-1, $GUI_HIDE)
-			$rbSXIAttacking = GUICtrlCreateRadio(GetTranslated(700, 4, "Farm XP instead of Attacking"), $x, $y + 45, 158, 17)
+			$rbSXIAttacking = _GUICtrlCreateRadio(GetTranslated(700, 4, "Farm XP instead of Attacking"), $x, $y + 45, 158, 17)
 			GUICtrlCreateLabel (GetTranslated(700, 14, "Max XP to Gain") & ":", $x, $y + 78, -1, 17)
 			GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
 			$txtMaxXPtoGain = GUICtrlCreateInput("500", $x + 85, $y + 75, 70, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))

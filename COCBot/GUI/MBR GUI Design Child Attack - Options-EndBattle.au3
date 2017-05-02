@@ -20,10 +20,11 @@ Global $g_hChkShareAttack = 0, $g_hLblShareMinLoot = 0, $g_hTxtShareMinGold = 0,
 Global $g_hLblShareMinGold = 0, $g_hLblShareMinElixir = 0,  $g_hLblShareMinDark = 0
 
 Func CreateAttackSearchOptionsEndBattle()
+   $18 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $x = 20, $y = 45
 
 	   GUICtrlCreateGroup(GetTranslated(633,1,"Share Replay"), $x-15, $y-20, $g_iSizeWGrpTab4, 204)
-		   $g_hChkShareAttack = GUICtrlCreateCheckbox(GetTranslated(633,2, "Share Replays in your clan's chat."), $x, $y-7, -1, -1)
+		   $g_hChkShareAttack = _GUICtrlCreateCheckbox(GetTranslated(633,2, "Share Replays in your clan's chat."), $x, $y-7, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(633,3, "Check this to share your battle replay in the clan chat."))
 			   GUICtrlSetOnEvent(-1, "chkShareAttack")
 
@@ -73,13 +74,13 @@ Func CreateAttackSearchOptionsEndBattle()
 	   $x = 20
 	   $y+=100
 	   GUICtrlCreateGroup(GetTranslated(633,11,"Take Loot Snapshot"), $x-15, $y-20, $g_iSizeWGrpTab4, 67)
-		   $g_hChkTakeLootSS = GUICtrlCreateCheckbox(GetTranslated(633,11, -1), $x, $y, -1, -1)
+		   $g_hChkTakeLootSS = _GUICtrlCreateCheckbox(GetTranslated(633,11, -1), $x, $y, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(633,12, "Check this if you want to save a Loot snapshot of the Village that was attacked."))
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
 			   GUICtrlSetOnEvent(-1, "chkTakeLootSS")
 
 		 $y += 18
-		   $g_hChkScreenshotLootInfo = GUICtrlCreateCheckbox(GetTranslated(633,13, "Include loot info in filename"), $x  , $y , -1, -1)
+		   $g_hChkScreenshotLootInfo = _GUICtrlCreateCheckbox(GetTranslated(633,13, "Include loot info in filename"), $x  , $y , -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(633,14, "Include loot info in the screenshot filename"))
 			   GUICtrlSetState(-1,$GUI_DISABLE)
 

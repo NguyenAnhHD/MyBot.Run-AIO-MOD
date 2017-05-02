@@ -17,6 +17,7 @@
 Global $g_hCmbCOCDistributors
 
 Func CreateBotAndroid()
+   $4 = GUICtrlCreatePic(@ScriptDir & '\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
    Local $x = 25, $y = 45
    GUICtrlCreateGroup(GetTranslated(642, 1, "Distributors"), $x - 20, $y - 20, 438, 50)
 	   $y -=2

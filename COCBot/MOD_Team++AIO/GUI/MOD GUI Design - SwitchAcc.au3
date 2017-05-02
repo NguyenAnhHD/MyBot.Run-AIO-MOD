@@ -24,18 +24,18 @@ Func CreateBotSwitchAcc()
 	$nTotalProfile = _Min(_GUICtrlComboBox_GetCount($g_hCmbProfile), 8)
 
 	Local $sTxtTip = ""
-	Local $x = 20, $y = 105
+	Local $x = 25, $y = 105
 
 	$g_StartHideSwitchAcc = GUICtrlCreateDummy()
 	GUICtrlCreateGroup(GetTranslated(109, 1, "Switch Account Mode"), $x - 15, $y - 20, 203, 295)
-	$chkSwitchAcc = GUICtrlCreateCheckbox(GetTranslated(109, 2, "Enable Switch Account"), $x - 5, $y, -1, -1)
+	$chkSwitchAcc = _GUICtrlCreateCheckbox(GetTranslated(109, 2, "Enable Switch Account"), $x - 5, $y, -1, -1)
 	$sTxtTip = GetTranslated(109, 3, "Switch to another account & profile when troop training time is >= 1 minutes") & _
 			@CRLF & GetTranslated(109, 4, "This function supports maximum 8 CoC accounts & 8 Bot profiles") & _
 			@CRLF & GetTranslated(109, 5, "Make sure to create sufficient Profiles equal to number of CoC Accounts")
 	GUICtrlSetTip(-1, $sTxtTip)
 	GUICtrlSetOnEvent(-1, "chkSwitchAcc")
 
-	$chkTrain = GUICtrlCreateCheckbox(GetTranslated(109,6, "Pre-train"), $x + 127, $y, -1, -1)
+	$chkTrain = _GUICtrlCreateCheckbox(GetTranslated(109,6, "Pre-train"), $x + 127, $y, -1, -1)
 	$sTxtTip = GetTranslated(109,7, "Enable it to pre-train donated troops in quick train 3 before switch to next account.") & _
 			@CRLF & GetTranslated(109,8, "This function requires use Quick Train, not Custom Train.") & _
 			@CRLF & GetTranslated(109,9, "Use army 1 for farming troops, army 2 for spells and army 3 for donated troops.")
@@ -48,42 +48,42 @@ Func CreateBotSwitchAcc()
 	GUICtrlSetData(-1, "1 Acc." & "|" & "2 Acc." & "|" & "3 Acc." & "|" & "4 Acc." & "|" & "5 Acc." & "|" & "6 Acc." & "|" & "7 Acc." & "|" & "8 Acc.")
 	GUICtrlSetTip(-1, $sTxtTip)
 
-	$radNormalSwitch = GUICtrlCreateRadio(GetTranslated(109, 12, "Normal switch"), $x + 10, $y + 55, -1, 16)
+	$radNormalSwitch = _GUICtrlCreateRadio(GetTranslated(109, 12, "Normal switch"), $x + 10, $y + 45, -1, 16)
 	GUICtrlSetTip(-1, GetTranslated(109, 13, "Switching accounts continously"))
 	GUICtrlSetState(-1, $GUI_CHECKED)
 	GUICtrlSetOnEvent(-1, "radNormalSwitch")
 
-	$radSmartSwitch = GUICtrlCreateRadio(GetTranslated(109, 14, "Smart switch"), $x + 100, $y + 55, -1, 16)
+	$radSmartSwitch = _GUICtrlCreateRadio(GetTranslated(109, 14, "Smart switch"), $x + 100, $y + 45, -1, 16)
 	GUICtrlSetTip(-1, GetTranslated(109, 15, "Switch to account with the shortest remain training time"))
 	GUICtrlSetOnEvent(-1, "radNormalSwitch")
 
 	$y += 80
-	$g_hChkForceSwitch = GUICtrlCreateCheckbox(GetTranslated(109, 16, "Force switch after:"), $x - 5, $y, -1, -1)
+	$g_hChkForceSwitch = _GUICtrlCreateCheckbox(GetTranslated(109, 16, "Force switch after:"), $x - 5, $y, -1, -1)
 	GUICtrlSetTip(-1, GetTranslated(109, 17, "Force the Bot to switch account when searching for too long") & _
 			@CRLF & GetTranslated(109, 18, "First switch to all donate accounts") & _
 			@CRLF & GetTranslated(109, 19, "Then switch to another active account if its army is ready"))
 	GUICtrlSetOnEvent(-1, "chkForceSwitch")
-	$g_txtForceSwitch = GUICtrlCreateInput("100", $x + 105, $y + 1, 27, -1, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+	$g_txtForceSwitch = GUICtrlCreateInput("100", $x + 105, $y - 3 , 27, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 	GUICtrlSetState(-1, $GUI_DISABLE)
 	GUICtrlSetLimit(-1, 3)
-	$g_lblForceSwitch = GUICtrlCreateLabel(GetTranslated(109, 20, "searches"), $x + 135, $y + 4, -1, -1)
+	$g_lblForceSwitch = GUICtrlCreateLabel(GetTranslated(109, 20, "searches"), $x + 135, $y, -1, -1)
 	GUICtrlSetState(-1, $GUI_DISABLE)
 
 	$y += 30
-	$g_hChkForceStayDonate = GUICtrlCreateCheckbox(GetTranslated(109, 21, "Stay on donation while training"), $x - 5, $y, -1, -1)
+	$g_hChkForceStayDonate = _GUICtrlCreateCheckbox(GetTranslated(109, 21, "Stay on donation while training"), $x - 5, $y, -1, -1)
 	GUICtrlSetTip(-1, GetTranslated(109, 22, "Stay at donate account until an active account is getting troops ready in 1 minute") & _
 			@CRLF & GetTranslated(109, 23, "Circulate among the donate accounts if there are more than 1"))
 
 	$y += 30
-	$chkUseTrainingClose = GUICtrlCreateCheckbox(GetTranslated(109, 24, "Combo Sleep after Switch Acc."), $x - 5, $y, -1, -1)
+	$chkUseTrainingClose = _GUICtrlCreateCheckbox(GetTranslated(109, 24, "Combo Sleep after Switch Acc."), $x - 5, $y, -1, -1)
 	$sTxtTip = GetTranslated(109, 25, "Close CoC combo with Switch Account when there is more than 3 mins remaining on training time of all accounts.")
 	GUICtrlSetTip(-1, $sTxtTip)
 
 	GUIStartGroup()
-	$radCloseCoC = GUICtrlCreateRadio(GetTranslated(109, 26, "Close CoC"), $x + 10, $y + 30, -1, 16)
+	$radCloseCoC = _GUICtrlCreateRadio(GetTranslated(109, 26, "Close CoC"), $x + 10, $y + 30, -1, 16)
 	GUICtrlSetState(-1, $GUI_CHECKED)
 
-	$radCloseAndroid = GUICtrlCreateRadio(GetTranslated(109, 27, "Close Android"), $x + 100, $y + 30, -1, 16)
+	$radCloseAndroid = _GUICtrlCreateRadio(GetTranslated(109, 27, "Close Android"), $x + 100, $y + 30, -1, 16)
 
 	$y += 60
 	GUICtrlCreateLabel(GetTranslated(109, 28, "Manually locate account coordinates"), $x, $y, -1, -1)
@@ -104,7 +104,7 @@ Func CreateBotSwitchAcc()
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 	; Profiles & Account matching
-	Local $x = 230, $y = 105
+	Local $x = 235, $y = 105
 
 	GUICtrlCreateGroup(GetTranslated(109, 34, "Profiles"), $x - 20, $y - 20, 225, 295)
 	GUICtrlCreateButton(GetTranslated(109, 35, "Update Profiles"), $x + 40, $y - 5, -1, 25)

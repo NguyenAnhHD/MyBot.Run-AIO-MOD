@@ -25,7 +25,7 @@ Global $g_lblKingStatus[8], $g_lblQueenStatus[8], $g_lblWardenStatus[8], $g_lblT
 Global $aStartHide[8], $aSecondHide[8], $aEndHide[8] ; GUI support
 
 Func CreateProfileStats()
-
+$8 = GUICtrlCreatePic(@ScriptDir & '\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
 	Local $x = 25, $y = 30
 
 	For $i = 0 To 7

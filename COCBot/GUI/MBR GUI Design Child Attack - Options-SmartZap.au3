@@ -21,7 +21,7 @@ Global $g_hChkSmartLightSpell = 0, $g_hChkSmartEQSpell = 0, $g_hChkNoobZap = 0, 
 Global $g_hLblSmartUseLSpell = 0, $g_hLblSmartUseEQSpell = 0,  $g_hLblSmartZap = 0, $g_hLblNoobZap = 0, $g_hLblSmartLightningUsed = 0, $g_hLblSmartEarthQuakeUsed = 0
 
 Func CreateAttackNewSmartZap()
-
+   $16 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $x = 25, $y = 45
 	   GUICtrlCreateGroup(GetTranslated(638, 1, "SmartZap/NoobZap"), $x - 20, $y - 20, $g_iSizeWGrpTab4, $g_iSizeHGrpTab4)
 		   GUICtrlCreateLabel(GetTranslated(638, 2, "Use This Spell to Zap Dark Drills"), $x + 20, $y, -1, -1)
@@ -47,16 +47,16 @@ Func CreateAttackNewSmartZap()
 			   _GUICtrlSetTip(-1, GetTranslated(638, 8, "Check this to drop EarthQuake Castle Spell on any Dark Elixir Drill"))
 			   GUICtrlSetOnEvent(-1, "chkEarthQuakeZap")
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
-		   $g_hChkNoobZap = GUICtrlCreateCheckbox(GetTranslated(638, 9, "Use NoobZap"), $x + 20 + 2, $y + 35, -1, -1)
+		   $g_hChkNoobZap = _GUICtrlCreateCheckbox(GetTranslated(638, 9, "Use NoobZap"), $x + 20 + 2, $y + 35, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(638, 10, "Check this to drop lightning spells on any Dark Elixir Drills"))
 			   GUICtrlSetOnEvent(-1, "chkNoobZap")
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
-		   $g_hChkSmartZapDB = GUICtrlCreateCheckbox(GetTranslated(638, 11, "Only Zap Drills in Dead Bases"), $x + 20 + 2, $y + 55, -1, -1)
+		   $g_hChkSmartZapDB = _GUICtrlCreateCheckbox(GetTranslated(638, 11, "Only Zap Drills in Dead Bases"), $x + 20 + 2, $y + 55, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(638, 12, "This will only SmartZap a Dead Base (Recommended)"))
 			   GUICtrlSetOnEvent(-1, "chkSmartZapDB")
 			   GUICtrlSetState(-1, $GUI_CHECKED)
 			   GUICtrlSetState(-1, $GUI_DISABLE)
-		   $g_hChkSmartZapSaveHeroes = GUICtrlCreateCheckbox(GetTranslated(638, 13, "TH Snipe Not Zap if Heroes Deployed"), $x + 20 + 2, $y + 75, -1, -1)
+		   $g_hChkSmartZapSaveHeroes = _GUICtrlCreateCheckbox(GetTranslated(638, 13, "TH Snipe Not Zap if Heroes Deployed"), $x + 20 + 2, $y + 75, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(638, 14, "This will stop SmartZap from zapping a base on a Town Hall Snipe if your Heroes were deployed"))
 			   GUICtrlSetOnEvent(-1, "chkSmartZapSaveHeroes")
 			   GUICtrlSetState(-1, $GUI_CHECKED)

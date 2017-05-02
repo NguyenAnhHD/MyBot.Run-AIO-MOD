@@ -12,7 +12,7 @@ Global $cmblang = 0,  $icmblang = 0
 Global $chkRusLang = 0, $ichkRusLang = 0
 ; Script Start - Add your code below here
 Func ChatbotGUI()
-;$36 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$36 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
 $chatIni = $g_sProfilePath & "\" & $g_sProfileCurrentName &  "\chat.ini"
    ChatbotReadSettings()
 

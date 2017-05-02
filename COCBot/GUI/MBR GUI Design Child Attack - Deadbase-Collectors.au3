@@ -21,6 +21,7 @@ Global $g_hCmbMinCollectorMatches = 0, $g_hSldCollectorTolerance = 0, $g_hLblCol
 Global $g_hChkDBMeetCollOutside = 0, $g_hTxtDBMinCollOutsidePercent ; Check Collector Outside - Added By NguyenAnhHD
 
 Func CreateAttackSearchDeadBaseCollectors()
+   $13 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $x = 10, $y = 45
    Local $s_TxtTip1 = GetTranslated(626,15, "If this box is checked, then the bot will look")
    Local $g_hTxtFull = GetTranslated(626,30, "Full")
@@ -28,14 +29,14 @@ Func CreateAttackSearchDeadBaseCollectors()
 
    GUICtrlCreateGroup(GetTranslated(626,1,"Collectors"), $x - 5, $y - 20, $g_iSizeWGrpTab4, $g_iSizeHGrpTab4)
 		GUICtrlCreateLabel(GetTranslated(626,2, "Choose which collectors to search for while looking for a dead base. Also, choose how full they must be."), $x, $y, 250, 28)
-		$g_hChkDBDisableCollectorsFilter = GUICtrlCreateCheckbox(GetTranslated(626,32,"Disable Collector Filter"), $x+250, $y+60, 150, 18)
+		$g_hChkDBDisableCollectorsFilter = _GUICtrlCreateCheckbox(GetTranslated(626,32,"Disable Collector Filter"), $x+250, $y+60, 150, 18)
 			_GUICtrlSetTip(-1, GetTranslated(626,33, "Disable Collector Filter CHANGES DeadBase into another ActiveBase search"))
 			GUICtrlSetState(-1, $GUI_UNCHECKED)
 			GUICtrlSetOnEvent(-1, "ChkDBDisableCollectorsFilter")
 			ChkDBDisableCollectorsFilter() ;modification by rulesss
          
 		; Check Collector Outside - Added By NguyenAnhHD
-		$g_hChkDBMeetCollOutside = GUICtrlCreateCheckbox(GetTranslated(626,40, "Check Collectors Outside"), $x+250, $y+90, -1, -1)
+		$g_hChkDBMeetCollOutside = _GUICtrlCreateCheckbox(GetTranslated(626,40, "Check Collectors Outside"), $x+250, $y+90, -1, -1)
 			$sTxtTip = GetTranslated(626,41, "Search for bases that has their collectors outside.")
 			GUICtrlSetOnEvent(-1, "chkDBMeetCollOutside")
 			GUICtrlSetTip(-1, $sTxtTip)
@@ -194,8 +195,8 @@ Func CreateAttackSearchDeadBaseCollectors()
 			GUICtrlSetState(-1, $GUI_HIDE)
 		;EndIf
 
-	    $y += 25
-		$g_hLblCollectorWarning = GUICtrlCreateLabel("Warning: no collecters are selected. The bot will never find a dead base.", $x, $y, 255, 30)
+	    $y += 200
+		$g_hLblCollectorWarning = GUICtrlCreateLabel(GetTranslated(626,50, "Warning: no collecters are selected. The bot will never find a dead base."), $x, $y, 300, 45)
 			GUICtrlSetFont(-1, 10, $FW_BOLD)
 			GUICtrlSetColor(-1, $COLOR_ERROR)
 			GUICtrlSetState(-1, $GUI_HIDE)

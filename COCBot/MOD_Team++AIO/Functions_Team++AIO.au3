@@ -97,3 +97,11 @@
 #include "functions\Other\Control.au3"
 ;function break connection by kychera
 #include "functions\Other\DetectConnection.au3"
+; modificed GuiCtrlCreateCheckbox function by kychera
+#include "functions\Other\_GuiCtrlCreateCheckbox.au3"
+; modificed GUICtrlCreateRadio function by kychera
+#include "functions\Other\_GUICtrlCreateRadio.au3"
+; Background GUI by kychera
+#include "functions\Other\BackgroundCheck.au3"
+; Transparent GUI by kychera
+#include "functions\Other\TransLevel.au3"
