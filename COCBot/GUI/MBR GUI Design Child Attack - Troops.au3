@@ -51,6 +51,18 @@ Global $g_ahImgTroopOrder[$eTroopCount] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Global $g_hBtnTroopOrderSet = 0, $g_ahImgTroopOrderSet = 0
 Global $g_hBtnRemoveTroops
 
+; Spells Brew Order
+Global Const $g_asSpellsOrderList[] = [ "", _
+   GetTranslated(605,15, "Lightning"), GetTranslated(605,16, "Heal"), GetTranslated(605,17, "Rage"), GetTranslated(605,18, "Jump"), _
+   GetTranslated(605,19, "Freeze"), GetTranslated(605,20, "Clone"), GetTranslated(605,9, "Poison"), GetTranslated(605,10, "EarthQuake"), _
+   GetTranslated(605,11, "Haste"), GetTranslated(605,14, "Skeleton")]
+Global $g_hChkCustomBrewOrderEnable = 0
+Global $g_ahCmbSpellsOrder[$eSpellCount] = [0,0,0,0,0,0,0,0,0,0]
+Global $g_ahImgSpellsOrder[$eSpellCount] = [0,0,0,0,0,0,0,0,0,0]
+Global $g_hBtnSpellsOrderSet = 0, $g_ahImgSpellsOrderSet = 0
+Global $g_hBtnRemoveSpells
+
+
 ; Options sub-tab
 Global $g_hChkCloseWhileTraining = 0, $g_hChkCloseWithoutShield = 0, $g_hChkCloseEmulator = 0, $g_hChkSuspendComputer = 0, $g_hChkRandomClose = 0, $g_hRdoCloseWaitExact = 0, _
 	   $g_hRdoCloseWaitRandom = 0, $g_hCmbCloseWaitRdmPercent = 0, $g_hCmbMinimumTimeClose = 0, $g_hSldTrainITDelay = 0, $g_hChkTrainAddRandomDelayEnable = 0, $g_hTxtAddRandomDelayMin = 0, _
@@ -650,7 +662,7 @@ Func CreateTroopsSpellsSubTab()
 
 EndFunc
 
-Func  CreateBoostSubTab()
+Func CreateBoostSubTab()
    Local $sTextBoostLeft = GetTranslated(623, 1, "Boosts left")
    Local $sTxtTip = ""
 
@@ -805,7 +817,7 @@ Func CreateTrainOrderSubTab()
 
    Local $x = 25, $y = 45
    GUICtrlCreateGroup(GetTranslated(641, 25, "Training Order"), $x - 20, $y - 20, $g_iSizeWGrpTab3, $g_iSizeHGrpTab3)
-	   $g_hChkCustomTrainOrderEnable = _GUICtrlCreateCheckbox(GetTranslated(641, 26, "Custom Order"), $x - 5, $y, -1, -1)
+	   $g_hChkCustomTrainOrderEnable = GUICtrlCreateCheckbox(GetTranslated(641, 26, "Troops Order"), $x - 5, $y, -1, -1)
 	   GUICtrlSetState(-1, $GUI_UNCHECKED)
 	   _GUICtrlSetTip(-1, GetTranslated(641, 27, "Enable to select a custom troop training order") & @CRLF & _
 						  GetTranslated(641, 28, "Changing train order can be useful with CSV scripted attack armies!"))
@@ -867,6 +879,50 @@ Func CreateTrainOrderSubTab()
 								GetTranslated(641, 46, "When not all troop slots are filled, will use random troop order in empty slots!"))
 			 GUICtrlSetOnEvent(-1, "btnTroopOrderSet")
 		  $g_ahImgTroopOrderSet = GUICtrlCreateIcon($g_sLibIconPath, $eIcnSilverStar, $x + 226, $y + 2, 18, 18)
+
+	; Brew Spells Order  [641] 49 last
+	Local $x = 300, $y = 45
+	$g_hChkCustomBrewOrderEnable = GUICtrlCreateCheckbox(GetTranslated(641, 49, "Spells Order"), $x - 5, $y, -1, -1)
+		GUICtrlSetState(-1, $GUI_UNCHECKED)
+		_GUICtrlSetTip(-1, GetTranslated(641, 50, "Enable to select a Brew Spells order") & @CRLF & _
+						  GetTranslated(641, 51, "Changing spells order can be useful with CSV scripted attack armies!"))
+		GUICtrlSetOnEvent(-1, "chkSpellsOrder")
+
+	; Create translated list of Spells for combo box
+	Local $sComboData = ""
+	For $j = 0 To UBound($g_asSpellsOrderList) - 1
+		$sComboData &= $g_asSpellsOrderList[$j] & "|"
+	Next
+
+	Local $txtSpellsOrder = GetTranslated(641, 52, "Enter sequence order for brew Spells #")
+
+	; Create ComboBox(es) for selection of Spells brew order
+	$y += 23
+	For $z = 0 To $eSpellCount - 1
+		GUICtrlCreateLabel($z + 1 & ":", $x - 16, $y + 2, -1, 18)
+			$g_ahCmbSpellsOrder[$z] = GUICtrlCreateCombo("", $x, $y, 94, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+				GUICtrlSetOnEvent(-1, "GUISpellsOrder")
+				GUICtrlSetData(-1, $sComboData, "")
+				_GUICtrlSetTip(-1, $txtSpellsOrder & $z + 1)
+				GUICtrlSetState(-1, $GUI_DISABLE)
+			$g_ahImgSpellsOrder[$z] = GUICtrlCreateIcon($g_sLibIconPath, $eIcnOptions, $x + 96, $y + 1, 18, 18)
+			$y += 22 ; move down to next combobox location
+	Next
+	$y += 20
+		$g_hBtnRemoveSpells = GUICtrlCreateButton(GetTranslated(641, 53, "Empty Spell list"), $x, $y, 94, 22)
+			GUICtrlSetState(-1, BitOR($GUI_UNCHECKED, $GUI_DISABLE))
+			_GUICtrlSetTip(-1, GetTranslated(641, 54, "Push button to remove all spells from list and start over"))
+			GUICtrlSetOnEvent(-1, "BtnRemoveSpells")
+	$y += 25
+		$g_hBtnSpellsOrderSet =GUICtrlCreateButton(GetTranslated(641, 30, "Apply New Order"), $x, $y, 94, 22)
+			GUICtrlSetState(-1, BitOR($GUI_UNCHECKED, $GUI_DISABLE))
+			_GUICtrlSetTip(-1, GetTranslated(641, 55, "Push button when finished selecting custom spells brew order") & @CRLF & _
+								GetTranslated(641, 56, "Icon changes color based on status: Red= Not Set, Green = Order Set") & @CRLF & _
+								GetTranslated(641, 57, "When not all spells slots are filled, will use random spell order in empty slots!"))
+			GUICtrlSetOnEvent(-1, "BtnSpellsOrderSet")
+		$g_ahImgSpellsOrderSet = GUICtrlCreateIcon($g_sLibIconPath, $eIcnSilverStar, $x + 98, $y + 2, 18, 18)
+
+
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
 

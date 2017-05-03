@@ -836,19 +836,22 @@ Global Const $g_aiTroopOrderIcon[21] = [ _
 		$eIcnHogRider, $eIcnValkyrie, $eIcnGolem, $eIcnWitch, $eIcnLavaHound, $eIcnBowler]
 Global $g_bCustomTrainOrderEnable = False, $g_aiCmbCustomTrainOrder[$eTroopCount] = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
 
-#cs
-	Global Const $g_aiTrainOrderDefault[] = [ _
-	$eTroopArcher, $eTroopGiant, $eTroopWallBreaker, $eTroopBarbarian, $eTroopGoblin, $eTroopHealer, _
-	$eTroopPekka, $eTroopBalloon, $eTroopWizard, $eTroopDragon, $eTroopBabyDragon, $eTroopMiner, _
-	$eTroopMinion, $eTroopHogRider, $eTroopValkyrie, $eTroopGolem, $eTroopWitch, $eTroopLavaHound, _
-	$eTroopBowler ]
-#ce
-
 Global $g_aiTrainOrder[$eTroopCount] = [ _
 		$eTroopArcher, $eTroopGiant, $eTroopWallBreaker, $eTroopBarbarian, $eTroopGoblin, $eTroopHealer, _
 		$eTroopPekka, $eTroopBalloon, $eTroopWizard, $eTroopDragon, $eTroopBabyDragon, $eTroopMiner, _
 		$eTroopMinion, $eTroopHogRider, $eTroopValkyrie, $eTroopGolem, $eTroopWitch, $eTroopLavaHound, _
 		$eTroopBowler]
+
+;	 Spells Brew Order
+Global Const $g_aiSpellsOrderIcon[12] = [ _
+		$eIcnOptions, $eIcnLightSpell, $eIcnHealSpell,$eIcnRageSpell, $eIcnJumpSpell, $eIcnFreezeSpell, $eIcnCloneSpell,  _
+		$eIcnPoisonSpell, $eIcnEarthQuakeSpell, $eIcnHasteSpell, $eIcnSkeletonSpell]
+
+Global $g_bCustomBrewOrderEnable = False, $g_aiCmbCustomBrewOrder[$eSpellCount] = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
+Global $g_aiBrewOrder[$eSpellCount] = [ _
+		$eSpellLightning, $eSpellHeal, $eSpellRage, $eSpellJump, $eSpellFreeze, $eSpellClone, _
+		$eSpellPoison, $eSpellEarthquake, $eSpellHaste, $eSpellSkeleton]
+
 
 ; <><><><> Attack Plan / Train Army / Options <><><><>
 Global $g_bCloseWhileTrainingEnable = True, $g_bCloseWithoutShield = False, $g_bCloseEmulator = False, $g_bSuspendComputer = False, $g_bCloseRandom = False, _
