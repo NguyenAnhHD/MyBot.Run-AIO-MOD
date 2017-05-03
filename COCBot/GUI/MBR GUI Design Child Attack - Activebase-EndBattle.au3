@@ -24,7 +24,7 @@ Global $g_hGrpABEndBattle = 0, $g_hLblABTimeStopAtka = 0, $g_hLblABTimeStopAtk =
 Global $g_hLblDELowEndMin = 0, $g_hLblDEEndAq = 0, $g_hLblABPercentHigher = 0, $g_hLblABPercentHigherSec = 0, $g_hLblABPercentChange = 0, $g_hLblABPercentChangeSec = 0
 
 Func CreateAttackSearchActiveBaseEndBattle()
-   $5 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
+   $5 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 10, $y = 45
 	$g_hGrpABEndBattle = GUICtrlCreateGroup(GetTranslated(606,1, -1),  $x - 5, $y - 20, 155, $g_iSizeHGrpTab4)

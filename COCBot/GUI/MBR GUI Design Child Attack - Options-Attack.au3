@@ -31,7 +31,7 @@ GLobal $g_hLblDropCChours[12] = [0,0,0,0,0,0,0,0,0,0,0,0]
 Global $g_ahChkDropCCHoursE1 = 0, $g_ahChkDropCCHoursE2 = 0
 
 Func CreateAttackSearchOptionsAttack()
-$17 = GUICtrlCreatePic (@ScriptDir & "\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
+$17 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
 
    Local $sTxtTip = ""
    Local $x = 25, $y = 45

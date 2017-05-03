@@ -20,7 +20,7 @@ Global $Icon4 = 0 , $Label14 = 0 , $Label15 = 0 , $Label16 = 0 , $Label13 = 0
 Global $Icon5 = 0 , $Label17 = 0 , $Label18 = 0 , $chkCollectAchievements = 0 , $chkLookAtRedNotifications = 0 , $cmbMaxActionsNumber = 0
 
 Func HumanizationGUI()
-$3 = GUICtrlCreatePic(@ScriptDir & '\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$3 = GUICtrlCreatePic(@ScriptDir & '\COCBot\MOD_Team++AIO\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
 	Local $x , $y
 
 	$chkUseBotHumanization = _GUICtrlCreateCheckbox(GetTranslated(42, 0, "Enable Bot Humanization"), 10, 20, 137, 17, -1, -1)
