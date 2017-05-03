@@ -1006,9 +1006,17 @@ EndFunc   ;==>SaveConfig_600_52_2
 Func SaveConfig_600_54()
 	; <><><> Attack Plan / Train Army / Train Order <><><>
 	ApplyConfig_600_54("Save")
+
+	; Troops Order
 	_Ini_Add("troop", "chkTroopOrder", $g_bCustomTrainOrderEnable ? 1 : 0)
 	For $z = 0 To UBound($g_aiCmbCustomTrainOrder) - 1
 		_Ini_Add("troop", "cmbTroopOrder" & $z, $g_aiCmbCustomTrainOrder[$z])
+	Next
+
+	; Spells Order
+	_Ini_Add("Spells", "chkSpellOrder", $g_bCustomBrewOrderEnable ? 1 : 0)
+	For $z = 0 To UBound($g_aiCmbCustomBrewOrder) - 1
+		_Ini_Add("Spells", "cmbSpellOrder" & $z, $g_aiCmbCustomBrewOrder[$z])
 	Next
 EndFunc   ;==>SaveConfig_600_54
 

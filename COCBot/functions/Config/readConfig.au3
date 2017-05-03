@@ -1099,9 +1099,16 @@ EndFunc   ;==>ReadConfig_600_52_2
 
 Func ReadConfig_600_54()
 	; <><><><> Attack Plan / Train Army / Train Order <><><><>
+	; Troops Order
 	IniReadS($g_bCustomTrainOrderEnable, $g_sProfileConfigPath, "troop", "chkTroopOrder", False, "Bool")
 	For $z = 0 To UBound($g_aiCmbCustomTrainOrder) - 1
 		IniReadS($g_aiCmbCustomTrainOrder[$z], $g_sProfileConfigPath, "troop", "cmbTroopOrder" & $z, -1)
+	Next
+
+	; Spells Order
+	IniReadS($g_bCustomBrewOrderEnable, $g_sProfileConfigPath, "Spells", "chkSpellOrder", False, "Bool")
+	For $z = 0 To UBound($g_aiCmbCustomBrewOrder) - 1
+		IniReadS($g_aiCmbCustomBrewOrder[$z], $g_sProfileConfigPath, "Spells", "cmbSpellOrder" & $z, -1)
 	Next
 EndFunc   ;==>ReadConfig_600_54
 

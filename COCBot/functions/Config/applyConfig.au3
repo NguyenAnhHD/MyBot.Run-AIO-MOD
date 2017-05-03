@@ -1810,6 +1810,7 @@ Func ApplyConfig_600_54($TypeReadSave)
 	; <><><> Attack Plan / Train Army / Train Order <><><>
 	Switch $TypeReadSave
 		Case "Read"
+			; Troops Order
 			GUICtrlSetState($g_hChkCustomTrainOrderEnable, $g_bCustomTrainOrderEnable ? $GUI_CHECKED : $GUI_UNCHECKED)
 			chkTroopOrder()
 			For $z = 0 To UBound($g_ahCmbTroopOrder) - 1
@@ -1828,13 +1829,39 @@ Func ApplyConfig_600_54($TypeReadSave)
 					Next
 				EndIf
 			EndIf
+			; Spells Order
+			GUICtrlSetState($g_hChkCustomBrewOrderEnable, $g_bCustomBrewOrderEnable ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkSpellsOrder()
+			For $z = 0 To UBound($g_ahCmbSpellsOrder) - 1
+				_GUICtrlComboBox_SetCurSel($g_ahCmbSpellsOrder[$z], $g_aiCmbCustomBrewOrder[$z])
+				GUICtrlSetImage($g_ahImgSpellsOrder[$z], $g_sLibIconPath, $g_aiSpellsOrderIcon[$g_aiCmbCustomBrewOrder[$z] + 1])
+			Next
+			If $g_bCustomBrewOrderEnable Then ; only update troop train order if enabled
+				If Not ChangeSpellsBrewOrder() Then ; process error
+					SetDefaultSpellsGroup()
+					GUICtrlSetState($g_hChkCustomBrewOrderEnable, $GUI_UNCHECKED)
+					$g_bCustomBrewOrderEnable = False
+					GUICtrlSetState($g_hBtnRemoveSpells, $GUI_DISABLE) ; disable button
+					GUICtrlSetState($g_hBtnSpellsOrderSet, $GUI_DISABLE)
+					For $i = 0 To UBound($g_ahCmbSpellsOrder) - 1
+						GUICtrlSetState($g_ahCmbSpellsOrder[$i], $GUI_DISABLE) ; disable combo boxes
+					Next
+				EndIf
+			EndIf
+
 			chkTotalCampForced()
 			chkUseQTrain() ; this function also calls calls lblTotalCount and TotalSpellCountClick
 			SetComboTroopComp() ; this function also calls lblTotalCount
 		Case "Save"
+			; Troops Order
 			$g_bCustomTrainOrderEnable = (GUICtrlRead($g_hChkCustomTrainOrderEnable) = $GUI_CHECKED)
 			For $z = 0 To UBound($g_ahCmbTroopOrder) - 1
 				$g_aiCmbCustomTrainOrder[$z] = _GUICtrlComboBox_GetCurSel($g_ahCmbTroopOrder[$z])
+			Next
+			; Spells Order
+			$g_bCustomBrewOrderEnable = (GUICtrlRead($g_hChkCustomBrewOrderEnable) = $GUI_CHECKED)
+			For $z = 0 To UBound($g_ahCmbSpellsOrder) - 1
+				$g_aiCmbCustomBrewOrder[$z] = _GUICtrlComboBox_GetCurSel($g_ahCmbSpellsOrder[$z])
 			Next
 	EndSwitch
 EndFunc   ;==>ApplyConfig_600_54
