@@ -40,7 +40,7 @@ Func SimpleTrain()
 		If $g_abRCheckWrongTroops[1] = False Then $text &= " Spells &"
 		If StringRight($text, 1) = "&" Then $text = StringTrimRight($text, 2) ; Remove last " &" as it is not needed
 
-		If $g_abRCheckWrongTroops[0] = False And $g_abRCheckWrongTroops[0] = False Then ; Troops & Spells are correct
+		If $g_abRCheckWrongTroops[0] = False And $g_abRCheckWrongTroops[1] = False Then ; Troops & Spells are correct
 			If $g_bFullArmy And $g_bFullArmySpells Then
 				Setlog(" »» Full" & $text & ". All are correct!")
 			Else
@@ -194,7 +194,7 @@ Func SimpleTrain()
 			Case 1 To $SpellCamp[1] - 1 ; 21/11
 				If $ichkFillEQ = 0 Or $SpellCamp[0] - $SpellCamp[1] < $SpellCamp[1] - 1 Then
 					SetLog(" »» Not full queue, Delete queued spells")
-					If Not $g_bForceBrewSpells Then	DeleteQueue(True) ; fix kychera					
+					If Not $g_bForceBrewSpells Then	DeleteQueue(True) ; fix kychera
 					If CheckBlockTroops(True) = False Then ; check if spell camp is not full after delete queue
 						$eBrewMethod = $g_eFull
 					Else
@@ -527,25 +527,28 @@ Func MakeCustomTrain($eTrainMethod, $eBrewMethod)
 		If $eBrewMethod = $g_eRemained Then
 			Setlog("Custom brew spells left")
 			For $i = 0 To ($eSpellCount - 1)
+				Local $BrewIndex = $g_aiBrewOrder[$i]
 				If $g_bRunState = False Then Return
 				If TotalSpellsToBrewInGUI() = 0 Then ExitLoop
-				If $g_aiArmyCompSpells[$i] - $g_aiCurrentSpells[$i] > 0 Then
-					$rWTT[UBound($rWTT) - 1][0] = $g_asSpellShortNames[$i]
-					$rWTT[UBound($rWTT) - 1][1] = $g_aiArmyCompSpells[$i] - $g_aiCurrentSpells[$i]
+				If $g_aiArmyCompSpells[$BrewIndex] - $g_aiCurrentSpells[$BrewIndex] > 0 Then
+					$rWTT[UBound($rWTT) - 1][0] = $g_asSpellShortNames[$BrewIndex]
+					$rWTT[UBound($rWTT) - 1][1] = $g_aiArmyCompSpells[$BrewIndex] - $g_aiCurrentSpells[$BrewIndex]
 					Local $iSpellIndex = TroopIndexLookup($rWTT[UBound($rWTT) - 1][0])
 					Local $sSpellName = $g_asSpellNames[$iSpellIndex - $eLSpell]
 					setlog(UBound($rWTT) & ". " & $sSpellName & " x " & $rWTT[UBound($rWTT) - 1][1])
 					ReDim $rWTT[UBound($rWTT) + 1][2]
 				EndIf
 			Next
+
 		ElseIf $eBrewMethod = $g_eFull Then
 			Setlog("Custom brew full set of spells")
 			For $i = 0 To ($eSpellCount - 1)
+				Local $BrewIndex = $g_aiBrewOrder[$i]
 				If $g_bRunState = False Then Return
 				If TotalSpellsToBrewInGUI() = 0 Then ExitLoop
-				If $g_aiArmyCompSpells[$i] > 0 Then
-					$rWTT[UBound($rWTT) - 1][0] = $g_asSpellShortNames[$i]
-					$rWTT[UBound($rWTT) - 1][1] = $g_aiArmyCompSpells[$i]
+				If $g_aiArmyCompSpells[$BrewIndex] > 0 Then
+					$rWTT[UBound($rWTT) - 1][0] = $g_asSpellShortNames[$BrewIndex]
+					$rWTT[UBound($rWTT) - 1][1] = $g_aiArmyCompSpells[$BrewIndex]
 					Local $iSpellIndex = TroopIndexLookup($rWTT[UBound($rWTT) - 1][0])
 					Local $sSpellName = $g_asSpellNames[$iSpellIndex - $eLSpell]
 					setlog(UBound($rWTT) & ". " & $sSpellName & " x " & $rWTT[UBound($rWTT) - 1][1])
