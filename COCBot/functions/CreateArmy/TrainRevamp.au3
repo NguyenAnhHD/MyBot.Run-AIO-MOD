@@ -162,7 +162,7 @@ Func TrainRevampOldStyle()
 	If ThSnipesSkiptrain() Then Return
 
 	If $g_bRunState = False Then Return
-	Local $rWhatToTrain = WhatToTrain(True) ; r in First means Result! Result of What To Train Function
+	Local $rWhatToTrain = WhatToTrain(True, False) ; r in First means Result! Result of What To Train Function
 	Local $rRemoveExtraTroops = RemoveExtraTroops($rWhatToTrain)
 
 	If $rRemoveExtraTroops = 1 Or $rRemoveExtraTroops = 2 Then

@@ -70,7 +70,7 @@ $1 = GUICtrlCreatePic(@ScriptDir & '\COCBot\MOD_Team++AIO\Images\1.jpg', 2, 23, 
 		   GUICtrlSetState(-1, $GUI_CHECKED)
 		   _GUICtrlSetTip(-1, GetTranslated(636,9, "Delete temp files older than this specified No. of days."))
 		   GUICtrlSetOnEvent(-1, "chkDeleteTemp")
-	   $g_hTxtDeleteTempDays = GUICtrlCreateInput("2", $x + 120, $y + 2, 25, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+	   $g_hTxtDeleteTempDays = GUICtrlCreateInput("5", $x + 120, $y + 2, 25, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 		   _GUICtrlSetTip(-1, $sTxtTip)
 		   GUICtrlSetLimit(-1, 2)
 		   GUICtrlSetFont(-1, 8)
