@@ -191,6 +191,23 @@ Global $ichkForecastHopingSwitchMax = 0, $icmbForecastHopingSwitchMax = 0 , $itx
 Global $icmbSwLang = 0
 Global $cmbSwLang = 0
 
+;Chatbot - modification by ruless,kychera
+Global $ChatbotChatGlobal = False
+Global $ChatbotScrambleGlobal = False
+Global $ChatbotSwitchLang = False
+Global $ChatbotChatClan = False
+Global $ChatbotClanUseResponses = False
+Global $ChatbotClanAlwaysMsg = False
+Global $ChatbotUsePushbullet = False
+Global $ChatbotPbSendNew = False
+Global $ClanMessages = ""
+Global $ClanResponses = ""
+Global $GlobalMessages1 = ""
+Global $GlobalMessages2 = ""
+Global $GlobalMessages3 = ""
+Global $GlobalMessages4 = ""
+Global $ChatbotStartTime
+Global $message = ""
 
 ; move the Request CC Troops (MMHK) - Added rulesss
 Global $g_bReqCCFirst = False

@@ -1,19 +1,24 @@
-#cs ----------------------------------------------------------------------------
-
- AutoIt Version: 3.3.14.2
- Author:         myName
-
- Script Function:
-	Template AutoIt script.
-
-#ce ----------------------------------------------------------------------------
+; #FUNCTION# ====================================================================================================================
+; Name ..........: Chat GUI Design
+; Description ...: This file contains the Sequence that runs all MBR Bot
+; Author ........:
+; Modified ......: rulesss,kychera
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
+;                  MyBot is distributed under the terms of the GNU GPL
+; Related .......:
+; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Example .......: No
+; ===============================================================================================================================
 Global $chatIni = ""
 Global $cmblang = 0,  $icmblang = 0
 Global $chkRusLang = 0, $ichkRusLang = 0
-; Script Start - Add your code below here
+Global $chkGlobalChat = 0,$chkGlobalScramble = 0,$chkSwitchLang = 0,$chkchatdelay = 0,$ichkchatdelay = 0,$ChatbotChatDelayLabel = "",$chatdelaycount = 0,$chkClanChat = 0
+Global $chkUseResponses = 0,$chkUseGeneric = 0,$chkChatPushbullet = 0,$chkPbSendNewChats = 0
+Global $editGlobalMessages1 = "", $editGlobalMessages2 = "",$editGlobalMessages3 = "",$editGlobalMessages4 = ""
+Global $editResponses = 0,$editGeneric = 0,$ChatbotQueuedChats[0],$ChatbotReadQueued = False,$ChatbotReadInterval = 0,$ChatbotIsOnInterval = False,$TmpResp
+
 Func ChatbotGUI()
 $36 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
-$chatIni = $g_sProfilePath & "\" & $g_sProfileCurrentName &  "\chat.ini"
    ChatbotReadSettings()
 
 	Local $x = 22, $y = 47
@@ -39,14 +44,9 @@ $chatIni = $g_sProfilePath & "\" & $g_sProfileCurrentName &  "\chat.ini"
    GUICtrlSetOnEvent(-1, "ChatGuiCheckboxUpdate")
 	GUICtrlCreateLabel(GetTranslated(106, 7, "Switch languages"), $x + 7, $y, -1, -1)
 	;======kychera===========
-   $cmbLang = GUICtrlCreateCombo("", $x + 120, $y, 45, 45, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+   $cmbLang = GUICtrlCreateCombo("", $x + 120, $y - 3, 45, 45, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
    GUICtrlSetData(-1, "FR|DE|ES|IT|NL|NO|PR|TR|RU", "RU")
    ;==========================
-   $y += 22
-  ;$ChatbotChatDelayLabel = GUICtrlCreateLabel(GetTranslated(106,9,"Chat Delay"), $x - 10, $y)
-  ; GUICtrlSetTip($ChatbotChatDelayLabel, GetTranslated(106,10,"Delay chat between number of bot cycles"))
-   ;$chkchatdelay = GUICtrlCreateInput("0", $x + 50, $y - 1, 35, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-  ; GUICtrlSetLimit(-1, 2)
    $y += 20
    $editGlobalMessages1 = GUICtrlCreateEdit(_ArrayToString($GlobalMessages1, @CRLF), $x - 15, $y, 202, 65)
    GUICtrlSetTip($editGlobalMessages1, GetTranslated(106,11,"Take one item randomly from this list (one per line) and add it to create a message to send to global"))
@@ -79,7 +79,6 @@ $chatIni = $g_sProfilePath & "\" & $g_sProfileCurrentName &  "\chat.ini"
    GUICtrlSetState(-1, $GUI_UNCHECKED)
    _GUICtrlSetTip(-1, GetTranslated(106,51, "On. Russian send text. Note: The input language in the Android emulator must be RUSSIAN."))
    GUICtrlCreateLabel(GetTranslated(106, 52, "Russian"), $x + 142, $y, -1, -1)
-   ;GUICtrlSetOnEvent(-1, "chkRusLang")
    $y += 22
    $chkUseResponses = GUICtrlCreateCheckbox("", $x - 10, $y, 13, 13);GUICtrlCreateCheckbox(GetTranslated(106,18,"Use custom responses"), $x - 10, $y)
    GUICtrlSetTip($chkUseResponses, GetTranslated(106,19,"Use the keywords and responses defined below"))

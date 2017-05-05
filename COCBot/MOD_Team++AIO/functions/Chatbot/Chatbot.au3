@@ -8,56 +8,7 @@
 #include <Process.au3>
 #include <Array.au3>
 #include <WinAPIEx.au3>
-$chatIni = ""
 
-;Global  $chatIni = $sProfilePath & "\" & $sCurrProfile & "\chat.ini"
-; SETTINGS =================================================
-Global $ChatbotChatGlobal = False
-Global $ChatbotScrambleGlobal = False
-Global $ChatbotSwitchLang = False
-Global $ChatbotChatClan = False
-Global $ChatbotClanUseResponses = False
-Global $ChatbotClanAlwaysMsg = False
-Global $ChatbotUsePushbullet = False
-Global $ChatbotPbSendNew = False
-Global $ClanMessages = ""
-Global $ClanResponses = ""
-Global $GlobalMessages1 = ""
-Global $GlobalMessages2 = ""
-Global $GlobalMessages3 = ""
-Global $GlobalMessages4 = ""
-Global $ChatbotStartTime
-; END SETTINGS =============================================
-Global $message = ""
-; GUI ======================================================
-
-Global $chkGlobalChat ;
-Global $chkGlobalScramble ;
-Global $chkSwitchLang ;
-Global $chkchatdelay
-Global $ichkchatdelay
-Global $ChatbotChatDelayLabel = ""
-Global $chatdelaycount = 0
-
-Global $chkClanChat ;
-Global $chkUseResponses ;
-Global $chkUseGeneric ;
-Global $chkChatPushbullet ;
-Global $chkPbSendNewChats ;
-
-Global $editGlobalMessages1 ;
-Global $editGlobalMessages2 ;
-Global $editGlobalMessages3 ;
-Global $editGlobalMessages4 ;
-
-Global $editResponses ;
-Global $editGeneric ;
-
-Global $ChatbotQueuedChats[0]
-Global $ChatbotReadQueued = False
-Global $ChatbotReadInterval = 0
-Global $ChatbotIsOnInterval = False
-Global $TmpResp
 Func ChatbotReadSettings()
 	If IniRead($chatIni, "global", "use", "False") = "True" Then $ChatbotChatGlobal = True
 	If IniRead($chatIni, "global", "scramble", "False") = "True" Then $ChatbotScrambleGlobal = True
