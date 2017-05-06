@@ -15,7 +15,7 @@
 #include-once
 
 Global $g_hGUI_MOD = 0
-Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0 , $g_hGUI_MOD_TAB_ITEM2 = 0 ,$g_hGUI_MOD_TAB_ITEM3 = 0, $g_hGUI_MOD_TAB_ITEM4 = 0, $g_hGUI_MOD_TAB_ITEM5 = 0, $g_hGUI_MOD_TAB_ITEM6 = 0
+Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0 , $g_hGUI_MOD_TAB_ITEM2 = 0 ,$g_hGUI_MOD_TAB_ITEM3 = 0, $g_hGUI_MOD_TAB_ITEM4 = 0, $g_hGUI_MOD_TAB_ITEM5 = 0, $g_hGUI_MOD_TAB_ITEM6 = 0, $g_hGUI_MOD_TAB_ITEM7 = 0
 
 ; Switch Account & Profiles
 #include "MOD GUI Design - Profiles.au3"
@@ -32,6 +32,9 @@ Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0 , $g_hGUI_MOD_TAB_ITEM2 = 
 
 ; Chatbot
 #include "MOD GUI Design - Chatbot.au3"
+
+;Custom drop troops
+#include "MOD GUI Design - DropOrderTpoops.au3"
 
 Func CreateMODTab()
 
@@ -52,6 +55,8 @@ Func CreateMODTab()
 		$g_hGUI_MOD_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslated(600,64,"Forecast"))
 			ForecastGUI()
         $g_hGUI_MOD_TAB_ITEM6 = GUICtrlCreateTabItem(GetTranslated(106,1,"Chat"))
-              ChatbotGUI()			
+              ChatbotGUI()
+        $g_hGUI_MOD_TAB_ITEM7 = GUICtrlCreateTabItem(GetTranslated(600, 68, "Drop troops"))
+              TroopsDrop()		
 	GUICtrlCreateTabItem("")
 EndFunc   ;==>CreateMODTab

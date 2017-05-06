@@ -105,3 +105,5 @@
 #include "functions\Other\BackgroundCheck.au3"
 ; Transparent GUI by kychera
 #include "functions\Other\TransLevel.au3"
+;Custom drop troops by kychera
+#include "functions\Mod's\TroopDrop.au3"

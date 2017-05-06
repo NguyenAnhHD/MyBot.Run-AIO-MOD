@@ -167,7 +167,7 @@ Global $iTxtUnitFactor = 10
 Global $iChkWaveFactor = 0
 Global $iTxtWaveFactor = 100
 
-Global $ChkGiantSlot = 0, $iChkGiantSlot = 0, $CmbGiantSlot = 0, $iCmbGiantSlot = 0, $SlotsGiantsVN = 1
+Global $ChkGiantSlot = 0, $iChkGiantSlot = 0, $CmbGiantSlot = 0, $iCmbGiantSlot = 0, $SlotsGiantsVN = 1, $SlotsGiants = 1 ; standard on middle of village
 
 ; Forecast - Added By Eloy (modification rulesss,kychera)
 Global Const $COLOR_DEEPPINK = 0xFF1493
@@ -235,6 +235,17 @@ Global $SldTransLevel = 0
 ; Misc Battle Settings added by rulesss
 Global $chkFastADBClicks = 0
 
-;Enabele\Disabele Watchdog by rulesss,kychera
+;Enabele\Disable Watchdog by rulesss,kychera
 Global $iChkLaunchWatchdog = 1
 Global $ChkLaunchWatchdog = 0
+;Drop order troops by kychera 
+#Region
+Global Enum $eTroopCountDrop = 21
+Global $icmbDropTroops[$eTroopCountDrop] = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+Global Const $g_asTroopNamesPluralDrop[$eTroopCountDrop] = ["Barbarians", "Archers", "Giants", "Goblins", "Wall Breakers", "Balloons", "Wizards", "Healers", "Dragons", "Pekkas", "Baby Dragons", "Miners", "Minions", "Hog Riders", "Valkyries", "Golems", "Witches", "Lava Hounds", "Bowlers", "Clan Castle", "Heroes"] 
+
+Global Const $g_aiTroopOrderDropIcon[23] = [ _
+		$eIcnOptions, $eIcnBarbarian, $eIcnArcher, $eIcnGiant, $eIcnGoblin, $eIcnWallBreaker, $eIcnBalloon, _
+		$eIcnWizard, $eIcnHealer, $eIcnDragon, $eIcnPekka, $eIcnBabyDragon, $eIcnMiner, $eIcnMinion, _
+		$eIcnHogRider, $eIcnValkyrie, $eIcnGolem, $eIcnWitch, $eIcnLavaHound, $eIcnBowler, $eIcnCC, $eIcnHeroes]
+#EndRegion

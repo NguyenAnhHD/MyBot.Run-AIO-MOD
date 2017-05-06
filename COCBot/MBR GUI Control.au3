@@ -50,7 +50,7 @@ Global $g_hFrmBot_WNDPROC_ptr = 0
 ; Team++ AIO MOD
 #include "MOD_Team++AIO\GUI\MOD GUI Control.au3"
 #include "MOD_Team++AIO\GUI\MOD GUI Control - Forecast.au3"
-
+#include "MOD_Team++AIO\GUI\MOD GUI Control - DropOrderTpoops.au3"
 Func InitializeMainGUI()
    InitializeControlVariables()
 

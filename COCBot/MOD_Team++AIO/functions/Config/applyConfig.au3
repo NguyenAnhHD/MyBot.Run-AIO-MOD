@@ -432,3 +432,38 @@ Func ApplyConfig_RK_MOD_NotifyBotSleep($TypeReadSave); by kychera
 		   $iNotifyAlertBOTSleep = GUICtrlRead($ChkNotifyAlertBOTSleep) = $GUI_CHECKED ? 1 : 0
 	EndSwitch
 EndFunc   ;==>ApplyConfig_RK_ruRequest
+
+Func ApplyConfig_DropTroops($TypeReadSave)
+	Switch $TypeReadSave
+		Case "Read"	
+		       GUICtrlSetState($g_hChkCustomTrainDropOrderEnable, $g_bCustomTrainDropOrderEnable ? $GUI_CHECKED : $GUI_UNCHECKED)
+			   chkTroopDropOrder()			   
+			  
+			 	For $p = 0 To UBound($icmbDropTroops) - 1
+				_GUICtrlComboBox_SetCurSel($cmbDropTroops[$p], $icmbDropTroops[$p])
+				GUICtrlSetImage($g_ahImgTroopDropOrder[$p], $g_sLibIconPath, $g_aiTroopOrderDropIcon[$icmbDropTroops[$p] + 1])
+				
+			    Next 
+				 ; process error
+			If $g_bCustomTrainDropOrderEnable = True Then ; only update troop train order if enabled
+				If ChangeTroopTrainOrder2() = False Then ; process error
+					;SetDefaultTroopGroup()
+					GUICtrlSetState($g_hChkCustomTrainDropOrderEnable, $GUI_UNCHECKED)
+					$g_bCustomTrainDropOrderEnable = False
+					GUICtrlSetState($g_hBtnTroopOrderSet2, $GUI_DISABLE) ; disable button
+					GUICtrlSetState($g_hBtnRemoveTroops2, $GUI_DISABLE)
+					For $i = 0 To UBound($cmbDropTroops) - 1
+						GUICtrlSetState($cmbDropTroops[$i], $GUI_DISABLE) ; disable combo boxes
+					Next
+				EndIf
+			EndIf	
+         
+		Case "Save"
+		
+		     $g_bCustomTrainDropOrderEnable = (GUICtrlRead($g_hChkCustomTrainDropOrderEnable) = $GUI_CHECKED)
+		    For $p = 0 To UBound($icmbDropTroops) - 1
+				$icmbDropTroops[$p] = _GUICtrlComboBox_GetCurSel($cmbDropTroops[$p])
+			Next
+		    
+	EndSwitch
+EndFunc   ;==>ApplyConfig_DropTroops

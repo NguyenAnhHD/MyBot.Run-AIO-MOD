@@ -110,6 +110,7 @@ Func applyConfig($bRedrawAtExit = True, $TypeReadSave = "Read") ;Applies the dat
 	ApplyConfig_SwitchAcc($TypeReadSave)
 	ApplyConfig_Forecast($TypeReadSave)
 	ApplyConfig_AndroidSettings($TypeReadSave)
+	ApplyConfig_DropTroops($TypeReadSave)
 
 	; <><><><> Attack Plan / Strategies <><><><>
 	; <<< nothing here >>>

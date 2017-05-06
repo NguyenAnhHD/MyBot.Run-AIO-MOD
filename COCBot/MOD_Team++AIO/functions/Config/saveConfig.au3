@@ -160,6 +160,12 @@ Func SaveConfig_MOD()
 	;Enabele\Disabele Watchdog by rulesss,kychera
 	_Ini_Add("Other", "chkLaunchWatchdog", $iChkLaunchWatchdog ? 1 : 0)
 	
+	;Custom drop troops
+	_Ini_Add("troop2", "chkTroopDropOrder", $g_bCustomTrainDropOrderEnable ? 1 : 0)
+    For $p = 0 To UBound($icmbDropTroops) - 1
+		_Ini_Add("troop2", $g_asTroopNamesPluralDrop[$p], $icmbDropTroops[$p])		
+	Next
+	
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen
