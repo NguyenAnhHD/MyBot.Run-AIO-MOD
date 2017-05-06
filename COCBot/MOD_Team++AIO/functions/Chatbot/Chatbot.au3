@@ -364,7 +364,7 @@ Func ChatbotStartTimer()
 EndFunc   ;==>ChatbotStartTimer
 
 Func ChatbotIsInterval()
-	$Time_Difference = TimerDiff($ChatbotStartTime)
+Local $Time_Difference = TimerDiff($ChatbotStartTime)
 	If $Time_Difference > $ChatbotReadInterval * 1000 Then
 		Return True
 	Else
@@ -387,7 +387,7 @@ Func ChatbotPushbulletSendChat()
    Local $Time = @HOUR & "." & @MIN & "." & @SEC
 
    Local $ChatFile = $Date & "__" & $Time & ".jpg" ; separator __ is need  to not have conflict with saving other files if $TakeSS = 1 and $chkScreenshotLootInfo = 0
-   $g_sProfileLootsPath
+   $g_sProfileLootsPath = ""
    _GDIPlus_ImageSaveToFile($g_hBitmap, $g_sProfileLootsPath & $ChatFile)
    _GDIPlus_ImageDispose($g_hBitmap)
    ;push the file
@@ -675,9 +675,9 @@ Func ChatbotMessage() ; run the chatbot
 
 		If ChatbotIsLastChatNew() Then
 			; get text of the latest message
-			$ChatMsg = StringStripWS(getOcrAndCapture("coc-latinA", 30, 148, 270, 13, False), 7)
+			Local $ChatMsg = StringStripWS(getOcrAndCapture("coc-latinA", 30, 148, 270, 13, False), 7)
 			SetLog(GetTranslated(106, 46, "Found chat message: ") & $ChatMsg, $COLOR_GREEN)
-			$SentMessage = False
+			Local $SentMessage = False
 
 			If $ChatMsg = "" Or $ChatMsg = " " Then
 				If $ChatbotClanAlwaysMsg Then
@@ -691,7 +691,7 @@ Func ChatbotMessage() ; run the chatbot
 			If $ChatbotClanUseResponses And Not $SentMessage Then
 				For $a = 0 To UBound($ClanResponses) - 1
 					If StringInStr($ChatMsg, $ClanResponses[$a][0]) Then
-						$Response = $ClanResponses[$a][1]
+						Local $Response = $ClanResponses[$a][1]
 						SetLog(GetTranslated(106, 47, "Sending response: ") & $Response, $COLOR_GREEN)
 						If Not ChatbotChatClanInput() Then Return
 						If Not ChatbotChatInput($Response) Then Return
