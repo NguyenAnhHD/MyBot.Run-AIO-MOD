@@ -1934,7 +1934,7 @@ Func Bind_ImageList($nCtrl)
 
 		Case $g_hGUI_MOD_TAB
 			; the icons for Mods tab
-			Local $aIconIndex[5] = [$eIcnSwitchOption, $eIcnBrain, $eIcnGoblinXP, $eIcnStats, $eIcnForecast]
+			Local $aIconIndex[6] = [$eIcnSwitchOption, $eIcnBrain, $eIcnGoblinXP, $eIcnStats, $eIcnForecast, $eIcnChatbot]
 
 		Case $g_hGUI_MOD_SWITCH_TAB
 			; the icons for Profiles tab
