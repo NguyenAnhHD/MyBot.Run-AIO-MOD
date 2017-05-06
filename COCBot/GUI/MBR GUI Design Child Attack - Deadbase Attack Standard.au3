@@ -115,7 +115,7 @@ Func CreateAttackSearchDeadBaseStandard()
 ; ====================================================== MULTI FINGERS ======================================================
 	$x  =  23
 	$y += -67
-	$LblDBMultiFinger = GUICtrlCreateLabel(GetTranslated(671,44, "Style:"), $x, $y + 3, 30, -1, $SS_RIGHT)
+	$LblDBMultiFinger = GUICtrlCreateLabel(GetTranslated(671,44, "Style:"), $x, $y + 3, 33, -1, $SS_RIGHT)
 	GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 	$CmbDBMultiFinger = GUICtrlCreateCombo("", $x + 56, $y, 122, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 		$sTxtTip = GetTranslated(671,45, "Select a Multi-Fingers Attack Style.") & @CRLF & @CRLF & _

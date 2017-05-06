@@ -1733,11 +1733,11 @@ Func CreateDonateSubTab()
 
 	   $x = $xStart
 	   $y = $Offy
-	   $g_hGrpDonateOptions = GUICtrlCreateGroup("Donate Options", $x - 20, $y - 20, $g_iSizeWGrpTab3, 169)
+	   $g_hGrpDonateOptions = GUICtrlCreateGroup(GetTranslated(612,120, "Donate Options"), $x - 20, $y - 20, $g_iSizeWGrpTab3, 169)
 	   $x -= 10
 	   $y -= 4
 		   GUICtrlSetState(-1, $GUI_HIDE)
-		   $g_hChkClanHop = GUICtrlCreateCheckbox("Clan Hop", $x, $y)
+		   $g_hChkClanHop = GUICtrlCreateCheckbox(GetTranslated(612,121, "Clan Hop"), $x, $y)
 			   GUICtrlSetState(-1,$GUI_HIDE)
 	   GUICtrlCreateGroup("", -99, -99, 1, 1)
 
