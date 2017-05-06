@@ -32,7 +32,7 @@
 Opt("MustDeclareVars", 1)
 
 Global $g_sBotVersion = "v7.1.4" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
-Global $g_sModversion = "v1.6.2" ;<== Just Change This to Version Number
+Global $g_sModversion = "v1.6.3" ;<== Just Change This to Version Number
 Global $g_sModSupportUrl = "https://mybot.run/forums/index.php?/topic/29141-mods-mbr-v701-dococ-aio-mod-v092-update-2103/" ;<== Our Website Link Support Or Link Download
 Global $g_sModDownloadUrl = "https://github.com/NguyenAnhHD/MyBot.Run-Official-MOD/releases" ;<== Our Website Link Download
 Global $g_sBotTitle = "" ;~ Don't assign any title here, use Func UpdateBotTitle()
@@ -72,7 +72,7 @@ InitializeBot()
 MainLoop()
 
 Func UpdateBotTitle()
-	Local $sTitle = "My Bot " & $g_sBotVersion & " - Team++ " & "AIO MOD " & $g_sModversion & " - "
+	Local $sTitle = "My Bot " & $g_sBotVersion & " [ AiO + RK | MoD" & " " & $g_sModversion & " ] - "
 	If $g_sBotTitle = "" Then
 		$g_sBotTitle = $sTitle
 	Else
