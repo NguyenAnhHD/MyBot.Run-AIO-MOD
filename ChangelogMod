@@ -11,6 +11,28 @@ $$$$$$$$/   ______    ______   _____  ____        /$$$$$$  |$$$$$$/ /$$$$$$  |/$
 
            Updated to v 7.1.4
            Add:
-
-           Fixed:                                    
+		       - Controlling the background and transparency of the bot (Bot option tab)
+			   - Request CC troops at first
+			   - Request of troops in Cyrillic
+			   - Android settings (Emulator selection)
+			   - Chatbot
+			   - Russian help
+			   - Nofity alert Bot sleep
+			   - Nofity alert Break connect
+			   - Start button for telegram and pushbullet
+			   - Fast ADB click
+			   - Launchers for multi farming
+			   - Enable \ Disable Watchdog
+		       - Spell order to Simple Train
+			   - Custom drop troops -=== NEW ===-
+           Improve:
+		       -
+           Fixed:
+		       - unit deploy for multi finger
+			   - dead base collectors filter
+			   - Forced detectiion Town Hall
+           Update:	
+               - Language arabic, russian
+			   - Logo image and name team
+			 
  
