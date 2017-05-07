@@ -667,7 +667,7 @@ EndFunc
 
 #Region Attacks SubTab
 Func CreateAttacksSubTab()
-	$34 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
+	$34 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
 	Local $sTxtTip = ""
 	Local $xStart = 25, $yStart = 45
 	Local $x = $xStart + 3, $y = $yStart + 20
