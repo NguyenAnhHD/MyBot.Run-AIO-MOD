@@ -36,6 +36,8 @@ Func ApplyConfig_MOD($TypeReadSave)
             ; Disable background by kychera
 		    GUICtrlSetState($chkPic, $ichkPic = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 		    chkPic()
+			_GUICtrlComboBox_SetCurSel($BackGr, $iBackGr)
+			BackGr()
 		    ; Transparent Gui by kychera
 	        GUICtrlSetData($SldTransLevel, $iSldTransLevel)
 
@@ -185,6 +187,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 
             ; Disable background by kychera
 			$ichkPic = (GUICtrlRead($chkPic) = $GUI_CHECKED)
+			$iBackGr = _GUICtrlComboBox_GetCurSel($BackGr)
 
 			; Transparent Gui by kychera
             $iSldTransLevel = GUICtrlRead($SldTransLevel)

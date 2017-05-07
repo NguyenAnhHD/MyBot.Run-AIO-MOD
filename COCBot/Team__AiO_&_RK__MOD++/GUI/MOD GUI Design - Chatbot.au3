@@ -21,7 +21,7 @@ Func ChatbotGUI()
 $36 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
    ChatbotReadSettings()
 
-	Local $x = 22, $y = 47
+	Local $x = 25, $y = 47
 
    GUICtrlCreateGroup(GetTranslated(106, 2,"Global Chat"), $x - 20, $y - 20, 215, 360)
     $y -= 5
@@ -66,7 +66,7 @@ $36 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg
    $y += 65
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-	Local $x = 240, $y = 47
+	Local $x = 245, $y = 47
 
    GUICtrlCreateGroup(GetTranslated(106,15,"Clan Chat"), $x - 20, $y - 20, 218, 360)
    $y -= 5

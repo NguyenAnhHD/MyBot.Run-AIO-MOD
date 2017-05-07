@@ -148,7 +148,7 @@ $1 = GUICtrlCreatePic(@ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg',
 		   GUICtrlSetState(-1, $GUI_DISABLE)
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 ;++++++++ Modified Kychera	+++++++++++
-	$y += 49
+	$y += 55
 	GUICtrlCreateGroup(GetTranslated(636,129, "Decor"), $x - 20, $y - 20, 210, 90)
 	$y += -5
 		$chkPic = GUICtrlCreateCheckbox("", $x, $y + 2, 13, 13)
@@ -214,11 +214,11 @@ GUICtrlCreateGroup("", -99, -99, 1, 1)
 	  $ChkLaunchWatchdog = _GUICtrlCreateCheckbox(GetTranslated(2000,1, "Disabled Watchdog"), $x, $y + 2, -1, -1)
           GUICtrlSetState(-1, $GUI_UNCHECKED)
 	     GUICtrlSetOnEvent(-1, "chkLaunchWatchdog")
-		$y += 19
-   GUICtrlSetPos($hGroup, $x - 20, $yGroup - 20, 255, (($y - $yGroup) / 19) * 25)
+		$y += 12
+   GUICtrlSetPos($hGroup, $x - 20, $yGroup - 20, 225, (($y - $yGroup) / 19) * 25)
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-   $y += 30
+   $y += 35
    GUICtrlCreateGroup(GetTranslated(636,55, "Photo Screenshot Options"), $x - 20, $y - 17, 225, 60)
 	   $g_hChkScreenshotType = _GUICtrlCreateCheckbox(GetTranslated(636,56, "Make in PNG format"), $x, $y, -1, -1)
 		   GUICtrlSetState(-1, $GUI_CHECKED)

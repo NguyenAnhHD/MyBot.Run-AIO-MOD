@@ -20,9 +20,9 @@ Func chkPic()
 	ElseIf GUICtrlRead($chkPic) = $GUI_UNCHECKED Then
 	        $ichkPic = 0
 	        GUICtrlSetState($BackGr, $GUI_HIDE)
-		 For $i = 1 To 50	
+		 For $i = 1 To 50
 			GUICtrlSetState(Eval("" & $i), $GUI_HIDE)
-   	     Next				
+   	     Next
 	EndIf
 EndFunc   ;==>chkPic
 
@@ -31,15 +31,15 @@ EndFunc   ;==>chkPic
      Local $iKey
         For $i = 1 To 42
             $iKey = StringRight(GUICtrlRead($BackGr), 1)
-            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\COCBot\MOD_Team++AIO\Images\' & $iKey & '.jpg')			
+            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\' & $iKey & '.jpg')
         Next
 		 For $i = 43 To 47
             $iKey = StringRight(GUICtrlRead($BackGr), 1)
-            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\COCBot\MOD_Team++AIO\Images2\' & $iKey & '.jpg')			
-        Next		
+            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images2\' & $iKey & '.jpg')
+        Next
 		 For $i = 49 To 50
             $iKey = StringRight(GUICtrlRead($BackGr), 1)
-            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\COCBot\MOD_Team++AIO\Images3\' & $iKey & '.jpg')			
-        Next		
+            GUICtrlSetImage(Eval("" & $i), @ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images3\' & $iKey & '.jpg')
+        Next
 EndFunc   ;==>BackGr
 ;================================

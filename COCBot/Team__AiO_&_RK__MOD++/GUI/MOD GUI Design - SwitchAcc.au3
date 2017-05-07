@@ -24,7 +24,7 @@ Func CreateBotSwitchAcc()
 	$nTotalProfile = _Min(_GUICtrlComboBox_GetCount($g_hCmbProfile), 8)
 
 	Local $sTxtTip = ""
-	Local $x = 25, $y = 105
+	Local $x = 20, $y = 105
 
 	$g_StartHideSwitchAcc = GUICtrlCreateDummy()
 	GUICtrlCreateGroup(GetTranslated(109, 1, "Switch Account Mode"), $x - 15, $y - 20, 203, 295)
@@ -104,7 +104,7 @@ Func CreateBotSwitchAcc()
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 	; Profiles & Account matching
-	Local $x = 235, $y = 105
+	Local $x = 230, $y = 105
 
 	GUICtrlCreateGroup(GetTranslated(109, 34, "Profiles"), $x - 20, $y - 20, 225, 295)
 	GUICtrlCreateButton(GetTranslated(109, 35, "Update Profiles"), $x + 40, $y - 5, -1, 25)
