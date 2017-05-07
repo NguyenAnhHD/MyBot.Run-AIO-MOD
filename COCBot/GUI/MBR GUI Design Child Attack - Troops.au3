@@ -15,7 +15,7 @@
 #include-once
 
 Global $g_hGUI_TRAINARMY = 0
-Global $g_hGUI_TRAINARMY_TAB = 0, $g_hGUI_TRAINARMY_TAB_ITEM1 = 0, $g_hGUI_TRAINARMY_TAB_ITEM2 = 0, $g_hGUI_TRAINARMY_TAB_ITEM3 = 0, $g_hGUI_TRAINARMY_TAB_ITEM4 = 0
+Global $g_hGUI_TRAINARMY_TAB = 0, $g_hGUI_TRAINARMY_TAB_ITEM1 = 0, $g_hGUI_TRAINARMY_TAB_ITEM2 = 0, $g_hGUI_TRAINARMY_TAB_ITEM3 = 0, $g_hGUI_TRAINARMY_TAB_ITEM4 = 0, $g_hGUI_TRAINARMY_TAB_ITEM5 = 0
 
 ; Troops/Spells sub-tab
 Global $g_hChkUseQuickTrain = 0, $g_ahChkArmy[3] = [0,0,0]			; QuickTrainCombo (check box) - Demen
@@ -71,6 +71,8 @@ Global $g_hChkCloseWhileTraining = 0, $g_hChkCloseWithoutShield = 0, $g_hChkClos
 Global $g_hLblCloseWaitRdmPercent = 0, $g_hLblCloseWaitingTroops = 0, $g_hLblSymbolWaiting = 0, $g_hLblWaitingInMinutes = 0, $g_hLblTrainITDelay = 0, $g_hLblTrainITDelayTime = 0, _
 	   $g_hLblAddDelayIdlePhaseBetween = 0, $g_hLblAddDelayIdlePhaseSec = 0, $g_hPicCloseWaitTrain = 0, $g_hPicCloseWaitStop = 0, $g_hPicCloseWaitExact = 0
 
+#include "..\Team__AiO_&_RK__MOD++\GUI\MOD GUI Design - DropOrderTpoops.au3"
+
 Func CreateAttackTroops()
    $g_hGUI_TRAINARMY = _GUICreate("", $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_ATTACK)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_TRAINARMY)
@@ -81,6 +83,7 @@ Func CreateAttackTroops()
    CreateBoostSubTab()
    CreateTrainOrderSubTab()
    CreateOptionsSubTab()
+   TroopsDrop()
 
 EndFunc
 

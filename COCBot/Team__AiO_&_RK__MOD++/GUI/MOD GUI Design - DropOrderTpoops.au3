@@ -25,59 +25,56 @@ Global Const $g_asTroopDropList[] = [ "", _
 
 Func TroopsDrop()
 $10 = GUICtrlCreatePic(@ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$g_hGUI_TRAINARMY_TAB_ITEM5 = GUICtrlCreateTabItem("Order Troops")
 Local $x = 25, $y = 45
-GUICtrlCreateGroup(GetTranslated(641, 58, "Custom dropping order"), $x - 20, $y - 20, 350, 405)
+GUICtrlCreateGroup(GetTranslated(641, 58, "Custom dropping order"), $x - 20, $y - 20, 350, 380)
 $x += 10
 $y += 20
         GUICtrlCreateLabel("BETA", $x + 200, $y - 35, 50, 30)
 		GUICtrlSetFont(-1, 14, 700, 0, "Comic Sans MS")
 		 GUICtrlSetBkColor(-1, 0xCCFFCC)
-$g_hChkCustomTrainDropOrderEnable = GUICtrlCreateCheckbox(GetTranslated(641, 59, "Enable troops order drop"), $x, $y - 25, -1, -1)
+$g_hChkCustomTrainDropOrderEnable = GUICtrlCreateCheckbox(GetTranslated(641, 59, "Enable troops order drop"), $x - 10, $y - 20, -1, -1)
 	   GUICtrlSetState(-1, $GUI_UNCHECKED)
 	   _GUICtrlSetTip(-1, GetTranslated(641, 60, "Enable to select a custom troop dropping order") & @CRLF & _
 						  GetTranslated(641, 61, "Changing drop order can NOT be used with CSV scripted attack! For a standard attack. Live and dead bases. Consistency - all troops"))
 	   GUICtrlSetOnEvent(-1, "chkTroopDropOrder")
-	 ; If UBound($g_asTroopOrderList) - 1 <> $eTroopCount Then ; safety check in case troops are added
-	;	If $g_iDebugSetlogTrain = 1 Then Setlog("UBound($g_asTroopOrderList) - 1: " & UBound($g_asTroopOrderList) - 1 & " = " & "$eTroopCount: " & $eTroopCount, $COLOR_DEBUG) ;Debug
-	;	Setlog("Monkey ate bad banana, fix $g_asTroopOrderList & $eTroopCount arrays!", $COLOR_RED)
-	 ; EndIf
 
 	  ; Create translated list of Troops for combo box
 Local $sComboData = ""
 	    For $j = 0 To UBound($g_asTroopDropList) - 1
 		  $sComboData &= $g_asTroopDropList[$j] & "|"
 	    Next
-
+$y += 5
 	  For $p = 0 To $eTroopCountDrop - 1
 		  If $p < 10 Then
-			  GUICtrlCreateLabel($p + 1 & ":", $x - 16, $y + 2, -1, 25)
-			  $cmbDropTroops[$p] = GUICtrlCreateCombo("", $x, $y, 94, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			  GUICtrlCreateLabel($p + 1 & ":", $x - 19, $y + 2, -1, 18)
+			  $cmbDropTroops[$p] = GUICtrlCreateCombo("", $x, $y, 94, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 				  GUICtrlSetOnEvent(-1, "GUITrainOrder2")
 				 GUICtrlSetData(-1, $sComboData, "")
 
 				 ;_GUICtrlSetTip(-1, $txtTroopOrder & $p + 1)
 				 GUICtrlSetState(-1, $GUI_DISABLE)
-			  $g_ahImgTroopDropOrder[$p] = GUICtrlCreateIcon($g_sLibIconPath, $eIcnOptions, $x + 100, $y, 25, 25)
-			  $y += 30 ; move down to next combobox location
+			  $g_ahImgTroopDropOrder[$p] = GUICtrlCreateIcon($g_sLibIconPath, $eIcnOptions, $x + 96, $y + 1, 18, 18)
+			  $y += 25 ; move down to next combobox location
 		  Else
 			  If $p = 10 Then
-				  $x += 135
-				  $y = 65
+				  $x += 128
+				  $y = 45 + 23
 			  EndIf
-			  GUICtrlCreateLabel($p + 1 & ":", $x - 5, $y + 2, -1, 25)
-			  $cmbDropTroops[$p] = GUICtrlCreateCombo("", $x + 20, $y, 94, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			  GUICtrlCreateLabel($p + 1 & ":", $x - 5, $y + 2, -1, 18)
+			  $cmbDropTroops[$p] = GUICtrlCreateCombo("", $x + 20, $y, 94, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 				  GUICtrlSetOnEvent(-1, "GUITrainOrder2")
 				 GUICtrlSetData(-1, $sComboData, "")
 
 				 ;_GUICtrlSetTip(-1, $txtTroopOrder & $p + 1)
 				 GUICtrlSetState(-1, $GUI_DISABLE)
-			$g_ahImgTroopDropOrder[$p] =  GUICtrlCreateIcon($g_sLibIconPath, $eIcnOptions, $x + 120, $y, 25, 25)
-			  $y += 30 ; move down to next combobox location
+			$g_ahImgTroopDropOrder[$p] =  GUICtrlCreateIcon($g_sLibIconPath, $eIcnOptions, $x + 120, $y + 1, 18, 18)
+			  $y += 25 ; move down to next combobox location
 		  EndIf
 	  Next
 
 	  $x = 25
-	  $y = 400
+	  $y = 350
 		  ; Create push button to set training order once completed
 		  $g_hBtnTroopOrderSet2 = GUICtrlCreateButton(GetTranslated(641, 62, "Apply New Order"), $x, $y, 100, 25)
 			 GUICtrlSetState(-1, BitOR($GUI_UNCHECKED, $GUI_ENABLE))

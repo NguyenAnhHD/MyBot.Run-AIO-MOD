@@ -33,9 +33,6 @@ Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0 , $g_hGUI_MOD_TAB_ITEM2 = 
 ; Chatbot
 #include "MOD GUI Design - Chatbot.au3"
 
-; Custom drop troops
-#include "MOD GUI Design - DropOrderTpoops.au3"
-
 Func CreateMODTab()
 
 	$g_hGUI_MOD = GUICreate("", $_GUI_MAIN_WIDTH - 20, $_GUI_MAIN_HEIGHT - 255, $_GUI_CHILD_LEFT, $_GUI_CHILD_TOP, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hFrmBotEx)
@@ -43,20 +40,18 @@ Func CreateMODTab()
 	CreateModProfiles()
 	GUISwitch($g_hGUI_MOD)
 	$g_hGUI_MOD_TAB = GUICtrlCreateTab(0, 0, $_GUI_MAIN_WIDTH - 20, $_GUI_MAIN_HEIGHT - 255, BitOR($TCS_SINGLELINE, $TCS_RIGHTJUSTIFY))
-		$g_hGUI_MOD_TAB_ITEM1 = GUICtrlCreateTabItem(GetTranslated(600,60,"Switch Option"))
-		$g_hGUI_MOD_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslated(600,61,"Humanization"))
+		$g_hGUI_MOD_TAB_ITEM1 = GUICtrlCreateTabItem(GetTranslated(600,58,"Profiles"))
+		$g_hGUI_MOD_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslated(600,59,"Humanization"))
 			HumanizationGUI()
-		$g_hGUI_MOD_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslated(600,62,"Goblin XP"))
+		$g_hGUI_MOD_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslated(600,60,"Goblin XP"))
 			GoblinXPGUI()
-		$g_hGUI_MOD_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslated(600,63,"Stat's")) ; Has to be outside of the Last Control to hide
+		$g_hGUI_MOD_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslated(600,61,"Chat"))
+			ChatbotGUI()
+		$g_hGUI_MOD_TAB_ITEM6 = GUICtrlCreateTabItem(GetTranslated(600,63,"Stat's")) ; Has to be outside of the Last Control to hide
 			$g_hLastControlToHide = GUICtrlCreateDummy()
 			ReDim $g_aiControlPrevState[$g_hLastControlToHide + 1]
 			CreateProfileStats()
-		$g_hGUI_MOD_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslated(600,64,"Forecast"))
+		$g_hGUI_MOD_TAB_ITEM7 = GUICtrlCreateTabItem(GetTranslated(600,64,"Forecast"))
 			ForecastGUI()
-        $g_hGUI_MOD_TAB_ITEM6 = GUICtrlCreateTabItem(GetTranslated(106,1,"Chat"))
-              ChatbotGUI()
-        $g_hGUI_MOD_TAB_ITEM7 = GUICtrlCreateTabItem(GetTranslated(600, 68, "Drop troops"))
-              TroopsDrop()
 	GUICtrlCreateTabItem("")
 EndFunc   ;==>CreateMODTab
