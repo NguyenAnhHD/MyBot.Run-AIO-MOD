@@ -199,7 +199,7 @@ Func SaveRegularConfig()
 	; <><><><> Bot / Debug <><><><>
 	SaveConfig_Debug()
 
-	;  <><><> Team++ AIO MOD <><><>
+	;  <><><> Team AiO & RK MOD++ (2017) <><><>
 	SaveConfig_MOD()
 	SaveConfig_SwitchAcc()
 	SaveConfig_Forecast()

@@ -47,10 +47,11 @@ Global $g_hFrmBot_WNDPROC_ptr = 0
 #include "GUI\MBR GUI Control Child Misc.au3"
 #include "GUI\MBR GUI Control Android.au3"
 #include "MBR GUI Action.au3"
-; Team++ AIO MOD
-#include "MOD_Team++AIO\GUI\MOD GUI Control.au3"
-#include "MOD_Team++AIO\GUI\MOD GUI Control - Forecast.au3"
-#include "MOD_Team++AIO\GUI\MOD GUI Control - DropOrderTpoops.au3"
+; Team AiO & RK MOD++ (2017)
+#include "Team__AiO_&_RK__MOD++\GUI\MOD GUI Control.au3"
+#include "Team__AiO_&_RK__MOD++\GUI\MOD GUI Control - Forecast.au3"
+#include "Team__AiO_&_RK__MOD++\GUI\MOD GUI Control - DropOrderTpoops.au3"
+
 Func InitializeMainGUI()
    InitializeControlVariables()
 

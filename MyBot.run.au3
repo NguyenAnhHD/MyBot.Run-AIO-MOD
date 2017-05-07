@@ -72,7 +72,7 @@ InitializeBot()
 MainLoop()
 
 Func UpdateBotTitle()
-	Local $sTitle = "My Bot " & $g_sBotVersion & " [ AiO + RK | MoD" & " " & $g_sModversion & " ] - "
+	Local $sTitle = "My Bot " & $g_sBotVersion & " [ AiO && RK | MOD++" & " " & $g_sModversion & " ] - "
 	If $g_sBotTitle = "" Then
 		$g_sBotTitle = $sTitle
 	Else
@@ -165,7 +165,7 @@ Func InitializeBot()
     ;===============================================
 	;transparent gui
       Slider()
-	;===============================================  
+	;===============================================
 
 EndFunc   ;==>InitializeBot
 
@@ -565,7 +565,7 @@ Func MainLoop()
 
 	While 1
 		_Sleep($DELAYSLEEP, True, False)
-		
+
 		If $g_bRunState = False and $g_bNotifyRemoteEnable = True Then
 	      NotifyRemoteControl2(); remote control when stopped the bot by kychera
 	    EndIf
@@ -996,8 +996,8 @@ Func AttackMain() ;Main control for attack functions
 				;Setlog("BullyMode: " & $g_abAttackTypeEnable[$TB] & ", Bully Hero: " & BitAND($g_aiAttackUseHeroes[$g_iAtkTBMode], $g_aiSearchHeroWaitEnable[$g_iAtkTBMode], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$g_iAtkTBMode] & "|" & $g_iHeroAvailable, $COLOR_DEBUG)
 			EndIf
 			If $ChatbotChatGlobal = true or $ChatbotChatClan = true Then
-               ChatbotMessage()	
-	        EndIf	
+               ChatbotMessage()
+	        EndIf
 			PrepareSearch()
 			If $g_bOutOfGold = True Then Return ; Check flag for enough gold to search
 			If $g_bRestart = True Then Return

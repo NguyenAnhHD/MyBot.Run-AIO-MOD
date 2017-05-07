@@ -29,7 +29,7 @@ Global $g_hChkSinglePBTForced = 0, $g_hTxtSinglePBTimeForced = 0, $g_hTxtPBTimeF
 Global $g_hChkAutohide = 0, $g_hTxtAutohideDelay = 0 ; Auto Hide - Added By NguyenAnhHD
 
 Func CreateBotOptions()
-$1 = GUICtrlCreatePic(@ScriptDir & '\COCBot\MOD_Team++AIO\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$1 = GUICtrlCreatePic(@ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 25, $y = 45
    GUICtrlCreateGroup(GetTranslated(636,83, "GUI Language"), $x - 20, $y - 20, 210, 47)

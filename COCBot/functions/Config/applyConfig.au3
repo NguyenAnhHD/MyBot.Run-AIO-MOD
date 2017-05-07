@@ -105,7 +105,7 @@ Func applyConfig($bRedrawAtExit = True, $TypeReadSave = "Read") ;Applies the dat
 	; <><><> Attack Plan / Train Army / Options <><><>
 	ApplyConfig_641_1($TypeReadSave)
 
-	;  <><><> Team++ AIO MOD <><><>
+	;  <><><> Team AiO & RK MOD++ (2017) <><><>
 	ApplyConfig_MOD($TypeReadSave)
 	ApplyConfig_SwitchAcc($TypeReadSave)
 	ApplyConfig_Forecast($TypeReadSave)

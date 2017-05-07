@@ -1,10 +1,10 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Globals_Team++AIO
+; Name ..........: Globals_Team__AiO_&_RK__MOD++
 ; Description ...: This file Includes several files in the current script and all Declared variables, constant, or create an array.
 ; Syntax ........: #include , Global
 ; Parameters ....: None
 ; Return values .: None
-; Author ........: Team++ AIO (2017)
+; Author ........: Team AiO & RK MOD++ (2017)
 ; Modified ......:
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
@@ -217,7 +217,7 @@ Global $ichkRusLang2 = 0
 Global $chkRusLang2 = 0
 ;Notify alert botsleep and break connect by kychera
 Global $ChkNotifyAlertBOTSleep = 0, $iNotifyAlertBOTSleep = 0
-Global $TimerConnect, $DiffConnect, $iNotifyAlertConnect = 0, $ChkNotifyAlertConnect = 0 
+Global $TimerConnect, $DiffConnect, $iNotifyAlertConnect = 0, $ChkNotifyAlertConnect = 0
 ;-------------------------------------------------------
 ;Background by Kychera
 Global $BackGr, $chkPic
@@ -238,11 +238,11 @@ Global $chkFastADBClicks = 0
 ;Enabele\Disable Watchdog by rulesss,kychera
 Global $iChkLaunchWatchdog = 1
 Global $ChkLaunchWatchdog = 0
-;Drop order troops by kychera 
+;Drop order troops by kychera
 #Region
 Global Enum $eTroopCountDrop = 21
 Global $icmbDropTroops[$eTroopCountDrop] = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
-Global Const $g_asTroopNamesPluralDrop[$eTroopCountDrop] = ["Barbarians", "Archers", "Giants", "Goblins", "Wall Breakers", "Balloons", "Wizards", "Healers", "Dragons", "Pekkas", "Baby Dragons", "Miners", "Minions", "Hog Riders", "Valkyries", "Golems", "Witches", "Lava Hounds", "Bowlers", "Clan Castle", "Heroes"] 
+Global Const $g_asTroopNamesPluralDrop[$eTroopCountDrop] = ["Barbarians", "Archers", "Giants", "Goblins", "Wall Breakers", "Balloons", "Wizards", "Healers", "Dragons", "Pekkas", "Baby Dragons", "Miners", "Minions", "Hog Riders", "Valkyries", "Golems", "Witches", "Lava Hounds", "Bowlers", "Clan Castle", "Heroes"]
 
 Global Const $g_aiTroopOrderDropIcon[23] = [ _
 		$eIcnOptions, $eIcnBarbarian, $eIcnArcher, $eIcnGiant, $eIcnGoblin, $eIcnWallBreaker, $eIcnBalloon, _

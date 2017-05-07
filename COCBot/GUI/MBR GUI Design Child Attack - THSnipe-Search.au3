@@ -27,7 +27,7 @@ Global $g_hGrpTSFilter = 0, $g_hPicTSMinGold = 0, $g_hPicTSMinElixir = 0, $g_hPi
 Global $g_hLblAddTiles = 0, $g_hLblAddTiles2 = 0, $g_hLblSWTTiles = 0, $g_hLblTHadd = 0
 
 Func CreateAttackSearchTHSnipeSearch()
-   $25 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 0, 23, 430, 350, $WS_CLIPCHILDREN)
+   $25 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 0, 23, 430, 350, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 25, $y = 45
 	GUICtrlCreateGroup(GetTranslated(625,0, -1), $x - 20, $y - 20, 190, $g_iSizeHGrpTab4)

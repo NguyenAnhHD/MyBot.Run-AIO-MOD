@@ -97,7 +97,7 @@ EndFunc
 Func CreateRequestSubTab()
 	Local $xStart = 25, $yStart = 45
 	$g_hGUI_RequestCC = _GUICreate("", $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, $xStart - 20, $yStart - 20, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DONATE)
-	$38 = GUICtrlCreatePic(@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 0, 0, 442, 380, $WS_CLIPCHILDREN)
+	$38 = GUICtrlCreatePic(@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 0, 0, 442, 380, $WS_CLIPCHILDREN)
 	; GUISetBkColor($COLOR_WHITE)
 	Local $xStart = 20, $yStart = 20
 	Local $x = $xStart
@@ -123,7 +123,7 @@ Func CreateRequestSubTab()
 			GUICtrlSetOnEvent(-1, "chkReqCCFirst")
 			GUICtrlCreateLabel(GetTranslated(611,5,"Early"), $x + 311, $y - 4, -1, -1)
 		    GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
-			
+
 		$x += 29 + 30
 		$y += 60
 		GUICtrlCreateLabel(GetTranslated(603,30,"Only during these hours of day"), $x + 30, $y, 300, 20, $BS_MULTILINE)
@@ -131,7 +131,7 @@ Func CreateRequestSubTab()
 		$x += 30
 		$y += 25
 		$g_hLblRequestCChour = GUICtrlCreateLabel(GetTranslated(603, 15, -1) & ":", $x , $y, -1, 15)
-		GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)	
+		GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 			Local $sTxtTip = GetTranslated(603, 30, -1)
 			_GUICtrlSetTip(-1, $sTxtTip)
 		$g_hLblRequestCChours[0] =  GUICtrlCreateLabel(" 0", $x + 30, $y, 13, 15)
@@ -267,7 +267,7 @@ EndFunc
 Func CreateDonateSubTab()
 	Local $xStart = 25, $yStart = 45
 	$g_hGUI_DONATECC = _GUICreate("", $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, $xStart - 20, $yStart - 20, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DONATE)
-	$28 = GUICtrlCreatePic(@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 0, 0, 442, 380, $WS_CLIPCHILDREN)
+	$28 = GUICtrlCreatePic(@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 0, 0, 442, 380, $WS_CLIPCHILDREN)
 	; GUISetBkColor($COLOR_WHITE)
 	Local $xStart = 20, $yStart = 20
   ;~ -------------------------------------------------------------
@@ -1748,7 +1748,7 @@ EndFunc
 Func CreateScheduleSubTab()
 	Local $xStart = 25, $yStart = 45
 	$g_hGUI_ScheduleCC = _GUICreate("", $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, $xStart - 20, $yStart - 20, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DONATE)
-    $29 = GUICtrlCreatePic(@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 0, 0, 442, 380, $WS_CLIPCHILDREN)
+    $29 = GUICtrlCreatePic(@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 0, 0, 442, 380, $WS_CLIPCHILDREN)
 	; GUISetBkColor($COLOR_WHITE)
 	Local $xStart = 20, $yStart = 20
 	Local $x = $xStart

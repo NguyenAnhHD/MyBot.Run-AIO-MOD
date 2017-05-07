@@ -25,7 +25,7 @@ Global $g_hBtnLocateKingAltar = 0, $g_hBtnLocateQueenAltar = 0, $g_hBtnLocateWar
 Global $g_hChkTreasuryCollect = 0, $g_hTxtTreasuryGold = 0, $g_hTxtTreasuryElixir = 0, $g_hTxtTreasuryDark = 0
 
 Func CreateVillageMisc()
-$39 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$39 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 15, $y = 45
    GUICtrlCreateGroup(GetTranslated(610,1, "Halt Attack"), $x - 10, $y - 20, $g_iSizeWGrpTab2, 100)

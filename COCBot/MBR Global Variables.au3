@@ -1383,13 +1383,13 @@ Global Enum $eWeakEagle = 1, $eWeakInferno, $eWeakXBow, $eWeakWizard, $eWeakMort
 Global $g_aWeakDefenseNames = ["None", "Eagle Artillery", "Inferno Tower", "XBow", "Wizard Tower", "Mortar", "Air Defense"]
 Global $g_aWeakDefenseMaxLevels = [0, 2, 4, 4, 9, 9, 8]
 
-; Team++ AIO MOD
-#include "MOD_Team++AIO\Globals_Team++AIO.au3"
+; Team AiO & RK MOD++ (2017)
+#include "Team__AiO_&_RK__MOD++\Globals_Team__AiO_&_RK__MOD++.au3"
 
 ; Android Settings (LunaEclipse)- modification (rulesss,kychera)
 Global $sAndroid = "<No Emulators>"
 Global $sAndroidInstance = ""
-Global $g_sBotTitle, $g_sOldTitle 
-Global $CmbAndroid  
-Global $TxtAndroidInstance 
+Global $g_sBotTitle, $g_sOldTitle
+Global $CmbAndroid
+Global $TxtAndroidInstance
 Global $LblAndroidInstance

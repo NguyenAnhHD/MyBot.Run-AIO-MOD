@@ -21,7 +21,7 @@ Global $g_hCmbMinCollectorMatches = 0, $g_hSldCollectorTolerance = 0, $g_hLblCol
 Global $g_hChkDBMeetCollOutside = 0, $g_hTxtDBMinCollOutsidePercent ; Check Collector Outside - Added By NguyenAnhHD
 
 Func CreateAttackSearchDeadBaseCollectors()
-   $13 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
+   $13 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $x = 10, $y = 45
    Local $s_TxtTip1 = GetTranslated(626,15, "If this box is checked, then the bot will look")
    Local $g_hTxtFull = GetTranslated(626,30, "Full")
@@ -34,7 +34,7 @@ Func CreateAttackSearchDeadBaseCollectors()
 			GUICtrlSetState(-1, $GUI_UNCHECKED)
 			GUICtrlSetOnEvent(-1, "ChkDBDisableCollectorsFilter")
 			ChkDBDisableCollectorsFilter() ;modification by rulesss
-         
+
 		; Check Collector Outside - Added By NguyenAnhHD
 		$g_hChkDBMeetCollOutside = _GUICtrlCreateCheckbox(GetTranslated(626,40, "Check Collectors Outside"), $x+250, $y+90, -1, -1)
 			$sTxtTip = GetTranslated(626,41, "Search for bases that has their collectors outside.")

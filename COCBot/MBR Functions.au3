@@ -274,8 +274,8 @@
 #include "functions\Other\Api.au3"
 #include "functions\Other\ApiClient.au3"
 
-; Team++ AIO MOD
-#include "MOD_Team++AIO\Functions_Team++AIO.au3"
+; Team AiO & RK MOD++ (2017)
+#include "Team__AiO_&_RK__MOD++\Functions_Team__AiO_&_RK__MOD++.au3"
 
 ; OLD CODE
 

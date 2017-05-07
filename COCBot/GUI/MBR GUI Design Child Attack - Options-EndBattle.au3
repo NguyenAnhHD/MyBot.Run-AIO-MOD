@@ -20,7 +20,7 @@ Global $g_hChkShareAttack = 0, $g_hLblShareMinLoot = 0, $g_hTxtShareMinGold = 0,
 Global $g_hLblShareMinGold = 0, $g_hLblShareMinElixir = 0,  $g_hLblShareMinDark = 0
 
 Func CreateAttackSearchOptionsEndBattle()
-   $18 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
+   $18 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $x = 20, $y = 45
 
 	   GUICtrlCreateGroup(GetTranslated(633,1,"Share Replay"), $x-15, $y-20, $g_iSizeWGrpTab4, 204)

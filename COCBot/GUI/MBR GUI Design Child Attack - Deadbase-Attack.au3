@@ -28,7 +28,7 @@ Global $g_hChkTHSnipeBeforeDBEnable = 0, $g_hTxtTHSnipeBeforeDBTiles = 0, $g_hCm
 Global $g_hLblTHSnipeBeforeDBTiles = 0
 
 Func CreateAttackSearchDeadBaseAttack()
-$49 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images3\1.jpg", 0, 20, 150, 352, $WS_CLIPCHILDREN)
+$49 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images3\1.jpg", 0, 20, 150, 352, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 25, $y = 40
 	   GUICtrlCreateGroup(GetTranslated(624,1,"Attack with"), $x - 20, $y - 15, 145, 223)

@@ -4,7 +4,7 @@
 ; Syntax ........: applyConfig()
 ; Parameters ....: $bRedrawAtExit = True, redraws bot window after config was applied
 ; Return values .: NA
-; Author ........: Team++ AIO (2017)
+; Author ........: Team AiO & RK MOD++ (2017)
 ; Modified ......:
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
 ;                  MyBot is distributed under the terms of the GNU GPL
@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 
 Func ApplyConfig_MOD($TypeReadSave)
-	; <><><> Team++ AIO MOD <><><>
+	; <><><> Team AiO & RK MOD++ (2017) <><><>
 	Switch $TypeReadSave
 		Case "Read"
 
@@ -37,7 +37,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 		    GUICtrlSetState($chkPic, $ichkPic = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 		    chkPic()
 		    ; Transparent Gui by kychera
-	        GUICtrlSetData($SldTransLevel, $iSldTransLevel)        
+	        GUICtrlSetData($SldTransLevel, $iSldTransLevel)
 
 			; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 			GUICtrlSetState($g_hChkAutohide, $ichkAutoHide = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -159,18 +159,18 @@ Func ApplyConfig_MOD($TypeReadSave)
 
 			; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 			GUICtrlSetState($g_hChkClanHop, $g_bChkClanHop ? $GUI_CHECKED : $GUI_UNCHECKED)
-            
+
 			;Move the Request CC Troops - Added by rulesss
 			GUICtrlSetState($chkReqCCFirst, $g_bReqCCFirst = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			
+
 			; Misc Battle Settings Added by rulesss
 			GUICtrlSetState($chkFastADBClicks, $g_bAndroidAdbClicksEnabled = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
             chkFastADBClicks()
-			
+
 			;Enabele\Disabele Watchdog by rulesss,kychera
 			GUICtrlSetState($ChkLaunchWatchdog, $iChkLaunchWatchdog = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			chkLaunchWatchdog()
-			
+
 		Case "Save"
 			; Multi Finger - Added by Eloy
 			$iMultiFingerStyle = _GUICtrlComboBox_GetCurSel($CmbDBMultiFinger)
@@ -182,13 +182,13 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$iTxtWaveFactor = GUICtrlRead($TxtWaveFactor)
 			$iChkGiantSlot = (GUICtrlRead($ChkGiantSlot) = $GUI_CHECKED)
 			$iCmbGiantSlot = _GUICtrlComboBox_GetCurSel($CmbGiantSlot)
-			
+
             ; Disable background by kychera
 			$ichkPic = (GUICtrlRead($chkPic) = $GUI_CHECKED)
-			
+
 			; Transparent Gui by kychera
             $iSldTransLevel = GUICtrlRead($SldTransLevel)
-			
+
 			; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 			$ichkAutoHide = GUICtrlRead($g_hChkAutohide) = $GUI_CHECKED ? 1 : 0
 			$ichkAutoHideDelay = GUICtrlRead($g_hTxtAutohideDelay)
@@ -294,13 +294,13 @@ Func ApplyConfig_MOD($TypeReadSave)
 
 			; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 			$g_bChkClanHop = (GUICtrlRead($g_hChkClanHop) = $GUI_CHECKED)
-            
+
 			;Move the Request CC Troops - Added by rulesss
 			$g_bReqCCFirst = GUICtrlRead($chkReqCCFirst) = $GUI_CHECKED ? 1 : 0
-			
+
 			;Enabele\Disabele Watchdog by rulesss,kychera
 			$iChkLaunchWatchdog = (GUICtrlRead($ChkLaunchWatchdog) = $GUI_CHECKED)
-			
+
 	EndSwitch
 EndFunc
 
@@ -388,24 +388,24 @@ Func ApplyConfig_Forecast($TypeReadSave)
 	EndSwitch
 EndFunc   ;==>ApplyConfig_Forecast
 
-; Android Settings (LunaEclipse)- modification (rulesss,kychera) 
-Func ApplyConfig_AndroidSettings($TypeReadSave)  
+; Android Settings (LunaEclipse)- modification (rulesss,kychera)
+Func ApplyConfig_AndroidSettings($TypeReadSave)
 	Switch $TypeReadSave
 		Case "Read"
 		If _GUICtrlComboBox_FindStringExact($CmbAndroid, String($sAndroid)) <> -1 Then
 		_GUICtrlComboBox_SelectString($CmbAndroid, String($sAndroid))
-	    Else		  
+	    Else
 		_GUICtrlComboBox_SetCurSel($CmbAndroid, 0)
-		EndIf		
+		EndIf
 	      modifyAndroid()
-sleep(300)		  
-		  GUICtrlSetData($TxtAndroidInstance, $sAndroidInstance)		 
-         
+sleep(300)
+		  GUICtrlSetData($TxtAndroidInstance, $sAndroidInstance)
+
 		Case "Save"
-		$sAndroid = _GUICtrlComboBox_GetCurSel($CmbAndroid)     
-		   
+		$sAndroid = _GUICtrlComboBox_GetCurSel($CmbAndroid)
+
 		   $sAndroidInstance = GUICtrlRead($TxtAndroidInstance)
-		   
+
 	EndSwitch
 EndFunc   ;==>ApplyConfig_AndroidSettings
 
@@ -435,15 +435,15 @@ EndFunc   ;==>ApplyConfig_RK_ruRequest
 
 Func ApplyConfig_DropTroops($TypeReadSave)
 	Switch $TypeReadSave
-		Case "Read"	
+		Case "Read"
 		       GUICtrlSetState($g_hChkCustomTrainDropOrderEnable, $g_bCustomTrainDropOrderEnable ? $GUI_CHECKED : $GUI_UNCHECKED)
-			   chkTroopDropOrder()			   
-			  
+			   chkTroopDropOrder()
+
 			 	For $p = 0 To UBound($icmbDropTroops) - 1
 				_GUICtrlComboBox_SetCurSel($cmbDropTroops[$p], $icmbDropTroops[$p])
 				GUICtrlSetImage($g_ahImgTroopDropOrder[$p], $g_sLibIconPath, $g_aiTroopOrderDropIcon[$icmbDropTroops[$p] + 1])
-				
-			    Next 
+
+			    Next
 				 ; process error
 			If $g_bCustomTrainDropOrderEnable = True Then ; only update troop train order if enabled
 				If ChangeTroopTrainOrder2() = False Then ; process error
@@ -456,14 +456,14 @@ Func ApplyConfig_DropTroops($TypeReadSave)
 						GUICtrlSetState($cmbDropTroops[$i], $GUI_DISABLE) ; disable combo boxes
 					Next
 				EndIf
-			EndIf	
-         
+			EndIf
+
 		Case "Save"
-		
+
 		     $g_bCustomTrainDropOrderEnable = (GUICtrlRead($g_hChkCustomTrainDropOrderEnable) = $GUI_CHECKED)
 		    For $p = 0 To UBound($icmbDropTroops) - 1
 				$icmbDropTroops[$p] = _GUICtrlComboBox_GetCurSel($cmbDropTroops[$p])
 			Next
-		    
+
 	EndSwitch
 EndFunc   ;==>ApplyConfig_DropTroops

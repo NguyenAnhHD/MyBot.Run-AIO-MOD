@@ -1,10 +1,10 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Functions_Team++AIO
+; Name ..........: Functions_Team__AiO_&_RK__MOD++
 ; Description ...: This file Includes several files in the current script.
 ; Syntax ........: #include
 ; Parameters ....: None
 ; Return values .: None
-; Author ........: Team++ AIO (2017)
+; Author ........: Team AiO & RK MOD++ (2017)
 ; Modified ......:
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
 ;                  MyBot is distributed under the terms of the GNU GPL
@@ -13,7 +13,7 @@
 ; Example .......: No
 ; ===============================================================================================================================
 
-; <><><><><><><><><><><><><><><> Team++ AIO MOD <><><><><><><><><><><><><><><>
+; <><><><><><><><><><><><><><><> Team AiO & RK MOD++ <><><><><><><><><><><><><><><>
 
 #include "functions\Config\saveConfig.au3"
 #include "functions\Config\readConfig.au3"
@@ -88,22 +88,30 @@
 #include "functions\Attack\Multi Fingers\8Fingers.au3"
 #include "functions\Attack\Multi Fingers\MultiFinger.au3"
 #include "functions\Attack\Multi Fingers\UnitInfo.au3"
-;=============================================================================
+
 ; Chatbot - Added Kychera
 #include "functions\Chatbot\Chatbot.au3"
-;Multi lang by Kychera
+
+; Multi lang by Kychera
 #include "functions\Other\Multy Lang.au3"
-;Contol function by kychera
+
+; Contol function by kychera
 #include "functions\Other\Control.au3"
-;function break connection by kychera
+
+; function break connection by kychera
 #include "functions\Other\DetectConnection.au3"
+
 ; modificed GuiCtrlCreateCheckbox function by kychera
 #include "functions\Other\_GuiCtrlCreateCheckbox.au3"
+
 ; modificed GUICtrlCreateRadio function by kychera
 #include "functions\Other\_GUICtrlCreateRadio.au3"
+
 ; Background GUI by kychera
 #include "functions\Other\BackgroundCheck.au3"
+
 ; Transparent GUI by kychera
 #include "functions\Other\TransLevel.au3"
-;Custom drop troops by kychera
+
+; Custom drop troops by kychera
 #include "functions\Mod's\TroopDrop.au3"

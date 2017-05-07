@@ -37,7 +37,7 @@ Global $g_hGrpDBFilter = 0, $g_hPicDBMinGold = 0, $g_hPicDBMinElixir = 0, $g_hPi
 Global $g_ahPicDBMaxTH[12]; $g_hPicDBMaxTH10 = 0
 
 Func CreateAttackSearchDeadBaseSearch()
-$15 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
+$15 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $sTxtLightningSpells = GetTranslated(605,15,"Lightning")
    Local $sTxtHealSpells = GetTranslated(605,16,"Heal")
    Local $sTxtRageSpells = GetTranslated(605,17,"Rage")

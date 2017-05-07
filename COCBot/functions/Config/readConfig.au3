@@ -211,7 +211,7 @@ Func ReadRegularConfig()
 	; <><><> Attack Plan / Train Army / Options <><><>
 	ReadConfig_641_1()
 
-	;  <><><> Team++ AIO MOD <><><>
+	;  <><><> Team AiO & RK MOD++ (2017) <><><>
 	ReadConfig_MOD()
 	ReadConfig_SwitchAcc()
 	ReadConfig_Forecast()

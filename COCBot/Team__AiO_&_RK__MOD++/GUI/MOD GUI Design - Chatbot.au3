@@ -1,8 +1,8 @@
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: Chat GUI Design
 ; Description ...: This file contains the Sequence that runs all MBR Bot
-; Author ........:
-; Modified ......: rulesss,kychera
+; Author ........: rulesss, Kychera
+; Modified ......: Team AiO & RK MOD++
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -18,7 +18,7 @@ Global $editGlobalMessages1 = "", $editGlobalMessages2 = "",$editGlobalMessages3
 Global $editResponses = 0,$editGeneric = 0,$ChatbotQueuedChats[0],$ChatbotReadQueued = False,$ChatbotReadInterval = 0,$ChatbotIsOnInterval = False,$TmpResp
 
 Func ChatbotGUI()
-$36 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$36 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
    ChatbotReadSettings()
 
 	Local $x = 22, $y = 47

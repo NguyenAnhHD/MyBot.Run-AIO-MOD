@@ -5,7 +5,7 @@
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: Mr.Viper
-; Modified ......: Team++ AIO (2017)
+; Modified ......: Team AiO & RK MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -19,7 +19,7 @@ Global $DocXP1 = 0 , $DocXP2 = 0 , $DocXP3 = 0 ,$DocXP4 = 0
 Global $lblXPatStart = 0 , $lblXPCurrent = 0 , $lblXPSXWon = 0 , $lblXPSXWonHour = 0
 
 Func GoblinXPGUI()
-$12 = GUICtrlCreatePic(@ScriptDir & '\COCBot\MOD_Team++AIO\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$12 = GUICtrlCreatePic(@ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
 	Local $x = 25, $y = 50, $xStart = 25, $yStart = 50
 
 	$grpSuperXP = GUICtrlCreateGroup(GetTranslated(700, 1, "Goblin XP"), $x - 20, $y - 20, 440, 340)

@@ -37,7 +37,7 @@ Global $g_hGrpABFilter = 0, $g_hPicABMinGold = 0, $g_hPicABMinElixir = 0, $g_hPi
 Global $g_ahPicABMaxTH[12]
 
 Func CreateAttackSearchActiveBaseSearch()
-     $6 = GUICtrlCreatePic(@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)   
+     $6 = GUICtrlCreatePic(@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $sTxtLightningSpells = GetTranslated(605,15,"Lightning")
    Local $sTxtHealSpells = GetTranslated(605,16,"Heal")
    Local $sTxtRageSpells = GetTranslated(605,17,"Rage")

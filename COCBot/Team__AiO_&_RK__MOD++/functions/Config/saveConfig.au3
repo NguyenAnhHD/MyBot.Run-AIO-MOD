@@ -4,7 +4,7 @@
 ; Syntax ........: saveConfig()
 ; Parameters ....: NA
 ; Return values .: NA
-; Author ........: Team++ AIO (2017)
+; Author ........: Team AiO & RK MOD++ (2017)
 ; Modified ......:
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
 ;                  MyBot is distributed under the terms of the GNU GPL
@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 
 Func SaveConfig_MOD()
-	; <><><> Team++ AIO MOD <><><>
+	; <><><> Team AiO & RK MOD++ (2017) <><><>
 	ApplyConfig_MOD("Save")
 
 	; Multi Finger (LunaEclipse) - Added by Eloy
@@ -29,13 +29,13 @@ Func SaveConfig_MOD()
 
 	_Ini_Add("SetSleep", "EnableGiantSlot", $iChkGiantSlot ? 1 : 0)
 	_Ini_Add("SetSleep", "CmbGiantSlot", _GUICtrlComboBox_GetCurSel($CmbGiantSlot))
-	
+
      ;Background by Kychera
 	_Ini_Add("background", "chkPic", $ichkPic ? 1 : 0)
 	_Ini_Add("background", "BackGr", $iBackGr)
     ;Transparent Gui (Modified Kychera)
 	_Ini_Add("TransLevel", "Level", $iSldTransLevel)
-	
+
 	; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 	_Ini_Add("general", "AutoHide", $ichkAutoHide ? 1 : 0)
 	_Ini_Add("general", "AutoHideDelay", $ichkAutoHideDelay)
@@ -139,33 +139,33 @@ Func SaveConfig_MOD()
 
 	; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 	_Ini_Add("donate", "chkClanHop", $g_bChkClanHop ? 1 : 0)
-    
+
 	; Move the Request CC Troops - Added by rulesss
 	_Ini_Add("planned", "ReqCCFirst", $g_bReqCCFirst ? 1 : 0)
-    
+
 	 ; Android Settings (LunaEclipse)- modification (rulesss,kychera)
 	_Ini_Add("Android", "Emulator", GUICtrlRead($CmbAndroid))
     _Ini_Add("Android", "Instance", GUICtrlRead($TxtAndroidInstance))
-	
+
 	;request  cyrillic by kychera
-	_Ini_Add("Lang", "chkRusLang2", $ichkRusLang2 ? 1 : 0)	
-	
+	_Ini_Add("Lang", "chkRusLang2", $ichkRusLang2 ? 1 : 0)
+
 	;Notify alert bot sleep by kychera
 	 _Ini_Add("notify", "AlertConnect", $iNotifyAlertConnect ? 1 : 0)
 	 _Ini_Add("notify", "AlertPBSleep", $iNotifyAlertBOTSleep ? 1 : 0)
-	 
+
 	 ; Misc Battle Settings - Added by rulesss
 	_Ini_Add("Fast Clicks", "UseADBFastClicks", $g_bAndroidAdbClicksEnabled ? 1 : 0)
-	
+
 	;Enabele\Disabele Watchdog by rulesss,kychera
 	_Ini_Add("Other", "chkLaunchWatchdog", $iChkLaunchWatchdog ? 1 : 0)
-	
+
 	;Custom drop troops
 	_Ini_Add("troop2", "chkTroopDropOrder", $g_bCustomTrainDropOrderEnable ? 1 : 0)
     For $p = 0 To UBound($icmbDropTroops) - 1
-		_Ini_Add("troop2", $g_asTroopNamesPluralDrop[$p], $icmbDropTroops[$p])		
+		_Ini_Add("troop2", $g_asTroopNamesPluralDrop[$p], $icmbDropTroops[$p])
 	Next
-	
+
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen

@@ -1,8 +1,8 @@
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: GUI Control DropOrderTpoops
 ; Description ...: This file contains the Sequence that runs all MBR Bot
-; Author ........: 	Kychera 05/2017
-; Modified ......: 
+; Author ........: Kychera 05/2017
+; Modified ......: Team AiO & RK MOD++
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -140,7 +140,7 @@ Func BtnTroopOrderSet2()
 
 	If $bReady Then
 		ChangeTroopTrainOrder2() ; code function to record new training order
-		
+
 		If @error Then
 			Switch @error
 				Case 1
@@ -160,7 +160,7 @@ Func BtnTroopOrderSet2()
 			Next
 			$sNewDropList = StringTrimRight($sNewDropList, 2)
 			Setlog("Troop drop order= " & $sNewDropList, $COLOR_INFO)
-			
+
 		EndIf
 	Else
 		Setlog("Must use all troops and No duplicate troop names!", $COLOR_ERROR)

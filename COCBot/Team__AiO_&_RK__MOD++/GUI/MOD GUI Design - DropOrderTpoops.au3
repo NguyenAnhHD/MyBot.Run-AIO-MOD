@@ -2,7 +2,7 @@
 ; Name ..........: GUI Design DropOrderTpoops
 ; Description ...: This file contains the Sequence that runs all MBR Bot
 ; Author ........: Kychera 05/2017
-; Modified ......: 
+; Modified ......: Team AiO & RK MOD++Team AiO & RK MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -13,18 +13,18 @@ Global $g_hChkCustomTrainDropOrderEnable = 0
 Global $g_bCustomTrainDropOrderEnable = False
 Global $g_hBtnRemoveTroops2, $g_hBtnTroopOrderSet2
 Global $g_ahImgTroopDropOrderSet = 0
-Global $g_ahImgTroopDropOrder[$eTroopCountDrop] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]  
+Global $g_ahImgTroopDropOrder[$eTroopCountDrop] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 Global $cmbDropTroops = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 Global Const $g_asTroopDropList[] = [ "", _
    GetTranslated(604,1, "Barbarians"), GetTranslated(604,2, "Archers"), GetTranslated(604,3, "Giants"), GetTranslated(604,4, "Goblins"), _
    GetTranslated(604,5, "Wall Breakers"), GetTranslated(604,7, "Balloons"), GetTranslated(604,8, "Wizards"), GetTranslated(604,9, "Healers"), _
    GetTranslated(604,10, "Dragons"), GetTranslated(604,11, "Pekkas"), GetTranslated(604,20, "Baby Dragons"), GetTranslated(604,21, "Miners"), _
    GetTranslated(604,13, "Minions"), GetTranslated(604,14, "Hog Riders"), GetTranslated(604,15, "Valkyries"), GetTranslated(604,16, "Golems"), _
-   GetTranslated(604,17, "Witches"), GetTranslated(604,18, "Lava Hounds"), GetTranslated(604, 19, "Bowlers"), GetTranslated(604, 25,"Clan Castle"), GetTranslated(604, 26,"Heroes")] 
+   GetTranslated(604,17, "Witches"), GetTranslated(604,18, "Lava Hounds"), GetTranslated(604, 19, "Bowlers"), GetTranslated(604, 25,"Clan Castle"), GetTranslated(604, 26,"Heroes")]
 
 
 Func TroopsDrop()
-$10 = GUICtrlCreatePic(@ScriptDir & '\COCBot\MOD_Team++AIO\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$10 = GUICtrlCreatePic(@ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
 Local $x = 25, $y = 45
 GUICtrlCreateGroup(GetTranslated(641, 58, "Custom dropping order"), $x - 20, $y - 20, 350, 405)
 $x += 10
@@ -54,7 +54,7 @@ Local $sComboData = ""
 			  $cmbDropTroops[$p] = GUICtrlCreateCombo("", $x, $y, 94, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 				  GUICtrlSetOnEvent(-1, "GUITrainOrder2")
 				 GUICtrlSetData(-1, $sComboData, "")
-				
+
 				 ;_GUICtrlSetTip(-1, $txtTroopOrder & $p + 1)
 				 GUICtrlSetState(-1, $GUI_DISABLE)
 			  $g_ahImgTroopDropOrder[$p] = GUICtrlCreateIcon($g_sLibIconPath, $eIcnOptions, $x + 100, $y, 25, 25)
@@ -68,20 +68,20 @@ Local $sComboData = ""
 			  $cmbDropTroops[$p] = GUICtrlCreateCombo("", $x + 20, $y, 94, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 				  GUICtrlSetOnEvent(-1, "GUITrainOrder2")
 				 GUICtrlSetData(-1, $sComboData, "")
-				
+
 				 ;_GUICtrlSetTip(-1, $txtTroopOrder & $p + 1)
 				 GUICtrlSetState(-1, $GUI_DISABLE)
 			$g_ahImgTroopDropOrder[$p] =  GUICtrlCreateIcon($g_sLibIconPath, $eIcnOptions, $x + 120, $y, 25, 25)
 			  $y += 30 ; move down to next combobox location
 		  EndIf
 	  Next
-	  
+
 	  $x = 25
 	  $y = 400
 		  ; Create push button to set training order once completed
 		  $g_hBtnTroopOrderSet2 = GUICtrlCreateButton(GetTranslated(641, 62, "Apply New Order"), $x, $y, 100, 25)
 			 GUICtrlSetState(-1, BitOR($GUI_UNCHECKED, $GUI_ENABLE))
-			 _GUICtrlSetTip(-1, GetTranslated(641, 63, "Push button when finished selecting custom troops dropping order") & @CRLF & _								
+			 _GUICtrlSetTip(-1, GetTranslated(641, 63, "Push button when finished selecting custom troops dropping order") & @CRLF & _
 								GetTranslated(641, 65, "When not all troop slots are filled, will use random troop order in empty slots!"))
 			 GUICtrlSetOnEvent(-1, "btnTroopOrderSet2")
 		  ;$g_ahImgTroopOrderSet = GUICtrlCreateIcon($g_sLibIconPath, $eIcnSilverStar, $x + 226, $y + 2, 18, 18)

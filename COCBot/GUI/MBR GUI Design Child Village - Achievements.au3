@@ -19,7 +19,7 @@ Global $g_hChkUnbreakable = 0, $g_hTxtUnbreakable = 0, $g_hTxtUnBrkMinGold = 0, 
 Global $g_hLblUnbreakableHelp = 0, $g_hLblUnbreakableLink = 0
 
 Func CreateVillageAchievements()
-$42 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$42 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
    Local $x = 25
    Local $y = 45
    GUICtrlCreateGroup(GetTranslated(618,1, "Defense Farming"), $x - 20, $y - 20, $g_iSizeWGrpTab2, 150)

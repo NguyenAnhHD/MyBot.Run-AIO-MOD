@@ -17,7 +17,7 @@
 Global $g_hCmbCOCDistributors
 
 Func CreateBotAndroid()
-   $4 = GUICtrlCreatePic(@ScriptDir & '\COCBot\MOD_Team++AIO\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
+   $4 = GUICtrlCreatePic(@ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
    Local $x = 25, $y = 45
    GUICtrlCreateGroup(GetTranslated(642, 1, "Distributors"), $x - 20, $y - 20, 438, 50)
 	   $y -=2
@@ -39,14 +39,14 @@ Func CreateBotAndroid()
 		$TxtAndroidInstance = GUICtrlCreateInput("", $x + 200, $y - 5, 210, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
 			GUICtrlSetTip($TxtAndroidInstance, GetTranslated(91,5,"Enter the Instance to use with this profile."))
 			GUICtrlSetOnEvent(-1, "TxtAndroidInstance")
-	GUICtrlCreateGroup("", -99, -99, 1, 1)		
+	GUICtrlCreateGroup("", -99, -99, 1, 1)
 	; Misc Battle Settings - added by rulesss
 	Local $x = 25, $y = 145
     GUICtrlCreateGroup(GetTranslated(91,9, "Miscellaneous Battle Settings"), $x - 20, $y - 20, 435, 45)
-		$chkFastADBClicks = GUICtrlCreateCheckbox("", $x - 10, $y, 13, 13) 
+		$chkFastADBClicks = GUICtrlCreateCheckbox("", $x - 10, $y, 13, 13)
 		GUICtrlSetTip($chkFastADBClicks, GetTranslated(91,11, "Tick this to enable faster ADB deployment for MEmu and Droid4x in Multi-finger mode.") & @CRLF & GetTranslated(91,12, " WARNING:  This is experimental, if you have issues with deployment, disable it."))
 			GUICtrlSetOnEvent(-1, "chkFastADBClicks")
 			GUICtrlCreateLabel(GetTranslated(91,10, "Enable Fast ADB Clicks") & ":", $x + 7, $y, -1, -1)
-			
+
 EndFunc
 

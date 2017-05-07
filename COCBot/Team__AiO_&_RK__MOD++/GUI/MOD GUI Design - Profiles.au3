@@ -5,7 +5,7 @@
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: NguyenAnhHD (2017)
-; Modified ......: Team++ AIO (2017)
+; Modified ......: Team AiO & RK MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -44,7 +44,7 @@ EndFunc
 
 #Region Profiles Subtab
 Func CreateSwitchAccount()
-$11 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$11 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
 	Local $x = 22, $y = 45
 	GUICtrlCreateGroup(GetTranslated(637,1, "Switch Profiles"), $x - 20, $y - 20, 435, 360)
 		$x -= 5
@@ -153,7 +153,7 @@ EndFunc   ;==>CreateSwitchAccount
 
 #Region Profiles Subtab
 Func CreateModSwitchProfile()
-$31 = GUICtrlCreatePic(@ScriptDir & '\COCBot\MOD_Team++AIO\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$31 = GUICtrlCreatePic(@ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
 	Local $sTxtTip = ""
 	Local $x = 25, $y = 45
 

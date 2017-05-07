@@ -5,7 +5,7 @@
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: AwesomeGamer (2016), Moebius14 06/2016
-; Modified ......: Team++ AIO (2017)
+; Modified ......: Team AiO & RK MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -38,7 +38,7 @@ Func chkForecastPause()
 		GUICtrlSetState($txtForecastPause, $GUI_ENABLE)
 		GUICtrlSetState($txtForecastPause, $GUI_SHOW)
 	Else
-	$iChkForecastPause = 0    
+	$iChkForecastPause = 0
 		_GUICtrlEdit_SetReadOnly($txtForecastPause, True)
 		GUICtrlSetState($txtForecastPause, $GUI_DISABLE)
 		GUICtrlSetState($txtForecastPause, $GUI_HIDE)

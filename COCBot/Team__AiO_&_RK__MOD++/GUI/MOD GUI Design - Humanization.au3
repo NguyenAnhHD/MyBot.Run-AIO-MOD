@@ -5,7 +5,7 @@
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: Roro-Titi
-; Modified ......: Team++ AIO (2017)
+; Modified ......: Team AiO & RK MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -20,7 +20,7 @@ Global $Icon4 = 0 , $Label14 = 0 , $Label15 = 0 , $Label16 = 0 , $Label13 = 0
 Global $Icon5 = 0 , $Label17 = 0 , $Label18 = 0 , $chkCollectAchievements = 0 , $chkLookAtRedNotifications = 0 , $cmbMaxActionsNumber = 0
 
 Func HumanizationGUI()
-$3 = GUICtrlCreatePic(@ScriptDir & '\COCBot\MOD_Team++AIO\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$3 = GUICtrlCreatePic(@ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
 	Local $x , $y
 
 	$chkUseBotHumanization = _GUICtrlCreateCheckbox(GetTranslated(42, 0, "Enable Bot Humanization"), 10, 20, 137, 17, -1, -1)

@@ -4,7 +4,7 @@
 ; Syntax ........: readConfig()
 ; Parameters ....: NA
 ; Return values .: NA
-; Author ........: Team++ AIO (2017)
+; Author ........: Team AiO & RK MOD++ (2017)
 ; Modified ......:
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
 ;                  MyBot is distributed under the terms of the GNU GPL
@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 
 Func ReadConfig_MOD()
-	; <><><> Team++ AIO MOD <><><>
+	; <><><> Team AiO & RK MOD++ (2017) <><><>
 
 	; Multi Finger (LunaEclipse) - Added by Eloy
 	IniReadS($iMultiFingerStyle, $g_sProfileConfigPath, "MultiFinger", "Select", 2, "int")
@@ -28,13 +28,13 @@ Func ReadConfig_MOD()
 
 	IniReadS($iChkGiantSlot, $g_sProfileConfigPath, "SetSleep", "EnableGiantSlot", 0, "Int")
 	IniReadS($iCmbGiantSlot , $g_sProfileConfigPath, "SetSleep", "CmbGiantSlot", 0 ,"Int")
-	
+
     ; Background by Kychera
     IniReadS($iBackGr, $g_sProfileConfigPath, "background", "BackGr", 0, "Int")
     IniReadS($ichkPic, $g_sProfileConfigPath, "background", "chkPic", 1, "Int")
     ; Transparent Gui by Kychera
     IniReadS($iSldTransLevel, $g_sProfileConfigPath, "TransLevel", "Level", 0, "Int")
-	
+
 	; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
 	IniReadS($ichkAutoHide, $g_sProfileConfigPath, "general", "AutoHide", 0, "int")
 	IniReadS($ichkAutoHideDelay, $g_sProfileConfigPath, "general", "AutoHideDelay", 10, "int")
@@ -146,21 +146,21 @@ Func ReadConfig_MOD()
      $sAndroid = IniRead($g_sProfileConfigPath, "Android", "Emulator", "<No Emulators>")
      $sAndroidInstance = IniRead($g_sProfileConfigPath, "Android", "Instance", "")
 	 ;Request russian by kychera
-	 IniReadS($ichkRusLang2, $g_sProfileConfigPath, "Lang", "chkRusLang2", 0, "int")	
-	
+	 IniReadS($ichkRusLang2, $g_sProfileConfigPath, "Lang", "chkRusLang2", 0, "int")
+
 	 ;Notify alert bot sleep by kychera
 	 IniReadS($iNotifyAlertConnect, $g_sProfileConfigPath, "notify", "AlertConnect", 0, "int")
 	 IniReadS($iNotifyAlertBOTSleep, $g_sProfileConfigPath, "notify", "AlertPBSleep", 0, "int")
-	 
+
 	 ; Misc Battle Settings - Added by rulesss
 	 IniReadS($g_bAndroidAdbClicksEnabled , $g_sProfileConfigPath, "Fast Clicks", "UseADBFastClicks", 0, "int")
-	 
+
 	 ;Enabele\Disabele Watchdog by rulesss,kychera
 	 IniReadS($iChkLaunchWatchdog, $g_sProfileConfigPath, "Other", "chkLaunchWatchdog", 1, "Int")
 	 ;Custom drop troops by kychera
 	 IniReadS($g_bCustomTrainDropOrderEnable, $g_sProfileConfigPath, "troop2", "chkTroopDropOrder", False, "Bool")
 	For $p = 0 To UBound($icmbDropTroops) - 1
-		IniReadS($icmbDropTroops[$p], $g_sProfileConfigPath, "troop2", $g_asTroopNamesPluralDrop[$p] , -1)		
+		IniReadS($icmbDropTroops[$p], $g_sProfileConfigPath, "troop2", $g_asTroopNamesPluralDrop[$p] , -1)
 	Next
 EndFunc
 

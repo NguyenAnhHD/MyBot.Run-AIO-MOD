@@ -4,7 +4,7 @@
 ; Syntax ........:
 ; Parameters ....: None
 ; Return values .: None
-; Author ........: Team++ AIO (2017)
+; Author ........: Team AiO & RK MOD++ (2017)
 ; Modified ......:
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
 ;                  MyBot is distributed under the terms of the GNU GPL
@@ -33,7 +33,7 @@ Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0 , $g_hGUI_MOD_TAB_ITEM2 = 
 ; Chatbot
 #include "MOD GUI Design - Chatbot.au3"
 
-;Custom drop troops
+; Custom drop troops
 #include "MOD GUI Design - DropOrderTpoops.au3"
 
 Func CreateMODTab()
@@ -57,6 +57,6 @@ Func CreateMODTab()
         $g_hGUI_MOD_TAB_ITEM6 = GUICtrlCreateTabItem(GetTranslated(106,1,"Chat"))
               ChatbotGUI()
         $g_hGUI_MOD_TAB_ITEM7 = GUICtrlCreateTabItem(GetTranslated(600, 68, "Drop troops"))
-              TroopsDrop()		
+              TroopsDrop()
 	GUICtrlCreateTabItem("")
 EndFunc   ;==>CreateMODTab

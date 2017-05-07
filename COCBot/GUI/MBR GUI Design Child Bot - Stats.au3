@@ -66,7 +66,7 @@ EndFunc
 
 #Region Gain SubTab
 Func CreateGainSubTab()
-	$32 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
+	$32 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
 	Local $sTxtTip = ""
 	Local $xStart = 25, $yStart = 45
 	Local $x = $xStart, $y = $yStart
@@ -415,7 +415,7 @@ EndFunc
 
 #Region Misc SubTab
 Func CreateMiscSubTab()
-		$33 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
+		$33 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
 	Local $sTxtTip = ""
 	Local $xStart = 25, $yStart = 45
 	Local $x = $xStart + 3, $y = $yStart + 20
@@ -1185,7 +1185,7 @@ $y += 45
 
    GUICtrlCreateGroup("", -99, -99, 1, 1)
    #ce
-   $27 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
+   $27 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
    	Local $sTxtTip = ""
 	Local $xStart = 25, $yStart = 45
 	Local $x = $xStart + 3, $y = $yStart + 20

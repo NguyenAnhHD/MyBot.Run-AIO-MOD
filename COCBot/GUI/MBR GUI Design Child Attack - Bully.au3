@@ -26,7 +26,7 @@ Func CreateAttackSearchBully()
    $g_hGUI_BULLY = _GUICreate("", $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_SEARCH)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_BULLY)
    GUISwitch($g_hGUI_BULLY)
-   $22 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 0, 442, 363, $WS_CLIPCHILDREN)
+   $22 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 0, 442, 363, $WS_CLIPCHILDREN)
    Local $x = 20, $y = 130 - 105
 	   $g_hGrpBullyAtkCombo = GUICtrlCreateGroup(GetTranslated(629,1, "Bully Attack Combo"), $x - 20, $y - 20, $g_iSizeWGrpTab3, $g_iSizeHGrpTab3 - 6)
 		   $y -= 5

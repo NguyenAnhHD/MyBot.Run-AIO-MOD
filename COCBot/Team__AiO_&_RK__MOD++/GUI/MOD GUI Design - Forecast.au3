@@ -2,7 +2,7 @@
 ; Name ..........: FORECAST GUI Design
 ; Description ...: This file contains the Sequence that runs all MBR Bot
 ; Author ........: AwesomeGamer 2015
-; Modified ......: rulesss,Eloy
+; Modified ......: rulesss, Eloy
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -12,7 +12,7 @@
 
 ; ======================================================== FORECAST =============================================================
 Func ForecastGUI()
-$37 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$37 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
 	Local $sTxtTip = ""
 	Local $xStart = 0, $yStart = 0
 	Local $x = $xStart + 10, $y = $yStart + 25
@@ -32,7 +32,7 @@ $y += + 318
 		_GUICtrlEdit_SetReadOnly(-1, True)
 		GUICtrlSetState(-1, $GUI_DISABLE)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
-	
+
 	$y += - 27
 	$chkForecastHopingSwitchMax = GUICtrlCreateCheckbox("", $x + 150, $y + 27, 13, 13)
 		$sTxtTip = "" ; Information

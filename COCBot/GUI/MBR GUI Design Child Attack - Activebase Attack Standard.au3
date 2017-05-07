@@ -24,7 +24,7 @@ Func CreateAttackSearchActiveBaseStandard()
 
    $g_hGUI_ACTIVEBASE_ATTACK_STANDARD = _GUICreate("", $_GUI_MAIN_WIDTH - 195, $g_iSizeHGrpTab4, 150, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_ACTIVEBASE)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_ACTIVEBASE_ATTACK_STANDARD)
-   $46 = GUICtrlCreatePic (@ScriptDir & "\COCBot\MOD_Team++AIO\Images2\1.jpg", 0, -5, 280, 352, $WS_CLIPCHILDREN)
+   $46 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images2\1.jpg", 0, -5, 280, 352, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 25, $y = 20
 
