@@ -32,9 +32,9 @@ Func CheckVersion()
 			_PrintLogVersion($g_sOldModversmessage)
 			CheckModVersion()
 		ElseIf VersionNumFromVersionTXT($g_sModversion) > VersionNumFromVersionTXT($g_sLastModversion) Then
-			SetLog("YOU ARE USING A FUTURE AIO & RK BY TEAM MOD++ VERSION CHIEF!", $COLOR_SUCCESS)
-			SetLog("__________________ YOUR MOD VERSION: " & $g_sModversion & " __________________", $COLOR_SUCCESS)
-			SetLog("________________ OFFICIAL MOD VERSION: " & $g_sLastModversion & " ________________", $COLOR_SUCCESS)
+			SetLog("YOU ARE USING A FUTURE MOD BY TEAM AIO & RK VERSION CHIEF!", $COLOR_SUCCESS)
+			SetLog("_________________ YOUR MOD VERSION: " & $g_sModversion & " _________________", $COLOR_SUCCESS)
+			SetLog("_______________ OFFICIAL MOD VERSION: " & $g_sLastModversion & " _______________", $COLOR_SUCCESS)
 			SetLog(" ")
 		Else
 			SetLog("WELCOME CHIEF, YOU HAVE THE LATEST MOD VERSION", $COLOR_SUCCESS)

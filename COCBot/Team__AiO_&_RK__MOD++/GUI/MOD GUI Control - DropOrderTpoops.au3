@@ -2,7 +2,7 @@
 ; Name ..........: GUI Control DropOrderTpoops
 ; Description ...: This file contains the Sequence that runs all MBR Bot
 ; Author ........: Kychera 05/2017
-; Modified ......: Team AiO & RK MOD++
+; Modified ......: Team AiO & RK MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
