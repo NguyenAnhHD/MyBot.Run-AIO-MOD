@@ -27,7 +27,7 @@ $$$$$$$$/   ______    ______   _____  ____        /$$$$$$  |$$$$$$/ /$$$$$$  |/$
 		       - Spell order to Simple Train
 			   - Custom drop troops -=== NEW ===-
            Improve:
-		       - Transfer tab SmartZap (Deadbase-Attack)
+		       - Transfer tab SmartZap (Attack-Deadbase)
            Fixed:
 		       - unit deploy for multi finger
 			   - dead base collectors filter
