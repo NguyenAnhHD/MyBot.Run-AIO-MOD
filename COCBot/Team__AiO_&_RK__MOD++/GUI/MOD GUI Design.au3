@@ -47,11 +47,11 @@ Func CreateMODTab()
 			GoblinXPGUI()
 		$g_hGUI_MOD_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslated(600,61,"Chat"))
 			ChatbotGUI()
-		$g_hGUI_MOD_TAB_ITEM6 = GUICtrlCreateTabItem(GetTranslated(600,63,"Stat's")) ; Has to be outside of the Last Control to hide
+		$g_hGUI_MOD_TAB_ITEM6 = GUICtrlCreateTabItem(GetTranslated(600,62,"Stat's")) ; Has to be outside of the Last Control to hide
 			$g_hLastControlToHide = GUICtrlCreateDummy()
 			ReDim $g_aiControlPrevState[$g_hLastControlToHide + 1]
 			CreateProfileStats()
-		$g_hGUI_MOD_TAB_ITEM7 = GUICtrlCreateTabItem(GetTranslated(600,64,"Forecast"))
+		$g_hGUI_MOD_TAB_ITEM7 = GUICtrlCreateTabItem(GetTranslated(600,63,"Forecast"))
 			ForecastGUI()
 	GUICtrlCreateTabItem("")
 EndFunc   ;==>CreateMODTab

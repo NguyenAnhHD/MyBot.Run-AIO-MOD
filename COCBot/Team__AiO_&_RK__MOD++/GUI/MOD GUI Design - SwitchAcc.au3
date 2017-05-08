@@ -24,10 +24,10 @@ Func CreateBotSwitchAcc()
 	$nTotalProfile = _Min(_GUICtrlComboBox_GetCount($g_hCmbProfile), 8)
 
 	Local $sTxtTip = ""
-	Local $x = 20, $y = 105
+	Local $x = 20, $y = 135
 
 	$g_StartHideSwitchAcc = GUICtrlCreateDummy()
-	GUICtrlCreateGroup(GetTranslated(109, 1, "Switch Account Mode"), $x - 15, $y - 20, 203, 295)
+	GUICtrlCreateGroup(GetTranslated(109, 1, "Switch Account Mode"), $x - 15, $y - 20, 203, 290)
 	$chkSwitchAcc = _GUICtrlCreateCheckbox(GetTranslated(109, 2, "Enable Switch Account"), $x - 5, $y, -1, -1)
 	$sTxtTip = GetTranslated(109, 3, "Switch to another account & profile when troop training time is >= 1 minutes") & _
 			@CRLF & GetTranslated(109, 4, "This function supports maximum 8 CoC accounts & 8 Bot profiles") & _
@@ -104,9 +104,9 @@ Func CreateBotSwitchAcc()
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 	; Profiles & Account matching
-	Local $x = 230, $y = 105
+	Local $x = 230, $y = 135
 
-	GUICtrlCreateGroup(GetTranslated(109, 34, "Profiles"), $x - 20, $y - 20, 225, 295)
+	GUICtrlCreateGroup(GetTranslated(109, 34, "Profiles"), $x - 20, $y - 20, 225, 290)
 	GUICtrlCreateButton(GetTranslated(109, 35, "Update Profiles"), $x + 40, $y - 5, -1, 25)
 	GUICtrlSetOnEvent(-1, "g_btnUpdateProfile")
 	GUICtrlCreateButton(GetTranslated(109, 36, "Clear Profiles"), $x + 130, $y - 5, -1, 25)
