@@ -21,10 +21,11 @@ Global $g_hGUI_DEADBASE = 0
 #include "MBR GUI Design Child Attack - Deadbase Attack Milking.au3"
 #include "MBR GUI Design Child Attack - Deadbase-Search.au3"
 #include "MBR GUI Design Child Attack - Deadbase-Attack.au3"
+#include "MBR GUI Design Child Attack - Deadbase-SmartZap.au3"
 #include "MBR GUI Design Child Attack - Deadbase-EndBattle.au3"
 #include "MBR GUI Design Child Attack - Deadbase-Collectors.au3"
 
-Global $g_hGUI_DEADBASE_TAB = 0, $g_hGUI_DEADBASE_TAB_ITEM1 = 0, $g_hGUI_DEADBASE_TAB_ITEM2 = 0, $g_hGUI_DEADBASE_TAB_ITEM3 = 0, $g_hGUI_DEADBASE_TAB_ITEM4 = 0
+Global $g_hGUI_DEADBASE_TAB = 0, $g_hGUI_DEADBASE_TAB_ITEM1 = 0, $g_hGUI_DEADBASE_TAB_ITEM2 = 0, $g_hGUI_DEADBASE_TAB_ITEM3 = 0, $g_hGUI_DEADBASE_TAB_ITEM4 = 0, $g_hGUI_DEADBASE_TAB_ITEM5 = 0
 
 Func CreateAttackSearchDeadBase()
 
@@ -42,7 +43,8 @@ Func CreateAttackSearchDeadBase()
 
    $g_hGUI_DEADBASE_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslated(600,29,"Attack"))
    CreateAttackSearchDeadBaseAttack()
-
+   $g_hGUI_DEADBASE_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslated(600,56,"SmartZap"))
+   CreateAttackNewSmartZap()
    $g_hGUI_DEADBASE_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslated(600,30,"End Battle"))
    CreateAttackSearchDeadBaseEndBattle()
 
