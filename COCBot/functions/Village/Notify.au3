@@ -450,7 +450,7 @@ Func NotifyGetLastMessageFromTelegram()
 	EndIf
 
 	$oHTTP.Open("Get", "https://api.telegram.org/bot" & $g_sNotifyTGToken & "/getupdates", False)
-	$oHTTP.Send()	  
+	$oHTTP.Send()
 	$oHTTP.WaitForResponse
 	Local $Result = $oHTTP.ResponseText
 	If $oHTTP.Status <> 200 Then
@@ -477,7 +477,7 @@ Func NotifyGetLastMessageFromTelegram()
 	If $g_iDebugSetlog Then Setlog("Telegram $g_sTGLast_UID:" & $g_sTGLast_UID)
 
 	$oHTTP.Open("Get", "https://api.telegram.org/bot" & $g_sNotifyTGToken & "/getupdates?offset=" & $g_sTGLast_UID, False)
-	$oHTTP.Send()	
+	$oHTTP.Send()
 	$oHTTP.WaitForResponse
 	Local $Result2 = $oHTTP.ResponseText
 	If $oHTTP.Status <> 200 Then
@@ -511,25 +511,25 @@ Func NotifyActivateKeyboardOnTelegram($TGMsg)
 	$oHTTP.SetRequestHeader("Content-Type", "application/json; charset=ISO-8859-1,utf-8")
 
 	Local $TGPushMsg = '{"text": "' & $TGMsg & '", "chat_id":' & $g_sTGChatID & ', "reply_markup": {"keyboard": [["' & _
-			'\ud83d\udcf7 ' & GetTranslated(620, 191, "Screenshot") & '","' & _
-			'\ud83d\udd28 ' & GetTranslated(620, 192, "Builder") & '","' & _
-			'\ud83d\udd30 ' & GetTranslated(620, 193, "Shield") & '"],["' & _
-			'\ud83d\udcc8 ' & GetTranslated(620, 194, "Stats") & '","' & _
-			'\ud83d\udcaa ' & GetTranslated(620, 195, "Troops") & '","' & _
-			'\u2753 ' & GetTranslated(620, 196, "Help") & '"],["' & _
-			'\u23F9 ' & GetTranslated(620,807,"Stop") & '","' & _
-	        '\u25b6 ' & GetTranslated(620,7,"START") & '","' & _ ; modified kychera
-	        '\u23F8 ' & GetTranslated(620,808,"Pause") & '","' & _
-			'\u25b6 ' & GetTranslated(620, 199, "Resume") & '","' & _
-			'\ud83d\udd01 ' & GetTranslated(620, 200, "Restart") & '"],["' & _
-			'\ud83d\udccb ' & GetTranslated(620, 201, "Log") & '","' & _
-			'\ud83c\udf04 ' & GetTranslated(620, 202, "Lastraid") & '","' & _
-			'\ud83d\udcc4 ' & GetTranslated(620, 203, "LastRaidTxt") & '"],["' & _
-			'\u2705 ' & GetTranslated(620, 204, "Attack On") & '","' & _
-			'\u274C ' & GetTranslated(620, 205, "Attack Off") & '"],["' & _
-			'\ud83d\udca4 ' & GetTranslated(620, 206, "Hibernate") & '","' & _
-			'\u26a1 ' & GetTranslated(620, 207, "Shut down") & '","' & _
-			'\ud83d\udd06 ' & GetTranslated(620, 208, "Standby") & '"]],"one_time_keyboard": false,"resize_keyboard":true}}'
+			'\ud83d\udcf7 ' & GetTranslated(620, 25, "SCREENSHOT") & '","' & _
+			'\ud83d\udd28 ' & GetTranslated(620, 29, "BUILDER") & '","' & _
+			'\ud83d\udd30 ' & GetTranslated(620, 31, "SHIELD") & '"],["' & _
+			'\ud83d\udcc8 ' & GetTranslated(620, 17, "STATS") & '","' & _
+			'\ud83d\udcaa ' & GetTranslated(620, 35, "TROOPS") & '","' & _
+			'\u2753 ' & GetTranslated(620, 4, "HELP") & '"],["' & _
+			'\u23F9 ' & GetTranslated(620, 11, "STOP") & '","' & _
+	        '\u25b6 ' & GetTranslated(620, 53, "START") & '","' & _ ; modified kychera
+			'\u23F8 ' & GetTranslated(620, 13, "PAUSE") & '","' & _
+			'\u25b6 ' & GetTranslated(620, 15, "RESUME") & '","' & _
+			'\ud83d\udd01 ' & GetTranslated(620, 9, "RESTART") & '"],["' & _
+			'\ud83d\udccb ' & GetTranslated(620, 19, "LOG") & '","' & _
+			'\ud83c\udf04 ' & GetTranslated(620, 21, "LASTRAID") & '","' & _
+			'\ud83d\udcc4 ' & GetTranslated(620, 23, "LASTRAIDTXT") & '"],["' & _
+			'\u2705 ' & GetTranslated(620, 41, "ATTACK ON") & '","' & _
+			'\u274C ' & GetTranslated(620, 38, "ATTACK OFF") & '"],["' & _
+			'\ud83d\udca4 ' & GetTranslated(620, 43, "HIBERNATE") & '","' & _
+			'\u26a1 ' & GetTranslated(620, 47, "SHUT DOWN") & '","' & _
+			'\ud83d\udd06 ' & GetTranslated(620, 50, "STANDBY") & '"]],"one_time_keyboard": false,"resize_keyboard":true}}'
 	$oHTTP.Send($TGPushMsg)
 
 	$g_iTGLastRemote = $g_sTGLast_UID
@@ -540,7 +540,7 @@ EndFunc   ;==>NotifyActivateKeyboardOnTelegram
 Func NotifyRemoteControl2()
   If $g_bNotifyPBEnable = True Or $g_bNotifyTGEnable = True Then NotifyRemoteControlProc2()
 EndFunc
- 
+
 Func NotifyRemoteControlProc2()
 
 If $g_bNotifyTGEnable = True And $g_sNotifyTGToken <> "" Then
@@ -551,23 +551,23 @@ If $g_bNotifyTGEnable = True And $g_sNotifyTGToken <> "" Then
 		If $g_iDebugSetlog Then Setlog("Telegram | NotifyRemoteControlProc $g_sTGLast_UID : " & $g_sTGLast_UID)
 		If $g_iTGLastRemote <> $g_sTGLast_UID Then
 			$g_iTGLastRemote = $g_sTGLast_UID
-			
+
               Switch $TGActionMSG
-                 ;========= modified kychera ============	
-					Case "START", '\u25b6 ' & "START"
-					     SetLog(GetTranslated(620,701,"Notify Telegram") & ": " & GetTranslated(620,900, "Your request has been received. Bot is now started"), $COLOR_GREEN)
+                 ;========= modified kychera ============
+					Case GetTranslated(620, 53, "START"), '\u25b6 ' & GetTranslated(620, 53, "START")
+					     SetLog("Notify Telegram" & ": " & GetTranslated(18, 1, "Your request has been received. Bot is now started"), $COLOR_GREEN)
 						;If	$g_bBotPaused = False And $g_bRunState = False Then
 						If $g_bRunState = False Then
-						 NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(620,901, "Request to Start...")& "\n" & GetTranslated(620,902,"Your bot is now started..."))
+						 NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 2, "Request to Start...")& "\n" & GetTranslated(18, 3, "Your bot is now started..."))
 						 btnStart()
                         Else
-						 NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(620,901, "Request to Start...")& "\n" & GetTranslated(620,903,"Your bot is currently started, no action was taken"))
+						 NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 2, "Request to Start...")& "\n" & GetTranslated(18, 4, "Your bot is currently started, no action was taken"))
 						EndIf
-					;======================================	
+					;======================================
 				EndSwitch
 		EndIf
- EndIf					    
-EndFunc	
+ EndIf
+EndFunc
 
 Func NotifyGetLastMessageFromTelegram2()
 	If $g_iDebugSetlog Then SetDebugLog("Notify | NotifyGetLastMessageFromTelegram()")
@@ -583,7 +583,7 @@ Func NotifyGetLastMessageFromTelegram2()
 
 	$oHTTP.Open("Get", "https://api.telegram.org/bot" & $g_sNotifyTGToken & "/getupdates", False)
 	;$oHTTP.Send()
-	Execute('$oHTTP.Send()')   
+	Execute('$oHTTP.Send()')
 	$oHTTP.WaitForResponse
 	Local $Result = Execute('$oHTTP.ResponseText');$oHTTP.ResponseText
 	;If $oHTTP.Status <> 200 Then
@@ -631,7 +631,7 @@ Func NotifyGetLastMessageFromTelegram2()
 	EndIf
 
 EndFunc   ;==>NotifyGetLastMessageFromTelegram
- 
+
 ;`~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -694,7 +694,7 @@ Func NotifyRemoteControlProc()
 							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " " & GetTranslated(620, 7, "DELETE") & GetTranslated(620, 8, " - delete all your previous PushBullet messages")
 							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(620, 9, "RESTART") & GetTranslated(620, 10, " - restart the Emulator and bot named") & " <" & $g_sNotifyOrigin & ">"
 							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(620, 11, "STOP") & GetTranslated(620, 12, " - stop the bot named") & " <" & $g_sNotifyOrigin & ">"
-							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & "START" & GetTranslated(620,8, " - start the bot named") & " <" & $g_sNotifyOrigin  & ">" ; modified kychera
+							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(620, 53, "START") & GetTranslated(620, 54, " - start the bot named") & " <" & $g_sNotifyOrigin  & ">" ; modified kychera
 							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(620, 13, "PAUSE") & GetTranslated(620, 14, " - pause the bot named") & " <" & $g_sNotifyOrigin & ">"
 							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(620, 15, "RESUME") & GetTranslated(620, 16, " - resume the bot named") & " <" & $g_sNotifyOrigin & ">"
 							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(620, 17, "STATS") & GetTranslated(620, 18, " - send Village Statistics of") & " <" & $g_sNotifyOrigin & ">"
@@ -703,8 +703,8 @@ Func NotifyRemoteControlProc()
 							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(620, 23, "LASTRAIDTXT") & GetTranslated(620, 24, " - send the last raid loot values of") & " <" & $g_sNotifyOrigin & ">"
 							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(620, 25, "SCREENSHOT") & GetTranslated(620, 26, " - send a screenshot of") & " <" & $g_sNotifyOrigin & ">"
 							;======addied kychera====== sendchat
-							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> SENDCHAT <TEXT> - send TEXT in clan chat of <Village Name>"
-							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> GETCHATS <STOP|NOW|INTERVAL> - select any of this three option to do"
+							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(18, 5, "SENDCHAT <TEXT>") & GetTranslated(18, 6, " - send TEXT in clan chat of <Village Name>")
+							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(18, 7, "GETCHATS <STOP|NOW|INTERVAL>") & GetTranslated(18, 8, " - select any of this three option to do")
 							;======>
 							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(620, 27, "SCREENSHOTHD") & GetTranslated(620, 28, " - send a screenshot in high resolution of") & " <" & $g_sNotifyOrigin & ">"
 							$txtHelp &= '\n' & GetTranslated(620, 1, -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslated(620, 29, "BUILDER") & GetTranslated(620, 30, " - send a screenshot of builder status of") & " <" & $g_sNotifyOrigin & ">"
@@ -743,15 +743,15 @@ Func NotifyRemoteControlProc()
 								NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(620, 124, "Request to Stop") & "..." & "\n" & GetTranslated(620, 134, "Your bot is currently stopped, no action was taken"))
 							EndIf
 						; modified kychera ============ 23.02.17
-						Case GetTranslated(620,1, -1) & " " & StringUpper($g_sNotifyOrigin) & " " & GetTranslated(620,7,"START")
-					     SetLog(GetTranslated(620,701,"Notify Telegram") & ": " & GetTranslated(620,900, "Your request has been received. Bot is now started"), $COLOR_GREEN)				
+						Case GetTranslated(620,1, -1) & " " & StringUpper($g_sNotifyOrigin) & " " & GetTranslated(620, 53, "START")
+					     SetLog("Notify Telegram" & ": " & GetTranslated(18, 1, "Your request has been received. Bot is now started"), $COLOR_GREEN)
 						If $g_bRunState = False Then
-						 NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(620,901, "Request to Start...")& "\n" & GetTranslated(620,902,"Your bot is now started..."))
+						 NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(18, 2, "Request to Start...")& "\n" & GetTranslated(18, 3,"Your bot is now started..."))
 						 btnStart()
                         Else
-						 NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(620,901, "Request to Start...")& "\n" & GetTranslated(620,903,"Your bot is currently started, no action was taken"))
+						 NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(18, 2, "Request to Start...")& "\n" & GetTranslated(18, 4,"Your bot is currently started, no action was taken"))
 						EndIf
-						;==============================	
+						;==============================
 						Case GetTranslated(620, 1, -1) & " " & StringUpper($g_sNotifyOrigin) & " " & GetTranslated(620, 13, "PAUSE")
 							If $g_bBotPaused = False And $g_bRunState = True Then
 								If ( _ColorCheck(_GetPixelColor($NextBtn[0], $NextBtn[1], True), Hex($NextBtn[2], 6), $NextBtn[3])) = False And IsAttackPage() Then
@@ -879,23 +879,23 @@ Func NotifyRemoteControlProc()
 							Local $chatMessage = StringRight($body[$x], StringLen($body[$x]) - StringLen("BOT " & StringUpper($g_sNotifyOrigin) & " SENDCHAT "))
 								$chatMessage = StringLower($chatMessage)
 								ChatbotPushbulletQueueChat($chatMessage)
-								NotifyPushToPushBullet($g_sNotifyOrigin & " | Chat queued, will send on next idle")
+								NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(18, 20, "Chat queued, will send on next idle"))
 								NotifyDeleteMessageFromPushBullet($iden[$x])
-							ElseIf StringInStr($body[$x], StringUpper($g_sNotifyOrigin) & " GETCHATS ") Then								
+							ElseIf StringInStr($body[$x], StringUpper($g_sNotifyOrigin) & " GETCHATS ") Then
 							Local $Interval = StringRight($body[$x], StringLen($body[$x]) - StringLen("BOT " & StringUpper($g_sNotifyOrigin) & " GETCHATS "))
 								If $Interval = "STOP" Then
 									ChatbotPushbulletStopChatRead()
-									NotifyPushToPushBullet($g_sNotifyOrigin  & " | Stopping interval sending")
+									NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(18, 21, "Stopping interval sending"))
 								ElseIf $Interval = "NOW" Then
 									ChatbotPushbulletQueueChatRead()
-									NotifyPushToPushBullet($g_sNotifyOrigin & " | Command queued, will send clan chat image on next idle")
+									NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(18, 22, "Command queued, will send clan chat image on next idle"))
 								Else
 									If Number($Interval) <> 0 Then
 										ChatbotPushbulletIntervalChatRead(Number($Interval))
-										NotifyPushToPushBullet($g_sNotifyOrigin & " | Command queued, will send clan chat image on interval")
+										NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(18, 23, "Command queued, will send clan chat image on interval"))
 									Else
 										SetLog("Chatbot: incorrect command syntax, Example: BOT <VillageName> GETCHATS NOW|STOP|INTERVAL", $COLOR_RED)
-										NotifyPushToPushBullet($g_sNotifyOrigin & " | Command not recognized" & "\n" & "Example: BOT <VillageName> GETCHATS NOW|STOP|INTERVAL")
+										NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(620, 97, "Command not recognized") & "\n" & GetTranslated(620, 94, "Example: BOT <VillageName> GETCHATS NOW|STOP|INTERVAL"))
 									EndIf
 								EndIf
 									NotifyDeleteMessageFromPushBullet($iden[$x])
@@ -904,11 +904,11 @@ Func NotifyRemoteControlProc()
 								Local $teststr = StringLeft($body[$x], $lenstr)
 								If $teststr = (GetTranslated(620, 1, -1) & " " & StringUpper($g_sNotifyOrigin) & " " & "") Then
 								SetLog("Pushbullet: received command syntax wrong, command ignored.", $COLOR_RED)
-									NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(620, 51, "Command not recognized") & "\n" & GetTranslated(620, 52, "Please push BOT HELP to obtain a complete command list."))
+									NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslated(620, 97, "Command not recognized") & "\n" & GetTranslated(620, 99, "Please push BOT HELP to obtain a complete command list."))
 									NotifyDeleteMessageFromPushBullet($iden[$x])
 								EndIf
 							EndIf
-                        ;============>	
+                        ;============>
 					EndSwitch
 					$body[$x] = ""
 					$iden[$x] = ""
@@ -940,7 +940,7 @@ Func NotifyRemoteControlProc()
 						$txtHelp &= '\n' & GetTranslated(620, 4, -1) & GetTranslated(620, 5, " - send this help message")
 						$txtHelp &= '\n' & GetTranslated(620, 9, "RESTART") & GetTranslated(620, 10, " - restart the Emulator and bot named") & " <" & $g_sNotifyOrigin & ">"
 						$txtHelp &= '\n' & GetTranslated(620, 11, "STOP") & GetTranslated(620, 12, " - stop the bot named") & " <" & $g_sNotifyOrigin & ">"
-						$txtHelp &= '\n' & GetTranslated(620, 7, "START") & GetTranslated(620, 8, " - start the bot named") & " <" & $g_sNotifyOrigin & ">" ; START - kychera
+						$txtHelp &= '\n' & GetTranslated(620, 53, "START") & GetTranslated(620, 54, " - start the bot named") & " <" & $g_sNotifyOrigin & ">" ; START - kychera
 						$txtHelp &= '\n' & GetTranslated(620, 13, "PAUSE") & GetTranslated(620, 14, " - pause the bot named") & " <" & $g_sNotifyOrigin & ">"
 						$txtHelp &= '\n' & GetTranslated(620, 15, "RESUME") & GetTranslated(620, 16, " - resume the bot named") & " <" & $g_sNotifyOrigin & ">"
 						$txtHelp &= '\n' & GetTranslated(620, 17, "STATS") & GetTranslated(620, 18, " - send Village Statistics of") & " <" & $g_sNotifyOrigin & ">"
@@ -959,8 +959,8 @@ Func NotifyRemoteControlProc()
 						$txtHelp &= "\n" & GetTranslated(620, 46, "SHUTDOWN") & GetTranslated(620, 48, " - Shut down host PC")
 						$txtHelp &= "\n" & GetTranslated(620, 50, "STANDBY") & GetTranslated(620, 51, " - Standby host PC")
 						;==========addied kychera=====
-						$txtHelp &= "\n" & GetTranslated(18, 111, "GETCHATS <INTERVAL|NOW|STOP> - to get the latest clan chat as an image")
-						$txtHelp &= "\n" & GetTranslated(18, 112, "SENDCHAT <chat message> - to send a chat to your clan")
+						$txtHelp &= "\n" & GetTranslated(18, 9, "GETCHATS <INTERVAL|NOW|STOP> - to get the latest clan chat as an image")
+						$txtHelp &= "\n" & GetTranslated(18, 10, "SENDCHAT <chat message> - to send a chat to your clan")
 						;=============================>
 
 						NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(620, 100, "Request for Help") & "\n" & $txtHelp)
@@ -978,17 +978,17 @@ Func NotifyRemoteControlProc()
 						Else
 							NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(620, 125, "Request to Stop...") & "\n" & GetTranslated(620, 127, "Your bot is currently stopped, no action was taken"))
 						EndIf
-					;========= modified kychera ============	
-					Case GetTranslated(620,7,"START"), '\u25b6 ' & "START"
-					     SetLog(GetTranslated(620,701,"Notify Telegram") & ": " & GetTranslated(620,900, "Your request has been received. Bot is now started"), $COLOR_GREEN)
+					;========= modified kychera ============
+					Case GetTranslated(620, 53, "START"), '\u25b6 ' & GetTranslated(620, 53, "START")
+					     SetLog("Notify Telegram" & ": " & GetTranslated(18, 1, "Your request has been received. Bot is now started"), $COLOR_GREEN)
 						;If	$g_bBotPaused = False And $g_bRunState = False Then
 						If $g_bRunState = False Then
-						 NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(620,901, "Request to Start...")& "\n" & GetTranslated(620,902,"Your bot is now started..."))
+						 NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 2, "Request to Start...")& "\n" & GetTranslated(18, 3, "Your bot is now started..."))
 						 btnStart()
                         Else
-						 NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(620,901, "Request to Start...")& "\n" & GetTranslated(620,903,"Your bot is currently started, no action was taken"))
+						 NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 2, "Request to Start...")& "\n" & GetTranslated(18, 4, "Your bot is currently started, no action was taken"))
 						EndIf
-					;======================================		
+					;======================================
 					Case GetTranslated(620, 13, "PAUSE"), '\u23F8 ' & GetTranslated(620, 13, "PAUSE")
 						If $g_bBotPaused = False And $g_bRunState = True Then
 							If ( _ColorCheck(_GetPixelColor($NextBtn[0], $NextBtn[1], True), Hex($NextBtn[2], 6), $NextBtn[3])) = False And IsAttackPage() Then
@@ -1121,26 +1121,26 @@ Func NotifyRemoteControlProc()
 					 Shutdown(32)
 					;=================================== "Chat Bot" ===================================addied Kychera 12.2016
 					Case Else
-						If StringInStr($TGActionMSG, "SENDCHAT") Then						
+						If StringInStr($TGActionMSG, "SENDCHAT") Then
 						local $chatMessage = StringRight($TGActionMSG, StringLen($TGActionMSG) - StringLen("SENDCHAT "))
 							$chatMessage = StringLower($chatMessage)
 							ChatbotPushbulletQueueChat($chatMessage)
-							NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 97, "Chat queued, will send on next idle"))
-						ElseIf StringInStr($TGActionMSG, "GETCHATS") Then							
+							NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 20, "Chat queued, will send on next idle"))
+						ElseIf StringInStr($TGActionMSG, "GETCHATS") Then
 							$Interval = StringRight($TGActionMSG, StringLen($TGActionMSG) - StringLen("GETCHATS "))
 							If $Interval = "STOP" Then
 								ChatbotPushbulletStopChatRead()
-								NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 117, "Stopping interval sending"))
+								NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 21, "Stopping interval sending"))
 							ElseIf $Interval = "NOW" Then
 								ChatbotPushbulletQueueChatRead()
-								NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 118, "Command queued, will send clan chat image on next idle"))
+								NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 22, "Command queued, will send clan chat image on next idle"))
 							Else
 								If Number($Interval) <> 0 Then
 									ChatbotPushbulletIntervalChatRead(Number($Interval))
-									NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 119, "Command queued, will send clan chat image on interval"))
+									NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 23, "Command queued, will send clan chat image on interval"))
 								Else
 									SetLog("Telegram: received command syntax wrong, command ignored.", $COLOR_RED)
-									NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(18, 46, "Command not recognized") & "\n" & GetTranslated(18, 47, "Please push BOT HELP to obtain a complete command list."))
+									NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslated(620, 97, "Command not recognized") & "\n" & GetTranslated(620, 99, "Please push BOT HELP to obtain a complete command list."))
 								EndIf
 							EndIf
 						EndIf
@@ -1419,17 +1419,17 @@ Func NotifyPushMessageToBoth($Message, $Source = "")
 		;===============Modified kychera===========
 		Case "SleepBot"
 		    If ($g_bNotifyPBEnable = True Or $g_bNotifyTGEnable = True) And $iNotifyAlertBOTSleep = 1 Then
-		      NotifyPushToBoth($g_sNotifyOrigin & " | " & GetTranslated(620,736, "Bot Sleep") & "..." & "\n" & $sWaitTime)
+		      NotifyPushToBoth($g_sNotifyOrigin & " | " & GetTranslated(620, 55, "Bot Sleep") & "..." & "\n" & $sWaitTime)
 		    EndIf
 		Case "WakeUpBot"
 		    If ($g_bNotifyPBEnable = True Or $g_bNotifyTGEnable = True) And $iNotifyAlertBOTSleep = 1 Then
-		      NotifyPushToBoth($g_sNotifyOrigin & " | " & GetTranslated(620,737, "Wake Up Bot"))
+		      NotifyPushToBoth($g_sNotifyOrigin & " | " & GetTranslated(620, 56, "Wake Up Bot"))
 		    EndIf
-		Case "Connect"		   
-            If ($g_bNotifyPBEnable = True Or $g_bNotifyTGEnable = True) And $iNotifyAlertConnect = 1 Then			 
-			    NotifyPushToBoth($g_sNotifyOrigin & " | " & GetTranslated(620,738,"Internet was not") & " " & $Time)				
-			EndIf	
-;==========================================		
+		Case "Connect"
+            If ($g_bNotifyPBEnable = True Or $g_bNotifyTGEnable = True) And $iNotifyAlertConnect = 1 Then
+			    NotifyPushToBoth($g_sNotifyOrigin & " | " & GetTranslated(620, 57, "Internet was not") & " " & $Time)
+			EndIf
+;==========================================
 		Case "Misc"
 			NotifyPushToBoth($Message)
 	EndSwitch

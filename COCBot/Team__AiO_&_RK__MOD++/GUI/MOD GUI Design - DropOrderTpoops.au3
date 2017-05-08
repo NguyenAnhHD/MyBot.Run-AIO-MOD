@@ -24,8 +24,8 @@ Global Const $g_asTroopDropList[] = [ "", _
 
 
 Func TroopsDrop()
-$10 = GUICtrlCreatePic(@ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
-$g_hGUI_TRAINARMY_TAB_ITEM5 = GUICtrlCreateTabItem("Order Troops")
+$g_hGUI_TRAINARMY_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslated(641, 68, "Order Troops"))
+;$10 = GUICtrlCreatePic(@ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
 Local $x = 25, $y = 45
 GUICtrlCreateGroup(GetTranslated(641, 58, "Custom dropping order"), $x - 20, $y - 20, 350, 380)
 $x += 10

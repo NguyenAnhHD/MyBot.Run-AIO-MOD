@@ -1914,7 +1914,7 @@ Func Bind_ImageList($nCtrl)
 
 		Case $g_hGUI_DEADBASE_TAB
 			; the icons for deadbase tab
-			Local $aIconIndex[4] = [$eIcnMagnifier, $eIcnCamp, $eIcnSilverStar, $eIcnCollector]
+			Local $aIconIndex[5] = [$eIcnMagnifier, $eIcnCamp, $eIcnLightSpell, $eIcnSilverStar, $eIcnCollector]
 
 		Case $g_hGUI_ACTIVEBASE_TAB
 			; the icons for activebase tab
@@ -1926,7 +1926,7 @@ Func Bind_ImageList($nCtrl)
 
 		Case $g_hGUI_ATTACKOPTION_TAB
 			; the icons for Attack Options tab
-			Local $aIconIndex[5] = [$eIcnMagnifier, $eIcnCamp, $eIcnLightSpell, $eIcnSilverStar, $eIcnTrophy]
+			Local $aIconIndex[4] = [$eIcnMagnifier, $eIcnCamp,  $eIcnSilverStar, $eIcnTrophy]
 
 		Case $g_hGUI_BOT_TAB
 			; the icons for Bot tab
