@@ -46,7 +46,7 @@ EndFunc
 Func CreateSwitchAccount()
 $11 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
 	Local $x = 22, $y = 45
-	GUICtrlCreateGroup(GetTranslated(637,1, "Switch Profiles"), $x - 20, $y - 20, 435, 380)
+	GUICtrlCreateGroup(GetTranslated(637,1, "Switch Profiles"), $x - 20, $y - 20, 435, 360)
 		$x -= 5
 		$g_hCmbProfile = GUICtrlCreateCombo("", $x - 3, $y + 1, 130, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			_GUICtrlSetTip(-1, GetTranslated(637,2, "Use this to switch to a different profile")& @CRLF & _
@@ -143,28 +143,7 @@ $11 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg
 				GUICtrlSetState(-1, $GUI_ENABLE)
 			EndIf
 		; IceCube (Misc v1.0)
-	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-	; Misc Battle Settings - added by rulesss
-	Local $x = 300, $y = 55
-    GUICtrlCreateGroup(GetTranslated(91,9, "Miscellaneous Battle Settings"), $x - 20, $y - 20, 155, 45)
-		$chkFastADBClicks = GUICtrlCreateCheckbox("", $x - 10, $y, 13, 13)
-		GUICtrlSetTip($chkFastADBClicks, GetTranslated(91,11, "Tick this to enable faster ADB deployment for MEmu and Droid4x in Multi-finger mode.") & @CRLF & GetTranslated(91,12, " WARNING:  This is experimental, if you have issues with deployment, disable it."))
-			GUICtrlSetOnEvent(-1, "chkFastADBClicks")
-			GUICtrlCreateLabel(GetTranslated(91,10, "Enable Fast ADB Clicks"), $x + 7, $y, -1, -1)
-	GUICtrlCreateGroup("", -99, -99, 1, 1)
-   ; Android Settings (LunaEclipse)- modification (rulesss,kychera)
-    Local $x = 25, $y = 95
-	GUICtrlCreateGroup(GetTranslated(91,2,"Android Options"), $x - 20, $y - 20, 430, 40)
-		$CmbAndroid = GUICtrlCreateCombo("", $x - 10, $y - 5, 130, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-			GUICtrlSetTip($CmbAndroid, GetTranslated(91,3,"Use this to select the Android Emulator to use with this profile."))
-			setupAndroidComboBox()
-			GUICtrlSetState(-1, $GUI_SHOW)
-			GUICtrlSetOnEvent(-1, "CmbAndroid")
-		$LblAndroidInstance = GUICtrlCreateLabel(GetTranslated(91,4,"Instance:"), $x + 120, $y - 2 , 60, 21, $SS_RIGHT)
-		$TxtAndroidInstance = GUICtrlCreateInput("", $x + 190, $y - 5, 210, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
-			GUICtrlSetTip($TxtAndroidInstance, GetTranslated(91,5,"Enter the Instance to use with this profile."))
-			GUICtrlSetOnEvent(-1, "TxtAndroidInstance")
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 	CreateBotSwitchAcc()
