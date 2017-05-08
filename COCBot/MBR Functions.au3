@@ -157,6 +157,7 @@
 #include "functions\Android\getBSPos.au3"
 #include "functions\Android\UniversalCloseWaitOpenCoC.au3"
 #include "functions\Android\AndroidEmbed.au3"
+#include "functions\Android\modifyAndroid.au3"
 
 #include "functions\Other\WerFaultClose.au3"
 #include "functions\Other\_NumberFormat.au3"
@@ -273,8 +274,8 @@
 #include "functions\Other\Api.au3"
 #include "functions\Other\ApiClient.au3"
 
-; Team++ AIO MOD
-#include "MOD_Team++AIO\Functions_Team++AIO.au3"
+; Team AiO & RK MOD++ (2017)
+#include "Team__AiO_&_RK__MOD++\Functions_Team__AiO_&_RK__MOD++.au3"
 
 ; OLD CODE
 

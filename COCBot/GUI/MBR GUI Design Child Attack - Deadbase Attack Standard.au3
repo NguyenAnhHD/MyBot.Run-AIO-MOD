@@ -24,13 +24,13 @@ Func CreateAttackSearchDeadBaseStandard()
 
    $g_hGUI_DEADBASE_ATTACK_STANDARD = _GUICreate("", $_GUI_MAIN_WIDTH - 195, $g_iSizeHGrpTab4, 150, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DEADBASE)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
-
+  $43 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images2\1.jpg", 0, -5, 280, 352, $WS_CLIPCHILDREN)
    Local $sTxtTip
    Local $x = 25, $y = 20
 	   GUICtrlCreateGroup(GetTranslated(608,1,"Deploy"), $x - 20, $y - 20, 270, $g_iSizeHGrpTab4)
    ;	$x -= 15
 		   GUICtrlCreateLabel(GetTranslated(608,2,"Troop Drop Order"),$x, $y, 143,18,$SS_LEFT)
-
+           GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 		   $y += 15
 		   $g_hCmbStandardDropOrderDB = GUICtrlCreateCombo("", $x, $y, 150, Default, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   GUICtrlSetData(-1, GetTranslated(608,25,"Default(All Troops)")&"|Barch/BAM/BAG|GiBarch", GetTranslated(608,25, -1))
@@ -40,6 +40,7 @@ Func CreateAttackSearchDeadBaseStandard()
 
 		   $y += 25
 		   GUICtrlCreateLabel(GetTranslated(608,3, "Attack on")&":", $x, $y + 5, -1, -1)
+		   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 		   $g_hCmbStandardDropSidesDB = GUICtrlCreateCombo("", $x + 55, $y, 120, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   _GUICtrlSetTip(-1, GetTranslated(608,4, "Attack on a single side, penetrates through base") & @CRLF & _
 								  GetTranslated(608,5, "Attack on two sides, penetrates through base") & @CRLF & _
@@ -54,6 +55,7 @@ Func CreateAttackSearchDeadBaseStandard()
 
 		   $y += 25
 		   GUICtrlCreateLabel(GetTranslated(608,12, "Delay Unit") & ":", $x, $y + 5, -1, -1)
+		   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 			   $sTxtTip = GetTranslated(608,13, "This delays the deployment of troops, 1 (fast) = like a Bot, 10 (slow) = Like a Human.") & @CRLF & _
 						  GetTranslated(608,14, "Random will make bot more varied and closer to a person.")
 			   _GUICtrlSetTip(-1, $sTxtTip)
@@ -61,24 +63,28 @@ Func CreateAttackSearchDeadBaseStandard()
 			   _GUICtrlSetTip(-1, $sTxtTip)
 			   GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9|10", "4")
 		   GUICtrlCreateLabel(GetTranslated(608,15, "Wave") & ":", $x + 100, $y + 5, -1, -1)
+		   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hCmbStandardWaveDelayDB = GUICtrlCreateCombo("", $x + 140, $y, 36, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   _GUICtrlSetTip(-1, $sTxtTip)
 			   GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9|10", "4")
 
 		  $y += 22
-		   $g_hChkRandomSpeedAtkDB = GUICtrlCreateCheckbox(GetTranslated(608,16, "Randomize delay for Units && Waves"), $x, $y, -1, -1)
+		   $g_hChkRandomSpeedAtkDB = GUICtrlCreateCheckbox("", $x, $y, 13, 13)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 			   GUICtrlSetOnEvent(-1, "chkRandomSpeedAtkDB")
-
+			   GUICtrlCreateLabel(GetTranslated(608,16, "Randomize delay for Units && Waves"), $x + 17, $y, -1, -1)
+               GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 		   $y +=22
-		   $g_hChkSmartAttackRedAreaDB = GUICtrlCreateCheckbox(GetTranslated(608,17, "Use Smart Attack: Near Red Line."), $x, $y, -1, -1)
+		   $g_hChkSmartAttackRedAreaDB = GUICtrlCreateCheckbox("", $x, $y, 13, 13)
 			   _GUICtrlSetTip(-1, GetTranslated(608,18, "Use Smart Attack to detect the outer 'Red Line' of the village to attack. And drop your troops close to it."))
 			   GUICtrlSetState(-1, $GUI_CHECKED)
 			   GUICtrlSetOnEvent(-1, "chkSmartAttackRedAreaDB")
-
+			   GUICtrlCreateLabel(GetTranslated(608,17, "Use Smart Attack: Near Red Line."), $x + 17, $y, -1, -1)
+		       GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 		   $y += 22
 		   $g_hLblSmartDeployDB = GUICtrlCreateLabel(GetTranslated(608,19, "Drop Type") & ":", $x, $y + 5, -1, -1)
+		   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 			   $sTxtTip = GetTranslated(608,20, "Select the Deploy Mode for the waves of Troops.") & @CRLF & GetTranslated(608,21, "Type 1: Drop a single wave of troops on each side then switch troops, OR") & @CRLF & GetTranslated(608,22, "Type 2: Drop a full wave of all troops (e.g. giants, barbs and archers) on each side then switch sides.")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hCmbSmartDeployDB = GUICtrlCreateCombo("", $x + 55, $y, 120, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
@@ -109,7 +115,7 @@ Func CreateAttackSearchDeadBaseStandard()
 ; ====================================================== MULTI FINGERS ======================================================
 	$x  =  23
 	$y += -67
-	$LblDBMultiFinger = GUICtrlCreateLabel(GetTranslated(671,44, "Style:"), $x, $y + 3, 30, -1, $SS_RIGHT)
+	$LblDBMultiFinger = GUICtrlCreateLabel(GetTranslated(671,44, "Style:"), $x, $y + 3, 33, -1, $SS_RIGHT)
 	GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 	$CmbDBMultiFinger = GUICtrlCreateCombo("", $x + 56, $y, 122, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 		$sTxtTip = GetTranslated(671,45, "Select a Multi-Fingers Attack Style.") & @CRLF & @CRLF & _
@@ -135,7 +141,7 @@ $y = 140
 GUICtrlCreateGroup(GetTranslated(671, 100, "Settings"), $x, $y, 180, 105)
 
 $y += 5
-$ChkGiantSlot = GUICtrlCreateCheckbox(GetTranslated(671, 101, "GiantSlot"), $x+10, $y + 10, 89, 25)
+$ChkGiantSlot = _GUICtrlCreateCheckbox(GetTranslated(671, 101, "GiantSlot"), $x+10, $y, 89, 25)
 	$sTxtTip = GetTranslated(671, 102, "perimeter (> = 12, recommended)") & @CRLF & _
 			   GetTranslated(671, 103, "two points on each side (> = 8, recommended)")
 	_GUICtrlSetTip(-1, $sTxtTip)
@@ -147,7 +153,7 @@ GUICtrlSetData(-1,  GetTranslated(671, 104, "Perimeter") & "|" & _
 					GUICtrlSetOnEvent(-1, "CmbGiantSlot")
 ; ==========================================================================================================================
 $y += 34
-$ChkUnitFactor = GUICtrlCreateCheckbox(GetTranslated(671, 106, "Modify Unit Factor"), $x + 10, $y + 4, 130, 25)
+$ChkUnitFactor = _GUICtrlCreateCheckbox(GetTranslated(671, 106, "Modify Unit Factor"), $x + 10, $y - 7, 130, 25)
 	$sTxtTip = GetTranslated(671, 107, "Unit deploy delay = Unit setting x Unit Factor (millisecond)")
 	_GUICtrlSetTip(-1, $sTxtTip)
 	GUICtrlSetOnEvent(-1, "chkUnitFactor")
@@ -160,7 +166,7 @@ $TxtUnitFactor = GUICtrlCreateInput("10", $x + 140, $y + 6, 31, 20, BitOR($GUI_S
 	GUICtrlSetData(-1, 10)
 	GUICtrlSetOnEvent(-1, "chkUnitFactor")
 $y += 30
-$ChkWaveFactor = GUICtrlCreateCheckbox(GetTranslated(671, 109, "Modify Wave Factor"), $x + 10, $y + 2, 130, 25)
+$ChkWaveFactor = _GUICtrlCreateCheckbox(GetTranslated(671, 109, "Modify Wave Factor"), $x + 10, $y - 9, 130, 25)
 	$sTxtTip = GetTranslated(671, 108, "Switch troop delay = Wave setting x Wave Factor (millisecond)")
 	_GUICtrlSetTip(-1, $sTxtTip)
 	GUICtrlSetOnEvent(-1, "chkWaveFactor")

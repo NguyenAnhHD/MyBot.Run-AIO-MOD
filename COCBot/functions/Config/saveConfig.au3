@@ -199,7 +199,7 @@ Func SaveRegularConfig()
 	; <><><><> Bot / Debug <><><><>
 	SaveConfig_Debug()
 
-	;  <><><> Team++ AIO MOD <><><>
+	;  <><><> Team AiO & RK MOD++ (2017) <><><>
 	SaveConfig_MOD()
 	SaveConfig_SwitchAcc()
 	SaveConfig_Forecast()
@@ -1006,9 +1006,17 @@ EndFunc   ;==>SaveConfig_600_52_2
 Func SaveConfig_600_54()
 	; <><><> Attack Plan / Train Army / Train Order <><><>
 	ApplyConfig_600_54("Save")
+
+	; Troops Order
 	_Ini_Add("troop", "chkTroopOrder", $g_bCustomTrainOrderEnable ? 1 : 0)
 	For $z = 0 To UBound($g_aiCmbCustomTrainOrder) - 1
 		_Ini_Add("troop", "cmbTroopOrder" & $z, $g_aiCmbCustomTrainOrder[$z])
+	Next
+
+	; Spells Order
+	_Ini_Add("Spells", "chkSpellOrder", $g_bCustomBrewOrderEnable ? 1 : 0)
+	For $z = 0 To UBound($g_aiCmbCustomBrewOrder) - 1
+		_Ini_Add("Spells", "cmbSpellOrder" & $z, $g_aiCmbCustomBrewOrder[$z])
 	Next
 EndFunc   ;==>SaveConfig_600_54
 
@@ -1050,11 +1058,11 @@ Func IniWriteS($filename, $section, $key, $value)
 	Local $s = $section
 	Local $k = $key
 	IniWrite($filename, $section, $key, $value)
-	If $g_sProfileSecondaryOutputFileName <> "" Then
-		If $s = "search" Or $s = "attack" Or $s = "troop" Or $s = "spells" Or $s = "milkingattack" Or $s = "endbattle" Or $s = "collectors" Or ($s = "general" And $k = "version") Then
-			IniWrite($g_sProfileSecondaryOutputFileName, $section, $key, $value)
-		EndIf
-	EndIf
+;~ 	If $g_sProfileSecondaryOutputFileName <> "" Then
+;~ 		If $s = "search" Or $s = "attack" Or $s = "troop" Or $s = "spells" Or $s = "milkingattack" Or $s = "endbattle" Or $s = "collectors" Or ($s = "general" And $k = "version") Then
+;~ 			IniWrite($g_sProfileSecondaryOutputFileName, $section, $key, $value)
+;~ 		EndIf
+;~ 	EndIf
 EndFunc   ;==>IniWriteS
 
 

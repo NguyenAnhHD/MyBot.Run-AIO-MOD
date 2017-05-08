@@ -682,3 +682,14 @@ Func btnTestOcrMemory()
 	Next
 
 EndFunc
+
+;Enabele\Disabele Watchdog by rulesss,kychera
+Func chkLaunchWatchdog()
+	If GUICtrlRead($ChkLaunchWatchdog) = $GUI_CHECKED Then
+	$iChkLaunchWatchdog = 1
+		
+	Else
+	$iChkLaunchWatchdog = 0
+		
+	EndIf
+EndFunc

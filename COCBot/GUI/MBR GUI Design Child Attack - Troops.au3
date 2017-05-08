@@ -15,7 +15,7 @@
 #include-once
 
 Global $g_hGUI_TRAINARMY = 0
-Global $g_hGUI_TRAINARMY_TAB = 0, $g_hGUI_TRAINARMY_TAB_ITEM1 = 0, $g_hGUI_TRAINARMY_TAB_ITEM2 = 0, $g_hGUI_TRAINARMY_TAB_ITEM3 = 0, $g_hGUI_TRAINARMY_TAB_ITEM4 = 0
+Global $g_hGUI_TRAINARMY_TAB = 0, $g_hGUI_TRAINARMY_TAB_ITEM1 = 0, $g_hGUI_TRAINARMY_TAB_ITEM2 = 0, $g_hGUI_TRAINARMY_TAB_ITEM3 = 0, $g_hGUI_TRAINARMY_TAB_ITEM4 = 0, $g_hGUI_TRAINARMY_TAB_ITEM5 = 0
 
 ; Troops/Spells sub-tab
 Global $g_hChkUseQuickTrain = 0, $g_ahChkArmy[3] = [0,0,0]			; QuickTrainCombo (check box) - Demen
@@ -51,6 +51,18 @@ Global $g_ahImgTroopOrder[$eTroopCount] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Global $g_hBtnTroopOrderSet = 0, $g_ahImgTroopOrderSet = 0
 Global $g_hBtnRemoveTroops
 
+; Spells Brew Order
+Global Const $g_asSpellsOrderList[] = [ "", _
+   GetTranslated(605,15, "Lightning"), GetTranslated(605,16, "Heal"), GetTranslated(605,17, "Rage"), GetTranslated(605,18, "Jump"), _
+   GetTranslated(605,19, "Freeze"), GetTranslated(605,20, "Clone"), GetTranslated(605,9, "Poison"), GetTranslated(605,10, "EarthQuake"), _
+   GetTranslated(605,11, "Haste"), GetTranslated(605,14, "Skeleton")]
+Global $g_hChkCustomBrewOrderEnable = 0
+Global $g_ahCmbSpellsOrder[$eSpellCount] = [0,0,0,0,0,0,0,0,0,0]
+Global $g_ahImgSpellsOrder[$eSpellCount] = [0,0,0,0,0,0,0,0,0,0]
+Global $g_hBtnSpellsOrderSet = 0, $g_ahImgSpellsOrderSet = 0
+Global $g_hBtnRemoveSpells
+
+
 ; Options sub-tab
 Global $g_hChkCloseWhileTraining = 0, $g_hChkCloseWithoutShield = 0, $g_hChkCloseEmulator = 0, $g_hChkSuspendComputer = 0, $g_hChkRandomClose = 0, $g_hRdoCloseWaitExact = 0, _
 	   $g_hRdoCloseWaitRandom = 0, $g_hCmbCloseWaitRdmPercent = 0, $g_hCmbMinimumTimeClose = 0, $g_hSldTrainITDelay = 0, $g_hChkTrainAddRandomDelayEnable = 0, $g_hTxtAddRandomDelayMin = 0, _
@@ -59,16 +71,19 @@ Global $g_hChkCloseWhileTraining = 0, $g_hChkCloseWithoutShield = 0, $g_hChkClos
 Global $g_hLblCloseWaitRdmPercent = 0, $g_hLblCloseWaitingTroops = 0, $g_hLblSymbolWaiting = 0, $g_hLblWaitingInMinutes = 0, $g_hLblTrainITDelay = 0, $g_hLblTrainITDelayTime = 0, _
 	   $g_hLblAddDelayIdlePhaseBetween = 0, $g_hLblAddDelayIdlePhaseSec = 0, $g_hPicCloseWaitTrain = 0, $g_hPicCloseWaitStop = 0, $g_hPicCloseWaitExact = 0
 
+#include "..\Team__AiO_&_RK__MOD++\GUI\MOD GUI Design - DropOrderTpoops.au3"
+
 Func CreateAttackTroops()
    $g_hGUI_TRAINARMY = _GUICreate("", $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_ATTACK)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_TRAINARMY)
-
+   $26 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
    $g_hGUI_TRAINARMY_TAB = GUICtrlCreateTab(0, 0, $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))
 
    CreateTroopsSpellsSubTab()
    CreateBoostSubTab()
    CreateTrainOrderSubTab()
    CreateOptionsSubTab()
+   TroopsDrop()
 
 EndFunc
 
@@ -83,16 +98,16 @@ Func CreateTroopsSpellsSubTab()
 
    Local $x = 0
    Local $y = 8
-	   $g_hChkUseQuickTrain = GUICtrlCreateCheckbox(GetTranslated(621, 34, "Use Quick Train"), $x + 15, $y + 19, -1, 15)
+	   $g_hChkUseQuickTrain = _GUICtrlCreateCheckbox(GetTranslated(621, 34, "Use Quick Train"), $x + 15, $y + 9, -1, 15)
 	   GUICtrlSetState(-1, $GUI_UNCHECKED)
 	   GUICtrlSetOnEvent(-1, "chkUseQTrain")
 	   For $i = 0 To 2												; QuickTrainCombo (check box) - Demen
-		   $g_ahChkArmy[$i] = GUICtrlCreateCheckbox("Army " & $i+1, $x + 120 + $i*60, $y + 20, 50, 15)
+		   $g_ahChkArmy[$i] = _GUICtrlCreateCheckbox(GetTranslated(621, 37 + $i, "Army " & $i+1), $x + 120 + $i*60, $y + 10, 50, 15)
 		   GUICtrlSetState(-1, $GUI_DISABLE)
 		   If $i = 0 Then GUICtrlSetState(-1, $GUI_CHECKED)
 		   GUICtrlSetOnEvent(-1, "chkQuickTrainCombo")
 	   Next															; QuickTrainCombo (check box) - Demen
-	   GUICtrlCreateLabel(GetTranslated(621, 41, "Remove Army"), $x + 335, $y + 20, -1, 15, $SS_LEFT)
+	   GUICtrlCreateLabel(GetTranslated(621, 41, "Remove Army"), $x + 330, $y + 20, -1, 15, $SS_LEFT)
 	   GUICtrlCreateIcon($g_sLibIconPath, $eIcnResetButton, $x + 405, $y + 17, 24, 24)
 	   GUICtrlSetOnEvent(-1, "Removecamp")
 
@@ -420,11 +435,11 @@ Func CreateTroopsSpellsSubTab()
 
 	  $x -= 195
 	  $Y += 35
-		  $g_hChkTotalCampForced = GUICtrlCreateCheckbox(GetTranslated(636, 46, "Force Total Army Camp") & ":", $x + 3, $y, -1, -1)
+		  $g_hChkTotalCampForced = _GUICtrlCreateCheckbox(GetTranslated(636, 46, "Force Total Army Camp") & ":", $x + 3, $y + 3, -1, -1)
 			 GUICtrlSetState(-1, $GUI_CHECKED)
 			 GUICtrlSetOnEvent(-1, "chkTotalCampForced")
 			 _GUICtrlSetTip(-1, GetTranslated(636, 47, "If not detected set army camp values (instead ask)"))
-		  $g_hTxtTotalCampForced = GUICtrlCreateInput("220", $x + 137, $y + 3, 30, 17, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+		  $g_hTxtTotalCampForced = GUICtrlCreateInput("220", $x + 137, $y + 3, 28, 17, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			 GUICtrlSetOnEvent(-1, "SetComboTroopComp")
 			 GUICtrlSetLimit(-1, 3)
 
@@ -434,8 +449,8 @@ Func CreateTroopsSpellsSubTab()
 			 GUICtrlSetState(-1, BitOR($GUI_DISABLE, $GUI_HIDE))
 
 	  $x += 38
-		  GUICtrlCreateLabel(GetTranslated(621, 15, "Total"), $x + 295, $y + 7, -1, -1, $SS_RIGHT)
-		  $g_hLblCountTotal = GUICtrlCreateLabel(0, $x + 330, $y + 5, 30, 15, $SS_CENTER)
+		  GUICtrlCreateLabel(GetTranslated(621, 15, "Total"), $x + 285, $y + 5, -1, -1, $SS_RIGHT)
+		  $g_hLblCountTotal = GUICtrlCreateLabel(0, $x + 330, $y + 5, 28, 15, $SS_CENTER)
 			 _GUICtrlSetTip(-1, GetTranslated(621, 16, "The total Units of Troops should equal Total Army Camps."))
 			 GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN) ;lime, moneygreen
 		  GUICtrlCreateLabel("x", $x + 364, $y + 7, -1, -1)
@@ -596,7 +611,7 @@ Func CreateTroopsSpellsSubTab()
 
 	  $y += 56
 	  $x = 17
-		  $g_hChkForceBrewBeforeAttack = GUICtrlCreateCheckbox(GetTranslated(621, 42, "Force Brew Spells"), $x, $y + 12, -1, -1)
+		  $g_hChkForceBrewBeforeAttack = _GUICtrlCreateCheckbox(GetTranslated(621, 42, "Force Brew Spells"), $x, $y + 12, -1, -1)
 		  GUICtrlSetState(-1, $GUI_UNCHECKED)
 
 	  $x = 210
@@ -623,7 +638,7 @@ Func CreateTroopsSpellsSubTab()
 	GUICtrlCreateGroup(GetTranslated(621, 300, "Simple Train (do not empty barracks)"), $x - 5, $y, $g_iSizeWGrpTab3, 38)
 		$x += 7
 		$y += 16
-			$g_hchkSimpleTrain = GUICtrlCreateCheckbox(GetTranslated(621, 301, "Always train queue"), $x, $y, -1, 15)
+			$g_hchkSimpleTrain = _GUICtrlCreateCheckbox(GetTranslated(621, 301, "Always train queue"), $x, $y - 10, -1, 15)
 				GUICtrlSetOnEvent(-1, "chkSimpleTrain")
 				_GUICtrlSetTip(-1, 	GetTranslated(621, 302, "Train 2 sets of army to make full camp & full queue") _
 									& @CRLF & GetTranslated(621, 303, "Only delete queued troops or spells if the queue is not full") _
@@ -634,7 +649,7 @@ Func CreateTroopsSpellsSubTab()
 				_GUICtrlSetTip(-1, 	GetTranslated(621, 306, "Check precision of troops & spells before training.") _
 									& @CRLF & GetTranslated(621, 307, "Will remove wrong troops or spells if any"))
 		$x += 103
-			$g_hchkFillArcher = GUICtrlCreateCheckbox(GetTranslated(621, 308, "Fill Archer:"), $x, $y, -1, 15)
+			$g_hchkFillArcher = _GUICtrlCreateCheckbox(GetTranslated(621, 308, "Fill Archer:"), $x, $y - 10, -1, 15)
 				GUICtrlSetState(-1, $GUI_DISABLE)
 				GUICtrlSetOnEvent(-1, "chkFillArcher")
 				_GUICtrlSetTip(-1, GetTranslated(621, 309, "Train some archers to top-up the camp or queue if it is nearly full"))
@@ -642,7 +657,7 @@ Func CreateTroopsSpellsSubTab()
 				GUICtrlSetState(-1, $GUI_DISABLE)
 				GUICtrlSetLimit(-1, 2)
 		$x += 110
-			$g_hchkFillEQ = GUICtrlCreateCheckbox(GetTranslated(621, 310, "Fill 1 EQ"), $x, $y, -1, 15)
+			$g_hchkFillEQ = _GUICtrlCreateCheckbox(GetTranslated(621, 310, "Fill 1 EQ"), $x, $y - 10, -1, 15)
 				GUICtrlSetState(-1, $GUI_DISABLE)
 				_GUICtrlSetTip(-1, GetTranslated(621, 311, "Brew 1 EarthQuake Spell to top-up the spell camp or queue"))
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -650,7 +665,7 @@ Func CreateTroopsSpellsSubTab()
 
 EndFunc
 
-Func  CreateBoostSubTab()
+Func CreateBoostSubTab()
    Local $sTextBoostLeft = GetTranslated(623, 1, "Boosts left")
    Local $sTxtTip = ""
 
@@ -805,7 +820,7 @@ Func CreateTrainOrderSubTab()
 
    Local $x = 25, $y = 45
    GUICtrlCreateGroup(GetTranslated(641, 25, "Training Order"), $x - 20, $y - 20, $g_iSizeWGrpTab3, $g_iSizeHGrpTab3)
-	   $g_hChkCustomTrainOrderEnable = GUICtrlCreateCheckbox(GetTranslated(641, 26, "Custom Order"), $x - 5, $y, -1, -1)
+	   $g_hChkCustomTrainOrderEnable = GUICtrlCreateCheckbox(GetTranslated(641, 26, "Troops Order"), $x - 5, $y, -1, -1)
 	   GUICtrlSetState(-1, $GUI_UNCHECKED)
 	   _GUICtrlSetTip(-1, GetTranslated(641, 27, "Enable to select a custom troop training order") & @CRLF & _
 						  GetTranslated(641, 28, "Changing train order can be useful with CSV scripted attack armies!"))
@@ -867,6 +882,50 @@ Func CreateTrainOrderSubTab()
 								GetTranslated(641, 46, "When not all troop slots are filled, will use random troop order in empty slots!"))
 			 GUICtrlSetOnEvent(-1, "btnTroopOrderSet")
 		  $g_ahImgTroopOrderSet = GUICtrlCreateIcon($g_sLibIconPath, $eIcnSilverStar, $x + 226, $y + 2, 18, 18)
+
+	; Brew Spells Order  [641] 49 last
+	Local $x = 300, $y = 45
+	$g_hChkCustomBrewOrderEnable = GUICtrlCreateCheckbox(GetTranslated(641, 49, "Spells Order"), $x - 5, $y, -1, -1)
+		GUICtrlSetState(-1, $GUI_UNCHECKED)
+		_GUICtrlSetTip(-1, GetTranslated(641, 50, "Enable to select a Brew Spells order") & @CRLF & _
+						  GetTranslated(641, 51, "Changing spells order can be useful with CSV scripted attack armies!"))
+		GUICtrlSetOnEvent(-1, "chkSpellsOrder")
+
+	; Create translated list of Spells for combo box
+	Local $sComboData = ""
+	For $j = 0 To UBound($g_asSpellsOrderList) - 1
+		$sComboData &= $g_asSpellsOrderList[$j] & "|"
+	Next
+
+	Local $txtSpellsOrder = GetTranslated(641, 52, "Enter sequence order for brew Spells #")
+
+	; Create ComboBox(es) for selection of Spells brew order
+	$y += 23
+	For $z = 0 To $eSpellCount - 1
+		GUICtrlCreateLabel($z + 1 & ":", $x - 16, $y + 2, -1, 18)
+			$g_ahCmbSpellsOrder[$z] = GUICtrlCreateCombo("", $x, $y, 94, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+				GUICtrlSetOnEvent(-1, "GUISpellsOrder")
+				GUICtrlSetData(-1, $sComboData, "")
+				_GUICtrlSetTip(-1, $txtSpellsOrder & $z + 1)
+				GUICtrlSetState(-1, $GUI_DISABLE)
+			$g_ahImgSpellsOrder[$z] = GUICtrlCreateIcon($g_sLibIconPath, $eIcnOptions, $x + 96, $y + 1, 18, 18)
+			$y += 22 ; move down to next combobox location
+	Next
+	$y += 20
+		$g_hBtnRemoveSpells = GUICtrlCreateButton(GetTranslated(641, 53, "Empty Spell list"), $x, $y, 94, 22)
+			GUICtrlSetState(-1, BitOR($GUI_UNCHECKED, $GUI_DISABLE))
+			_GUICtrlSetTip(-1, GetTranslated(641, 54, "Push button to remove all spells from list and start over"))
+			GUICtrlSetOnEvent(-1, "BtnRemoveSpells")
+	$y += 25
+		$g_hBtnSpellsOrderSet =GUICtrlCreateButton(GetTranslated(641, 30, "Apply New Order"), $x, $y, 94, 22)
+			GUICtrlSetState(-1, BitOR($GUI_UNCHECKED, $GUI_DISABLE))
+			_GUICtrlSetTip(-1, GetTranslated(641, 55, "Push button when finished selecting custom spells brew order") & @CRLF & _
+								GetTranslated(641, 56, "Icon changes color based on status: Red= Not Set, Green = Order Set") & @CRLF & _
+								GetTranslated(641, 57, "When not all spells slots are filled, will use random spell order in empty slots!"))
+			GUICtrlSetOnEvent(-1, "BtnSpellsOrderSet")
+		$g_ahImgSpellsOrderSet = GUICtrlCreateIcon($g_sLibIconPath, $eIcnSilverStar, $x + 98, $y + 2, 18, 18)
+
+
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
 
@@ -876,15 +935,15 @@ Func CreateOptionsSubTab()
    Local $sTxtTip = ""
    Local $x = 25, $y = 45
    GUICtrlCreateGroup(GetTranslated(641, 2, "Training Idle Time"), $x - 20, $y - 20, 151, 294)
-	   $g_hChkCloseWhileTraining = GUICtrlCreateCheckbox(GetTranslated(641, 3, "Close While Training"), $x - 12, $y, 140, -1)
-	   GUICtrlSetState(-1, $GUI_CHECKED)
+	   $g_hChkCloseWhileTraining = _GUICtrlCreateCheckbox(GetTranslated(641, 3, "Close While Training"), $x - 12, $y, 140, -1)
+	   GUICtrlSetState(-1, $GUI_UNCHECKED)
 	   _GUICtrlSetTip(-1, GetTranslated(641, 4, "Option will exit CoC game for time required to complete TROOP training when SHIELD IS ACTIVE") & @CRLF & _
 						  GetTranslated(641, 5, "Close for Spell creation will be enabled when 'Wait for Spells' is selected on Search tabs") & @CRLF & _
 						  GetTranslated(641, 6, "Close for Hero healing will be enabled when 'Wait for Heroes' is enabled on Search tabs"))
 	   GUICtrlSetOnEvent(-1, "chkCloseWaitEnable")
 
    $y += 28
-	   $g_hChkCloseWithoutShield = GUICtrlCreateCheckbox(GetTranslated(641, 7, "Without Shield"), $x + 18, $y + 1, 110, -1)
+	   $g_hChkCloseWithoutShield = _GUICtrlCreateCheckbox(GetTranslated(641, 7, "Without Shield"), $x + 18, $y + 1, 110, -1)
 	   $sTxtTip = GetTranslated(641, 8, "Option will ALWAYS close CoC for idle training time and when NO SHIELD IS ACTIVE!") & @CRLF & _
 				  GetTranslated(641, 9, "Note - You can be attacked and lose trophies when this option is enabled!")
 	   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -894,7 +953,7 @@ Func CreateOptionsSubTab()
 	   _GUICtrlSetTip(-1, $sTxtTip)
 
    $y += 28
-	   $g_hChkCloseEmulator = GUICtrlCreateCheckbox(GetTranslated(641, 13, "Close Emulator"), $x + 18, $y + 1, 110, -1)
+	   $g_hChkCloseEmulator = _GUICtrlCreateCheckbox(GetTranslated(641, 13, "Close Emulator"), $x + 18, $y + 1, 110, -1)
 	   $sTxtTip = GetTranslated(641, 14, "Option will close Android Emulator completely when selected") & @CRLF & _
 				  GetTranslated(641, 15, "Adding this option may increase offline time slightly due to variable times required for startup")
 	   GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -913,14 +972,14 @@ Func CreateOptionsSubTab()
 	   ;_GUICtrlSetTip(-1, $sTxtTip)
 
    $y += 28
-	   $g_hChkRandomClose = GUICtrlCreateCheckbox(GetTranslated(641, 10, "Random Close"), $x + 18, $y + 1, 110, -1)
+	   $g_hChkRandomClose = _GUICtrlCreateCheckbox(GetTranslated(641, 10, "Random Close"), $x + 18, $y + 1, 110, -1)
 	   GUICtrlSetState(-1, $GUI_UNCHECKED)
 	   _GUICtrlSetTip(-1, GetTranslated(641, 11, "Option will Randomly choose between time out, close CoC, or Close emulator when selected") & @CRLF & _
 						  GetTranslated(641, 15, "Adding this option may increase offline time slightly due to variable times required for startup"))
 	   GUICtrlSetOnEvent(-1, "btnCloseWaitStopRandom")
 
    $y += 28
-	   $g_hRdoCloseWaitExact = GUICtrlCreateRadio(GetTranslated(641, 16, "Exact Time"), $x + 18, $y + 1, 110, -1)
+	   $g_hRdoCloseWaitExact = _GUICtrlCreateRadio(GetTranslated(641, 16, "Exact Time"), $x + 18, $y + 1, 110, -1)
 	   _GUICtrlSetTip(-1, GetTranslated(641, 17, "Select to wait exact time required for troops to complete training"))
 	   GUICtrlSetState(-1, $GUI_UNCHECKED)
 	   GUICtrlSetOnEvent(-1, "btnCloseWaitRandom")
@@ -928,7 +987,7 @@ Func CreateOptionsSubTab()
 	   _GUICtrlSetTip(-1, GetTranslated(641, 18, "Select how much time to wait when feature enables"))
 
    $y += 24
-	   $g_hRdoCloseWaitRandom = GUICtrlCreateRadio(GetTranslated(641, 19, "Random Time"), $x + 18, $y + 1, 110, -1)
+	   $g_hRdoCloseWaitRandom = _GUICtrlCreateRadio(GetTranslated(641, 19, "Random Time"), $x + 18, $y + 1, 110, -1)
 	   _GUICtrlSetTip(-1, GetTranslated(641, 20, "Select to ADD a random extra wait time like human who forgets to clash"))
 	   GUICtrlSetState(-1, $GUI_CHECKED)
 	   GUICtrlSetOnEvent(-1, "btnCloseWaitRandom")
@@ -982,10 +1041,10 @@ Func CreateOptionsSubTab()
    $y = 45
    GUICtrlCreateGroup(GetTranslated(641,35, "Training Add Random Delay"), $x - 20, $y - 20, 173, 81)
    $y += 15
-	   $g_hChkTrainAddRandomDelayEnable = GUICtrlCreateCheckbox(GetTranslated(641, 36, "Add Random Delay"),$x + 18, $y - 11, 130, -1)
+	   $g_hChkTrainAddRandomDelayEnable = _GUICtrlCreateCheckbox(GetTranslated(641, 36, "Add Random Delay"),$x + 18, $y - 11, 130, -1)
 	   $sTxtTip = GetTranslated(641, 37, "Add random delay between two calls of train army.")& @CRLF & _
 				  GetTranslated(641, 38, "This option reduces the calls to the training window  humanizing the bot spacing calls each time with a causal interval chosen between the minimum and maximum values indicated below.")
-	   GUICtrlSetState(-1, $GUI_CHECKED)
+	   GUICtrlSetState(-1, $GUI_UNCHECKED)
 	   _GUICtrlSetTip(-1, $sTxtTip)
 	   GUICtrlSetOnEvent(-1, "chkAddDelayIdlePhaseEnable")
 	   GUICtrlCreateIcon($g_sLibIconPath, $eIcnDelay, $x - 13, $y - 13, 24, 24)

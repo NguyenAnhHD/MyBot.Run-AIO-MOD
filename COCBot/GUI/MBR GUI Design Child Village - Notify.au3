@@ -34,7 +34,7 @@ Global $g_hLblNotifyWeekdays[7] = [0,0,0,0,0,0,0], $g_ahLblNotifyWeekdaysE = 0, 
 Func CreateVillageNotify()
    $g_hGUI_NOTIFY = _GUICreate("", $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_VILLAGE)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_NOTIFY)
-
+   $40 = GUICtrlCreatePic(@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
    GUISwitch($g_hGUI_NOTIFY)
    $g_hGUI_NOTIFY_TAB = GUICtrlCreateTab(0, 0, $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))
    $g_hGUI_NOTIFY_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslated(600,18,"PushBullet/Telegram"))
@@ -51,10 +51,10 @@ Func CreatePushBulletTelegramSubTab()
 
 		$x -= 10
 		GUICtrlCreateIcon ($g_sLibIconPath, $eIcnNotify, $x + 3, $y, 32, 32)
-		$g_hChkNotifyPBEnable = GUICtrlCreateCheckbox(GetTranslated(619,2, "Enable PushBullet"), $x + 40, $y + 5)
+		$g_hChkNotifyPBEnable = _GUICtrlCreateCheckbox(GetTranslated(619,2, "Enable PushBullet"), $x + 40, $y + 5, -1, -1)
 			GUICtrlSetOnEvent(-1, "chkPBTGenabled")
 			_GUICtrlSetTip(-1, GetTranslated(619,3, "Enable PushBullet notifications"))
-		$g_hChkNotifyDeleteAllPBPushes = GUICtrlCreateCheckbox(GetTranslated(619,8, "Delete Msg on Start"), $x + 160, $y)
+		$g_hChkNotifyDeleteAllPBPushes = _GUICtrlCreateCheckbox(GetTranslated(619,8, "Delete Msg on Start"), $x + 160, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,9, "It will delete all previous push notification when you start bot"))
 			GUICtrlSetState(-1, $GUI_DISABLE)
 		$g_hBtnNotifyDeleteMessages = GUICtrlCreateButton(GetTranslated(619,10, "Delete all Msg now"), $x + 300, $y, 100, 20)
@@ -64,7 +64,7 @@ Func CreatePushBulletTelegramSubTab()
 			GUICtrlSetState(-1, $GUI_DISABLE)
 
 		$y += 22
-		$g_hChkNotifyDeleteOldPBPushes = GUICtrlCreateCheckbox(GetTranslated(619,12, "Delete Msg older than"), $x + 160, $y)
+		$g_hChkNotifyDeleteOldPBPushes = _GUICtrlCreateCheckbox(GetTranslated(619,12, "Delete Msg older than"), $x + 160, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,13, "Delete all previous push notification older than specified hour"))
 			GUICtrlSetState(-1, $GUI_DISABLE)
 			GUICtrlSetOnEvent(-1, "chkDeleteOldPBPushes")
@@ -86,7 +86,7 @@ Func CreatePushBulletTelegramSubTab()
 
 		$y += 20
 		GUICtrlCreateIcon ($g_sLibIconPath, $eIcnTelegram, $x + 3, $y, 32, 32)
-		 $g_hChkNotifyTGEnable = GUICtrlCreateCheckbox(GetTranslated(619,4, "Enable Telegram"), $x + 40, $y + 5)
+		 $g_hChkNotifyTGEnable = _GUICtrlCreateCheckbox(GetTranslated(619,4, "Enable Telegram"), $x + 40, $y + 5, -1, -1)
 			GUICtrlSetOnEvent(-1, "chkPBTGenabled")
 			_GUICtrlSetTip(-1, GetTranslated(619,5, "Enable Telegram notifications"))
 
@@ -97,13 +97,13 @@ Func CreatePushBulletTelegramSubTab()
 			GUICtrlSetState(-1, $GUI_DISABLE)
 
 		$y += 30
-		$g_hChkNotifyRemote = GUICtrlCreateCheckbox(GetTranslated(619,6, "Remote Control"), $x + 10, $y)
+		$g_hChkNotifyRemote = _GUICtrlCreateCheckbox(GetTranslated(619,6, "Remote Control"), $x + 10, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,7, "Enables PushBullet Remote function"))
 			GUICtrlSetState(-1, $GUI_DISABLE)
 		GUICtrlCreateLabel(GetTranslated(619,20, "Origin") & ":", $x + 120, $y + 3, -1, -1, $SS_RIGHT)
 			$sTxtTip = GetTranslated(619,21, "Origin - Village name.")
 			_GUICtrlSetTip(-1, $sTxtTip)
-		$g_hTxtNotifyOrigin = GUICtrlCreateInput("", $x + 170, $y, 230, 19)
+		$g_hTxtNotifyOrigin = GUICtrlCreateInput("", $x + 180, $y, 180, 19)
 			_GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetState(-1, $GUI_DISABLE)
 
@@ -111,55 +111,66 @@ Func CreatePushBulletTelegramSubTab()
 		GUICtrlCreateLabel(GetTranslated(619,22, "Send a PushBullet/Telegram message for these options") & ":", $x, $y, -1, -1, $SS_RIGHT)
 
 		$y += 15
-		$g_hChkNotifyAlertMatchFound = GUICtrlCreateCheckbox(GetTranslated(619,23, "Match Found"), $x + 10, $y)
+		$g_hChkNotifyAlertMatchFound = _GUICtrlCreateCheckbox(GetTranslated(619,23, "Match Found"), $x + 10, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,24, "Send the amount of available loot when bot finds a village to attack."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hChkNotifyAlertLastRaidIMG = GUICtrlCreateCheckbox(GetTranslated(619,25, "Last raid as image"), $x + 100, $y)
+		$g_hChkNotifyAlertLastRaidIMG = _GUICtrlCreateCheckbox(GetTranslated(619,25, "Last raid as image"), $x + 100, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,26, "Send the last raid screenshot."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hChkNotifyAlertLastRaidTXT = GUICtrlCreateCheckbox(GetTranslated(619,27, "Last raid as Text"), $x + 210, $y, -1, -1)
+		$g_hChkNotifyAlertLastRaidTXT = _GUICtrlCreateCheckbox(GetTranslated(619,27, "Last raid as Text"), $x + 210, $y, -1, -1)
 			GUICtrlSetState(-1, $GUI_DISABLE)
 			_GUICtrlSetTip(-1, GetTranslated(619,28, "Send the last raid results as text."))
-		$g_hChkNotifyAlertCampFull = GUICtrlCreateCheckbox(GetTranslated(619,29, "Army Camp Full"), $x + 315, $y, -1, -1)
+		$g_hChkNotifyAlertCampFull = _GUICtrlCreateCheckbox(GetTranslated(619,29, "Army Camp Full"), $x + 315, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,30, "Sent an Alert when your Army Camp is full."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
 
 		$y += 20
-		$g_hChkNotifyAlertUpgradeWall = GUICtrlCreateCheckbox(GetTranslated(619,31, "Wall upgrade"), $x + 10, $y, -1, -1)
+		$g_hChkNotifyAlertUpgradeWall = _GUICtrlCreateCheckbox(GetTranslated(619,31, "Wall upgrade"), $x + 10, $y, -1, -1)
 			 _GUICtrlSetTip(-1, GetTranslated(619,32, "Send info about wall upgrades."))
 			 GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hChkNotifyAlertOutOfSync = GUICtrlCreateCheckbox(GetTranslated(619,33, "Error: Out Of Sync"), $x + 100, $y, -1, -1)
+		$g_hChkNotifyAlertOutOfSync = _GUICtrlCreateCheckbox(GetTranslated(619,33, "Error: Out Of Sync"), $x + 100, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,34, "Send an Alert when you get the Error: Client and Server out of sync"))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hChkNotifyAlertTakeBreak = GUICtrlCreateCheckbox(GetTranslated(619,35, "Take a break"), $x + 210, $y, -1, -1)
+		$g_hChkNotifyAlertTakeBreak = _GUICtrlCreateCheckbox(GetTranslated(619,35, "Take a break"), $x + 210, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,36, "Send an Alert when you have been playing for too long and your villagers need to rest."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hChkNotifyAlertBuilderIdle = GUICtrlCreateCheckbox(GetTranslated(619,37, "Builder Idle"), $x + 315, $y, -1, -1)
+		$g_hChkNotifyAlertBuilderIdle = _GUICtrlCreateCheckbox(GetTranslated(619,37, "Builder Idle"), $x + 315, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,38, "Send an Alert when at least one builder is idle."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
 
 		$y += 20
-		$g_hChkNotifyAlertVillageStats = GUICtrlCreateCheckbox(GetTranslated(619,39, "Village Report"), $x + 10, $y, -1, -1)
+		$g_hChkNotifyAlertVillageStats = _GUICtrlCreateCheckbox(GetTranslated(619,39, "Village Report"), $x + 10, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,40, "Send a Village Report."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hChkNotifyAlertLastAttack = GUICtrlCreateCheckbox(GetTranslated(619,41, "Alert Last Attack"), $x + 100, $y, -1, -1)
+		$g_hChkNotifyAlertLastAttack = _GUICtrlCreateCheckbox(GetTranslated(619,41, "Alert Last Attack"), $x + 100, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,42, "Send info about the Last Attack."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hChkNotifyAlertAnotherDevice = GUICtrlCreateCheckbox(GetTranslated(619,43, "Another device"), $x + 210, $y, -1, -1)
+		$g_hChkNotifyAlertAnotherDevice = _GUICtrlCreateCheckbox(GetTranslated(619,43, "Another device"), $x + 210, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,44, "Send an Alert when your village is connected to from another device."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-
+		;============Modified Kychera=========
+		$ChkNotifyAlertConnect = _GUICtrlCreateCheckbox(GetTranslated(619,73, "Break connection"), $x + 315, $y, -1, -1)
+             _GUICtrlSetTip(-1, GetTranslated(619,74, "Send the message after the connection is restored, with the time."))
+			 GUICtrlSetState(-1, $GUI_DISABLE)
+		GUICtrlSetOnEvent(-1, "ChkNotifyConnect")
+		;=====================================
 		$y += 20
-		$g_hChkNotifyAlertMaintenance = GUICtrlCreateCheckbox(GetTranslated(619,45, "Maintenance"), $x + 10, $y, -1, -1)
+		$g_hChkNotifyAlertMaintenance = _GUICtrlCreateCheckbox(GetTranslated(619,45, "Maintenance"), $x + 10, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,46, "Send an Alert when CoC is under maintenance by SuperCell"))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hChkNotifyAlertBAN = GUICtrlCreateCheckbox(GetTranslated(619,47, "BAN"), $x + 100, $y, -1, -1)
+		$g_hChkNotifyAlertBAN = _GUICtrlCreateCheckbox(GetTranslated(619,47, "BAN"), $x + 100, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,48, "Send an Alert if your village was BANNED by SuperCell"))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hChkNotifyBOTUpdate = GUICtrlCreateCheckbox(GetTranslated(619,49, "BOT Update"), $x + 210, $y, -1, -1)
+		$g_hChkNotifyBOTUpdate = _GUICtrlCreateCheckbox(GetTranslated(619,49, "BOT Update"), $x + 210, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(619,50, "Send an Alert when there is a new version of the bot."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		GUICtrlCreateLabel(GetTranslated(619,69,"Help ?"), $x + 197, $y + 93, 220, 24, $SS_RIGHT)
+		;============Modified Kychera=========
+		$ChkNotifyAlertBOTSleep = _GUICtrlCreateCheckbox(GetTranslated(619,71, "BOT Sleep"), $x + 315, $y, -1, -1)
+			_GUICtrlSetTip(-1, GetTranslated(619,72, "Send an Alert when Sleep."))
+			GUICtrlSetState(-1, $GUI_DISABLE)
+			GUICtrlSetOnEvent(-1, "ChkNotifyAlertBOTSleep")
+	   ;=====================================
+		GUICtrlCreateLabel(GetTranslated(619,69,"Help ?"), $x + 200, $y + 60, 220, 24, $SS_RIGHT)
 			GUICtrlSetOnEvent(-1, "NotifyHelp")
 			GUICtrlSetCursor(-1, 0)
 			GUICtrlSetFont(-1, 8.5, $FW_BOLD)
@@ -177,7 +188,7 @@ Func CreateNotifyScheduleSubTab()
 	$x += 10
 	$y += 10
 	GUICtrlCreateIcon($g_sLibIconPath, $eIcnPBNotify, $x - 5, $y, 64, 64, $BS_ICON)
-	$g_hChkNotifyOnlyHours = GUICtrlCreateCheckbox(GetTranslated(603,30, -1), $x+70, $y-6)
+	$g_hChkNotifyOnlyHours = _GUICtrlCreateCheckbox(GetTranslated(603,30, -1), $x+70, $y-6, -1, -1)
 		GUICtrlSetOnEvent(-1, "chkNotifyHours")
 
 	$x += 59
@@ -265,7 +276,7 @@ Func CreateNotifyScheduleSubTab()
 
 	$x = 35
 	$y = 220
-	$g_hChkNotifyOnlyWeekDays = GUICtrlCreateCheckbox(GetTranslated(603, 31, -1), $x + 70, $y - 6)
+	$g_hChkNotifyOnlyWeekDays = _GUICtrlCreateCheckbox(GetTranslated(603, 31, -1), $x + 70, $y - 6, -1, -1)
 		GUICtrlSetOnEvent(-1, "chkNotifyWeekDays")
 		GUICtrlSetState(-1, $GUI_DISABLE)
 

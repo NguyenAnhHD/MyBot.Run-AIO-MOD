@@ -1,0 +1,40 @@
+ ________                                           ______   ______   ______    ___      _______   __    __        __       __   ______   _______                            __         ______        ______  
+/        |                                         /      \ /      | /      \  /   \    /       \ /  |  /  |      /  \     /  | /      \ /       \                         _/  |       /      \      /      \ 
+$$$$$$$$/   ______    ______   _____  ____        /$$$$$$  |$$$$$$/ /$$$$$$  |/$$$  |   $$$$$$$  |$$ | /$$/       $$  \   /$$ |/$$$$$$  |$$$$$$$  |       __     __       / $$ |      /$$$$$$  |    /$$$$$$  |
+   $$ |    /      \  /      \ /     \/    \       $$ |__$$ |  $$ |  $$ |  $$ |$$ $$ \__ $$ |__$$ |$$ |/$$/        $$$  \ /$$$ |$$ |  $$ |$$ |  $$ |      /  \   /  |      $$$$ |      $$ \__$$/     $$ ___$$ |
+   $$ |   /$$$$$$  | $$$$$$  |$$$$$$ $$$$  |      $$    $$ |  $$ |  $$ |  $$ |/$$$     |$$    $$< $$  $$<         $$$$  /$$$$ |$$ |  $$ |$$ |  $$ |      $$  \ /$$/         $$ |      $$      \       /   $$< 
+   $$ |   $$    $$ | /    $$ |$$ | $$ | $$ |      $$$$$$$$ |  $$ |  $$ |  $$ |$$ $$ $$/ $$$$$$$  |$$$$$  \        $$ $$ $$/$$ |$$ |  $$ |$$ |  $$ |       $$  /$$/          $$ |      $$$$$$$  |     _$$$$$  |
+   $$ |   $$$$$$$$/ /$$$$$$$ |$$ | $$ | $$ |      $$ |  $$ | _$$ |_ $$ \__$$ |$$ \$$  \ $$ |  $$ |$$ |$$  \       $$ |$$$/ $$ |$$ \__$$ |$$ |__$$ |        $$ $$/          _$$ |_  __ $$ \__$$ | __ /  \__$$ |
+   $$ |   $$       |$$    $$ |$$ | $$ | $$ |      $$ |  $$ |/ $$   |$$    $$/ $$   $$  |$$ |  $$ |$$ | $$  |      $$ | $/  $$ |$$    $$/ $$    $$/          $$$/          / $$   |/  |$$    $$/ /  |$$    $$/ 
+   $$/     $$$$$$$/  $$$$$$$/ $$/  $$/  $$/       $$/   $$/ $$$$$$/  $$$$$$/   $$$$/$$/ $$/   $$/ $$/   $$/       $$/      $$/  $$$$$$/  $$$$$$$/            $/           $$$$$$/ $$/  $$$$$$/  $$/  $$$$$$/  
+ 
+
+           Updated to v 7.1.4
+           Add:
+		       - Controlling the background and transparency of the bot (Bot option tab)
+			   - Request CC troops at first
+			   - Request of troops in Cyrillic
+			   - Android settings (Emulator selection)
+			   - Chatbot
+			   - Halt attacks for Forecast
+			   - Russian help
+			   - Nofity alert Bot sleep
+			   - Nofity alert Break connect
+			   - Start button for telegram and pushbullet
+			   - Fast ADB click
+			   - Launchers for multi farming
+			   - Enable \ Disable Watchdog
+		       - Spell order to Simple Train
+			   - Custom drop troops -=== NEW ===-
+           Improve:
+		       - Transfer tab SmartZap (Attack-Deadbase)
+           Fixed:
+		       - unit deploy for multi finger
+			   - dead base collectors filter
+			   - Forced detection Town Hall
+			   - minor fix for Precise Troop
+           Update:	
+               - Language arabic, russian
+			   - Logo image and name team
+			 
+ 

@@ -162,7 +162,7 @@ Func TrainRevampOldStyle()
 	If ThSnipesSkiptrain() Then Return
 
 	If $g_bRunState = False Then Return
-	Local $rWhatToTrain = WhatToTrain(True) ; r in First means Result! Result of What To Train Function
+	Local $rWhatToTrain = WhatToTrain(True, False) ; r in First means Result! Result of What To Train Function
 	Local $rRemoveExtraTroops = RemoveExtraTroops($rWhatToTrain)
 
 	If $rRemoveExtraTroops = 1 Or $rRemoveExtraTroops = 2 Then
@@ -1495,21 +1495,22 @@ Func WhatToTrain($ReturnExtraTroopsOnly = False, $showlog = True)
 
 		; Spells
 		For $i = 0 To $eSpellCount - 1
+			Local $BrewIndex = $g_aiBrewOrder[$i]
 			If $g_bRunState = False Then Return
 			If TotalSpellsToBrewInGUI() = 0 Then ExitLoop
-			If $g_aiArmyCompSpells[$i] > 0 Then
-				If HowManyTimesWillBeUsed($g_asSpellShortNames[$i]) > 0 Then
-					$ToReturn[UBound($ToReturn) - 1][0] = $g_asSpellShortNames[$i]
-					$ToReturn[UBound($ToReturn) - 1][1] = $g_aiArmyCompSpells[$i]
+			If $g_aiArmyCompSpells[$BrewIndex] > 0 Then
+				If HowManyTimesWillBeUsed($g_asSpellShortNames[$BrewIndex]) > 0 Then
+					$ToReturn[UBound($ToReturn) - 1][0] = $g_asSpellShortNames[$BrewIndex]
+					$ToReturn[UBound($ToReturn) - 1][1] = $g_aiArmyCompSpells[$BrewIndex]
 					ReDim $ToReturn[UBound($ToReturn) + 1][2]
 				Else
 					CheckExistentArmy("Spells", False)
-					If $g_aiArmyCompSpells[$i] - $g_aiCurrentSpells[$i] > 0 Then
-						$ToReturn[UBound($ToReturn) - 1][0] = $g_asSpellShortNames[$i]
-						$ToReturn[UBound($ToReturn) - 1][1] = $g_aiArmyCompSpells[$i] - $g_aiCurrentSpells[$i]
+					If $g_aiArmyCompSpells[$BrewIndex] - $g_aiCurrentSpells[$BrewIndex] > 0 Then
+						$ToReturn[UBound($ToReturn) - 1][0] = $g_asSpellShortNames[$BrewIndex]
+						$ToReturn[UBound($ToReturn) - 1][1] = $g_aiArmyCompSpells[$BrewIndex] - $g_aiCurrentSpells[$BrewIndex]
 						ReDim $ToReturn[UBound($ToReturn) + 1][2]
 					Else
-						$ToReturn[UBound($ToReturn) - 1][0] = $g_asSpellShortNames[$i]
+						$ToReturn[UBound($ToReturn) - 1][0] = $g_asSpellShortNames[$BrewIndex]
 						$ToReturn[UBound($ToReturn) - 1][1] = 9999
 						ReDim $ToReturn[UBound($ToReturn) + 1][2]
 					EndIf
@@ -1539,11 +1540,12 @@ Func WhatToTrain($ReturnExtraTroopsOnly = False, $showlog = True)
 
 			; Check Spells needed quantity to Brew
 			For $i = 0 To $eSpellCount - 1
+				Local $BrewIndex = $g_aiBrewOrder[$i]
 				If $g_bRunState = False Then Return
 				If TotalSpellsToBrewInGUI() = 0 Then ExitLoop
-				If $g_aiArmyCompSpells[$i] > 0 Then
-					$ToReturn[UBound($ToReturn) - 1][0] = $g_asSpellShortNames[$i]
-					$ToReturn[UBound($ToReturn) - 1][1] = $g_aiArmyCompSpells[$i] - $g_aiCurrentSpells[$i]
+				If $g_aiArmyCompSpells[$BrewIndex] > 0 Then
+					$ToReturn[UBound($ToReturn) - 1][0] = $g_asSpellShortNames[$BrewIndex]
+					$ToReturn[UBound($ToReturn) - 1][1] = $g_aiArmyCompSpells[$BrewIndex] - $g_aiCurrentSpells[$BrewIndex]
 					ReDim $ToReturn[UBound($ToReturn) + 1][2]
 				EndIf
 			Next
@@ -1564,12 +1566,13 @@ Func WhatToTrain($ReturnExtraTroopsOnly = False, $showlog = True)
 
 			; Check Spells Extra Quantity
 			For $i = 0 To $eSpellCount - 1
+				Local $BrewIndex = $g_aiBrewOrder[$i]
 				If $g_bRunState = False Then Return
 				If TotalSpellsToBrewInGUI() = 0 Then ExitLoop
 				If $g_aiCurrentSpells[$i] > 0 Then
-					If $g_aiArmyCompSpells[$i] - $g_aiCurrentSpells[$i] < 0 Then
-						$ToReturn[UBound($ToReturn) - 1][0] = $g_asSpellShortNames[$i]
-						$ToReturn[UBound($ToReturn) - 1][1] = Abs($g_aiArmyCompSpells[$i] - $g_aiCurrentSpells[$i])
+					If $g_aiArmyCompSpells[$i] - $g_aiCurrentSpells[$BrewIndex] < 0 Then
+						$ToReturn[UBound($ToReturn) - 1][0] = $g_asSpellShortNames[$BrewIndex]
+						$ToReturn[UBound($ToReturn) - 1][1] = Abs($g_aiArmyCompSpells[$BrewIndex] - $g_aiCurrentSpells[$BrewIndex])
 						ReDim $ToReturn[UBound($ToReturn) + 1][2]
 					EndIf
 				EndIf
@@ -2457,28 +2460,28 @@ Func CheckValuesCost($Troop = "Arch", $troopQuantity = 1, $DebugLogs = 0)
 	If _ColorCheck(_GetPixelColor(223, 594, True), Hex(0xE8E8E0, 6), 20) Then ; Gray background window color
 		; Village without Dark Elixir
 		If $iTroopIndex >= $eBarb And $iTroopIndex <= $eBowl Then		; Bypass checking $TrainTroopsTAB when deal with Spell - Demen
-			If ISArmyWindow(False, $TrainTroopsTAB) Then $nElixirCurrent = getResourcesValueTrainPage(315, 594)  ; ELIXIR
+			 $nElixirCurrent = getResourcesValueTrainPage(315, 594)  ; ELIXIR
 		ElseIf $iTroopIndex >= $eLSpell And $iTroopIndex <= $eSkSpell Then
-			If ISArmyWindow(False, $BrewSpellsTAB) Then $nElixirCurrent = getResourcesValueTrainPage(315, 594)  ; ELIXIR
+			$nElixirCurrent = getResourcesValueTrainPage(315, 594)  ; ELIXIR
 		EndIf
 	Else
 		; Village with Elixir and Dark Elixir
 		If $iTroopIndex >= $eBarb And $iTroopIndex <= $eBowl Then		; Bypass checking $TrainTroopsTAB when deal with Spell - Demen
-			If ISArmyWindow(False, $TrainTroopsTAB) Then
+
 				$nElixirCurrent = getResourcesValueTrainPage(230, 594)  ; ELIXIR
 				$nDarkCurrent = getResourcesValueTrainPage(382, 594) 	; DARK ELIXIR
-			EndIf
+
 		ElseIf $iTroopIndex >= $eLSpell And $iTroopIndex <= $eSkSpell Then
-			If ISArmyWindow(False, $BrewSpellsTAB) Then
+
 				$nElixirCurrent = getResourcesValueTrainPage(230, 594)  ; ELIXIR
 				$nDarkCurrent = getResourcesValueTrainPage(382, 594) 	; DARK ELIXIR
-			EndIf
+
 		EndIf
 	EndIf
 
 	; 	DEBUG
 	If $g_iDebugSetlogTrain = 1 Or $DebugLogs Then
-		Setlog(" ?? Current resources:")
+		Setlog("- Current resources:")
 		Setlog(" - Elixir: " & _NumberFormat($nElixirCurrent) & " / Dark Elixir: " & _NumberFormat($nDarkCurrent), $COLOR_INFO)
 		$g_iDebugOcr = $bLocalDebugOCR ; disable the OCR debug
 	EndIf

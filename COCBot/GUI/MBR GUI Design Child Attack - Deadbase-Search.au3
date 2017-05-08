@@ -37,6 +37,7 @@ Global $g_hGrpDBFilter = 0, $g_hPicDBMinGold = 0, $g_hPicDBMinElixir = 0, $g_hPi
 Global $g_ahPicDBMaxTH[12]; $g_hPicDBMaxTH10 = 0
 
 Func CreateAttackSearchDeadBaseSearch()
+$15 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $sTxtLightningSpells = GetTranslated(605,15,"Lightning")
    Local $sTxtHealSpells = GetTranslated(605,16,"Heal")
    Local $sTxtRageSpells = GetTranslated(605,17,"Rage")
@@ -51,7 +52,7 @@ Func CreateAttackSearchDeadBaseSearch()
    Local $x = 25, $y = 45
 	   GUICtrlCreateGroup(GetTranslated(625,0, "Start Search IF"), $x - 20, $y - 20, 190, $g_iSizeHGrpTab4)
 		   $x -= 15
-		   $g_hChkDBActivateSearches = GUICtrlCreateCheckbox(GetTranslated(625,1,"Search"), $x, $y, 68, 18)
+		   $g_hChkDBActivateSearches = _GUICtrlCreateCheckbox(GetTranslated(625,1,"Search"), $x, $y - 10, 68, 18)
 			   _GUICtrlSetTip(-1, GetTranslated(625,68, "Note - enables SEARCH range for this attack type ONLY.") & @CRLF & _
 								  GetTranslated(625,69, "Setting will not set search limit to restart search process!"))
 			   GUICtrlSetState(-1,$GUI_CHECKED)
@@ -68,7 +69,7 @@ Func CreateAttackSearchDeadBaseSearch()
 		   GUICtrlCreateIcon($g_sLibIconPath, $eIcnMagnifier, $x + 163, $y + 1, 16, 16)
 
 	   $y += 21
-		   $g_hChkDBActivateTropies = GUICtrlCreateCheckbox(GetTranslated(625,4,"Trophies"), $x, $y, 68, 18)
+		   $g_hChkDBActivateTropies = _GUICtrlCreateCheckbox(GetTranslated(625,4,"Trophies"), $x, $y - 10, 68, 18)
 			   _GUICtrlSetTip(-1, GetTranslated(625,68, -1) & @CRLF & _
 								  GetTranslated(625,70,"This option will NOT adjust tropies to stay in range entered!"))
 			   GUICtrlSetOnEvent(-1, "chkDBActivateTropies")
@@ -87,7 +88,7 @@ Func CreateAttackSearchDeadBaseSearch()
 		   GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrophy, $x + 163, $y + 1, 16, 16)
 
 	   $y +=21
-		   $g_hChkDBActivateCamps = GUICtrlCreateCheckbox(GetTranslated(625,7, "Army Camps"), $x, $y, 110, 18)
+		   $g_hChkDBActivateCamps = _GUICtrlCreateCheckbox(GetTranslated(625,7, "Army Camps"), $x, $y - 10, 110, 18)
 			   $sTxtTip = GetTranslated(625,8, "Set the % Army camps required to enable this attack option while searching")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 			   GUICtrlSetOnEvent(-1, "chkDBActivateCamps")
@@ -156,13 +157,13 @@ Func CreateAttackSearchDeadBaseSearch()
 
 	   $y += 22
 	   $x = 10
-		   $g_hChkDBSpellsWait = GUICtrlCreateCheckbox(GetTranslated(625,71, "Wait for Spells to be Ready"), $x, $y, -1, -1)
+		   $g_hChkDBSpellsWait = _GUICtrlCreateCheckbox(GetTranslated(625,71, "Wait for Spells to be Ready"), $x, $y, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(625,72, "Stop searching for this attack type when Spells are not ready") & @CRLF & _
 								  GetTranslated(625,73, "Warning: Do not enable unless you have spell factory or bot will not attack!"))
 			   GUICtrlSetOnEvent(-1, "chkDBSpellsWait")
 
 
-		   $g_hChkDBWaitForCastleSpell = GUICtrlCreateCheckbox(GetTranslated(625,74, "Wait to get Castle Spell"), $x, $y + 25, -1, -1)
+		   $g_hChkDBWaitForCastleSpell = _GUICtrlCreateCheckbox(GetTranslated(625,74, "Wait to get Castle Spell"), $x, $y + 25, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(625,75, "Wait until Someone Donate you an Spell"))
 			   GUICtrlSetOnEvent(-1, "chkDBWaitForCCSpell")
 
@@ -175,7 +176,7 @@ Func CreateAttackSearchDeadBaseSearch()
 				GUICtrlSetData(-1, $sTxtPoisonSpells & "|" & $sTxtEarthquakeSpells & "|" & $sTxtHasteSpells & "|" & $sTxtSkeletonSpells)
 				_GUICtrlSetTip(-1, GetTranslated(625,75, -1))
 
-		   $g_hChkDBWaitForCastleTroops = GUICtrlCreateCheckbox(GetTranslated(625,78, "Wait for Castle troops to be full"), $x, $y + 75, -1, -1)
+		   $g_hChkDBWaitForCastleTroops = _GUICtrlCreateCheckbox(GetTranslated(625,78, "Wait for Castle troops to be full"), $x, $y + 75, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(625,79, "Wait until your Clan Castle be Full"))
 	   GUICtrlCreateGroup("", -99, -99, 1, 1)
 
@@ -215,7 +216,7 @@ Func CreateAttackSearchDeadBaseSearch()
 			   GUICtrlSetState (-1, $GUI_HIDE)
 
 		   $y += 34
-		   $g_hChkDBMeetDE = GUICtrlCreateCheckbox(GetTranslated(625,26, "Dark Elixir"), $x , $y, -1, -1)
+		   $g_hChkDBMeetDE = _GUICtrlCreateCheckbox(GetTranslated(625,26, "Dark Elixir"), $x , $y, -1, -1)
 			   GUICtrlSetOnEvent(-1, "chkDBMeetDE")
 			   _GUICtrlSetTip(-1, GetTranslated(625,27, "Search for a base that meets the value set for Min. Dark Elixir."))
 		   $g_hTxtDBMinDarkElixir = GUICtrlCreateInput("0", $x + 85, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
@@ -227,7 +228,7 @@ Func CreateAttackSearchDeadBaseSearch()
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $y += 24
-		   $g_hChkDBMeetTrophy = GUICtrlCreateCheckbox(GetTranslated(625,4, -1), $x, $y, -1, -1)
+		   $g_hChkDBMeetTrophy = _GUICtrlCreateCheckbox(GetTranslated(625,4, -1), $x, $y, -1, -1)
 			   GUICtrlSetOnEvent(-1, "chkDBMeetTrophy")
 			   _GUICtrlSetTip(-1, GetTranslated(625,29, "Search for a base that meets the value set for Min. Trophies."))
 		   $g_hTxtDBMinTrophy = GUICtrlCreateInput("0", $x + 85, $y, 20, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
@@ -245,7 +246,7 @@ Func CreateAttackSearchDeadBaseSearch()
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $y += 24
-		   $g_hChkDBMeetTH = GUICtrlCreateCheckbox(GetTranslated(625,31, "Townhall"), $x, $y, -1, -1)
+		   $g_hChkDBMeetTH = _GUICtrlCreateCheckbox(GetTranslated(625,31, "Townhall"), $x, $y, -1, -1)
 			   GUICtrlSetOnEvent(-1, "chkDBMeetTH")
 			   _GUICtrlSetTip(-1, GetTranslated(625,32, "Search for a base that meets the value set for Max. Townhall Level."))
 		   $g_hCmbDBTH = GUICtrlCreateCombo("", $x + 85, $y - 1, 50, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
@@ -274,7 +275,7 @@ Func CreateAttackSearchDeadBaseSearch()
 			GUICtrlSetState (-1, $GUI_HIDE)
 
 		   $y += 24
-		   $g_hChkDBMeetTHO = GUICtrlCreateCheckbox(GetTranslated(625,34, "Townhall Outside"), $x, $y, -1, -1)
+		   $g_hChkDBMeetTHO = _GUICtrlCreateCheckbox(GetTranslated(625,34, "Townhall Outside"), $x, $y, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(625,35, "Search for a base that has an exposed Townhall. (Outside of Walls)"))
 		   $y += 24
 
@@ -356,7 +357,7 @@ Func CreateAttackSearchDeadBaseSearch()
 
 		   $y += 44
 		   $x = $xStartColumn
-		   $g_ahChkMeetOne[$DB] = GUICtrlCreateCheckbox(GetTranslated(625,40, "Meet One Then Attack"), $x, $y, -1, -1)
+		   $g_ahChkMeetOne[$DB] = _GUICtrlCreateCheckbox(GetTranslated(625,40, "Meet One Then Attack"), $x, $y, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(625,41, "Just meet only ONE of the above conditions, then Attack."))
 	   GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc

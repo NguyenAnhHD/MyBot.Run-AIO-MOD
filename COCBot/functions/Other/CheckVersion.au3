@@ -32,15 +32,16 @@ Func CheckVersion()
 			_PrintLogVersion($g_sOldModversmessage)
 			CheckModVersion()
 		ElseIf VersionNumFromVersionTXT($g_sModversion) > VersionNumFromVersionTXT($g_sLastModversion) Then
-			SetLog("YOU ARE USING A FUTURE AIO MOD BY TEAM++ VERSION CHIEF!", $COLOR_SUCCESS)
-			SetLog("YOUR MOD VERSION: " & $g_sModversion, $COLOR_SUCCESS)
-			SetLog("OFFICIAL MOD VERSION: " & $g_sLastModversion, $COLOR_SUCCESS)
+			SetLog("YOU ARE USING A FUTURE MOD BY TEAM AIO & RK VERSION CHIEF!", $COLOR_SUCCESS)
+			SetLog("_________________ YOUR MOD VERSION: " & $g_sModversion & " _________________", $COLOR_SUCCESS)
+			SetLog("_______________ OFFICIAL MOD VERSION: " & $g_sLastModversion & " _______________", $COLOR_SUCCESS)
 			SetLog(" ")
 		Else
 			SetLog("WELCOME CHIEF, YOU HAVE THE LATEST MOD VERSION", $COLOR_SUCCESS)
-			SetLog(" ")
-			SetLog("TEAM++AIO MOD: NguyenAnhHD, Demen, Eloy, ahsan iqbal", $COLOR_SUCCESS)
-			SetLog("CHEEERS..")
+			SetLog("__________________" & " AIO & RK MOD++ " & "__________________", $COLOR_ORANGE)
+			SetLog("Dev AiO MOD++: NguyenAnhHD, Demen, Eloy, ahsan iqbal", $COLOR_ORANGE)
+			SetLog("Dev RK MOD++: rulesss, Kychera", $COLOR_ORANGE)
+			SetLog("CHEEERS..", $COLOR_SUCCESS)
 			_PrintLogVersion($g_sLastModmessage)
 		EndIf
 	EndIf
@@ -182,7 +183,7 @@ Func CheckModVersion()
 			Return False
 		EndIf
 	Else
-		MsgBox($MB_ICONINFORMATION, "Notify", "You Are Using The Latest Version Of AIO MOD By Team++" & @CRLF & _
+		MsgBox($MB_ICONINFORMATION, "Notify", "You Are Using The Latest Version Of AIO & RK By Team MOD++" & @CRLF & _
 				"Thanks..", 15) ;15s timeout
 	EndIf
 EndFunc   ;==>CheckModVersion

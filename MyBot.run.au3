@@ -23,16 +23,16 @@
 #pragma compile(Icon, "Images\MyBot.ico")
 #pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
 #pragma compile(ProductName, My Bot)
-#pragma compile(ProductVersion, 7.1.3)
-#pragma compile(FileVersion, 7.1.3)
+#pragma compile(ProductVersion, 7.1.4)
+#pragma compile(FileVersion, 7.1.4)
 #pragma compile(LegalCopyright, © https://mybot.run)
 #pragma compile(Out, MyBot.run.exe) ; Required
 
 ; Enforce variable declarations
 Opt("MustDeclareVars", 1)
 
-Global $g_sBotVersion = "v7.1.3" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
-Global $g_sModversion = "v1.6.2" ;<== Just Change This to Version Number
+Global $g_sBotVersion = "v7.1.4" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
+Global $g_sModversion = "v1.6.3" ;<== Just Change This to Version Number
 Global $g_sModSupportUrl = "https://mybot.run/forums/index.php?/topic/29141-mods-mbr-v701-dococ-aio-mod-v092-update-2103/" ;<== Our Website Link Support Or Link Download
 Global $g_sModDownloadUrl = "https://github.com/NguyenAnhHD/MyBot.Run-Official-MOD/releases" ;<== Our Website Link Download
 Global $g_sBotTitle = "" ;~ Don't assign any title here, use Func UpdateBotTitle()
@@ -72,7 +72,7 @@ InitializeBot()
 MainLoop()
 
 Func UpdateBotTitle()
-	Local $sTitle = "My Bot " & $g_sBotVersion & " - Team++ " & "AIO MOD " & $g_sModversion & " - "
+	Local $sTitle = "My Bot " & $g_sBotVersion & " [ AiO && RK | MOD++" & " " & $g_sModversion & " ] - "
 	If $g_sBotTitle = "" Then
 		$g_sBotTitle = $sTitle
 	Else
@@ -136,7 +136,9 @@ Func InitializeBot()
 	CreateSplashScreen() ; Create splash window
 
 	; Ensure watchdog is launched (requires Bot Window for messaging)
-	If $g_bBotLaunchOption_NoWatchdog = False Then LaunchWatchdog()
+	If $iChkLaunchWatchdog = 0 Then
+	     If $g_bBotLaunchOption_NoWatchdog = False Then LaunchWatchdog()
+	EndIf
 
 	InitializeMBR($sAndroidInfo)
 
@@ -160,6 +162,10 @@ Func InitializeBot()
 	FinalInitialization($sAndroidInfo)
 
 	;ProcessSetPriority(@AutoItPID, $iBotProcessPriority) ;~ Restore process priority
+    ;===============================================
+	;transparent gui
+      Slider()
+	;===============================================
 
 EndFunc   ;==>InitializeBot
 
@@ -295,7 +301,8 @@ EndFunc   ;==>InitializeAndroid
 ; ===============================================================================================================================
 Func SetupProfileFolder()
 	$g_sProfileConfigPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\config.ini"
-	$g_sProfileWeakBasePath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\stats_chkweakbase.INI"
+	$chatIni = $g_sProfilePath & "\" & $g_sProfileCurrentName &  "\chat.ini"
+    $g_sProfileWeakBasePath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\stats_chkweakbase.INI"
 	$g_sProfileBuildingPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\building.ini"
 	$g_sProfileLogsPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\Logs\"
 	$g_sProfileLootsPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\Loots\"
@@ -467,7 +474,7 @@ Func SetupFilesAndFolders()
 	If $g_bDeleteLoots Then DeleteFiles($g_sProfileLootsPath, "*.*", $g_iDeleteLootsDays, 0)
 	If $g_bDeleteTemp Then
 		DeleteFiles($g_sProfileTempPath, "*.*", $g_iDeleteTempDays, 0)
-		DeleteFiles($g_sProfileTempDebugPath, "*.*", $g_iDeleteTempDays, 0)
+		DeleteFiles($g_sProfileTempDebugPath, "*.*", $g_iDeleteTempDays, 0, $FLTAR_RECUR)
 	EndIf
 
 	SetDebugLog("$g_sProfilePath = " & $g_sProfilePath)
@@ -559,9 +566,14 @@ Func MainLoop()
 	While 1
 		_Sleep($DELAYSLEEP, True, False)
 
+		If $g_bRunState = False and $g_bNotifyRemoteEnable = True Then
+	      NotifyRemoteControl2(); remote control when stopped the bot by kychera
+	    EndIf
+
 		Switch $g_iBotAction
 			Case $eBotStart
 				BotStart($iStartDelay)
+				$iStartDelay = 0 ; don't autostart delay in future
 				If $g_iBotAction = $eBotStart Then $g_iBotAction = $eBotNoAction
 			Case $eBotStop
 				BotStop()
@@ -640,6 +652,12 @@ Func runBot() ;Bot that runs everything in order
 			If _Sleep($DELAYRUNBOT5) Then Return
 			checkMainScreen(False)
 			If $g_bRestart = True Then ContinueLoop
+			; MOD ; MMHK ; move the Request CC Troops function to the beginning of the run loop
+			$g_bcanRequestCC = True ; coz almost always empty cc after raids, and no other lines above could check if true, other than Idle(): set True - Train(), CheckOverviewFullArmy(); set False - RequestCC()
+			If ($g_bReqCCFirst) Then
+				RequestCC()
+				If _Sleep($DELAYRUNBOT1) = False Then checkMainScreen(False)
+			EndIf
 			Local $aRndFuncList = ['Collect', 'CheckTombs', 'ReArm', 'CleanYard']
 			While 1
 				If $g_bRunState = False Then Return
@@ -670,6 +688,9 @@ Func runBot() ;Bot that runs everything in order
 					SetLog("Forecast index is below the required value, no boost !", $COLOR_RED)
 					EndIf
  			EndIf
+			If $iChkForecastPause = 1 Then
+				$currentForecast = readCurrentForecast()
+			EndIf
 			If IsSearchAttackEnabled() Then ; if attack is disabled skip reporting, requesting, donating, training, and boosting
 				Local $aRndFuncList = ['ReplayShare', 'NotifyReport', 'DonateCC,Train', 'BoostBarracks', 'BoostSpellFactory', 'BoostKing', 'BoostQueen', 'BoostWarden', 'RequestCC']
 				While 1
@@ -796,6 +817,11 @@ Func Idle() ;Sequence that runs until Full Army
 		NotifyPendingActions()
 		If _Sleep($DELAYIDLE1) Then Return
 		If $g_iCommandStop = -1 Then SetLog("====== Waiting for full army ======", $COLOR_SUCCESS)
+
+		If $ChatbotChatGlobal = True Or $ChatbotChatClan = True Then
+              ChatbotMessage()
+		EndIf
+
 		Local $hTimer = __TimerInit()
 		Local $iReHere = 0
 		;PrepareDonateCC()
@@ -935,6 +961,7 @@ Func AttackMain() ;Main control for attack functions
 		MainSuperXPHandler()
 		Return
 	EndIf
+	If checkForecastPause($currentForecast) = True Then Return
 	getArmyCapacity(True, True)
 	If IsSearchAttackEnabled() Then
 		If (IsSearchModeActive($DB) And checkCollectors(True, False)) Or IsSearchModeActive($LB) Or IsSearchModeActive($TS) Then
@@ -968,6 +995,9 @@ Func AttackMain() ;Main control for attack functions
 				SetLog(_PadStringCenter(" Hero status check" & BitAND($g_aiAttackUseHeroes[$LB], $g_aiSearchHeroWaitEnable[$LB], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$LB] & "|" & $g_iHeroAvailable, 54, "="), $COLOR_DEBUG)
 				;Setlog("BullyMode: " & $g_abAttackTypeEnable[$TB] & ", Bully Hero: " & BitAND($g_aiAttackUseHeroes[$g_iAtkTBMode], $g_aiSearchHeroWaitEnable[$g_iAtkTBMode], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$g_iAtkTBMode] & "|" & $g_iHeroAvailable, $COLOR_DEBUG)
 			EndIf
+			If $ChatbotChatGlobal = true or $ChatbotChatClan = true Then
+               ChatbotMessage()
+	        EndIf
 			PrepareSearch()
 			If $g_bOutOfGold = True Then Return ; Check flag for enough gold to search
 			If $g_bRestart = True Then Return
@@ -1132,7 +1162,7 @@ Func _RunFunction($action)
 			BoostWarden()
 		Case "RequestCC"
 			If $g_bChkClanHop Then Return
-			RequestCC()
+			If Not ($g_bReqCCFirst) Then RequestCC() ; MOD ; MMHK ; move the Request CC Troops function to the beginning of the run loop
 			If _Sleep($DELAYRUNBOT1) = False Then checkMainScreen(False)
 		Case "Laboratory"
 			If $g_bChkClanHop Then Return

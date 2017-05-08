@@ -47,9 +47,10 @@ Global $g_hFrmBot_WNDPROC_ptr = 0
 #include "GUI\MBR GUI Control Child Misc.au3"
 #include "GUI\MBR GUI Control Android.au3"
 #include "MBR GUI Action.au3"
-; Team++ AIO MOD
-#include "MOD_Team++AIO\GUI\MOD GUI Control.au3"
-#include "MOD_Team++AIO\GUI\MOD GUI Control - Forecast.au3"
+; Team AiO & RK MOD++ (2017)
+#include "Team__AiO_&_RK__MOD++\GUI\MOD GUI Control.au3"
+#include "Team__AiO_&_RK__MOD++\GUI\MOD GUI Control - Forecast.au3"
+#include "Team__AiO_&_RK__MOD++\GUI\MOD GUI Control - DropOrderTpoops.au3"
 
 Func InitializeMainGUI()
    InitializeControlVariables()
@@ -663,7 +664,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 		Case $g_hTabMain
 			; Handle RichText controls
 			tabMain()
-			If GUICtrlRead($g_hTabMain, 1) = $g_hGUI_MOD And GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM5 Then
+			If GUICtrlRead($g_hTabMain, 1) = $g_hGUI_MOD And GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM7 Then
 				Local $tTag  = DllStructCreate("hwnd;int;int;int;int;int;int;ptr;int;int;int;int;int;int;int;int;int;int;int;int", $lParam)
 				Local $hFrom = DllStructGetData($tTag, 1)
 				Local $iID   = DllStructGetData($tTag, 2)
@@ -671,7 +672,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 				Local $iPos  = DllStructGetData($tTag, 4)
 
 				If $iCode = -551 Then
-					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM5, $GUI_SHOW)
+					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM7, $GUI_SHOW)
 					Sleep(100)
 					If TimerDiff($TimerForecast) > (1 * 10000) Then ; 1 Refresh Graphique toutes les 5 mn maxi, faut pas abuser
 						cmbSwLang()
@@ -696,7 +697,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 		Case $g_hGUI_BOT_TAB
 			tabBot()
 		Case $g_hGUI_MOD_TAB
-			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM5 Then
+			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM7 Then
 				Local $tTag  = DllStructCreate("hwnd;int;int;int;int;int;int;ptr;int;int;int;int;int;int;int;int;int;int;int;int", $lParam)
 				Local $hFrom = DllStructGetData($tTag, 1)
 				Local $iID   = DllStructGetData($tTag, 2)
@@ -704,7 +705,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 				Local $iPos  = DllStructGetData($tTag, 4)
 
 				If $iCode = -551 Then ;tab selected
-					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM5, $GUI_SHOW)
+					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM7, $GUI_SHOW)
 					Sleep(100)
 					If TimerDiff($TimerForecast) > (1 * 10000) Then ; 1 Refresh Graphique toutes les 5 mn maxi, faut pas abuser
 						setForecast()
@@ -715,7 +716,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 			tabMod()
 			tabMain()
 
-			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM5 Then
+			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM7 Then
 				Local $tTag  = DllStructCreate("hwnd;int;int;int;int;int;int;ptr;int;int;int;int;int;int;int;int;int;int;int;int", $lParam)
 				Local $hFrom = DllStructGetData($tTag, 1)
 				Local $iID   = DllStructGetData($tTag, 2)
@@ -723,7 +724,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 				Local $iPos  = DllStructGetData($tTag, 4)
 
 				If $iCode = -551 Then ;tab selected
-					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM5, $GUI_SHOW)
+					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM7, $GUI_SHOW)
 					Sleep(100)
 					If TimerDiff($TimerForecast) > (1 * 10000) Then ; 1 Refresh Graphique toutes les 5 mn maxi, faut pas abuser
 						cmbSwLang()
@@ -1426,7 +1427,7 @@ Func SetTime($bForceUpdate = False)
 		$DisplayLoop = 0
 		;Update Multi Stat Page _ SwitchAcc_Demen_Style
 		If $ichkSwitchAcc = 1 Then
-			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM4 Then
+			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM6 Then
 				For $i = 0 To $nTotalProfile - 1 ; Update time for all Accounts
 					If $aProfileType[$i] = 1 And _
 							$i <> $nCurProfile - 1 And _
@@ -1889,7 +1890,7 @@ Func Bind_ImageList($nCtrl)
 
 		Case $g_hGUI_TRAINARMY_TAB
 			; the icons for army tab
-			Local $aIconIndex[4] = [$eIcnTrain, $eIcnGem, $eIcnReOrder, $eIcnOptions]
+			Local $aIconIndex[5] = [$eIcnTrain, $eIcnGem, $eIcnReOrder, $eIcnOptions, $eIcnReOrder]
 
 		Case $g_hGUI_DONATE_TAB
 			 ; the icons for donate tab
@@ -1913,7 +1914,7 @@ Func Bind_ImageList($nCtrl)
 
 		Case $g_hGUI_DEADBASE_TAB
 			; the icons for deadbase tab
-			Local $aIconIndex[4] = [$eIcnMagnifier, $eIcnCamp, $eIcnSilverStar, $eIcnCollector]
+			Local $aIconIndex[5] = [$eIcnMagnifier, $eIcnCamp, $eIcnLightSpell, $eIcnSilverStar, $eIcnCollector]
 
 		Case $g_hGUI_ACTIVEBASE_TAB
 			; the icons for activebase tab
@@ -1925,7 +1926,7 @@ Func Bind_ImageList($nCtrl)
 
 		Case $g_hGUI_ATTACKOPTION_TAB
 			; the icons for Attack Options tab
-			Local $aIconIndex[5] = [$eIcnMagnifier, $eIcnCamp, $eIcnLightSpell, $eIcnSilverStar, $eIcnTrophy]
+			Local $aIconIndex[4] = [$eIcnMagnifier, $eIcnCamp,  $eIcnSilverStar, $eIcnTrophy]
 
 		Case $g_hGUI_BOT_TAB
 			; the icons for Bot tab
@@ -1934,7 +1935,7 @@ Func Bind_ImageList($nCtrl)
 
 		Case $g_hGUI_MOD_TAB
 			; the icons for Mods tab
-			Local $aIconIndex[5] = [$eIcnSwitchOption, $eIcnBrain, $eIcnGoblinXP, $eIcnStats, $eIcnForecast]
+			Local $aIconIndex[6] = [$eIcnSwitchOption, $eIcnBrain, $eIcnGoblinXP, $eIcnChatbot, $eIcnStats, $eIcnForecast]
 
 		Case $g_hGUI_MOD_SWITCH_TAB
 			; the icons for Profiles tab

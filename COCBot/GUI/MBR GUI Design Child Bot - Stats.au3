@@ -66,6 +66,7 @@ EndFunc
 
 #Region Gain SubTab
 Func CreateGainSubTab()
+	$32 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
 	Local $sTxtTip = ""
 	Local $xStart = 25, $yStart = 45
 	Local $x = $xStart, $y = $yStart
@@ -398,7 +399,7 @@ Func CreateGainSubTab()
 
 	   $y += 10
 	   $x += -12
-		   $g_hChkCoCStats = GUICtrlCreateCheckbox(GetTranslated(657,1, "CoCStats Activate"), $x, $y, -1, -1)
+		   $g_hChkCoCStats = _GUICtrlCreateCheckbox(GetTranslated(657,1, "CoCStats Activate"), $x, $y, -1, -1)
 		   $sTxtTip = GetTranslated(657,2, "Activate sending raid results to CoCStats.com")
 		   GUICtrlSetTip(-1, $sTxtTip)
 		   GUICtrlSetOnEvent(-1, "chkCoCStats")
@@ -414,6 +415,7 @@ EndFunc
 
 #Region Misc SubTab
 Func CreateMiscSubTab()
+		$33 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
 	Local $sTxtTip = ""
 	Local $xStart = 25, $yStart = 45
 	Local $x = $xStart + 3, $y = $yStart + 20
@@ -665,6 +667,7 @@ EndFunc
 
 #Region Attacks SubTab
 Func CreateAttacksSubTab()
+	$34 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
 	Local $sTxtTip = ""
 	Local $xStart = 25, $yStart = 45
 	Local $x = $xStart + 3, $y = $yStart + 20
@@ -1182,6 +1185,7 @@ $y += 45
 
    GUICtrlCreateGroup("", -99, -99, 1, 1)
    #ce
+   $27 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
    	Local $sTxtTip = ""
 	Local $xStart = 25, $yStart = 45
 	Local $x = $xStart + 3, $y = $yStart + 20

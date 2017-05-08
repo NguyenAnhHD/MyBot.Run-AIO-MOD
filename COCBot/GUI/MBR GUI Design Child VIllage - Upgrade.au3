@@ -45,12 +45,12 @@ Global $g_ahPicWallsLevel[13] = [-1,-1,-1,-1,0,0,0,0,0,0,0,0,0] ; elements 0 to 
 ; Upgrade Management (MMHK) - Added by NguyenAnhHD
 Global $g_hChkUpgradeAllOrNone = 0, $g_hChkUpgradeRepeatAllOrNone = 0, $g_hChkUpdateNewUpgradesOnly = 0, $g_hBtnTop = 0, $g_hBtnBottom = 0, $g_hBtnUp = 0, $g_hBtnDown = 0
 
-#include "..\MOD_Team++AIO\GUI\MOD GUI Design - SmartUpgrade.au3"
+#include "..\Team__AiO_&_RK__MOD++\GUI\MOD GUI Design - SmartUpgrade.au3"
 
 Func CreateVillageUpgrade()
    $g_hGUI_UPGRADE = _GUICreate("", $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_VILLAGE)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_UPGRADE)
-
+   $41 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 380, $WS_CLIPCHILDREN)
    GUISwitch($g_hGUI_UPGRADE)
    $g_hGUI_UPGRADE_TAB = GUICtrlCreateTab(0, 0, $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))
    $g_hGUI_UPGRADE_TAB_ITEM1 = GUICtrlCreateTabItem(GetTranslated(600,14,"Laboratory"))
@@ -61,7 +61,7 @@ Func CreateVillageUpgrade()
    CreateBuildingsSubTab()
    $g_hGUI_UPGRADE_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslated(600,17,"Walls"))
    CreateWallsSubTab()
-   $g_hGUI_UPGRADE_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslated(600,67,"SmartUpgarde"))
+   $g_hGUI_UPGRADE_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslated(600,66,"SmartUpgarde"))
    CreateSmartUpgradeGUI()
    GUICtrlCreateTabItem("")
 EndFunc
@@ -83,7 +83,7 @@ Func CreateLaboratorySubTab()
  	Local $x = 25, $y = 45
 	GUICtrlCreateGroup(GetTranslated(614,1, "Laboratory"), $x - 20, $y - 20, $g_iSizeWGrpTab3, $g_iSizeHGrpTab3)
 		GUICtrlCreateIcon($g_sLibIconPath, $eIcnLaboratory, $x, $y, 64, 64)
-		$g_hChkAutoLabUpgrades = GUICtrlCreateCheckbox(GetTranslated(614,2, "Auto Laboratory Upgrades"), $x + 80, $y + 5, -1, -1)
+		$g_hChkAutoLabUpgrades = _GUICtrlCreateCheckbox(GetTranslated(614,2, "Auto Laboratory Upgrades"), $x + 80, $y + 5, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(614,3, "Check box to enable automatically starting Upgrades in laboratory"))
 			GUICtrlSetOnEvent(-1, "chkLab")
 		$g_hLblNextUpgrade = GUICtrlCreateLabel(GetTranslated(614,4, "Next one") & ":", $x + 80, $y + 38, 50, -1)
@@ -259,7 +259,7 @@ Func CreateBuildingsSubTab()
 			GUICtrlSetLimit(-1, 6)
 
 ; Upgrade Management (MMHK) - Added by NguyenAnhHD
-		$g_hChkUpdateNewUpgradesOnly = GUICtrlCreateCheckbox(GetTranslated(656,1, "New Only"), $x + 141, $y + 15, -1, -1)
+		$g_hChkUpdateNewUpgradesOnly = _GUICtrlCreateCheckbox(GetTranslated(656,1, "New Only"), $x + 141, $y + 15, -1, -1)
 			GUICtrlSetTip(-1, GetTranslated(656,2, "Update NEW upgrades only for speed"))
 			GUICtrlSetOnEvent(-1, "chkUpdateNewUpgradesOnly")
 		$g_hBtnTop = GUICtrlCreateButton("T", $x + 209, $y + 18, 23, 17, $BS_CENTER)
@@ -293,7 +293,7 @@ Func CreateWallsSubTab()
    Local $x = 25, $y = 45
    GUICtrlCreateGroup(GetTranslated(617,1, "Walls"), $x - 20, $y - 20, $g_iSizeWGrpTab3, 120)
 		GUICtrlCreateIcon ($g_sLibIconPath, $eIcnWall, $x - 12, $y - 6, 24, 24)
-		$g_hChkWalls = GUICtrlCreateCheckbox(GetTranslated(617,2, "Auto Wall Upgrade"), $x + 18, $y-2, -1, -1)
+		$g_hChkWalls = _GUICtrlCreateCheckbox(GetTranslated(617,2, "Auto Wall Upgrade"), $x + 18, $y-2, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(617,3, "Check this to upgrade Walls if there are enough resources."))
 			GUICtrlSetState(-1, $GUI_ENABLE)
 			GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -310,18 +310,18 @@ Func CreateWallsSubTab()
 			_GUICtrlSetTip(-1, GetTranslated(617,6, "Click here to test the Wall Detection."))
 			GUICtrlSetOnEvent(-1, "btnWalls")
 			If $g_bBtnColor then GUICtrlSetBkColor(-1, 0x5CAD85)
-		$g_hRdoUseGold = GUICtrlCreateRadio(GetTranslated(617,7, "Use Gold"), $x + 25, $y + 16, -1, -1)
+		$g_hRdoUseGold = _GUICtrlCreateRadio(GetTranslated(617,7, "Use Gold"), $x + 25, $y + 16, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(617,8, "Use only Gold for Walls.") & @CRLF & GetTranslated(617,9, "Available at all Wall levels."))
 			GUICtrlSetState(-1, $GUI_CHECKED)
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hRdoUseElixir = GUICtrlCreateRadio(GetTranslated(617,10, "Use Elixir"), $x + 25, $y + 34, -1, -1)
+		$g_hRdoUseElixir = _GUICtrlCreateRadio(GetTranslated(617,10, "Use Elixir"), $x + 25, $y + 34, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(617,11, "Use only Elixir for Walls.") & @CRLF & GetTranslated(617,12, "Available only at Wall levels upgradeable with Elixir."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hRdoUseElixirGold = GUICtrlCreateRadio(GetTranslated(617,13, "Try Elixir first, Gold second"), $x + 25, $y + 52, -1, -1)
+		$g_hRdoUseElixirGold = _GUICtrlCreateRadio(GetTranslated(617,13, "Try Elixir first, Gold second"), $x + 25, $y + 52, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(617,14, "Try to use Elixir first. If not enough Elixir try to use Gold second for Walls.") & @CRLF & GetTranslated(617,12, -1))
 			GUICtrlSetState(-1, $GUI_DISABLE)
 		GUICtrlCreateIcon ($g_sLibIconPath, $eIcnBuilder, $x - 12, $y + 72, 20, 20)
-		$g_hChkSaveWallBldr = GUICtrlCreateCheckbox(GetTranslated(617,15, "Save ONE builder for Walls"), $x+18, $y + 72, -1, -1)
+		$g_hChkSaveWallBldr = _GUICtrlCreateCheckbox(GetTranslated(617,15, "Save ONE builder for Walls"), $x+18, $y + 72, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslated(617,16, "Check this to reserve 1 builder exclusively for walls and") & @CRLF & _
 							   GetTranslated(617,17, "reduce the available builder by 1 for other upgrades"))
 			GUICtrlSetState(-1, $GUI_ENABLE)

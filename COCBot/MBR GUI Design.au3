@@ -113,8 +113,8 @@ Global $g_bFrmBotMinimized = False ; prevents bot flickering
 #include "GUI\MBR GUI Design Bot.au3"
 #include "GUI\MBR GUI Design About.au3"
 
-; Team++ AIO MOD
-#include "MOD_Team++AIO\GUI\MOD GUI Design.au3"
+; Team AiO & RK MOD++ (2017)
+#include "Team__AiO_&_RK__MOD++\GUI\MOD GUI Design.au3"
 
 Func CreateMainGUI()
 
