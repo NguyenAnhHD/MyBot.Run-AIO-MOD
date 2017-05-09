@@ -21,7 +21,7 @@ Global $g_hLblNotesScriptAB = 0
 Func CreateAttackSearchActiveBaseScripted()
    $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED = _GUICreate("", $_GUI_MAIN_WIDTH - 195, $g_iSizeHGrpTab4, 150, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_ACTIVEBASE)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED)
-   $47 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images2\1.jpg", 0, -5, 280, 352, $WS_CLIPCHILDREN)
+   $47 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg2, 0, -5, 280, 352, $WS_CLIPCHILDREN)
    Local $x = 25, $y = 20
 	   GUICtrlCreateGroup(GetTranslated(607,1, -1), $x - 20, $y - 20, 270, $g_iSizeHGrpTab4)
 

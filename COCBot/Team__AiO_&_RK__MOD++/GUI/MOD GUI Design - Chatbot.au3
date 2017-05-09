@@ -18,7 +18,7 @@ Global $editGlobalMessages1 = "", $editGlobalMessages2 = "",$editGlobalMessages3
 Global $editResponses = 0,$editGeneric = 0,$ChatbotQueuedChats[0],$ChatbotReadQueued = False,$ChatbotReadInterval = 0,$ChatbotIsOnInterval = False,$TmpResp
 
 Func ChatbotGUI()
-$36 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 410, $WS_CLIPCHILDREN)
+$36 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg, 2, 23, 442, 410, $WS_CLIPCHILDREN)
    ChatbotReadSettings()
 
 	Local $x = 25, $y = 47
