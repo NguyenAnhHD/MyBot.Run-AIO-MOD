@@ -78,9 +78,9 @@ EndFunc   ;==>getInstalledEmulators
 
 Func setupInstances()
 	; Update Bot title
-	Local $g_sOldTitle = $g_sBotTitle
+	Local $g_sOldTitle = $g_sBotTitle 
     UpdateBotTitle()
-    ;$g_sBotTitle & "(" & ($g_sAndroidInstance <> "" ? $g_sAndroidInstance : $g_sAndroidEmulator) & ")" ;Do not change this. If you do, multiple instances will not work.
+ 
 	Local $g_hMutexTmp = _Singleton($g_sBotTitle, 1)
 	If $g_hMutexTmp = 0 And $g_sBotTitle <> $g_sOldTitle Then
 		MsgBox(0, $g_sBotTitle, "My Bot for " & $g_sAndroidEmulator & ($g_sAndroidInstance <> "" ? " instance (" & $g_sAndroidInstance & ")" : "") & " is already running." & @CRLF & @CRLF & _
@@ -124,9 +124,9 @@ Func modifyAndroid()
 				Case Else
 					; Another emulator so use the instance parameter
 					GUICtrlSetState($TxtAndroidInstance, $GUI_ENABLE)
-
+                    Local $sAndroidInfo = ""
 					$g_sAndroidEmulator = $sAndroid
-					$g_sAndroidInstance = ""
+			        $g_sAndroidInstance = $sAndroidInfo
 					
 					
 					If $g_iAndroidConfig <> $currentConfig Or $g_sAndroidEmulator <> $currentAndroid Or $g_sAndroidInstance <> $currentAndroidInstance Then setupInstances()
