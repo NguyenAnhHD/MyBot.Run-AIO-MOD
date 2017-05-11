@@ -588,13 +588,13 @@ EndFunc
 ; Android Settings (LunaEclipse)- modification (rulesss,kychera)
 Func setupAndroidComboBox()
 	Local $androidString = ""
-	Local $aAndroid = getInstalledEmulators()
+	Local $aAndroidWindow = getInstalledEmulators()
 
 	; Convert the array into a string
-	$androidString = _ArrayToString($aAndroid, "|")
+	$androidString = _ArrayToString($aAndroidWindow, "|")
 
 	; Set the new data of valid Emulators
-	GUICtrlSetData($CmbAndroid, $androidString, $aAndroid[0])
+	GUICtrlSetData($CmbAndroid, $androidString, $aAndroidWindow[0])
 EndFunc   ;==>setupAndroidComboBox
 
 Func CmbAndroid()
