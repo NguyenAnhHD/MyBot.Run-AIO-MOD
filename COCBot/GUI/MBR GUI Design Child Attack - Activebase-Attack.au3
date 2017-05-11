@@ -28,7 +28,7 @@ Global $g_hChkTHSnipeBeforeLBEnable = 0, $g_hTxtTHSnipeBeforeLBTiles = 0, $g_hCm
 Global $g_hLblTHSnipeBeforeLBTiles = 0
 
 Func CreateAttackSearchActiveBaseAttack()
-  $50 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images3\1.jpg", 0, 20, 150, 352, $WS_CLIPCHILDREN)
+  $50 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg3, 0, 20, 150, 352, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 25, $y = 40
 	$g_hGrpABAttack = GUICtrlCreateGroup(GetTranslated(624,1, -1), $x - 20, $y - 15, 145, 223)

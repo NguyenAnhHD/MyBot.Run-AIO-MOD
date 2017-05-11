@@ -143,6 +143,7 @@ Func ReadConfig_MOD()
 	$g_bReqCCFirst = (IniRead($g_sProfileConfigPath, "planned", "ReqCCFirst", 0) = 1)
 
 	; Android Settings (LunaEclipse)- modification (rulesss,kychera)
+	 IniReadS($g_iChkAndroid, $g_sProfileConfigPath, "Android", "ChkEmulator", 0, "int")
      $sAndroid = IniRead($g_sProfileConfigPath, "Android", "Emulator", "<No Emulators>")
      $sAndroidInstance = IniRead($g_sProfileConfigPath, "Android", "Instance", "")
 	 ;Request russian by kychera

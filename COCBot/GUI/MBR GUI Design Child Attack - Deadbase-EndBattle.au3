@@ -24,7 +24,7 @@ Global $g_hGrpDBEndBattle = 0, $g_hLblStopAtkDBNoLoot1a = 0, $g_hLblStopAtkDBNoL
 	   $g_hLblDBPercentHigher = 0, $g_hLblDBPercentHigherSec = 0, $g_hLblDBPercentChange = 0, $g_hLblDBPercentChangeSec = 0
 
 Func CreateAttackSearchDeadBaseEndBattle()
-   $14 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
+   $14 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg, 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 10, $y = 45
 	   $g_hGrpDBEndBattle = GUICtrlCreateGroup(GetTranslated(606,1, "Exit Battle"),  $x - 5, $y - 20, $g_iSizeWGrpTab4, $g_iSizeHGrpTab4)

@@ -14,10 +14,10 @@
 ; ===============================================================================================================================
 #include-once
 
-Global $g_hCmbCOCDistributors
+Global $g_hCmbCOCDistributors, $g_hChkAndroid = 0, $g_iChkAndroid = 0
 
 Func CreateBotAndroid()
-   $4 = GUICtrlCreatePic(@ScriptDir & '\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg', 2, 23, 442, 410, $WS_CLIPCHILDREN)
+   $4 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg, 2, 23, 442, 410, $WS_CLIPCHILDREN)
    Local $x = 25, $y = 45
    GUICtrlCreateGroup(GetTranslated(642, 1, "Distributors"), $x - 20, $y - 20, 438, 50)
 	   $y -=2
@@ -30,15 +30,21 @@ Func CreateBotAndroid()
    ; Android Settings (LunaEclipse)- modification (rulesss,kychera)
     Local $x = 25, $y = 95
 	GUICtrlCreateGroup(GetTranslated(91,2,"Android Options"), $x - 20, $y - 20, 438, 50)
-		$CmbAndroid = GUICtrlCreateCombo("", $x - 10, $y - 5, 130, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+	    $g_hChkAndroid = GUICtrlCreateCheckbox("", $x - 10, $y, 13, 13)
+		 GUICtrlSetTip(-1, GetTranslated(91, 6, "Do not use this option with the launchers for multi farming (for example: MyBot.run-MEmu.exe)."))
+		 GUICtrlSetState(-1, $GUI_UNCHECKED)
+		 GUICtrlSetOnEvent(-1, "chkAndroid")
+		$CmbAndroid = GUICtrlCreateCombo("", $x + 10, $y - 5, 130, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			GUICtrlSetTip($CmbAndroid, GetTranslated(91,3,"Use this to select the Android Emulator to use with this profile."))
 			setupAndroidComboBox()
-			GUICtrlSetState(-1, $GUI_SHOW)
+			GUICtrlSetState(-1, $GUI_DISABLE)
 			GUICtrlSetOnEvent(-1, "CmbAndroid")
+	$x += 20	
 		$LblAndroidInstance = GUICtrlCreateLabel(GetTranslated(91,4,"Instance:"), $x + 130, $y - 2 , 60, 21, $SS_RIGHT)
-		$TxtAndroidInstance = GUICtrlCreateInput("", $x + 200, $y - 5, 210, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
+		$TxtAndroidInstance = GUICtrlCreateInput("", $x + 200, $y - 5, 150, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
 			GUICtrlSetTip($TxtAndroidInstance, GetTranslated(91,5,"Enter the Instance to use with this profile."))
-			GUICtrlSetOnEvent(-1, "TxtAndroidInstance")
+			GUICtrlSetState(-1, $GUI_DISABLE)
+			GUICtrlSetOnEvent(-1, "TxtAndroidInstance")		
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 	; Misc Battle Settings - added by rulesss
 	Local $x = 25, $y = 145

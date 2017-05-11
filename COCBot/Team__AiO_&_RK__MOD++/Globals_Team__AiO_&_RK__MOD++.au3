@@ -249,3 +249,7 @@ Global Const $g_aiTroopOrderDropIcon[23] = [ _
 		$eIcnWizard, $eIcnHealer, $eIcnDragon, $eIcnPekka, $eIcnBabyDragon, $eIcnMiner, $eIcnMinion, _
 		$eIcnHogRider, $eIcnValkyrie, $eIcnGolem, $eIcnWitch, $eIcnLavaHound, $eIcnBowler, $eIcnCC, $eIcnHeroes]
 #EndRegion
+Global Const $g_sImagePath = @ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images"
+Global $g_sImageBg = "\1.jpg"
+Global $g_sImageBg2 = "2\1.jpg"
+Global $g_sImageBg3 = "3\1.jpg"
