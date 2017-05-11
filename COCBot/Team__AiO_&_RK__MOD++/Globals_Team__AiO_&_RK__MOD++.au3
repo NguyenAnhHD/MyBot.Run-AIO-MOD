@@ -168,6 +168,7 @@ Global $iChkWaveFactor = 0
 Global $iTxtWaveFactor = 100
 
 Global $ChkGiantSlot = 0, $iChkGiantSlot = 0, $CmbGiantSlot = 0, $iCmbGiantSlot = 0, $SlotsGiantsVN = 1, $SlotsGiants = 1 ; standard on middle of village
+Global $g_hGrpSettings = 0
 
 ; Forecast - Added By Eloy (modification rulesss,kychera)
 Global Const $COLOR_DEEPPINK = 0xFF1493
