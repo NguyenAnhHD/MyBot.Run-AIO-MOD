@@ -27,14 +27,14 @@ Func chkTroopDropOrder()
 			GUICtrlSetState($cmbDropTroops[$i], $GUI_DISABLE) ; disable combo boxes
 		Next
 		;SetDefaultTroopGroup($bNoiseMode) ; Reset troopgroup values to default
-		If $g_iDebugSetlogTrain = 1 Then
-			Local $sNewDropList = ""
-			For $i = 0 To $eTroopCountDrop - 1
-				$sNewDropList &= $g_asTroopNamesPluralDrop[$icmbDropTroops[$i]] & ", "
-			Next
-			$sNewDropList = StringTrimRight($sNewDropList, 2)
-			Setlog("Current drop order= " & $sNewDropList, $COLOR_BLUE)
-		EndIf
+		;If $g_iDebugSetlogTrain = 1 Then
+		;	Local $sNewDropList = ""
+		;	For $i = 0 To $eTroopCountDrop - 1
+		;		$sNewDropList &= $g_asTroopNamesPluralDrop[$icmbDropTroops[$i]] & ", "
+		;	Next
+		;	$sNewDropList = StringTrimRight($sNewDropList, 2)
+		;	Setlog("Current drop order= " & $sNewDropList, $COLOR_BLUE)
+		;EndIf
 	EndIf
 EndFunc   ;==>chkTroopDropOrder
 
@@ -173,17 +173,17 @@ EndFunc   ;==>BtnTroopOrderSet2
 Func IsUseCustomTroopOrder2()
 	For $i = 0 To UBound($icmbDropTroops) - 1 ; Check if custom train order has been used, to select log message
 		If $icmbDropTroops[$i] = -1 Then
-			If $g_iDebugSetlogTrain = 1 Then Setlog("Custom drop order not used...", $COLOR_DEBUG) ;Debug
+			;If $g_iDebugSetlogTrain = 1 Then Setlog("Custom drop order not used...", $COLOR_DEBUG) ;Debug
 			Return False
 		EndIf
 	Next
-	If $g_iDebugSetlogTrain = 1 Then Setlog("Custom drop order used...", $COLOR_DEBUG) ;Debug
+	;If $g_iDebugSetlogTrain = 1 Then Setlog("Custom drop order used...", $COLOR_DEBUG) ;Debug
 	Return True
 EndFunc   ;==>IsUseCustomTroopOrder2
 
 Func ChangeTroopTrainOrder2()
 
-	If $g_iDebugSetlog = 1 Or $g_iDebugSetlogTrain = 1 Then Setlog("Begin Func ChangeTroopTrainOrder2()", $COLOR_DEBUG) ;Debug
+	If $g_iDebugSetlog = 1 Then Setlog("Begin Func ChangeTroopTrainOrder2()", $COLOR_DEBUG) ;Debug
 
 	Local $NewTroopDrop[$eTroopCountDrop]
 	Local $iUpdateCount = 0
