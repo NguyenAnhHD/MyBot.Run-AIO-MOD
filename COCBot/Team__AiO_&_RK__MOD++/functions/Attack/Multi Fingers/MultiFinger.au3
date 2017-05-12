@@ -266,6 +266,48 @@ Func cmbDBMultiFinger()
 EndFunc   ;==>cmbDBMultiFinger
 
 Func Bridge()
-    cmbDBMultiFinger()
-    cmbStandardDropSidesDB()
+    If _GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 4 Then
+            GUICtrlSetState($g_hChkSmartAttackRedAreaDB, $GUI_UNCHECKED)
+		    GUICtrlSetState($g_hChkRandomSpeedAtkDB, $GUI_UNCHECKED)
+		    chkRandomSpeedAtkDB()
+		For $i = $g_hChkRandomSpeedAtkDB To $g_hPicAttackNearDarkElixirDrillDB			
+			GUICtrlSetState($i, $GUI_DISABLE + $GUI_HIDE)
+		Next
+		    
+		    GUICtrlSetState($LblDBMultiFinger, $GUI_HIDE)
+		    GUICtrlSetState($CmbDBMultiFinger, $GUI_HIDE)
+		For $i = $g_hGrpSettings To $TxtWaveFactor
+			GUICtrlSetState($i, $GUI_SHOW)
+	    Next
+		
+	ElseIf _GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 5 Then
+	        GUICtrlSetState($g_hChkSmartAttackRedAreaDB, $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkRandomSpeedAtkDB, $GUI_UNCHECKED)
+			chkRandomSpeedAtkDB()
+        For $i = $g_hChkRandomSpeedAtkDB To $g_hPicAttackNearDarkElixirDrillDB			
+			GUICtrlSetState($i, $GUI_DISABLE + $GUI_HIDE)
+		Next
+		
+		For $i = $LblDBMultiFinger To $TxtWaveFactor
+			GUICtrlSetState($i, $GUI_SHOW)
+	    Next
+	Else	 
+		For $i = $g_hChkRandomSpeedAtkDB To $g_hPicAttackNearDarkElixirDrillDB
+			GUICtrlSetState($i, $GUI_ENABLE + $GUI_SHOW)
+			GUICtrlSetState($g_hChkSmartAttackRedAreaDB, $GUI_CHECKED)
+		Next
+        
+	    For $i = $LblDBMultiFinger To $TxtWaveFactor
+			GUICtrlSetState($i, $GUI_HIDE)
+	    Next		
+        chkSmartAttackRedAreaDB()
+	EndIf
+	
 EndFunc ;==>Bridge
+
+; old function unit factor only for multifinger
+
+;Func Bridge() 
+ ;   cmbDBMultiFinger()
+ ;   cmbStandardDropSidesDB()
+;EndFunc ;==>Bridge
