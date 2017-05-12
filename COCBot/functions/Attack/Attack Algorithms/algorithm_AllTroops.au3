@@ -201,7 +201,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 				[MatchTroopDropName(19), MatchSidesDrop(19), MatchTroopWaveNb(19), 1, MatchSlotsPerEdge(19)], _
 				[MatchTroopDropName(20), MatchSidesDrop(20), MatchTroopWaveNb(20), 1, MatchSlotsPerEdge(20)]]
 			Else
-		Local $listInfoDeploy[21][5] = [[$eGiant, $nbSides, 1, 1, $SlotsGiants], _
+		Local $listInfoDeploy[21][5] = [[$eGiant, $nbSides, 1, 1, $SlotsGiantsVN], _
 						[$eGole, $nbSides, 1, 1, 2], _
 						[$eLava, $nbSides, 1, 1, 2], _
 						[$eBarb, $nbSides, 1, 1, 0], _
