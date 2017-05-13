@@ -8,4 +8,4 @@
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/mo /rsln
 
-Run("MyBot.run.exe LeapdroidVM LeapdroidVM")
+Run("MyBot.run.exe LeapdroidVM Leapdroid vm")

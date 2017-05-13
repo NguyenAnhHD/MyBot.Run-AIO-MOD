@@ -1,11 +1,19 @@
-#Region ;**** Directives created by AutoIt3Wrapper_GUI ****
-#AutoIt3Wrapper_Icon=..\..\images\MyBot.ico
-#AutoIt3Wrapper_Outfile=..\..\MyBot.run - Nox_2.exe
-#EndRegion ;**** Directives created by AutoIt3Wrapper_GUI ****
-
+; AutoIt pragmas
 #RequireAdmin
 #AutoIt3Wrapper_UseX64=7n
+;#AutoIt3Wrapper_Res_HiDpi=Y ; HiDpi will be set during run-time!
 #AutoIt3Wrapper_Run_Au3Stripper=y
-#Au3Stripper_Parameters=/mo /rsln
+#Au3Stripper_Parameters=/rsln /MI=3
+;/SV=0
 
-Run("MyBot.run.exe Nox_2 Nox_2 Nox_2")
+;#AutoIt3Wrapper_Change2CUI=y
+;#pragma compile(Console, true)
+#pragma compile(Icon, "MyBot.ico")
+#pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
+#pragma compile(ProductName, My Bot)
+#pragma compile(ProductVersion, 7.1.4)
+#pragma compile(FileVersion, 7.1.4)
+#pragma compile(LegalCopyright, © https://mybot.run)
+#pragma compile(Out, MyBot.run - Nox_2.exe) ; Required
+
+Run("MyBot.run.exe Nox_2 Nox Nox_2")
