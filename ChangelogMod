@@ -11,14 +11,17 @@ $$$$$$$$/   ______    ______   _____  ____        /$$$$$$  |$$$$$$/ /$$$$$$  |/$
                                                                                                                                                                                                               
                                                                                                                                                                                                          
            Add:
-		       - 
+		       - Unit deploy to 4 fingers classic
+			   - Added checkbox Android Setting and description
 
            Improve:
 		       - 
            Fixed:
-		       - 
-			   - 
-			   - 
-			   - 
+		       - Fixed Troops drop order
+			   - Fixed Android Setting
+			   - Fixed Decor GUIs
+			   - Correcting a bug with overlapping tabs if the names are long
+			   - Fixed Launchers for multi farming
            Update:	
                - Language arabic
+			   - Update Notify help(English,Vietnamese)
