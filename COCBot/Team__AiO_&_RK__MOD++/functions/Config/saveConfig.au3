@@ -144,6 +144,7 @@ Func SaveConfig_MOD()
 	_Ini_Add("planned", "ReqCCFirst", $g_bReqCCFirst ? 1 : 0)
 
 	 ; Android Settings (LunaEclipse)- modification (rulesss,kychera)
+	_Ini_Add("Android", "ChkEmulator", $g_iChkAndroid)
 	_Ini_Add("Android", "Emulator", GUICtrlRead($CmbAndroid))
     _Ini_Add("Android", "Instance", GUICtrlRead($TxtAndroidInstance))
 

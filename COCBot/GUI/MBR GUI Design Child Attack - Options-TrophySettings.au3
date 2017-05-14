@@ -22,7 +22,7 @@ Global $g_hPicMaxTrophies[$eLeagueCount] = [0,0,0,0,0,0,0,0,0], $g_hLblMaxTrophi
 Global $g_hLblTrophyHeroesPriority = 0, $g_hLblDropTrophyArmyMin = 0, $g_hLblDropTrophyArmyPercent = 0
 
 Func CreateAttackSearchOptionsTrophySettings()
-   $20 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
+   $20 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg, 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 25, $y = 45
 

@@ -588,13 +588,13 @@ EndFunc
 ; Android Settings (LunaEclipse)- modification (rulesss,kychera)
 Func setupAndroidComboBox()
 	Local $androidString = ""
-	Local $aAndroid = getInstalledEmulators()
+	Local $aAndroidWindow = getInstalledEmulators()
 
 	; Convert the array into a string
-	$androidString = _ArrayToString($aAndroid, "|")
+	$androidString = _ArrayToString($aAndroidWindow, "|")
 
 	; Set the new data of valid Emulators
-	GUICtrlSetData($CmbAndroid, $androidString, $aAndroid[0])
+	GUICtrlSetData($CmbAndroid, $androidString, $aAndroidWindow[0])
 EndFunc   ;==>setupAndroidComboBox
 
 Func CmbAndroid()
@@ -615,3 +615,14 @@ Func chkFastADBClicks()
 		$g_bAndroidAdbClicksEnabled = 0
 	EndIf
 EndFunc   ;==>chkFastADBClicks
+Func chkAndroid()
+    If GUICtrlRead($g_hChkAndroid) = $GUI_CHECKED Then
+		$g_iChkAndroid = 1
+		GUICtrlSetState($CmbAndroid, $GUI_ENABLE)
+		GUICtrlSetState($TxtAndroidInstance, $GUI_ENABLE)		
+	Else
+		$g_iChkAndroid = 0
+		GUICtrlSetState($CmbAndroid, $GUI_DISABLE)
+		GUICtrlSetState($TxtAndroidInstance, $GUI_DISABLE)
+	EndIf
+EndFunc

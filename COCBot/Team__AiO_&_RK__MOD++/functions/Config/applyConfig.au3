@@ -395,6 +395,7 @@ EndFunc   ;==>ApplyConfig_Forecast
 Func ApplyConfig_AndroidSettings($TypeReadSave)
 	Switch $TypeReadSave
 		Case "Read"
+		GUICtrlSetState($g_hChkAndroid, $g_iChkAndroid = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 		If _GUICtrlComboBox_FindStringExact($CmbAndroid, String($sAndroid)) <> -1 Then
 		_GUICtrlComboBox_SelectString($CmbAndroid, String($sAndroid))
 	    Else
@@ -405,6 +406,7 @@ sleep(300)
 		  GUICtrlSetData($TxtAndroidInstance, $sAndroidInstance)
 
 		Case "Save"
+		$g_iChkAndroid = GUICtrlRead($g_hChkAndroid) = $GUI_CHECKED ? 1 : 0
 		$sAndroid = _GUICtrlComboBox_GetCurSel($CmbAndroid)
 
 		   $sAndroidInstance = GUICtrlRead($TxtAndroidInstance)

@@ -21,7 +21,7 @@ Global $g_hCmbMinCollectorMatches = 0, $g_hSldCollectorTolerance = 0, $g_hLblCol
 Global $g_hChkDBMeetCollOutside = 0, $g_hTxtDBMinCollOutsidePercent ; Check Collector Outside - Added By NguyenAnhHD
 
 Func CreateAttackSearchDeadBaseCollectors()
-   $13 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 2, 23, 442, 367, $WS_CLIPCHILDREN)
+   $13 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg, 2, 23, 442, 367, $WS_CLIPCHILDREN)
    Local $x = 10, $y = 45
    Local $s_TxtTip1 = GetTranslated(626,15, "If this box is checked, then the bot will look")
    Local $g_hTxtFull = GetTranslated(626,30, "Full")
@@ -41,7 +41,7 @@ Func CreateAttackSearchDeadBaseCollectors()
 			GUICtrlSetOnEvent(-1, "chkDBMeetCollOutside")
 			GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetState(-1, $GUI_UNCHECKED)
-			GUICtrlCreateLabel(GetTranslated(626,53, "Min: "), $x+270, $y+120, -1, -1)
+			GUICtrlCreateLabel(GetTranslated(626,53, "Min") & ": ", $x+270, $y+120, -1, -1)
 		$g_hTxtDBMinCollOutsidePercent = GUICtrlCreateInput("50", $x+300, $y+115, 31, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			$sTxtTip = GetTranslated(626,42, "Set the Min. % of collectors outside to search for on a village to attack.")
 			GUICtrlSetTip(-1, $sTxtTip)

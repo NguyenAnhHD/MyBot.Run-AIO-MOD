@@ -97,7 +97,7 @@ EndFunc
 Func CreateRequestSubTab()
 	Local $xStart = 25, $yStart = 45
 	$g_hGUI_RequestCC = _GUICreate("", $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, $xStart - 20, $yStart - 20, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DONATE)
-	$38 = GUICtrlCreatePic(@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 0, 0, 442, 380, $WS_CLIPCHILDREN)
+	$38 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg, 0, 0, 442, 380, $WS_CLIPCHILDREN)
 	; GUISetBkColor($COLOR_WHITE)
 	Local $xStart = 20, $yStart = 20
 	Local $x = $xStart
@@ -250,7 +250,7 @@ Func CreateRequestSubTab()
             GUICtrlSetState(-1, $GUI_UNCHECKED)
             GUICtrlSetTip(-1, GetTranslated(634,52, "Kick New Donated Members Or Already Full"))
             GUICtrlCreateIcon($g_sLibIconPath, $eIcnKick, $x - 13, $y - 9, 24, 24)
-    GUICtrlCreateLabel(GetTranslated(634,53, "Kicks In a Single Loop: "), $x + 112, $y + 17, -1, -1)
+    GUICtrlCreateLabel(GetTranslated(634,53, "Kicks In a Single Loop") & ": ", $x + 112, $y + 17, -1, -1)
            GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
            $cmbgtfo = GUICtrlCreateCombo("", $x + 260, $y + 12, 35, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
             GUICtrlSetTip(-1, GetTranslated(634,54, "Number of New Members You Want To Kick") & @CRLF & _
@@ -267,7 +267,7 @@ EndFunc
 Func CreateDonateSubTab()
 	Local $xStart = 25, $yStart = 45
 	$g_hGUI_DONATECC = _GUICreate("", $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, $xStart - 20, $yStart - 20, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DONATE)
-	$28 = GUICtrlCreatePic(@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 0, 0, 442, 380, $WS_CLIPCHILDREN)
+	$28 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg, 0, 0, 442, 380, $WS_CLIPCHILDREN)
 	; GUISetBkColor($COLOR_WHITE)
 	Local $xStart = 20, $yStart = 20
   ;~ -------------------------------------------------------------
@@ -1749,7 +1749,7 @@ EndFunc
 Func CreateScheduleSubTab()
 	Local $xStart = 25, $yStart = 45
 	$g_hGUI_ScheduleCC = _GUICreate("", $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, $xStart - 20, $yStart - 20, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DONATE)
-    $29 = GUICtrlCreatePic(@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images\1.jpg", 0, 0, 442, 380, $WS_CLIPCHILDREN)
+    $29 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg, 0, 0, 442, 380, $WS_CLIPCHILDREN)
 	; GUISetBkColor($COLOR_WHITE)
 	Local $xStart = 20, $yStart = 20
 	Local $x = $xStart

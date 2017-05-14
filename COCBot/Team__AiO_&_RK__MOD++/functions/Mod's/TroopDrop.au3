@@ -65,7 +65,7 @@ Func MatchSlotsPerEdge($Num)
 		Case 1                ;$eArch
 			  Return 0 
 		Case 2
-		      If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then 			
+		      If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Or ($g_iMatchMode = $DB And $g_aiAttackStdDropSides[$DB] = 5) Then 			
 			    Return $SlotsGiantsVN
 			  Else
 			    Return $SlotsGiants
@@ -147,7 +147,7 @@ EndFunc
 
 Func MatchSidesDrop($Num)   
 	Switch _GUICtrlComboBox_GetCurSel($cmbDropTroops[$Num])
-		Case 0
+		Case 0 To 18 ;$eBarb to $eBowl
 		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
 		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
 		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
@@ -155,169 +155,7 @@ Func MatchSidesDrop($Num)
 		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
 		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
 		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1;$eBarb
-		Case 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eArch
-		Case 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1; $eGiant
-		Case 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eGobl
-		Case 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eWall
-		Case 5
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eBall
-		Case 6
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eWiza
-		Case 7
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eHeal
-		Case 8
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eDrag			
-		Case 9
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$ePekk
-		Case 10
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eBabyD
-		Case 11		
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eMine
-		Case 12
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eMini			
-		Case 13
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eHogs
-		Case 14
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eValk
-		Case 15
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eGole
-		Case 16
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eWitc
-		Case 17
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1;$eLava
-		Case 18	
-        If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 3 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 4 
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1 ;$eBowl
+		If $g_aiAttackStdDropSides[$g_iMatchMode] = 7 Then Return 1		
 		Case 19
 			Return 1 ;CC
 		Case 20	
@@ -325,48 +163,9 @@ Func MatchSidesDrop($Num)
 	EndSwitch
 EndFunc 
 Func  MatchTroopWaveNb($Num)
-
 	Switch _GUICtrlComboBox_GetCurSel($cmbDropTroops[$Num])
-		Case 0
-			Return 1
-		Case 1
-			Return 1
-		Case 2
-			Return 1
-		Case 3
-			Return 1
-		Case 4
-			Return 1
-		Case 5
-			Return 1
-		Case 6
-			Return 1
-		Case 7
-			Return 1
-		Case 8
-			Return 1			
-		Case 9
-			Return 1
-		Case 10
-			Return 1
-		Case 11		
-			Return 1
-		Case 12
-			Return 1			
-		Case 13
-			Return 1
-		Case 14
-			Return 1
-		Case 15
-			Return 1
-		Case 16
-			Return 1
-		Case 17
-			Return 1
-		Case 18	
-            Return 1
-		Case 19
-		    Return 1
+		Case 0 To 19 
+			Return 1		
 		Case 20
 		    Return 2
 	EndSwitch

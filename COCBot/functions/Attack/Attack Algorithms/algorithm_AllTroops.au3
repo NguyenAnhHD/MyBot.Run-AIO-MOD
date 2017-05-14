@@ -177,6 +177,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 		EndSwitch
 	; Classic Four Fingers
 	ElseIf $nbSides = 5 Then
+	    CmbGiantSlot()
 	        If $g_bCustomTrainDropOrderEnable = True Then			
 			     Local $listInfoDeploy[21][5] = [[MatchTroopDropName(0), MatchSidesDrop(0), MatchTroopWaveNb(0), 1, MatchSlotsPerEdge(0)], _
 				[MatchTroopDropName(1), MatchSidesDrop(1), MatchTroopWaveNb(1), 1, MatchSlotsPerEdge(1)], _
@@ -200,7 +201,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 				[MatchTroopDropName(19), MatchSidesDrop(19), MatchTroopWaveNb(19), 1, MatchSlotsPerEdge(19)], _
 				[MatchTroopDropName(20), MatchSidesDrop(20), MatchTroopWaveNb(20), 1, MatchSlotsPerEdge(20)]]
 			Else
-		Local $listInfoDeploy[21][5] = [[$eGiant, $nbSides, 1, 1, $SlotsGiants], _
+		Local $listInfoDeploy[21][5] = [[$eGiant, $nbSides, 1, 1, $SlotsGiantsVN], _
 						[$eGole, $nbSides, 1, 1, 2], _
 						[$eLava, $nbSides, 1, 1, 2], _
 						[$eBarb, $nbSides, 1, 1, 0], _
@@ -370,9 +371,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 
 	If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 And $g_iMatchMode = $DB Then
 		SetLog(_PadStringCenter("Multi Finger Attack", 50, "="), $COLOR_BLUE)
-		launchMultiFinger($listInfoDeploy, $g_iClanCastleSlot, $g_iKingSlot, $g_iQueenSlot, $g_iWardenSlot)
-		chkUnitFactor()
-		chkWaveFactor()
+		launchMultiFinger($listInfoDeploy, $g_iClanCastleSlot, $g_iKingSlot, $g_iQueenSlot, $g_iWardenSlot)		
 	Else
 		SetLog(_PadStringCenter("Standard Attack", 50, "="), $COLOR_BLUE)
 		LaunchTroop2($listInfoDeploy, $g_iClanCastleSlot, $g_iKingSlot, $g_iQueenSlot, $g_iWardenSlot)

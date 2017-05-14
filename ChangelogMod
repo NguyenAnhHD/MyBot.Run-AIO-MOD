@@ -1,40 +1,27 @@
- ________                                           ______   ______   ______    ___      _______   __    __        __       __   ______   _______                            __         ______        ______  
-/        |                                         /      \ /      | /      \  /   \    /       \ /  |  /  |      /  \     /  | /      \ /       \                         _/  |       /      \      /      \ 
-$$$$$$$$/   ______    ______   _____  ____        /$$$$$$  |$$$$$$/ /$$$$$$  |/$$$  |   $$$$$$$  |$$ | /$$/       $$  \   /$$ |/$$$$$$  |$$$$$$$  |       __     __       / $$ |      /$$$$$$  |    /$$$$$$  |
-   $$ |    /      \  /      \ /     \/    \       $$ |__$$ |  $$ |  $$ |  $$ |$$ $$ \__ $$ |__$$ |$$ |/$$/        $$$  \ /$$$ |$$ |  $$ |$$ |  $$ |      /  \   /  |      $$$$ |      $$ \__$$/     $$ ___$$ |
-   $$ |   /$$$$$$  | $$$$$$  |$$$$$$ $$$$  |      $$    $$ |  $$ |  $$ |  $$ |/$$$     |$$    $$< $$  $$<         $$$$  /$$$$ |$$ |  $$ |$$ |  $$ |      $$  \ /$$/         $$ |      $$      \       /   $$< 
-   $$ |   $$    $$ | /    $$ |$$ | $$ | $$ |      $$$$$$$$ |  $$ |  $$ |  $$ |$$ $$ $$/ $$$$$$$  |$$$$$  \        $$ $$ $$/$$ |$$ |  $$ |$$ |  $$ |       $$  /$$/          $$ |      $$$$$$$  |     _$$$$$  |
-   $$ |   $$$$$$$$/ /$$$$$$$ |$$ | $$ | $$ |      $$ |  $$ | _$$ |_ $$ \__$$ |$$ \$$  \ $$ |  $$ |$$ |$$  \       $$ |$$$/ $$ |$$ \__$$ |$$ |__$$ |        $$ $$/          _$$ |_  __ $$ \__$$ | __ /  \__$$ |
-   $$ |   $$       |$$    $$ |$$ | $$ | $$ |      $$ |  $$ |/ $$   |$$    $$/ $$   $$  |$$ |  $$ |$$ | $$  |      $$ | $/  $$ |$$    $$/ $$    $$/          $$$/          / $$   |/  |$$    $$/ /  |$$    $$/ 
-   $$/     $$$$$$$/  $$$$$$$/ $$/  $$/  $$/       $$/   $$/ $$$$$$/  $$$$$$/   $$$$/$$/ $$/   $$/ $$/   $$/       $$/      $$/  $$$$$$/  $$$$$$$/            $/           $$$$$$/ $$/  $$$$$$/  $$/  $$$$$$/  
- 
 
-           Updated to v 7.1.4
+ ________                                           ______   ______   ______    ___      _______   __    __        __       __   ______   _______                            __         ______       __    __ 
+/        |                                         /      \ /      | /      \  /   \    /       \ /  |  /  |      /  \     /  | /      \ /       \                         _/  |       /      \     /  |  /  |
+$$$$$$$$/   ______    ______   _____  ____        /$$$$$$  |$$$$$$/ /$$$$$$  |/$$$  |   $$$$$$$  |$$ | /$$/       $$  \   /$$ |/$$$$$$  |$$$$$$$  |       __     __       / $$ |      /$$$$$$  |    $$ |  $$ |
+   $$ |    /      \  /      \ /     \/    \       $$ |__$$ |  $$ |  $$ |  $$ |$$ $$ \__ $$ |__$$ |$$ |/$$/        $$$  \ /$$$ |$$ |  $$ |$$ |  $$ |      /  \   /  |      $$$$ |      $$ \__$$/     $$ |__$$ |
+   $$ |   /$$$$$$  | $$$$$$  |$$$$$$ $$$$  |      $$    $$ |  $$ |  $$ |  $$ |/$$$     |$$    $$< $$  $$<         $$$$  /$$$$ |$$ |  $$ |$$ |  $$ |      $$  \ /$$/         $$ |      $$      \     $$    $$ |
+   $$ |   $$    $$ | /    $$ |$$ | $$ | $$ |      $$$$$$$$ |  $$ |  $$ |  $$ |$$ $$ $$/ $$$$$$$  |$$$$$  \        $$ $$ $$/$$ |$$ |  $$ |$$ |  $$ |       $$  /$$/          $$ |      $$$$$$$  |    $$$$$$$$ |
+   $$ |   $$$$$$$$/ /$$$$$$$ |$$ | $$ | $$ |      $$ |  $$ | _$$ |_ $$ \__$$ |$$ \$$  \ $$ |  $$ |$$ |$$  \       $$ |$$$/ $$ |$$ \__$$ |$$ |__$$ |        $$ $$/          _$$ |_  __ $$ \__$$ | __       $$ |
+   $$ |   $$       |$$    $$ |$$ | $$ | $$ |      $$ |  $$ |/ $$   |$$    $$/ $$   $$  |$$ |  $$ |$$ | $$  |      $$ | $/  $$ |$$    $$/ $$    $$/          $$$/          / $$   |/  |$$    $$/ /  |      $$ |
+   $$/     $$$$$$$/  $$$$$$$/ $$/  $$/  $$/       $$/   $$/ $$$$$$/  $$$$$$/   $$$$/$$/ $$/   $$/ $$/   $$/       $$/      $$/  $$$$$$/  $$$$$$$/            $/           $$$$$$/ $$/  $$$$$$/  $$/       $$/ 
+                                                                                                                                                                                                              
+                                                                                                                                                                                                         
            Add:
-		       - Controlling the background and transparency of the bot (Bot option tab)
-			   - Request CC troops at first
-			   - Request of troops in Cyrillic
-			   - Android settings (Emulator selection)
-			   - Chatbot
-			   - Halt attacks for Forecast
-			   - Russian help
-			   - Nofity alert Bot sleep
-			   - Nofity alert Break connect
-			   - Start button for telegram and pushbullet
-			   - Fast ADB click
-			   - Launchers for multi farming
-			   - Enable \ Disable Watchdog
-		       - Spell order to Simple Train
-			   - Custom drop troops -=== NEW ===-
+		       - Unit deploy to 4 fingers classic
+			   - Added checkbox Android Setting and description
+
            Improve:
-		       - Transfer tab SmartZap (Attack-Deadbase)
+		       - 
            Fixed:
-		       - unit deploy for multi finger
-			   - dead base collectors filter
-			   - Forced detection Town Hall
-			   - minor fix for Precise Troop
+		       - Fixed Troops drop order
+			   - Fixed Android Setting
+			   - Fixed Decor GUIs
+			   - Correcting a bug with overlapping tabs if the names are long
+			   - Fixed Launchers for multi farming
            Update:	
-               - Language arabic, russian
-			   - Logo image and name team
-			 
- 
+               - Language Arabic, Vietnamese
+			   - Update Notify help(English,Vietnamese)

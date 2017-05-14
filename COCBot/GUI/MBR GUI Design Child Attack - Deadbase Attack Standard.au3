@@ -24,7 +24,7 @@ Func CreateAttackSearchDeadBaseStandard()
 
    $g_hGUI_DEADBASE_ATTACK_STANDARD = _GUICreate("", $_GUI_MAIN_WIDTH - 195, $g_iSizeHGrpTab4, 150, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DEADBASE)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
-  $43 = GUICtrlCreatePic (@ScriptDir & "\COCBot\Team__AiO_&_RK__MOD++\Images2\1.jpg", 0, -5, 280, 352, $WS_CLIPCHILDREN)
+  $43 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg2, 0, -5, 280, 352, $WS_CLIPCHILDREN)
    Local $sTxtTip
    Local $x = 25, $y = 20
 	   GUICtrlCreateGroup(GetTranslated(608,1,"Deploy"), $x - 20, $y - 20, 270, $g_iSizeHGrpTab4)
@@ -92,21 +92,21 @@ Func CreateAttackSearchDeadBaseStandard()
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $y += 26
-		   $g_hChkAttackNearGoldMineDB = GUICtrlCreateCheckbox("", $x + 20, $y, 17, 17)
+		   $g_hChkAttackNearGoldMineDB = GUICtrlCreateCheckbox("", $x + 20, $y, 13, 13)
 			   $sTxtTip = GetTranslated(608,26, "Drop troops near Gold Mines")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   GUICtrlCreateIcon($g_sLibIconPath, $eIcnMine, $x + 40 , $y - 3 , 24, 24)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $x += 75
-		   $g_hChkAttackNearElixirCollectorDB = GUICtrlCreateCheckbox("", $x, $y, 17, 17)
+		   $g_hChkAttackNearElixirCollectorDB = GUICtrlCreateCheckbox("", $x, $y, 13, 13)
 			   $sTxtTip = GetTranslated(608,27, "Drop troops near Elixir Collectors")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   GUICtrlCreateIcon($g_sLibIconPath, $eIcnCollector, $x + 20 , $y - 3 , 24, 24)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $x += 55
-		   $g_hChkAttackNearDarkElixirDrillDB = GUICtrlCreateCheckbox("", $x, $y, 17, 17)
+		   $g_hChkAttackNearDarkElixirDrillDB = GUICtrlCreateCheckbox("", $x, $y, 13, 13)
 			   $sTxtTip = GetTranslated(608,28, "Drop troops near Dark Elixir Drills")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hPicAttackNearDarkElixirDrillDB = GUICtrlCreateIcon($g_sLibIconPath, $eIcnDrill, $x + 20 , $y - 3, 24, 24)
@@ -138,7 +138,7 @@ Func CreateAttackSearchDeadBaseStandard()
 $x = 23
 $y = 140
 
-GUICtrlCreateGroup(GetTranslated(671, 100, "Settings"), $x, $y, 180, 105)
+  $g_hGrpSettings = GUICtrlCreateGroup(GetTranslated(671, 100, "Settings"), $x, $y, 180, 105)
 
 $y += 5
 $ChkGiantSlot = _GUICtrlCreateCheckbox(GetTranslated(671, 101, "GiantSlot"), $x+10, $y, 89, 25)
