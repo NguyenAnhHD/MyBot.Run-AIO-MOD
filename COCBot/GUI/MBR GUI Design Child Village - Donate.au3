@@ -250,7 +250,7 @@ Func CreateRequestSubTab()
             GUICtrlSetState(-1, $GUI_UNCHECKED)
             GUICtrlSetTip(-1, GetTranslated(634,52, "Kick New Donated Members Or Already Full"))
             GUICtrlCreateIcon($g_sLibIconPath, $eIcnKick, $x - 13, $y - 9, 24, 24)
-    GUICtrlCreateLabel(GetTranslated(634,53, "Kicks In a Single Loop: "), $x + 112, $y + 17, -1, -1)
+    GUICtrlCreateLabel(GetTranslated(634,53, "Kicks In a Single Loop") & ": ", $x + 112, $y + 17, -1, -1)
            GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
            $cmbgtfo = GUICtrlCreateCombo("", $x + 260, $y + 12, 35, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
             GUICtrlSetTip(-1, GetTranslated(634,54, "Number of New Members You Want To Kick") & @CRLF & _
