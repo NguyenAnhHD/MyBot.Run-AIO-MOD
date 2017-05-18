@@ -167,7 +167,7 @@ Func ReadConfig_MOD()
 	
 	;Max logout time( mandryd) - Added by rulesss
 	IniReadS($TrainLogoutMaxTime, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTime", 0, "int")
-	IniReadS($TrainLogoutMaxTimeTXT, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTimeTXT", 50, "int")
+	IniReadS($TrainLogoutMaxTimeTXT, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTimeTXT", 4, "int")
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen
