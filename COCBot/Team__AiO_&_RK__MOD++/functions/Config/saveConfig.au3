@@ -161,14 +161,17 @@ Func SaveConfig_MOD()
 	;Enabele\Disabele Watchdog by rulesss,kychera
 	_Ini_Add("Other", "chkLaunchWatchdog", $iChkLaunchWatchdog ? 1 : 0)
 
-	;Custom drop troops
+	;Custom drop troops by kychera
 	_Ini_Add("troop2", "chkTroopDropOrder", $g_bCustomTrainDropOrderEnable ? 1 : 0)
     For $p = 0 To UBound($icmbDropTroops) - 1
 		_Ini_Add("troop2", $g_asTroopNamesPluralDrop[$p], $icmbDropTroops[$p])
 	Next
-
+    
+	;Max logout time( mandryd) - Added by rulesss
+	_Ini_Add("TrainLogout", "TrainLogoutMaxTime", $TrainLogoutMaxTime ? 1 : 0)
+	_Ini_Add("TrainLogout", "TrainLogoutMaxTimeTXT", $TrainLogoutMaxTimeTXT)
 EndFunc
-
+	
 ; SwitchAcc (Demen) - Added By Demen
 Func SaveConfig_SwitchAcc()
 	ApplyConfig_SwitchAcc("Save")

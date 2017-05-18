@@ -172,8 +172,14 @@ Func ApplyConfig_MOD($TypeReadSave)
 			;Enabele\Disabele Watchdog by rulesss,kychera
 			GUICtrlSetState($ChkLaunchWatchdog, $iChkLaunchWatchdog = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			chkLaunchWatchdog()
-
+            
+			;Max logout time( mandryd) - Added by rulesss
+			GUICtrlSetState($chkTrainLogoutMaxTime, $TrainLogoutMaxTime = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($txtTrainLogoutMaxTime, $TrainLogoutMaxTimeTXT)
+			
+			
 		Case "Save"
+		    
 			; Multi Finger - Added by Eloy
 			$iMultiFingerStyle = _GUICtrlComboBox_GetCurSel($CmbDBMultiFinger)
 
@@ -303,7 +309,11 @@ Func ApplyConfig_MOD($TypeReadSave)
 
 			;Enabele\Disabele Watchdog by rulesss,kychera
 			$iChkLaunchWatchdog = (GUICtrlRead($ChkLaunchWatchdog) = $GUI_CHECKED)
-
+            
+			;Max logout time( mandryd) - Added by rulesss
+			$TrainLogoutMaxTime = GUICtrlRead($chkTrainLogoutMaxTime) = $GUI_CHECKED ? 1 : 0
+			$TrainLogoutMaxTimeTXT = GUICtrlRead($txtTrainLogoutMaxTime)
+			
 	EndSwitch
 EndFunc
 

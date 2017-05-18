@@ -269,11 +269,11 @@ Func chkCloseWaitEnable()
 	If GUICtrlRead($g_hChkCloseWhileTraining) = $GUI_CHECKED Then
 		$g_bCloseWhileTrainingEnable = True
 		_GUI_Value_STATE("ENABLE", $groupCloseWhileTraining)
-		_GUI_Value_STATE("ENABLE", $g_hLblCloseWaitingTroops & "#" & $g_hCmbMinimumTimeClose & "#" & $g_hLblSymbolWaiting & "#" & $g_hLblWaitingInMinutes)
+		_GUI_Value_STATE("ENABLE", $g_hLblCloseWaitingTroops & "#" & $g_hCmbMinimumTimeClose & "#" & $g_hLblSymbolWaiting & "#" & $g_hLblWaitingInMinutes & "#" & $chkTrainLogoutMaxTime & "#" & $txtTrainLogoutMaxTime & "#" &  $lblTrainLogoutMaxTime)
 	Else
 		$g_bCloseWhileTrainingEnable = False
 		_GUI_Value_STATE("DISABLE", $groupCloseWhileTraining)
-		_GUI_Value_STATE("DISABLE", $g_hLblCloseWaitingTroops & "#" & $g_hCmbMinimumTimeClose & "#" & $g_hLblSymbolWaiting & "#" & $g_hLblWaitingInMinutes)
+		_GUI_Value_STATE("DISABLE", $g_hLblCloseWaitingTroops & "#" & $g_hCmbMinimumTimeClose & "#" & $g_hLblSymbolWaiting & "#" & $g_hLblWaitingInMinutes & "#" & $chkTrainLogoutMaxTime & "#" & $txtTrainLogoutMaxTime & "#" & $lblTrainLogoutMaxTime)
 	EndIf
 	If GUICtrlRead($g_hChkRandomClose) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hChkCloseEmulator, BitOR($GUI_DISABLE, $GUI_UNCHECKED))

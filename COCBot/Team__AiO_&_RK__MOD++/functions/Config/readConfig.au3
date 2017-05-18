@@ -158,11 +158,16 @@ Func ReadConfig_MOD()
 
 	 ;Enabele\Disabele Watchdog by rulesss,kychera
 	 IniReadS($iChkLaunchWatchdog, $g_sProfileConfigPath, "Other", "chkLaunchWatchdog", 1, "Int")
+	 
 	 ;Custom drop troops by kychera
 	 IniReadS($g_bCustomTrainDropOrderEnable, $g_sProfileConfigPath, "troop2", "chkTroopDropOrder", False, "Bool")
 	For $p = 0 To UBound($icmbDropTroops) - 1
 		IniReadS($icmbDropTroops[$p], $g_sProfileConfigPath, "troop2", $g_asTroopNamesPluralDrop[$p] , -1)
 	Next
+	
+	;Max logout time( mandryd) - Added by rulesss
+	IniReadS($TrainLogoutMaxTime, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTime", 0, "int")
+	IniReadS($TrainLogoutMaxTimeTXT, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTimeTXT", 50, "int")
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen

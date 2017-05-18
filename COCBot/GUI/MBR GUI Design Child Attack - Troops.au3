@@ -62,6 +62,8 @@ Global $g_ahImgSpellsOrder[$eSpellCount] = [0,0,0,0,0,0,0,0,0,0]
 Global $g_hBtnSpellsOrderSet = 0, $g_ahImgSpellsOrderSet = 0
 Global $g_hBtnRemoveSpells
 
+;Max logout time
+Global $chkTrainLogoutMaxTime = 0,$txtTrainLogoutMaxTime = 4,$lblTrainLogoutMaxTime
 
 ; Options sub-tab
 Global $g_hChkCloseWhileTraining = 0, $g_hChkCloseWithoutShield = 0, $g_hChkCloseEmulator = 0, $g_hChkSuspendComputer = 0, $g_hChkRandomClose = 0, $g_hRdoCloseWaitExact = 0, _
@@ -934,7 +936,7 @@ Func CreateOptionsSubTab()
 
    Local $sTxtTip = ""
    Local $x = 25, $y = 45
-   GUICtrlCreateGroup(GetTranslated(641, 2, "Training Idle Time"), $x - 20, $y - 20, 151, 294)
+   GUICtrlCreateGroup(GetTranslated(641, 2, "Training Idle Time"), $x - 20, $y - 20, 171, 310)
 	   $g_hChkCloseWhileTraining = _GUICtrlCreateCheckbox(GetTranslated(641, 3, "Close While Training"), $x - 12, $y, 140, -1)
 	   GUICtrlSetState(-1, $GUI_UNCHECKED)
 	   _GUICtrlSetTip(-1, GetTranslated(641, 4, "Option will exit CoC game for time required to complete TROOP training when SHIELD IS ACTIVE") & @CRLF & _
@@ -1018,10 +1020,22 @@ Func CreateOptionsSubTab()
 	   _GUICtrlSetTip(-1, $sTxtTip)
 	   $g_hLblWaitingInMinutes = GUICtrlCreateLabel(GetTranslated(603, 10, -1), $x + 84, $y + 3, -1, -1)
 	   _GUICtrlSetTip(-1, $sTxtTip)
-   GUICtrlCreateGroup("", -99, -99, 1, 1)
-
-   $y += 53
-   GUICtrlCreateGroup(GetTranslated(636, 30, "Train Click Timing"), $x - 20, $y - 20, 151, 60)
+   
+  ;Max logout time( mandryd) - Added by rulesss    
+	$y += 26
+		$chkTrainLogoutMaxTime = _GUICtrlCreateCheckbox(GetTranslated(641, 69, "Max Logout Time: "), $x - 14, $y, -1, -1)
+			$sTxtTip = GetTranslated(641, 70, "Only allow logout for a maximum amount of time: ")
+			_GUICtrlSetTip(-1, $sTxtTip)
+		GUICtrlSetState(-1, $GUI_UNCHECKED)
+		GUICtrlSetOnEvent(-1, "chkTrainLogoutMaxTime")	
+		$txtTrainLogoutMaxTime = GUICtrlCreateInput("4", $x + 95, $y, 30, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+			GUICtrlSetTip(-1, $sTxtTip)
+			GUICtrlSetLimit(-1, 2)
+		$lblTrainLogoutMaxTime = GUICtrlCreateLabel(GetTranslated(641, 71, "Min"), $x + 127, $y + 2, -1, -1)
+	GUICtrlCreateGroup("", -99, -99, 1, 1)
+	
+   $y += 42
+   GUICtrlCreateGroup(GetTranslated(636, 30, "Train Click Timing"), $x - 20, $y - 20, 171, 60)
 	   $g_hLblTrainITDelay = GUICtrlCreateLabel(GetTranslated(636, 32, "delay"), $x - 10, $y, 37, 30)
 		  $sTxtTip = GetTranslated(636, 33, "Increase the delay if your PC is slow or to create human like training click speed")
 		  _GUICtrlSetTip(-1, $sTxtTip)
@@ -1037,7 +1051,7 @@ Func CreateOptionsSubTab()
 		  GUICtrlSetOnEvent(-1, "sldTrainITDelay")
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-   $x = 25 + 151 + 5
+   $x = 55 + 151 + 5
    $y = 45
    GUICtrlCreateGroup(GetTranslated(641,35, "Training Add Random Delay"), $x - 20, $y - 20, 173, 81)
    $y += 15
@@ -1060,4 +1074,5 @@ Func CreateOptionsSubTab()
 	   GUICtrlSetLimit(-1, 999)
 	   $g_hLblAddDelayIdlePhaseSec = GUICtrlCreateLabel(GetTranslated(603, 6, "sec."), $x+110, $y, 20, 30)
    GUICtrlCreateGroup("", -99, -99, 1, 1)
+   
 EndFunc
