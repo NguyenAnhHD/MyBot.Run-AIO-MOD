@@ -981,7 +981,7 @@ Func CreateOptionsSubTab()
 	   GUICtrlSetOnEvent(-1, "btnCloseWaitStopRandom")
 
    $y += 28
-	   $g_hRdoCloseWaitExact = _GUICtrlCreateRadio(GetTranslated(641, 16, "Exact Time"), $x + 18, $y + 1, 110, -1)
+	   $g_hRdoCloseWaitExact = GUICtrlCreateRadio(GetTranslated(641, 16, "Exact Time"), $x + 18, $y + 1, 110, -1)
 	   _GUICtrlSetTip(-1, GetTranslated(641, 17, "Select to wait exact time required for troops to complete training"))
 	   GUICtrlSetState(-1, $GUI_UNCHECKED)
 	   GUICtrlSetOnEvent(-1, "btnCloseWaitRandom")
@@ -989,7 +989,7 @@ Func CreateOptionsSubTab()
 	   _GUICtrlSetTip(-1, GetTranslated(641, 18, "Select how much time to wait when feature enables"))
 
    $y += 24
-	   $g_hRdoCloseWaitRandom = _GUICtrlCreateRadio(GetTranslated(641, 19, "Random Time"), $x + 18, $y + 1, 110, -1)
+	   $g_hRdoCloseWaitRandom = GUICtrlCreateRadio(GetTranslated(641, 19, "Random Time"), $x + 18, $y + 1, 110, -1)
 	   _GUICtrlSetTip(-1, GetTranslated(641, 20, "Select to ADD a random extra wait time like human who forgets to clash"))
 	   GUICtrlSetState(-1, $GUI_CHECKED)
 	   GUICtrlSetOnEvent(-1, "btnCloseWaitRandom")
@@ -1020,20 +1020,20 @@ Func CreateOptionsSubTab()
 	   _GUICtrlSetTip(-1, $sTxtTip)
 	   $g_hLblWaitingInMinutes = GUICtrlCreateLabel(GetTranslated(603, 10, -1), $x + 84, $y + 3, -1, -1)
 	   _GUICtrlSetTip(-1, $sTxtTip)
-   
-  ;Max logout time( mandryd) - Added by rulesss    
+
+  ;Max logout time( mandryd) - Added by rulesss
 	$y += 26
 		$chkTrainLogoutMaxTime = _GUICtrlCreateCheckbox(GetTranslated(641, 69, "Max Logout Time: "), $x - 14, $y, -1, -1)
 			$sTxtTip = GetTranslated(641, 70, "Only allow logout for a maximum amount of time: ")
 			_GUICtrlSetTip(-1, $sTxtTip)
 		GUICtrlSetState(-1, $GUI_UNCHECKED)
-		GUICtrlSetOnEvent(-1, "chkTrainLogoutMaxTime")	
+		GUICtrlSetOnEvent(-1, "chkTrainLogoutMaxTime")
 		$txtTrainLogoutMaxTime = GUICtrlCreateInput("4", $x + 95, $y, 30, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetLimit(-1, 2)
 		$lblTrainLogoutMaxTime = GUICtrlCreateLabel(GetTranslated(641, 71, "Min"), $x + 127, $y + 2, -1, -1)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
-	
+
    $y += 42
    GUICtrlCreateGroup(GetTranslated(636, 30, "Train Click Timing"), $x - 20, $y - 20, 171, 60)
 	   $g_hLblTrainITDelay = GUICtrlCreateLabel(GetTranslated(636, 32, "delay"), $x - 10, $y, 37, 30)
@@ -1074,5 +1074,5 @@ Func CreateOptionsSubTab()
 	   GUICtrlSetLimit(-1, 999)
 	   $g_hLblAddDelayIdlePhaseSec = GUICtrlCreateLabel(GetTranslated(603, 6, "sec."), $x+110, $y, 20, 30)
    GUICtrlCreateGroup("", -99, -99, 1, 1)
-   
+
 EndFunc

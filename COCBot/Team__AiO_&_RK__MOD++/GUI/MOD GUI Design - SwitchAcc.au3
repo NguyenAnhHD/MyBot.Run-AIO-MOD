@@ -48,12 +48,12 @@ Func CreateBotSwitchAcc()
 	GUICtrlSetData(-1, "1 Acc." & "|" & "2 Acc." & "|" & "3 Acc." & "|" & "4 Acc." & "|" & "5 Acc." & "|" & "6 Acc." & "|" & "7 Acc." & "|" & "8 Acc.")
 	GUICtrlSetTip(-1, $sTxtTip)
 
-	$radNormalSwitch = _GUICtrlCreateRadio(GetTranslated(109, 12, "Normal switch"), $x + 10, $y + 45, -1, 16)
+	$radNormalSwitch = GUICtrlCreateRadio(GetTranslated(109, 12, "Normal switch"), $x + 10, $y + 55, -1, 16)
 	GUICtrlSetTip(-1, GetTranslated(109, 13, "Switching accounts continously"))
 	GUICtrlSetState(-1, $GUI_CHECKED)
 	GUICtrlSetOnEvent(-1, "radNormalSwitch")
 
-	$radSmartSwitch = _GUICtrlCreateRadio(GetTranslated(109, 14, "Smart switch"), $x + 100, $y + 45, -1, 16)
+	$radSmartSwitch = GUICtrlCreateRadio(GetTranslated(109, 14, "Smart switch"), $x + 100, $y + 55, -1, 16)
 	GUICtrlSetTip(-1, GetTranslated(109, 15, "Switch to account with the shortest remain training time"))
 	GUICtrlSetOnEvent(-1, "radNormalSwitch")
 
@@ -80,10 +80,10 @@ Func CreateBotSwitchAcc()
 	GUICtrlSetTip(-1, $sTxtTip)
 
 	GUIStartGroup()
-	$radCloseCoC = _GUICtrlCreateRadio(GetTranslated(109, 26, "Close CoC"), $x + 10, $y + 30, -1, 16)
+	$radCloseCoC = GUICtrlCreateRadio(GetTranslated(109, 26, "Close CoC"), $x + 10, $y + 30, -1, 16)
 	GUICtrlSetState(-1, $GUI_CHECKED)
 
-	$radCloseAndroid = _GUICtrlCreateRadio(GetTranslated(109, 27, "Close Android"), $x + 100, $y + 30, -1, 16)
+	$radCloseAndroid = GUICtrlCreateRadio(GetTranslated(109, 27, "Close Android"), $x + 100, $y + 30, -1, 16)
 
 	$y += 60
 	GUICtrlCreateLabel(GetTranslated(109, 28, "Manually locate account coordinates"), $x, $y, -1, -1)

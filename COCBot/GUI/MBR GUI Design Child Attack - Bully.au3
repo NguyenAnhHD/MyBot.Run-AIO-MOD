@@ -72,10 +72,10 @@ Func CreateAttackSearchBully()
 		   GUICtrlCreateLabel(GetTranslated(629,8, "When found, Attack with settings from")&":", $x + 10, $y, -1, -1, $SS_RIGHT)
            GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 		   $y += 14
-		   $g_hRadBullyUseDBAttack = _GUICtrlCreateRadio(GetTranslated(629,9, "DeadBase Atk."), $x + 20, $y, -1, -1)
+		   $g_hRadBullyUseDBAttack = GUICtrlCreateRadio(GetTranslated(629,9, "DeadBase Atk."), $x + 20, $y, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(629,10, "Use Dead Base attack settings when attacking a TH Bully match."))
 			   GUICtrlSetState(-1, $GUI_CHECKED)
-		   $g_hRadBullyUseLBAttack = _GUICtrlCreateRadio(GetTranslated(629,11, "Active Base Atk."), $x + 115, $y, -1, -1)
+		   $g_hRadBullyUseLBAttack = GUICtrlCreateRadio(GetTranslated(629,11, "Active Base Atk."), $x + 115, $y, -1, -1)
 			   _GUICtrlSetTip(-1, GetTranslated(629,12, "Use Active Base attack settings when attacking a TH Bully match."))
 	   GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
