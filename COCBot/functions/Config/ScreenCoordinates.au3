@@ -15,25 +15,25 @@ Global $aCenterEnemyVillageClickDrag = [65, 545] ; Scroll village using this loc
 Global $aCenterHomeVillageClickDrag = [160, 665] ; Scroll village using this location in the water
 Global $aIsReloadError[4] = [457, 301 + $g_iMidOffsetY, 0x33B5E5, 10] ; Pixel Search Check point For All Reload Button errors, except break ending
 ;Global $aIsMain[4] = [284, 28, 0x41B1CD, 20] ; Main Screen, Builder Left Eye
-Global $aIsMain[4] = [283, 29, 0x4693BD, 20] ; Main Screen, Builder Left Eye :SC_okt
+Global $aIsMain[4] = [285, 29, 0x260C11, 20] ; Main Screen, Builder Left Eye :SC_oktcc
 
 Global $aIsDPI125[4] = [355, 35, 0x399CB8, 15] ; Main Screen, Builder Left Eye, DPI set to 125%
 Global $aIsDPI150[4] = [426, 42, 0x348FAA, 15] ; Main Screen, Builder Left Eye, DPI set to 150%
 ;Global $aIsMainGrayed[4] = [284, 28, 0x215B69, 15] ; Main Screen Grayed, Builder Left Eye
-Global $aIsMainGrayed[4] = [284, 29, 0x120808, 15] ; Main Screen Grayed, Builder Left Eye :SC_okt
+Global $aIsMainGrayed[4] = [285, 29, 0x260C11, 15] ; Main Screen Grayed, Builder Left Eye :SC_oktcc
 
-Global $aTopLeftClient[4] = [1, 1, 0x000000, 0] ; TopLeftClient: Tolerance not needed
-Global $aTopMiddleClient[4] = [475, 1, 0x000000, 0] ; TopMiddleClient: Tolerance not needed
-Global $aTopRightClient[4] = [850, 1, 0x000000, 0] ; TopRightClient: Tolerance not needed
-Global $aBottomRightClient[4] = [850, 675 + $g_iBottomOffsetY, 0x000000, 0] ; BottomRightClient: Tolerance not needed
+Global $aTopLeftClient[4] = [1, 1, 0x000000, 0] ; TopLeftClient: Tolerance not neededcc
+Global $aTopMiddleClient[4] = [1, 1, 0x000000, 0] ; TopMiddleClient: Tolerance not cc
+Global $aTopRightClient[4] = [1, 1, 0x000000, 0] ; TopRightClient: Tolerance not neededcc
+Global $aBottomRightClient[4] = [1, 1, 0x000000, 0] ; BottomRightClient: Tolerance not neededcc
 Global $aIsInactive[4] = [457, 300 + $g_iMidOffsetY, 0x33B5E5, 20] ; COC message : 'Anyone there?'
 Global $aIsConnectLost[4] = [255, 271 + $g_iMidOffsetY, 0x33B5E5, 20] ; COC message : 'Connection Lost' network error or annother device
 Global $aIsCheckOOS[4] = [223, 272 + $g_iMidOffsetY, 0x33B5E5, 20] ; COC message : 'Connection Lost' network error or annother device
 Global $aIsMaintenance[4] = [350, 273 + $g_iMidOffsetY, 0x33B5E5, 20] ; COC message : 'Anyone there?'
 Global $aReloadButton[4] = [443, 408 + $g_iMidOffsetY, 0x282828, 10] ; Reload Coc Button after Out of Sync, 860x780
 Global $aAttackButton[2] = [60, 614 + $g_iBottomOffsetY] ; Attack Button, Main Screen
-Global $aFindMatchButton[4] = [195, 480 + $g_iBottomOffsetY, 0xF0B028, 10] ; Find Multiplayer Match Button, Attack Screen 860x780 without shield
-Global $aFindMatchButton2[4] = [195, 480 + $g_iBottomOffsetY, 0xD84D00, 10] ; Find Multiplayer Match Button, Attack Screen 860x780 with shield
+Global $aFindMatchButton[4] = [214,523 ,0xFFFFFF, 20] ; Find Multiplayer Match Button, Attack Screen 860x780 without shieldcc
+Global $aFindMatchButton2[4] = [215,568, 0xFFFFFF, 10] ; Find Multiplayer Match Button, Attack Screen 860x780 with shieldcc
 Global $aIsAttackShield[4] = [250, 415 + $g_iMidOffsetY, 0xE8E8E0, 10] ; Attack window, white shield verification window
 Global $aAway[2] = [1, 40] ; Away click, moved from 1,1 to prevent scroll window from top
 Global $aRemoveShldButton[4] = [470, 18, 0xA80408, 10] ; Legacy - Main Screen, Red pixel lower part of Minus sign to remove shield, used to validate latest COC installed
@@ -65,7 +65,7 @@ Global $aLanguageCheck2[4] = [329, 9, 0x060706, 20] ; Main Screen Test Language 
 Global $aLanguageCheck3[4] = [348, 12, 0x040403, 20] ; Main Screen Test Language for word 'Builders'
 Global $aLanguageCheck4[4] = [354, 11, 0x090908, 20] ; Main Screen Test Language for word 'Builders'
 Global $aTrophies[2] = [72, 85] ; Main Screen, Trophies
-Global $aNoCloudsAttack[4] = [25, 606, 0xC00000, 10] ; Attack Screen: No More Clouds
+Global $aNoCloudsAttack[4] = [30, 594, 0xFFFFFF, 20] ; Attack Screen: No More Clouds cc
 Global $aMessageButton[2] = [38, 143] ; Main Screen, Message Button
 Global $aArmyTrainButton[2] = [40, 525 + $g_iBottomOffsetY] ; Main Screen, Army Train Button
 Global $aWonOneStar[4] = [714, 538 + $g_iBottomOffsetY, 0xC0C8C0, 20] ; Center of 1st Star for winning attack on enemy
@@ -87,7 +87,7 @@ Global $aIsGemWindow3[4] = [586, 266 + $g_iMidOffsetY, 0xBC1218, 20] ; Main Scre
 Global $aIsGemWindow4[4] = [595, 266 + $g_iMidOffsetY, 0xBC1218, 20] ; Main Screen, pixel below Red X to close gem window
 Global $aLootCartBtn[2] = [430, 640 + $g_iBottomOffsetY] ; Main Screen Loot Cart button
 Global $aCleanYard[4] = [418, 587 + $g_iBottomOffsetY, 0xE1debe, 20] ; Main Screen Clean Resources - Trees , Mushrooms etc
-Global $aIsTrainPgChk1[4] = [812, 97 + $g_iMidOffsetY, 0xE0070A, 10] ; Main Screen, Train page open - Red below X
+Global $aIsTrainPgChk1[4] = [828, 124 , 0xFFFFFF, 10] ; Main Screen, Train page open - Red below X cc
 Global $aIsTrainPgChk2[4] = [762, 328 + $g_iMidOffsetY, 0xF18439, 10] ; Main Screen, Train page open - Dark Orange in left arrow
 Global $aRtnHomeCloud1[4] = [56, 592 + $g_iBottomOffsetY, 0x0A223F, 15] ; Cloud Screen, during search, blue pixel in left eye
 Global $aRtnHomeCloud2[4] = [72, 592 + $g_iBottomOffsetY, 0x103F7E, 15] ; Cloud Screen, during search, blue pixel in right eye
@@ -103,11 +103,11 @@ Global $aAttackForTreasury[4] = [88, 619 + $g_iMidOffsetY, 0xF0EBE8, 5] ; Red pi
 
 ; Check healthy color RGB ( 220,255,19~27) ; the king and queen haves the same Y , but warden is a little lower ...
 ; King Crown ; background pixel not at green bar
-Global $aKingHealth = [-1, 569 + $g_iBottomOffsetY, 0x00D500, 15] ; Attack Screen, Check King's Health, X coordinate is dynamic, not used from array   ;  -> with slot compensation 0xbfb29e
+Global $aKingHealth = [-1, 569 + $g_iBottomOffsetY, 0x543e20, 15] ; Attack Screen, Check King's Health, X coordinate is dynamic, not used from array   ;  -> with slot compensation 0xbfb29e
 ; Queen purple between crown ; background pixel not at green bar
-Global $aQueenHealth = [-1, 569 + $g_iBottomOffsetY, 0x00D500, 15] ; Attack Screen, Check Queen's Health, X coordinate is dynamic, not used from array  ;  -> with slot compensation 0xe08227
+Global $aQueenHealth = [-1, 569 + $g_iBottomOffsetY, 0x4b35b5, 15] ; Attack Screen, Check Queen's Health, X coordinate is dynamic, not used from array  ;  -> with slot compensation 0xe08227
 ; Warden hair ; background pixel not at green bar
-Global $aWardenHealth = [-1, 569 + $g_iBottomOffsetY, 0x00D500, 15] ; Attack Screen, Check Warden's Health, X coordinate is dynamic, not used from array  ;  -> with slot compensation 0xe08227
+Global $aWardenHealth = [-1, 569 + $g_iBottomOffsetY, 0xd2696c, 15] ; Attack Screen, Check Warden's Health, X coordinate is dynamic, not used from array  ;  -> with slot compensation 0xe08227
 
 
 ;attack report... stars won
@@ -133,7 +133,7 @@ Global $aWonThreeStarAtkRprt[4] = [534, 180 + $g_iMidOffsetY, 0xC8CAC7, 30] ; Ce
 #ce
 ;	pixel color: location information								BS 850MB (Reg GFX), BS 500MB (Med GFX) : location
 
-Global $NextBtn[4] = [780, 546 + $g_iBottomOffsetY, 0xD34300, 20] ;  Next Button
+Global $NextBtn[4] = [770, 560, 0xFFFFFF, 20] ;  Next Button cc
 ; Someone asking troops : Color 0xD0E978 in x = 121
 
 ; 1 - Green : available | 2 - Dark gray : request allready made | 3 - Light gray : Castle filled/No Castle
@@ -156,7 +156,7 @@ Global Const $aRtnHomeCheck2[4] = [497, 548 + $g_iMidOffsetY, 0x79C326, 20]
 Global Const $aSearchLimit[6] = [19, 565, 104, 580, 0xD9DDCF, 10] ; (kaganus) no idea what this is for
 
 ;inattackscreen
-Global Const $aIsAttackPage[4] = [70, 548 + $g_iBottomOffsetY, 0xC80000, 20] ; red button "end battle" 860x780
+Global Const $aIsAttackPage[4] = [30, 594, 0xFFFFFF, 20] ; red button "end battle" 860x780 cc
 
 ; Bluestacks Menu - replaced with shortcut keys due removal or BS menu bar
 ;Global Const $aBSBackButton[4] = [ 50, 700 + $g_iBottomOffsetY, 0x000000, 10] ; Bluestacks V0.9. - V0.10. back button
@@ -174,5 +174,5 @@ Global Const $ProfileRep01[4] = [600, 260, 0x71769F, 20] ; If colorcheck then vi
 
 Global $aArmyTrainButtonRND[4] = [20, 540 + $g_iMidOffsetY, 55, 570 + $g_iMidOffsetY] ; Main Screen, Army Train Button, RND  Screen 860x732
 Global $aAttackButtonRND[4] = [20, 610 + $g_iMidOffsetY, 100, 670 + $g_iMidOffsetY] ; Attack Button, Main Screen, RND  Screen 860x732
-Global $aFindMatchButtonRND[4] = [200, 510 + $g_iMidOffsetY, 300, 530 + $g_iMidOffsetY] ; Find Multiplayer Match Button, Both Shield or without shield Screen 860x732
-Global $NextBtnRND[4] = [710, 530 + $g_iMidOffsetY, 830, 570 + $g_iMidOffsetY] ;  Next Button
+Global $aFindMatchButtonRND[4] = [214,523 ,0xFFFFFF, 20] ; Find Multiplayer Match Button, Both Shield or without shield Screen 860x732 111
+Global $NextBtnRND[4] = [770,560 ,0xFFFFFF, 20] ;  Next Button cc
