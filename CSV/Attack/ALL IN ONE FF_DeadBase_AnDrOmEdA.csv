@@ -1,0 +1,211 @@
+NOTE  |Author: Cosote - ver. 1.6 - 2016-04-30
+NOTE  |modified by AnDrOmEdA  18-11-2016 ALL IN ONE
+NOTE  |Gibarch FFF (Fast Four Fingers)
+NOTE  |Attack: FF Gibarch, +2 tile from redline
+NOTE  |Make these Troops: Barbarians 50%, Archers 50%, 4-12 Giants, 4-16 Hogs, 1-4 P.E.K.K.A's, 1-4 Golems, 4-8 Wall Breakers
+NOTE  |Will drop ALL KIND OF TROOPS All Heroes and Castle if enabled from GUI
+
+      |---------------------------------------- four fingers gibarch start -----------------------------|
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |1          |1          |           |           |           |           |           |           |
+
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|MAKE BARBARIAN VECTORS
+MAKE  |A          |FRONT-RIGHT|15         |1          |INT-EXT    |2          |2          |           |
+MAKE  |B          |FRONT-LEFT |15         |1          |INT-EXT    |2          |2          |           |
+MAKE  |C          |RIGHT-FRONT|15         |1          |INT-EXT    |2          |2          |           |
+MAKE  |D          |LEFT-FRONT |15         |1          |INT-EXT    |2          |2          |           |
+MAKE  |E          |BACK-RIGHT |15         |1          |INT-EXT    |2          |2          |           |
+MAKE  |F          |BACK-LEFT  |15         |1          |INT-EXT    |2          |2          |           |
+MAKE  |G          |RIGHT-BACK |15         |1          |INT-EXT    |2          |2          |           |
+MAKE  |H          |LEFT-BACK  |15         |1          |INT-EXT    |2          |2          |           |
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|MAKE VECTORS TO DROP KINK, QUEEN and CASTLE
+MAKE  |Q          |RANDOM     |70         |1          |INT-EXT    |2          |2          |           |random side to drop king, at 1 tile from redarea
+MAKE  |R          |RANDOM     |70         |3          |INT-EXT    |2          |2          |           |random side to drop queen and castle, at 3 tiles from redarea
+
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|DROP BARB, ARCH, GIANT
+DROP  |A-B        |5          |1          |gole       |0          |0          |500-800    |           |launch gole using all 4 vectors concurrently...               2 gole
+DROP  |A-B        |5          |1          |pekk       |0          |0          |500-800    |           |launch pekk using all 4 vectors concurrently...               2 pekk
+DROP  |A-B        |5          |1          |Lava       |30-50      |40-70      |2000-3000  |           |launch Lava using all 4 vectors concurrently...               2 Lava
+DROP  |A-B        |1,3,5,7,9  |5          |barb       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 barb
+DROP  |A-B        |6          |1          |giant      |30-50      |40-70      |500-800    |           |launch giants using all 4 vectors concurrently...             2 giant
+DROP  |A-B        |6          |1          |Drag       |30-50      |40-70      |500-800    |           |launch drags using all 4 vectors concurrently...              2 Drag
+DROP  |A-B        |6          |1          |BabyD      |30-50      |40-70      |500-800    |           |launch BabyD using all 4 vectors concurrently...             2 giant
+DROP  |A-B        |6          |2          |Ball       |30-50      |40-70      |200-300    |           |launch balloons using all 4 vectors concurrently...           2 ball
+DROP  |A-B        |3,5,7      |3          |Mini       |30-50      |40-70      |200-300    |           |launch minions using all 4 vectors concurrently...            6 Mini
+DROP  |A-B        |3,5,7      |3          |Gobl       |30-50      |40-70      |200-300    |           |launch Goblins using all 4 vectors concurrently...            6 Gobl
+DROP  |A-B        |5-8        |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             2 Mine
+DROP  |A-B        |6          |1          |Bowl       |30-50      |40-70      |200-300    |           |launch bowlers using all 4 vectors concurrently...            2 Bowl
+DROP  |A-B        |1,3,5,7,9  |5          |arch       |30-50      |40-70      |200-300    |           |launch archs all 4 vectors concurrently...                   10 arch
+DROP  |A-B        |7          |2          |hogs       |30-50      |40-70      |200-300    |           |launch hogs using all 4 vectors concurrently...               4 hogs
+DROP  |A-B        |6          |1          |valk       |30-50      |40-70      |200-300    |           |launch valk using all 4 vectors concurrently...               2 valk
+DROP  |A-B        |6          |1          |wiza       |30-50      |40-70      |200-300    |           |launch wizards using all 4 vectors concurrently...            2 wiza
+DROP  |A-B        |6          |1          |Witc       |30-50      |40-70      |200-300    |           |launch witches using all 4 vectors concurrently...            2 Witc
+DROP  |A-B        |6          |1          |heal       |30-50      |40-70      |200-300    |           |launch healers using all 4 vectors concurrently...            2 heal
+DROP  |A          |3          |1          |king       |0          |40-70      |200-300    |           |launch King                                                     king
+DROP  |A          |3          |1          |queen      |0          |40-70      |200-300    |           |launch Queen                                                    queen
+DROP  |A          |3          |1          |castle     |0          |40-70      |200-300    |           |launch Castle                                                   castle
+DROP  |A          |3          |1          |Warden     |0          |40-70      |200-300    |           |launch Grand Warden                                             warden
+DROP  |C-D        |1,3,5,7,9  |5          |barb       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 barb
+DROP  |C-D        |6          |1          |giant      |30-50      |40-70      |500-800    |           |launch giants using all 4 vectors concurrently...             2 giant
+DROP  |C-D        |6          |1          |Drag       |30-50      |40-70      |500-800    |           |launch drags using all 4 vectors concurrently...              2 Drag
+DROP  |C-D        |6          |1          |BabyD      |30-50      |40-70      |500-800    |           |launch BabyD using all 4 vectors concurrently...             2 giant
+DROP  |C-D        |6          |2          |Ball       |30-50      |40-70      |200-300    |           |launch balloons using all 4 vectors concurrently...           2 ball
+DROP  |C-D        |3,5,7      |3          |Mini       |30-50      |40-70      |200-300    |           |launch minions using all 4 vectors concurrently...            6 Mini
+DROP  |C-D        |3,5,7      |3          |Gobl       |30-50      |40-70      |200-300    |           |launch Goblins using all 4 vectors concurrently...            6 Gobl
+DROP  |C-D        |5-8        |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             2 Mine
+DROP  |C-D        |6          |1          |Bowl       |30-50      |40-70      |200-300    |           |launch bowlers using all 4 vectors concurrently...            2 Bowl
+DROP  |C-D        |1,3,5,7,9  |5          |arch       |30-50      |40-70      |200-300    |           |launch archs using all 4 vectors concurrently...             10 arch
+DROP  |C-D        |7          |2          |hogs       |30-50      |40-70      |200-300    |           |launch hogs using all 4 vectors concurrently...               4 hogs
+DROP  |C-D        |6          |1          |valk       |30-50      |40-70      |200-300    |           |launch valk using all 4 vectors concurrently...               2 valk
+DROP  |C-D        |6          |1          |wiza       |30-50      |40-70      |200-300    |           |launch wizards using all 4 vectors concurrently...            2 wiza
+DROP  |C-D        |6          |1          |Witc       |30-50      |40-70      |200-300    |           |launch witches using all 4 vectors concurrently...            2 Witc
+DROP  |C-D        |6          |1          |heal       |30-50      |40-70      |200-300    |           |launch healers using all 4 vectors concurrently...            2 heal
+DROP  |A-B-C-D    |6          |2          |wall       |0          |0          |0          |           |launch wall using all 4 vectors concurrently...               8 wall
+DROP  |E-F        |5          |1          |gole       |0          |0          |500-800    |           |launch gole using all 4 vectors concurrently...               2 gole
+DROP  |E-F        |5          |1          |pekk       |0          |0          |500-800    |           |launch pekk using all 4 vectors concurrently...               2 pekk
+DROP  |E-F        |5          |1          |Lava       |30-50      |40-70      |2000-3000  |           |launch Lava using all 4 vectors concurrently...               2 Lava
+DROP  |E-F        |1,3,5,7,9  |5          |barb       |30-50      |40-70      |0          |           |launch barbarians using all 4 vectors concurrently...        10 barb
+DROP  |E-F        |6          |1          |giant      |30-50      |40-70      |500-800    |           |launch giants using all 4 vectors concurrently...             2 giant
+DROP  |E-F        |6          |1          |Drag       |30-50      |40-70      |500-800    |           |launch drags using all 4 vectors concurrently...              2 Drag
+DROP  |E-F        |6          |1          |BabyD      |30-50      |40-70      |500-800    |           |launch BabyD using all 4 vectors concurrently...             2 giant
+DROP  |E-F        |6          |2          |Ball       |30-50      |40-70      |200-300    |           |launch balloons using all 4 vectors concurrently...           2 ball
+DROP  |E-F        |3,5,7      |3          |Mini       |30-50      |40-70      |200-300    |           |launch minions using all 4 vectors concurrently...            6 Mini
+DROP  |E-F        |3,5,7      |3          |Gobl       |30-50      |40-70      |200-300    |           |launch Goblins using all 4 vectors concurrently...            6 Gobl
+DROP  |E-F        |5-8        |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             2 Mine
+DROP  |E-F        |6          |1          |Bowl       |30-50      |40-70      |200-300    |           |launch bowlers using all 4 vectors concurrently...            2 Bowl
+DROP  |E-F        |1,3,5,7,9  |5          |arch       |30-50      |40-70      |200-300    |           |launch archs using all 4 vectors concurrently...             10 arch
+DROP  |E-F        |7          |2          |hogs       |30-50      |40-70      |200-300    |           |launch hogs using all 4 vectors concurrently...               4 hogs
+DROP  |E-F        |6          |1          |valk       |30-50      |40-70      |200-300    |           |launch valk using all 4 vectors concurrently...               2 valk
+DROP  |E-F        |6          |1          |wiza       |30-50      |40-70      |200-300    |           |launch wizards using all 4 vectors concurrently...            2 wiza
+DROP  |E-F        |6          |1          |Witc       |30-50      |40-70      |200-300    |           |launch witches using all 4 vectors concurrently...            2 Witc
+DROP  |E-F        |6          |1          |heal       |30-50      |40-70      |200-300    |           |launch healers using all 4 vectors concurrently...            2 heal
+DROP  |G-H        |1,3,5,7,9  |5          |barb       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 barb
+DROP  |G-H        |6          |1          |giant      |30-50      |40-70      |500-800    |           |launch giants using all 4 vectors concurrently...             2 giant
+DROP  |G-H        |6          |1          |Drag       |30-50      |40-70      |500-800    |           |launch drags using all 4 vectors concurrently...              2 Drag
+DROP  |G-H        |6          |1          |BabyD      |30-50      |40-70      |500-800    |           |launch BabyD using all 4 vectors concurrently...             2 giant
+DROP  |G-H        |6          |2          |Ball       |30-50      |40-70      |200-300    |           |launch balloons using all 4 vectors concurrently...           2 ball
+DROP  |G-H        |3,5,7      |3          |Mini       |30-50      |40-70      |200-300    |           |launch minions using all 4 vectors concurrently...            6 Mini
+DROP  |G-H        |3,5,7      |3          |Gobl       |30-50      |40-70      |200-300    |           |launch Goblins using all 4 vectors concurrently...            6 Gobl
+DROP  |G-H        |5-8        |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             2 Mine
+DROP  |G-H        |6          |1          |Bowl       |30-50      |40-70      |200-300    |           |launch bowlers using all 4 vectors concurrently...            2 Bowl
+DROP  |G-H        |1,3,5,7,9  |5          |arch       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 arch
+DROP  |G-H        |7          |2          |hogs       |30-50      |40-70      |200-300    |           |launch hogs using all 4 vectors concurrently...               4 hogs
+DROP  |G-H        |6          |1          |valk       |30-50      |40-70      |200-300    |           |launch valk using all 4 vectors concurrently...               2 valk
+DROP  |G-H        |6          |1          |wiza       |30-50      |40-70      |200-300    |           |launch wizards using all 4 vectors concurrently...            2 wiza
+DROP  |G-H        |6          |1          |Witc       |30-50      |40-70      |200-300    |           |launch witches using all 4 vectors concurrently...            2 Witc
+DROP  |G-H        |6          |1          |heal       |30-50      |40-70      |200-300    |           |launch healers using all 4 vectors concurrently...            2 heal
+DROP  |E-F-G-H    |6          |2          |wall       |0          |40-70      |0          |           |launch wall using all 4 vectors concurrently...               8 wall
+DROP  |A-B        |2,4,6,8,10 |5          |barb       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 barb
+DROP  |A-B        |6          |1          |giant      |30-50      |40-70      |500-800    |           |launch giants using all 4 vectors concurrently...             2 giant
+DROP  |A-B        |6          |1          |Drag       |30-50      |40-70      |500-800    |           |launch drags using all 4 vectors concurrently...              2 Drag
+DROP  |A-B        |6          |1          |BabyD      |30-50      |40-70      |500-800    |           |launch BabyD using all 4 vectors concurrently...             2 giant
+DROP  |A-B        |6          |2          |Ball       |30-50      |40-70      |200-300    |           |launch balloons using all 4 vectors concurrently...           2 ball
+DROP  |A-B        |3,5,7      |3          |Mini       |30-50      |40-70      |200-300    |           |launch minions using all 4 vectors concurrently...            6 Mini
+DROP  |A-B        |3,5,7      |3          |Gobl       |30-50      |40-70      |200-300    |           |launch Goblins using all 4 vectors concurrently...            6 Gobl
+DROP  |A-B        |5-8        |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             2 Mine
+DROP  |A-B        |6          |1          |Bowl       |30-50      |40-70      |200-300    |           |launch bowlers using all 4 vectors concurrently...            2 Bowl
+DROP  |A-B        |2,4,6,8,10 |5          |arch       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 arch
+DROP  |A-B        |7          |2          |hogs       |30-50      |40-70      |200-300    |           |launch hogs using all 4 vectors concurrently...               4 hogs
+DROP  |A-B        |6          |1          |valk       |30-50      |40-70      |200-300    |           |launch valk using all 4 vectors concurrently...               2 valk
+DROP  |A-B        |6          |1          |wiza       |30-50      |40-70      |200-300    |           |launch wizards using all 4 vectors concurrently...            2 wiza
+DROP  |A-B        |6          |1          |Witc       |30-50      |40-70      |200-300    |           |launch witches using all 4 vectors concurrently...            2 Witc
+DROP  |A-B        |6          |1          |heal       |30-50      |40-70      |200-300    |           |launch healers using all 4 vectors concurrently...            2 heal
+DROP  |C-D        |2,4,6,8,10 |5          |barb       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 barb
+DROP  |C-D        |6          |1          |giant      |30-50      |40-70      |500-800    |           |launch giants using all 4 vectors concurrently...             2 giant
+DROP  |C-D        |6          |1          |Drag       |30-50      |40-70      |500-800    |           |launch drags using all 4 vectors concurrently...              2 Drag
+DROP  |C-D        |6          |1          |BabyD      |30-50      |40-70      |500-800    |           |launch BabyD using all 4 vectors concurrently...             2 giant
+DROP  |C-D        |6          |2          |Ball       |30-50      |40-70      |200-300    |           |launch balloons using all 4 vectors concurrently...           2 ball
+DROP  |C-D        |3,5,7      |3          |Mini       |30-50      |40-70      |200-300    |           |launch minions using all 4 vectors concurrently...            6 Mini
+DROP  |C-D        |3,5,7      |3          |Gobl       |30-50      |40-70      |200-300    |           |launch Goblins using all 4 vectors concurrently...            6 Gobl
+DROP  |C-D        |5-8        |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             2 Mine
+DROP  |C-D        |6          |1          |Bowl       |30-50      |40-70      |200-300    |           |launch bowlers using all 4 vectors concurrently...            2 Bowl
+DROP  |C-D        |2,4,6,8,10 |5          |arch       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 arch
+DROP  |C-D        |7          |2          |hogs       |30-50      |40-70      |200-300    |           |launch hogs using all 4 vectors concurrently...               4 hogs
+DROP  |C-D        |6          |1          |valk       |30-50      |40-70      |200-300    |           |launch valk using all 4 vectors concurrently...               2 valk
+DROP  |C-D        |6          |1          |wiza       |30-50      |40-70      |200-300    |           |launch wizards using all 4 vectors concurrently...            2 wiza
+DROP  |C-D        |6          |1          |Witc       |30-50      |40-70      |200-300    |           |launch witches using all 4 vectors concurrently...            2 Witc
+DROP  |C-D        |6          |1          |heal       |30-50      |40-70      |200-300    |           |launch healers using all 4 vectors concurrently...            2 heal
+DROP  |E-F        |2,4,6,8,10 |5          |barb       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 barb
+DROP  |E-F        |6          |1          |giant      |30-50      |40-70      |500-800    |           |launch giants using all 4 vectors concurrently...             2 giant
+DROP  |E-F        |6          |1          |Drag       |30-50      |40-70      |500-800    |           |launch drags using all 4 vectors concurrently...              2 Drag
+DROP  |E-F        |6          |1          |BabyD      |30-50      |40-70      |500-800    |           |launch BabyD using all 4 vectors concurrently...             2 giant
+DROP  |E-F        |6          |2          |Ball       |30-50      |40-70      |200-300    |           |launch balloons using all 4 vectors concurrently...           2 ball
+DROP  |E-F        |3,5,7      |3          |Mini       |30-50      |40-70      |200-300    |           |launch minions using all 4 vectors concurrently...            6 Mini
+DROP  |E-F        |3,5,7      |3          |Gobl       |30-50      |40-70      |200-300    |           |launch Goblins using all 4 vectors concurrently...            6 Gobl
+DROP  |E-F        |5-8        |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             2 Mine
+DROP  |E-F        |6          |1          |Bowl       |30-50      |40-70      |200-300    |           |launch bowlers using all 4 vectors concurrently...            2 Bowl
+DROP  |E-F        |2,4,6,8,10 |5          |arch       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 arch
+DROP  |E-F        |7          |2          |hogs       |30-50      |40-70      |200-300    |           |launch hogs using all 4 vectors concurrently...               4 hogs
+DROP  |E-F        |6          |1          |valk       |30-50      |40-70      |200-300    |           |launch valk using all 4 vectors concurrently...               2 valk
+DROP  |E-F        |6          |1          |wiza       |30-50      |40-70      |200-300    |           |launch wizards using all 4 vectors concurrently...            2 wiza
+DROP  |E-F        |6          |1          |Witc       |30-50      |40-70      |200-300    |           |launch witches using all 4 vectors concurrently...            2 Witc
+DROP  |E-F        |6          |1          |heal       |30-50      |40-70      |200-300    |           |launch healers using all 4 vectors concurrently...            2 heal
+DROP  |G-H        |2,4,6,8,10 |5          |barb       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 barb
+DROP  |G-H        |6          |1          |giant      |30-50      |40-70      |500-800    |           |launch giants using all 4 vectors concurrently...             2 giant
+DROP  |G-H        |6          |1          |Drag       |30-50      |40-70      |500-800    |           |launch drags using all 4 vectors concurrently...              2 Drag
+DROP  |G-H        |6          |1          |BabyD      |30-50      |40-70      |500-800    |           |launch BabyD using all 4 vectors concurrently...             2 giant
+DROP  |G-H        |5-8        |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             2 Mine
+DROP  |G-H        |6          |1          |Bowl       |30-50      |40-70      |200-300    |           |launch bowlers using all 4 vectors concurrently...            2 Bowl
+DROP  |G-H        |2,4,6,8,10 |5          |arch       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        10 arch
+DROP  |G-H        |6          |2          |Ball       |30-50      |40-70      |200-300    |           |launch balloons using all 4 vectors concurrently...           2 ball
+DROP  |G-H        |3,5,7      |3          |Mini       |30-50      |40-70      |200-300    |           |launch minions using all 4 vectors concurrently...            6 Mini
+DROP  |G-H        |3,5,7      |3          |Gobl       |30-50      |40-70      |200-300    |           |launch Goblins using all 4 vectors concurrently...            6 Gobl
+DROP  |G-H        |5-8        |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             2 Mine
+DROP  |G-H        |7          |2          |hogs       |30-50      |40-70      |200-300    |           |launch hogs using all 4 vectors concurrently...               4 hogs
+DROP  |G-H        |6          |1          |valk       |30-50      |40-70      |200-300    |           |launch valk using all 4 vectors concurrently...               2 valk
+DROP  |G-H        |6          |1          |wiza       |30-50      |40-70      |200-300    |           |launch wizards using all 4 vectors concurrently...            2 wiza
+DROP  |G-H        |6          |1          |Witc       |30-50      |40-70      |200-300    |           |launch witches using all 4 vectors concurrently...            2 Witc
+DROP  |G-H        |6          |1          |heal       |30-50      |40-70      |200-300    |           |launch healers using all 4 vectors concurrently...            2 heal
+
+DROP  |D-C-B-A    |1,3,5,7,9  |5          |barb       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        20 barb
+DROP  |D-C-B-A    |6          |1          |giant      |30-50      |40-70      |500-800    |           |launch giants using all 4 vectors concurrently...             4 giant
+DROP  |D-C-B-A    |6          |1          |BabyD      |30-50      |40-70      |500-800    |           |launch BabyD using all 4 vectors concurrently...             4 giant
+DROP  |D-C-B-A    |6          |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             4 Mine
+DROP  |D-C-B-A    |6          |1          |Bowl       |30-50      |40-70      |200-300    |           |launch bowlers using all 4 vectors concurrently...            4 Bowl
+DROP  |D-C B-A    |1,3,5,7,9  |5          |arch       |30-50      |40-70      |200-300    |           |launch archs using all 4 vectors concurrently...             20 arch
+DROP  |D-C-B-A    |6          |2          |Ball       |30-50      |40-70      |200-300    |           |launch balloons using all 4 vectors concurrently...           8 ball
+DROP  |D-C-B-A    |3,5,7      |3          |Mini       |30-50      |40-70      |200-300    |           |launch minions using all 4 vectors concurrently...           12 Mini
+DROP  |D-C-B-A    |3,5,7      |3          |Gobl       |30-50      |40-70      |200-300    |           |launch Goblins using all 4 vectors concurrently...           12 Gobl
+DROP  |D-C-B-A    |6          |1          |valk       |30-50      |40-70      |200-300    |           |launch valk using all 4 vectors concurrently...               4 valk
+DROP  |D-C-B-A    |6          |1          |wiza       |30-50      |40-70      |200-300    |           |launch wizards using all 4 vectors concurrently...            4 wiza
+DROP  |D-C-B-A    |6          |1          |Witc       |30-50      |40-70      |200-300    |           |launch witches using all 4 vectors concurrently...            4 Witc
+
+DROP  |H-G-F-E    |2,4,6,8,10 |5          |barb       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        20 barb
+DROP  |H-G-F-E    |6          |1          |giant      |30-50      |40-70      |500-800    |           |launch giants using all 4 vectors concurrently...             4 giant
+DROP  |H-G-F-E    |6          |1          |BabyD      |30-50      |40-70      |500-800    |           |launch BabyD using all 4 vectors concurrently...             4 giant
+DROP  |H-G-F-E    |6          |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             4 Mine
+DROP  |H-G-F-E    |6          |1          |Bowl       |30-50      |40-70      |200-300    |           |launch bowlers using all 4 vectors concurrently...            4 Bowl
+DROP  |H-G-F-E    |2,4,6,8,10 |5          |arch       |30-50      |40-70      |200-300    |           |launch archs using all 4 vectors concurrently...             20 arch
+DROP  |H-G-F-E    |6          |2          |Ball       |30-50      |40-70      |200-300    |           |launch balloons using all 4 vectors concurrently...           8 ball
+DROP  |H-G-F-E    |3,5,7      |3          |Mini       |30-50      |40-70      |200-300    |           |launch minions using all 4 vectors concurrently...           12 Mini
+DROP  |H-G-F-E    |3,5,7      |3          |Gobl       |30-50      |40-70      |200-300    |           |launch Goblins using all 4 vectors concurrently...           12 Gobl
+DROP  |H-G-F-E    |6          |1          |valk       |30-50      |40-70      |200-300    |           |launch valk using all 4 vectors concurrently...               4 valk
+DROP  |H-G-F-E    |6          |1          |wiza       |30-50      |40-70      |200-300    |           |launch wizards using all 4 vectors concurrently...            4 wiza
+DROP  |H-G-F-E    |6          |1          |Witc       |30-50      |40-70      |200-300    |           |launch witches using all 4 vectors concurrently...            4 Witc
+
+RECALC|           |           |           |           |           |           |           |           |recalculate remaining troops and then launch...
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|DROP REMAINING
+DROP  |A-B-B-A    |1-10       |10         |arch       |30-50      |40-70      |200-300    |           |launch barbarians using all 4 vectors concurrently...        40 arch
+DROP  |A-B-B-A    |1-10       |10         |barb       |30-50      |40-70      |200-300    |           |launch archers using all 4 vectors concurrently...           40 barb
+DROP  |A-B-B-A    |6          |1          |giant      |30-50      |40-70      |500-800    |           |launch giants using all 4 vectors concurrently...             4 giant
+DROP  |A-B-B-A    |6          |1          |Mine       |30-50      |40-70      |200-300    |           |launch miners using all 4 vectors concurrently...             4 Mine
+DROP  |A-B-B-A    |6          |1          |Bowl       |30-50      |40-70      |200-300    |           |launch bowlers using all 4 vectors concurrently...            4 Bowl
+DROP  |A-B-B-A    |6          |1          |valk       |30-50      |40-70      |200-300    |           |launch valk using all 4 vectors concurrently...               4 valk
+DROP  |A-B-B-A    |6          |1          |wiza       |30-50      |40-70      |200-300    |           |launch wizards using all 4 vectors concurrently...            4 wiza
+DROP  |A-B-B-A    |7          |1          |hogs       |30-50      |40-70      |200-300    |           |launch hogs using all 4 vectors concurrently...               4 hogs
+DROP  |A-B-B-A    |5          |1          |pekk       |30-50      |0          |200-300    |           |launch pekk using all 4 vectors concurrently...               4 pekk
+DROP  |A-B-B-A    |5          |1          |gole       |30-50      |0          |200-300    |           |launch gole using all 4 vectors concurrently...               4 gole
+DROP  |A-B-B-A    |6          |2          |wall       |30-50      |0          |200-300    |           |launch wall using all 4 vectors concurrently...               8 wall
+
+      |------------------------------------- four fingers gibarch end-----------------------------------|
+      |Change log
+      |2016-05-01 ver. 1.6 Combined again A-B, C-D etc. of Barch deploy
+      |2016-04-30 ver. 1.5 Mixed Barch, Giant and Arch deployment, deploy heroes and other troops earlier
+      |2016-04-22 ver. 1.4 Added P.K.K.A, Golem, Wall Breakers after Giants. Merged Giants drop into Barbs for traps focus on A,B,C,D sides
+      |2016-04-17 ver. 1.3 Added Hogs after Giants
+      |2016-04-16 ver. 1.2 Changed all Heroes to vector A, index 3
+      |2016-04-16 ver. 1.1 Moved main Archs drop prior to Heroes

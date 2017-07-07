@@ -20,6 +20,8 @@ Func saveConfig()
 	$iSaveConfigCount += 1
 	SetDebugLog("saveConfig(), call number " & $iSaveConfigCount)
 
+	SaveProfileConfig()
+
 	SaveWeakBaseStats()
 	;SetDebugLog("saveWeakBaseStats(), time = " & Round(__TimerDiff($t)/1000, 2) & " sec")
 
@@ -32,6 +34,17 @@ Func saveConfig()
 	SetDebugLog("SaveConfig(), time = " & Round(__TimerDiff($t) / 1000, 2) & " sec")
 EndFunc   ;==>saveConfig
 
+Func SaveProfileConfig($sIniFile = Default, $bForceWrite = False)
+	If $sIniFile = Default Then $sIniFile = $g_sProfilePath & "\profile.ini"
+	IniWrite($sIniFile, "general", "defaultprofile", $g_sProfileCurrentName)
+	If $bForceWrite Or Int(IniRead($sIniFile, "general", "globalactivebotsallowed", 0)) = 0 Then
+		IniWrite($sIniFile, "general", "globalactivebotsallowed", $g_iGlobalActiveBotsAllowed)
+	EndIf
+	If $bForceWrite Or IniRead($sIniFile, "general", "globalthreads", "-") = "-" Then
+		IniWrite($sIniFile, "general", "globalthreads", $g_iGlobalThreads)
+	EndIf
+EndFunc   ;==>SaveProfileConfig
+
 Func SaveWeakBaseStats()
 	_Ini_Clear()
 
@@ -41,7 +54,7 @@ Func SaveWeakBaseStats()
 		_Ini_Add("WeakBase", $g_aiWeakBaseStats[$j][0], $g_aiWeakBaseStats[$j][1])
 	Next
 
-	_Ini_Save($g_sProfileWeakBasePath)
+	_Ini_Save($g_sProfileBuildingStatsPath)
 EndFunc   ;==>SaveWeakBaseStats
 
 Func SaveBuildingConfig()
@@ -187,7 +200,7 @@ Func SaveRegularConfig()
 	SaveConfig_600_35()
 	; <><><> Attack Plan / Train Army / Troops/Spells <><><>
 	; Quick train
-	SaveConfig_600_52_1()
+ 	SaveConfig_600_52_1()
 	; troop/spell levels and counts
 	SaveConfig_600_52_2()
 	; <><><> Attack Plan / Train Army / Train Order <><><>
@@ -199,7 +212,7 @@ Func SaveRegularConfig()
 	; <><><><> Bot / Debug <><><><>
 	SaveConfig_Debug()
 
-	;  <><><> Team AiO & RK MOD++ (2017) <><><>
+	;  <><><> Team AiO MOD++ (2017) <><><>
 	SaveConfig_MOD()
 	SaveConfig_SwitchAcc()
 	SaveConfig_Forecast()
@@ -232,6 +245,7 @@ Func SaveConfig_Android()
 	_Ini_Add("android", "adb.screencap.timeout.dynamic", $g_iAndroidAdbScreencapTimeoutDynamic)
 	_Ini_Add("android", "adb.input.enabled", ($g_bAndroidAdbInputEnabled ? "1" : "0"))
 	_Ini_Add("android", "adb.click.enabled", ($g_bAndroidAdbClickEnabled ? "1" : "0"))
+	_Ini_Add("android", "adb.click.drag.script", ($g_bAndroidAdbClickDragScript ? "1" : "0"))
 	_Ini_Add("android", "adb.click.group", $g_iAndroidAdbClickGroup)
 	_Ini_Add("android", "adb.clicks.enabled", ($g_bAndroidAdbClicksEnabled ? "1" : "0"))
 	_Ini_Add("android", "adb.clicks.troop.deploy.size", $g_iAndroidAdbClicksTroopDeploySize)
@@ -242,6 +256,7 @@ Func SaveConfig_Android()
 	_Ini_Add("android", "active.transparency", $g_iAndroidActiveTransparency)
 	_Ini_Add("android", "inactive.color", Hex($g_iAndroidInactiveColor, 6))
 	_Ini_Add("android", "inactive.transparency", $g_iAndroidInactiveTransparency)
+	_Ini_Add("android", "suspend.mode", $g_iAndroidSuspendModeFlags)
 	_Ini_Add("android", "emulator", $g_sAndroidEmulator)
 	_Ini_Add("android", "instance", $g_sAndroidInstance)
 EndFunc   ;==>SaveConfig_Android
@@ -251,38 +266,38 @@ Func SaveConfig_Debug()
 	ApplyConfig_Debug("Save")
 	; <><><><> Bot / Debug <><><><>
 	; If $g_bDevMode = True Then
-		_Ini_Add("debug", "debugsetlog", $g_iDebugSetlog)
-		_Ini_Add("debug", "debugsetclick", $g_iDebugClick)
-		_Ini_Add("debug", "disablezoomout", $g_iDebugDisableZoomout)
-		_Ini_Add("debug", "disablevillagecentering", $g_iDebugDisableVillageCentering)
-		_Ini_Add("debug", "debugdeadbaseimage", $g_iDebugDeadBaseImage)
-		_Ini_Add("debug", "debugocr", $g_iDebugOcr)
-		_Ini_Add("debug", "debugimagesave", $g_iDebugImageSave)
-		_Ini_Add("debug", "debugbuildingpos", $g_iDebugBuildingPos)
-		_Ini_Add("debug", "debugtrain", $g_iDebugSetlogTrain)
-		_Ini_Add("debug", "debugresourcesoffset", $g_iDebugResourcesOffset)
-		_Ini_Add("debug", "continuesearchelixirdebug", $g_iDebugContinueSearchElixir)
-		_Ini_Add("debug", "debugMilkingIMGmake", $g_iDebugMilkingIMGmake)
-		_Ini_Add("debug", "debugOCRDonate", $g_iDebugOCRdonate)
-		_Ini_Add("debug", "debugAttackCSV", $g_iDebugAttackCSV)
-		_Ini_Add("debug", "debugmakeimgcsv", $g_iDebugMakeIMGCSV)
-		_Ini_Add("debug", "DebugSmartZap", $g_bDebugSmartZap)
+	_Ini_Add("debug", "debugsetlog", $g_iDebugSetlog)
+	_Ini_Add("debug", "debugsetclick", $g_iDebugClick)
+	_Ini_Add("debug", "disablezoomout", $g_iDebugDisableZoomout)
+	_Ini_Add("debug", "disablevillagecentering", $g_iDebugDisableVillageCentering)
+	_Ini_Add("debug", "debugdeadbaseimage", $g_iDebugDeadBaseImage)
+	_Ini_Add("debug", "debugocr", $g_iDebugOcr)
+	_Ini_Add("debug", "debugimagesave", $g_iDebugImageSave)
+	_Ini_Add("debug", "debugbuildingpos", $g_iDebugBuildingPos)
+	_Ini_Add("debug", "debugtrain", $g_iDebugSetlogTrain)
+	_Ini_Add("debug", "debugresourcesoffset", $g_iDebugResourcesOffset)
+	_Ini_Add("debug", "continuesearchelixirdebug", $g_iDebugContinueSearchElixir)
+	_Ini_Add("debug", "debugMilkingIMGmake", $g_iDebugMilkingIMGmake)
+	_Ini_Add("debug", "debugOCRDonate", $g_iDebugOCRdonate)
+	_Ini_Add("debug", "debugAttackCSV", $g_iDebugAttackCSV)
+	_Ini_Add("debug", "debugmakeimgcsv", $g_iDebugMakeIMGCSV)
+	_Ini_Add("debug", "DebugSmartZap", $g_bDebugSmartZap)
 	; Else
-		; _Ini_Delete("debug", "debugsetlog")
-		; _Ini_Delete("debug", "debugsetclick")
-		; _Ini_Delete("debug", "disablezoomout")
-		; _Ini_Delete("debug", "disablevillagecentering")
-		; _Ini_Delete("debug", "debugdeadbaseimage")
-		; _Ini_Delete("debug", "debugocr")
-		; _Ini_Delete("debug", "debugimagesave")
-		; _Ini_Delete("debug", "debugbuildingpos")
-		; _Ini_Delete("debug", "debugtrain")
-		; _Ini_Delete("debug", "debugresourcesoffset")
-		; _Ini_Delete("debug", "continuesearchelixirdebug")
-		; _Ini_Delete("debug", "debugMilkingIMGmake")
-		; _Ini_Delete("debug", "debugOCRDonate")
-		; _Ini_Delete("debug", "debugAttackCSV")
-		; _Ini_Delete("debug", "debugmakeimgcsv")
+	; _Ini_Delete("debug", "debugsetlog")
+	; _Ini_Delete("debug", "debugsetclick")
+	; _Ini_Delete("debug", "disablezoomout")
+	; _Ini_Delete("debug", "disablevillagecentering")
+	; _Ini_Delete("debug", "debugdeadbaseimage")
+	; _Ini_Delete("debug", "debugocr")
+	; _Ini_Delete("debug", "debugimagesave")
+	; _Ini_Delete("debug", "debugbuildingpos")
+	; _Ini_Delete("debug", "debugtrain")
+	; _Ini_Delete("debug", "debugresourcesoffset")
+	; _Ini_Delete("debug", "continuesearchelixirdebug")
+	; _Ini_Delete("debug", "debugMilkingIMGmake")
+	; _Ini_Delete("debug", "debugOCRDonate")
+	; _Ini_Delete("debug", "debugAttackCSV")
+	; _Ini_Delete("debug", "debugmakeimgcsv")
 	; EndIf
 EndFunc   ;==>SaveConfig_Debug
 
@@ -315,6 +330,9 @@ Func SaveConfig_600_6()
 	_Ini_Add("other", "minTreasurygold", $g_iTxtTreasuryGold)
 	_Ini_Add("other", "minTreasuryelixir", $g_iTxtTreasuryElixir)
 	_Ini_Add("other", "minTreasurydark", $g_iTxtTreasuryDark)
+
+	_Ini_Add("other", "ChkCollectBuildersBase", $g_bChkCollectBuilderBase ? 1: 0)
+	_Ini_Add("other", "ChkStartClockTowerBoost", $g_bChkStartClockTowerBoost ? 1 : 0)
 EndFunc   ;==>SaveConfig_600_6
 
 Func SaveConfig_600_9()
@@ -1028,6 +1046,7 @@ Func SaveConfig_600_56()
 	_Ini_Add("SmartZap", "UseNoobZap", $g_bNoobZap ? 1 : 0)
 	_Ini_Add("SmartZap", "ZapDBOnly", $g_bSmartZapDB ? 1 : 0)
 	_Ini_Add("SmartZap", "THSnipeSaveHeroes", $g_bSmartZapSaveHeroes ? 1 : 0)
+	_Ini_Add("SmartZap", "FTW", $g_bSmartZapFTW ? 1 : 0)
 	_Ini_Add("SmartZap", "MinDE", $g_iSmartZapMinDE)
 	_Ini_Add("SmartZap", "ExpectedDE", $g_iSmartZapExpectedDE)
 EndFunc   ;==>SaveConfig_600_56

@@ -85,8 +85,6 @@ Func chkPBTGenabled()
 		GUICtrlSetState($g_hChkNotifyDeleteOldPBPushes, $GUI_DISABLE)
 		GUICtrlSetState($g_hBtnNotifyDeleteMessages, $GUI_DISABLE)
 	EndIf
-	 ChkNotifyAlertBOTSleep()
-	 ChkNotifyConnect()
 EndFunc   ;==>chkPBTGenabled
 
 Func chkDeleteOldPBPushes()

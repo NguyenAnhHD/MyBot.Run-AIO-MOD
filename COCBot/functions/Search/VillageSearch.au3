@@ -14,12 +14,26 @@
 ; Example .......: No
 ; ===============================================================================================================================
 
-Func VillageSearch() ;Control for searching a village that meets conditions
+Func VillageSearch()
+
+	$g_bVillageSearchActive = True
+	$g_bCloudsActive = True
+
+	Local $Result = _VillageSearch()
+
+	$g_bVillageSearchActive = False
+	$g_bCloudsActive = False
+
+	Return $Result
+
+EndFunc   ;==>VillageSearch
+
+Func _VillageSearch() ;Control for searching a village that meets conditions
 	Local $Result
 	Local $weakBaseValues
 	Local $logwrited = False
 	Local $iSkipped = 0
-	$iProfileBeforeForceSwitch = 0;	Force SwitchAcc - Demen
+	$iProfileBeforeForceSwitch = 0;	Force SwitchAcc
 
 	If $g_iDebugDeadBaseImage = 1 Or $g_aiSearchEnableDebugDeadBaseImage > 0 Then
 		DirCreate($g_sProfileTempDebugPath & "\SkippedZombies\")
@@ -74,6 +88,8 @@ Func VillageSearch() ;Control for searching a village that meets conditions
 		; cleanup some vars used by imgloc just in case. usend in TH and DeadBase ( imgloc functions)
 		ResetTHsearch()
 
+		_ObjDeleteKey($g_oBldgAttackInfo, "") ; Remove all keys from building dictionary
+
 		If $g_iDebugVillageSearchImages = 1 Then DebugImageSave("villagesearch")
 		$logwrited = False
 		$g_bBtnAttackNowPressed = False
@@ -87,6 +103,8 @@ Func VillageSearch() ;Control for searching a village that meets conditions
 		; ----------------- READ ENEMY VILLAGE RESOURCES  -----------------------------------
 		WaitForClouds() ; Wait for clouds to disappear
 		If $g_bRestart = True Then Return ; exit func
+
+		$g_bCloudsActive = False
 
 		GetResources(False) ;Reads Resource Values
 		If $g_bRestart = True Then Return ; exit func
@@ -232,12 +250,12 @@ Func VillageSearch() ;Control for searching a village that meets conditions
 			$logwrited = True
 			If $ichkDBMeetCollOutside = 1 Then
 				If AreCollectorsOutside($iDBMinCollOutsidePercent) Then
-					SetLog("Collectors are outside, match found !", $COLOR_GREEN, "Lucida Console", 7.5)
+					SetLog("Collectors are outside, match found !", $COLOR_SUCCESS, "Lucida Console", 7.5)
 					$g_iMatchMode = $DB
 					cmbCSVSpeed()
 					ExitLoop
 				Else
-					SetLog("Collectors are not outside, skipping search !", $COLOR_RED, "Lucida Console", 7.5)
+					SetLog("Collectors are not outside, skipping search !", $COLOR_ERROR, "Lucida Console", 7.5)
 				EndIf
 			Else
 				$g_iMatchMode = $DB
@@ -248,13 +266,14 @@ Func VillageSearch() ;Control for searching a village that meets conditions
 			SetLog($GetResourcesTXT, $COLOR_SUCCESS, "Lucida Console", 7.5)
 			SetLog("      " & "Live Base Found!", $COLOR_SUCCESS, "Lucida Console", 7.5)
 			$logwrited = True
-			$g_iMatchMode = $LB
 			cmbCSVSpeed()
+			$g_iMatchMode = $LB
 			ExitLoop
 		ElseIf $match[$LB] And $g_bCollectorFilterDisable Then
 			SetLog($GetResourcesTXT, $COLOR_SUCCESS, "Lucida Console", 7.5)
 			SetLog("      " & "Live Base Found!*", $COLOR_SUCCESS, "Lucida Console", 7.5)
 			$logwrited = True
+			cmbCSVSpeed()
 			$g_iMatchMode = $LB
 			ExitLoop
 		ElseIf $g_abAttackTypeEnable[$TB] = 1 And ($g_iSearchCount >= $g_iAtkTBEnableCount) Then ; TH bully doesn't need the resources conditions
@@ -299,7 +318,7 @@ Func VillageSearch() ;Control for searching a village that meets conditions
 		; Return Home on Search limit
 		If SearchLimit($iSkipped + 1) Then Return True
 
-		; Force SwitchAcc when long search - DEMEN
+		; Force SwitchAcc when long search
 		If $ichkForceSwitch = 1 And $iSkipped+1 >= $iForceSwitch And Mod(($iSkipped+1), _Min(10, Number($iForceSwitch))) = 0 Then
 			If UBound($aDonateProfile) >= 1 Then
 				Setlog("Reach search limit: " & $iForceSwitch & ". Force switch to Donate Account.")
@@ -340,7 +359,7 @@ Func VillageSearch() ;Control for searching a village that meets conditions
 				If $i > 5 Or isProblemAffect(True) Then checkMainScreen()
 				ForceSwitchAcc($eForceSwitch, "SearchLimit")
 			EndIf
-		EndIf	; Force SwitchAcc when long search - DEMEN
+		EndIf	; Force SwitchAcc when long search
 
 		If checkAndroidReboot() = True Then
 			$g_bRestart = True
@@ -380,6 +399,7 @@ Func VillageSearch() ;Control for searching a village that meets conditions
 			$i += 1
 			_CaptureRegions()
 			If ( _ColorCheck(_GetPixelColor($NextBtn[0], $NextBtn[1]), Hex($NextBtn[2], 6), $NextBtn[3])) And IsAttackPage(False) Then
+				$g_bCloudsActive = True
 				If $g_bUseRandomClick = False Then
 					ClickP($NextBtn, 1, 0, "#0155") ;Click Next
 				Else
@@ -470,7 +490,7 @@ Func VillageSearch() ;Control for searching a village that meets conditions
 
 	$g_bIsClientSyncError = False
 
-EndFunc   ;==>VillageSearch
+EndFunc   ;==>_VillageSearch
 
 Func SearchLimit($iSkipped)
 	If $g_bSearchRestartEnable And $iSkipped >= Number($g_iSearchRestartLimit) Then

@@ -24,22 +24,40 @@
 ; Example .......: No
 ; ===============================================================================================================================
 
-Func GetVillageSize($DebugLog = False)
+Func GetVillageSize($DebugLog = False, $sStonePrefix = Default, $sTreePrefix = "tree")
+
+	If $sStonePrefix = Default Then $sStonePrefix = "stone"
+	If $sTreePrefix = Default Then $sTreePrefix = "tree"
 
 	Local $aResult = 0
-	Local $directory = @ScriptDir & "\imgxml\village\"
+	Local $sDirectory
 	Local $stone[6] = [0, 0, 0, 0, 0, ""], $tree[6] = [0, 0, 0, 0, 0, ""]
 	Local $x0, $y0, $d0, $x, $y, $x1, $y1, $right, $bottom, $a
 
 	Local $iAdditional = 75
 
-	Local $aStoneFiles = _FileListToArray($directory, "stone*.*", $FLTA_FILES)
+	If isOnBuilderIsland(True) Then
+		$sDirectory = @ScriptDir & "\imgxml\village\BuilderBase"
+	Else
+		$sDirectory = @ScriptDir & "\imgxml\village\NormalVillage"
+	EndIf
+
+	Local $aStoneFiles = _FileListToArray($sDirectory, $sStonePrefix & "*.*", $FLTA_FILES)
 	If @error Then
 		SetLog("Error: Missing stone files", $COLOR_ERROR)
 		Return $aResult
 	EndIf
-
-	Local $aTreeFiles = _FileListToArray($directory, "tree*.*", $FLTA_FILES)
+	; use stoneBlueStacks2A stones first
+	Local $iNewIdx = 1
+	For $i = 1 To $aStoneFiles[0]
+		If StringInStr($aStoneFiles[$i], "stoneBlueStacks2A") = 1 Then
+			Local $s = $aStoneFiles[$iNewIdx]
+			$aStoneFiles[$iNewIdx] = $aStoneFiles[$i]
+			$aStoneFiles[$i] = $s
+			$iNewIdx += 1
+		EndIf
+	Next
+	Local $aTreeFiles = _FileListToArray($sDirectory, $sTreePrefix & "*.*", $FLTA_FILES)
 	If @error Then
 		SetLog("Error: Missing tree files", $COLOR_ERROR)
 		Return $aResult
@@ -61,7 +79,7 @@ Func GetVillageSize($DebugLog = False)
 			$bottom = $y0 + $iAdditional
 			$sArea = Int($x1) & "," & Int($y1) & "|" & Int($right) & "," & Int($y1) & "|" & Int($right) & "," & Int($bottom) & "|" & Int($x1) & "," & Int($bottom)
 			;SetDebugLog("GetVillageSize check for image " & $findImage)
-			$a = decodeSingleCoord(findImage($findImage, $directory & "\" & $findImage,  $sArea, 1, False))
+			$a = decodeSingleCoord(findImage($findImage, $sDirectory & "\" & $findImage,  $sArea, 1, False))
 			If UBound($a) = 2 Then
 				$x = Int($a[0])
 				$y = Int($a[1])
@@ -100,7 +118,7 @@ Func GetVillageSize($DebugLog = False)
 			$bottom = $y0 + $iAdditional
 			$sArea = Int($x1) & "," & Int($y1) & "|" & Int($right) & "," & Int($y1) & "|" & Int($right) & "," & Int($bottom) & "|" & Int($x1) & "," & Int($bottom)
 			;SetDebugLog("GetVillageSize check for image " & $findImage)
-			$a = decodeSingleCoord(findImage($findImage, $directory & "\" & $findImage,  $sArea, 1, False))
+			$a = decodeSingleCoord(findImage($findImage, $sDirectory & "\" & $findImage,  $sArea, 1, False))
 			If UBound($a) = 2 Then
 				$x = Int($a[0])
 				$y = Int($a[1])

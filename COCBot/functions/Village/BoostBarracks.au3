@@ -25,17 +25,19 @@ Func BoostBarracks()
 			Return ; exit func if no planned Boost Barracks checkmarks
 		EndIf
 	EndIf
+
 	If GUICtrlRead($chkForecastBoost) = $GUI_CHECKED Then
-	If $currentForecast > Number($iTxtForecastBoost, 3) Then
-		Local $hour = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
-		If $g_abBoostBarracksHours[$hour[0]] = False Then
-			SetLog("No planned boosting for this hour.", $COLOR_RED)
-			Return ; exit func if no planned Boost Barracks checkmarks
+		If $currentForecast > Number($iTxtForecastBoost, 3) Then
+			Local $hour = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
+			If $g_abBoostBarracksHours[$hour[0]] = False Then
+				SetLog("No planned boosting for this hour.", $COLOR_RED)
+				Return ; exit func if no planned Boost Barracks checkmarks
+			EndIf
+		Else
+			Return
 		EndIf
-	Else
-		Return
 	EndIf
-EndIf
+
 	If OpenArmyWindow() = True Then
 		Local $CheckArmyWindow = ISArmyWindow()
 		OpenTrainTabNumber(1, "BoostBarracks")
@@ -45,13 +47,9 @@ EndIf
 		If $ClickResult = True Then
 			Local $GemResult = IsGemWindowOpen(True)
 			If $GemResult = True Then
-				If $g_iCmbBoostBarracks >= 1 And $g_iCmbBoostBarracks <= 24 Then
-					$g_iCmbBoostBarracks -= 1
-					Setlog(" Total remain cycles to boost Barracks:" & $g_iCmbBoostBarracks, $COLOR_GREEN)
-					GUICtrlSetData($g_hCmbBoostBarracks, $g_iCmbBoostBarracks)
-				ElseIf $g_iCmbBoostBarracks = 25 Then
-					Setlog(" Total remain cycles to boost Barracks: Unlimited", $COLOR_GREEN)
-				EndIf
+				If $g_iCmbBoostBarracks >= 1 Then $g_iCmbBoostBarracks -= 1
+				Setlog(" Total remain cycles to boost Barracks:" & $g_iCmbBoostBarracks, $COLOR_GREEN)
+				GUICtrlSetData($g_hCmbBoostBarracks, $g_iCmbBoostBarracks)
 			EndIf
 		EndIf
 
@@ -67,7 +65,9 @@ Func BoostSpellFactory()
 	If $g_bTrainEnabled = False Then Return
 	If $g_iCmbBoostSpellFactory >= 1 Then
 		SetLog("Boosting Spell Factory...", $COLOR_BLUE)
-        If $iChkForecastBoost = 1 And $currentForecast <= Number($iTxtForecastBoost, 3) Then Return
+
+		If $iChkForecastBoost = 1 And $currentForecast <= Number($iTxtForecastBoost, 3) Then Return
+
 		If OpenArmyWindow() = True Then
 			Local $CheckArmyWindow = ISArmyWindow()
 			OpenTrainTabNumber(2, "BoostSpellFactory")
@@ -77,13 +77,9 @@ Func BoostSpellFactory()
 			If $ClickResult = True Then
 				Local $GemResult = IsGemWindowOpen(True)
 				If $GemResult = True Then
-					If $g_iCmbBoostSpellFactory >= 1 And $g_iCmbBoostSpellFactory <= 24 Then
-						$g_iCmbBoostSpellFactory -= 1
-						Setlog(" Total remain cycles to boost Spells:" & $g_iCmbBoostSpellFactory, $COLOR_GREEN)
-						GUICtrlSetData($g_hCmbBoostSpellFactory, $g_iCmbBoostSpellFactory)
-					ElseIf $g_iCmbBoostSpellFactory = 25 Then
-						Setlog(" Total remain cycles to boost Spells: Unlimited", $COLOR_GREEN)
-					EndIf
+					If $g_iCmbBoostSpellFactory >= 1 Then $g_iCmbBoostSpellFactory -= 1
+					Setlog(" Total remain cycles to boost Spells:" & $g_iCmbBoostSpellFactory, $COLOR_GREEN)
+					GUICtrlSetData($g_hCmbBoostSpellFactory, $g_iCmbBoostSpellFactory)
 				EndIf
 			EndIf
 

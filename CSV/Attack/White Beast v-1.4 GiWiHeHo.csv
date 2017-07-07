@@ -1,0 +1,45 @@
+NOTE  |Author: White Beast- ver. 1.3 GIWIHEHO
+NOTE  |
+NOTE  |Troops: 10 Giants,11 Wizards,4 Healers,13 Hogs,5 Archers
+NOTE  |Spells:1 Poison,3 Healing Spell,1 Rage Spell
+NOTE  |CC: Ground Troops. And Haste Spell
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |           |           |           |5          |5          |           |10         |           |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |A          |FRONT-LEFT |1          |2          |IGNORE     |0          |0          |           |Vector Giants	
+MAKE  |B          |FRONT-LEFT |1          |2          |IGNORE     |0          |0          |           |Vector Healers	
+MAKE  |C          |FRONT-LEFT |10         |2          |IGNORE     |0          |0          |           |Vector Wizards
+MAKE  |E          |FRONT-LEFT |1          |-5         |IGNORE     |0          |0          |           |Vector Rage Spell,Earth,Poison&Haste
+MAKE  |F          |FRONT-RIGHT|10         |2          |EXT-INT    |0          |0          |           |Vector Hogs
+MAKE  |G          |RIGHT-FRONT|1          |-11        |IGNORE     |0          |0          |           |Vector Heal Spell
+MAKE  |H          |RIGHT-FRONT|1          |-7         |IGNORE     |0          |0          |           |Vector Heal Spell
+MAKE  |I          |FRONT-LEFT |1          |-11        |IGNORE     |0          |0          |           |Vector Heal Spell
+MAKE  |J          |BACK-LEFT  |10         |2          |EXT-INT    |0          |0          |           |Vector Archers
+MAKE  |K          |LEFT-BACK  |10         |2          |EXT-INT    |0          |0          |           |Vector Archers
+MAKE  |L          |FRONT-LEFT |1          |1          |IGNORE     |0          |0          |           |Vector King
+MAKE  |M          |FRONT-LEFT |1          |1          |IGNORE     |0          |0          |           |Vector Queen
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
+DROP  |A          |1          |10-15      |Giant      |0          |0          |1000-5000  |           |Droping Giants
+DROP  |B          |1          |4-7        |Heal       |0          |0          |500-700    |           |Droping Healer
+DROP  |C          |1-9        |3-5        |Wiza       |500        |0          |1000-5000  |           |Droping Wizards
+DROP  |C          |4-6        |7-9        |Wiza       |200        |0          |500-700    |           |Droping Wizards
+DROP  |L          |1-2        |1          |King       |0          |0          |500-700    |           |Droping King
+DROP  |M          |1-2        |1          |Queen      |0          |0          |500-700    |           |Droping Queen
+DROP  |A          |1          |1          |Castle     |0          |0          |100-300    |           |Droping Castle
+DROP  |E          |1          |1-3        |PSpell     |0          |0          |600-1000   |           |Droping Poison Spell
+DROP  |E          |1          |1-3        |HaSpell    |0          |0          |600-1000   |           |Droping Haste Spell
+DROP  |E          |1          |1-3        |ESpell     |0          |0          |600-1000   |           |Droping Earth Spell
+DROP  |E          |1          |1          |RSpell     |0          |0          |600-1000   |           |Droping Rage
+DROP  |F          |1-10       |13-17      |Hogs       |0          |0          |1000-3000  |           |Droping Hogs
+DROP  |I          |1          |1          |HSpell     |0          |0          |1000-2000  |           |Droping Heal Spell
+DROP  |G          |1          |1          |HSpell     |0          |0          |5000-9000  |           |Droping Heal Spell
+DROP  |H          |1          |1          |HSpell     |0          |0          |500-700    |           |Droping Heal Spell
+DROP  |J-K        |1-10       |5-11       |Arch       |0          |0          |3000-9000  |           |Droping Archers
+
+
+
+WAIT  |1500-2500  |           |           |           |           |           |           |           |Waiting  Untill Battle Ends
+DROP  |RECALC     |           |           |           |           |           |           |           |Droping Remaing Troops

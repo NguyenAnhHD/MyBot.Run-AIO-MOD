@@ -28,108 +28,107 @@ Global $g_hChkTHSnipeBeforeDBEnable = 0, $g_hTxtTHSnipeBeforeDBTiles = 0, $g_hCm
 Global $g_hLblTHSnipeBeforeDBTiles = 0
 
 Func CreateAttackSearchDeadBaseAttack()
-$49 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg3, 0, 20, 150, 352, $WS_CLIPCHILDREN)
    Local $sTxtTip = ""
    Local $x = 25, $y = 40
-	   GUICtrlCreateGroup(GetTranslated(624,1,"Attack with"), $x - 20, $y - 15, 145, 223)
+	   GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Group_01", "Attack with"), $x - 20, $y - 15, 145, 223)
 		   $x -= 15
 		   $y += 5
 		   $g_hCmbDBAlgorithm = GUICtrlCreateCombo("", $x, $y, 135, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   _GUICtrlSetTip(-1, "")
-			   GUICtrlSetData(-1, GetTranslated(624,3,"Standard Attack") & "|" & GetTranslated(624,4,"Scripted Attack") & "|" & GetTranslated(624,5,"Milking Attack"), GetTranslated(624,3,-1))
+			   GUICtrlSetData(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-Algorithm_Item_01", "Standard Attack") & "|" & GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-Algorithm_Item_02", "Scripted Attack") & "|" & GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-Algorithm_Item_03", "Milking Attack"), GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-Algorithm_Item_01", -1))
 			   GUICtrlSetOnEvent(-1, "cmbDBAlgorithm")
 		   $y += 30
 		   $g_hCmbDBSelectTroop = GUICtrlCreateCombo("", $x, $y, 135, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-			   GUICtrlSetData(-1, GetTranslated(624,7, "Use All Troops") &"|"&GetTranslated(624,8, "Use Troops in Barracks")&"|"&GetTranslated(624,9, "Barb Only")&"|" & GetTranslated(624,10, "Arch Only") &"|"&GetTranslated(624,11, "B+A")&"|"&GetTranslated(624,12, "B+Gob")&"|"&GetTranslated(624,13, "A+Gob")&"|"&GetTranslated(624,14, "B+A+Gi")&"|"&GetTranslated(624,15, "B+A+Gob+Gi")&"|"&GetTranslated(624,16, "B+A+Hog Rider")&"|"&GetTranslated(624,17, "B+A+Minion") , GetTranslated(624,7, -1))
-			   _GUICtrlSetTip(-1, GetTranslated(624,18,"Select the troops to use in attacks"))
+			   GUICtrlSetData(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_01", "Use All Troops") &"|"&GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_02", "Use Troops in Barracks")&"|"&GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_03", "Barb Only")&"|" & GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_04", "Arch Only") &"|"&GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_05", "B+A")&"|"&GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_06", "B+Gob")&"|"&GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_07", "A+Gob")&"|"&GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_08", "B+A+Gi")&"|"&GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_09", "B+A+Gob+Gi")&"|"&GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_10", "B+A+Hog Rider")&"|"&GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_11", "B+A+Minion") , GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Item_01", -1))
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Cmb-SelectTroop_Info_01", "Select the troops to use in attacks"))
 		   $y += 30
-		   $g_hPicDBKingAttack = GUICtrlCreateIcon($g_sLibIconPath, $eIcnKing, $x , $y, 24, 24)
-			   $sTxtTip = GetTranslated(624,20, "Use your King when Attacking...") & @CRLF & GetTranslated(624,41, "Enabled with TownHall 7 and higher")
+		   $g_hPicDBKingAttack = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKing, $x , $y, 24, 24)
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-King_Info_01", "Use your King when Attacking...") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-King_Info_02", "Enabled with TownHall 7 and higher")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBKingAttack = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $x += 46
-		   $g_hPicDBQueenAttack = GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueen, $x, $y, 24, 24)
-			   $sTxtTip = GetTranslated(624,21, "Use your Queen when Attacking...")& @CRLF & GetTranslated(624,42, "Enabled with TownHall 9 and higher")
+		   $g_hPicDBQueenAttack = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueen, $x, $y, 24, 24)
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Queen_Info_01", "Use your Queen when Attacking...")& @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Queen_Info_02", "Enabled with TownHall 9 and higher")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBQueenAttack = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $x +=46
-		   $g_hPicDBWardenAttack = GUICtrlCreateIcon($g_sLibIconPath, $eIcnWarden, $x, $y, 24, 24)
-			   $sTxtTip = GetTranslated(624,22, "Use your Warden when Attacking...") & @CRLF & GetTranslated(624,43, "Enabled with Townhall 11")
+		   $g_hPicDBWardenAttack = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWarden, $x, $y, 24, 24)
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Warden_Info_01", "Use your Warden when Attacking...") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Warden_Info_02", "Enabled with Townhall 11")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBWardenAttack = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $y +=27
 		   $x -=92
-		   $g_hPicDBDropCC = GUICtrlCreateIcon($g_sLibIconPath, $eIcnCC, $x, $y, 24, 24)
-			   $sTxtTip =GetTranslated(624,23, "Drop your Clan Castle in battle if it contains troops.")
+		   $g_hPicDBDropCC = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnCC, $x, $y, 24, 24)
+			   $sTxtTip =GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Clan Castle_Info_01", "Drop your Clan Castle in battle if it contains troops.")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBDropCC = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $x += 46
-		   $g_hPicDBLightSpell = GUICtrlCreateIcon($g_sLibIconPath, $eIcnLightSpell, $x, $y, 24, 24)
-			   $sTxtTip = GetTranslated(624,24, "Use your Light Spells when Attacking...")
+		   $g_hPicDBLightSpell = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLightSpell, $x, $y, 24, 24)
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Light_Info_01", "Use your Light Spells when Attacking...")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBLightSpell = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $x +=46
-		   $g_hPicDBHealSpell = GUICtrlCreateIcon($g_sLibIconPath, $eIcnHealSpell, $x, $y, 24, 24)
-			   $sTxtTip = GetTranslated(624,25, "Use your Healing Spells when Attacking...")
+		   $g_hPicDBHealSpell = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnHealSpell, $x, $y, 24, 24)
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Healing_Info_01", "Use your Healing Spells when Attacking...")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBHealSpell = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $y +=27
 		   $x -=92
-		   $g_hPicDBRageSpell = GUICtrlCreateIcon($g_sLibIconPath, $eIcnRageSpell, $x, $y, 24, 24)
-			   $sTxtTip = GetTranslated(624,26, "Use your Rage Spells when Attacking...")
+		   $g_hPicDBRageSpell = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnRageSpell, $x, $y, 24, 24)
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Rage_Info_01", "Use your Rage Spells when Attacking...")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBRageSpell = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $x +=46
-		   $g_hPicDBJumpSpell = GUICtrlCreateIcon($g_sLibIconPath, $eIcnJumpSpell , $x, $y, 24, 24)
-			   $sTxtTip =GetTranslated(624,27, "Use your Jump Spells when Attacking...")
+		   $g_hPicDBJumpSpell = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnJumpSpell , $x, $y, 24, 24)
+			   $sTxtTip =GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Jump_Info_01", "Use your Jump Spells when Attacking...")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBJumpSpell = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $x += 46
-		   $g_hPicDBFreezeSpell=GUICtrlCreateIcon($g_sLibIconPath, $eIcnFreezeSpell , $x, $y, 24, 24)
-			   $sTxtTip = GetTranslated(624,28, "Use your Freeze Spells when Attacking...")
+		   $g_hPicDBFreezeSpell=_GUICtrlCreateIcon($g_sLibIconPath, $eIcnFreezeSpell , $x, $y, 24, 24)
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Freeze_Info_01", "Use your Freeze Spells when Attacking...")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBFreezeSpell = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $y +=27
 		   $x -=92
-		   $g_hPicDBCloneSpell=GUICtrlCreateIcon($g_sLibIconPath, $eIcnCloneSpell , $x, $y, 24, 24)
-			   $sTxtTip = GetTranslated(624,44, "Use your Clone Spells when Attacking...")
+		   $g_hPicDBCloneSpell=_GUICtrlCreateIcon($g_sLibIconPath, $eIcnCloneSpell , $x, $y, 24, 24)
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Clone_Info_01", "Use your Clone Spells when Attacking...")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBCloneSpell = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $x +=46
-		   $g_hPicDBPoisonSpell=GUICtrlCreateIcon($g_sLibIconPath, $eIcnPoisonSpell , $x, $y, 24, 24)
-			   $sTxtTip = GetTranslated(624,29, "Use your Poison Spells when Attacking...")
+		   $g_hPicDBPoisonSpell=_GUICtrlCreateIcon($g_sLibIconPath, $eIcnPoisonSpell , $x, $y, 24, 24)
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Poison_Info_01", "Use your Poison Spells when Attacking...")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBPoisonSpell = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $x +=46
-		   $g_hPicDBEarthquakeSpell = GUICtrlCreateIcon($g_sLibIconPath, $eIcnEarthquakeSpell , $x, $y, 24, 24)
-			   $sTxtTip = GetTranslated(624,30, "Use your Earthquake Spells when Attacking...")
+		   $g_hPicDBEarthquakeSpell = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnEarthquakeSpell , $x, $y, 24, 24)
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Earthquake_Info_01", "Use your Earthquake Spells when Attacking...")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBEarthquakeSpell = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $y +=27
 		   $x -=92
-		   $g_hPicDBHasteSpell = GUICtrlCreateIcon($g_sLibIconPath, $eIcnHasteSpell, $x, $y, 24, 24)
-		   $sTxtTip =GetTranslated(624,31, "Use your Haste Spells when Attacking...")
+		   $g_hPicDBHasteSpell = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnHasteSpell, $x, $y, 24, 24)
+		   $sTxtTip =GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Haste_Info_01", "Use your Haste Spells when Attacking...")
 		   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBHasteSpell = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 		   _GUICtrlSetTip(-1, $sTxtTip)
 		   $x +=46
-		   $g_hPicDBSkeletonSpell=GUICtrlCreateIcon($g_sLibIconPath, $eIcnSkeletonSpell , $x, $y, 24, 24)
-			   $sTxtTip = GetTranslated(624,45, "Use your Skeletons Spells when Attacking...")
+		   $g_hPicDBSkeletonSpell=_GUICtrlCreateIcon($g_sLibIconPath, $eIcnSkeletonSpell , $x, $y, 24, 24)
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Chk-Use-Skeleton_Info_01", "Use your Skeletons Spells when Attacking...")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 		   $g_hChkDBSkeletonSpell = GUICtrlCreateCheckbox("", $x + 27, $y, 17, 17)
 			   _GUICtrlSetTip(-1, $sTxtTip)
@@ -137,25 +136,25 @@ $49 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg3, 0, 20, 150, 352, $WS_CLIPCH
 	   GUICtrlCreateGroup("", -99, -99, 1, 1)
 
    Local $x = 10, $y = 268
-	   GUICtrlCreateGroup(GetTranslated(624,32, "TH Snipe"),  $x - 5, $y - 20, 145, 84,$SS_CENTER)
-		   $g_hChkTHSnipeBeforeDBEnable = _GUICtrlCreateCheckbox(GetTranslated(624,33, "Snipe TH External first") ,$x, $y - 5, -1, -1)
-			   _GUICtrlSetTip(-1, GetTranslated(624,34, "If TH is external start with a TH Snipe"))
+	   GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Group_02", "TH Snipe"),  $x - 5, $y - 20, 145, 84,$SS_CENTER)
+		   $g_hChkTHSnipeBeforeDBEnable = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "ChkTHSnipeBeforeEnable", "Snipe TH External first") ,$x, $y - 5, -1, -1)
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "ChkTHSnipeBeforeEnable_Info_01", "If TH is external start with a TH Snipe"))
 			   GUICtrlSetOnEvent(-1, "chkTHSnipeBeforeDBEnable")
 		   $y +=16
-		   $g_hLblTHSnipeBeforeDBTiles = GUICtrlCreateLabel(GetTranslated(624,35, "Add Tiles")& ":", $x, $y + 3, 70, -1, $SS_RIGHT)
+		   $g_hLblTHSnipeBeforeDBTiles = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "LblTHSnipeBeforeTiles", "Add Tiles")& ":", $x, $y + 3, 70, -1, $SS_RIGHT)
 		   GUICtrlSetState(-1, $GUI_DISABLE)
 		   $g_hTxtTHSnipeBeforeDBTiles = GUICtrlCreateInput("2", $x + 75, $y + 1, 30, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-			   $sTxtTip = GetTranslated(624,36, "Max numbers of tiles from border to consider TH as external")
+			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "LblTHSnipeBeforeTiles_Info_01", "Max numbers of tiles from border to consider TH as external")
 			   _GUICtrlSetTip(-1, $sTxtTip)
 			   GUICtrlSetLimit(-1, 2)
 			   GUICtrlSetState(-1, $GUI_DISABLE)
-		   GUICtrlCreateIcon($g_sLibIconPath, $eIcnTiles, $x + 107, $y + 1, 16, 16)
+		   _GUICtrlCreateIcon($g_sLibIconPath, $eIcnTiles, $x + 107, $y + 1, 16, 16)
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $y += 21
 		   $g_hCmbTHSnipeBeforeDBScript = GUICtrlCreateCombo("",  $x, $y, 130, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   GUICtrlSetData(-1, "")
-			   _GUICtrlSetTip(-1, GetTranslated(624,37, "You can add/edit CSV settings in the CSV\THSnipe folder"))
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "CmbTHSnipeBeforeScript_Info_01", "You can add/edit CSV settings in the CSV\THSnipe folder"))
 			   GUICtrlSetState(-1, $GUI_DISABLE)
 			   ;GUICtrlSetOnEvent(-1, "cmbAttackTHType")
    LoadDBSnipeAttacks()

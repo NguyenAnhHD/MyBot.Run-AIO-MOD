@@ -14,45 +14,39 @@
 ; ===============================================================================================================================
 #include-once
 
-Global $g_hCmbCOCDistributors, $g_hChkAndroid = 0, $g_iChkAndroid = 0
+Global $g_hCmbCOCDistributors = 0, $g_hCmbSuspendAndroid = 0, $g_hChkAndroidAdbClickDragScript = 0
 
 Func CreateBotAndroid()
-   $4 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg, 2, 23, 442, 410, $WS_CLIPCHILDREN)
-   Local $x = 25, $y = 45
-   GUICtrlCreateGroup(GetTranslated(642, 1, "Distributors"), $x - 20, $y - 20, 438, 50)
+   Local $x = 25, $y = 45, $w = 210, $h = 50
+   GUICtrlCreateGroup(GetTranslatedFileIni("MBR Distributors", "Group_01", "Distributors"), $x - 20, $y - 20, $w, $h) ; $g_iSizeWGrpTab2, $g_iSizeHGrpTab2
 	   $y -=2
 	   $g_hCmbCOCDistributors = GUICtrlCreateCombo("", $x - 8 , $y, 185, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-	   _GUICtrlSetTip(-1, GetTranslated(642, 2, "Allow bot to launch COC based on the distribution chosen"))
+	   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR Distributors", "CmbCOCDistributors_Info_01", "Allow bot to launch COC based on the distribution chosen"))
 	   LoadCOCDistributorsComboBox()
 	   SetCurSelCmbCOCDistributors()
 	   GUICtrlSetOnEvent(-1, "cmbCOCDistributors")
    GUICtrlCreateGroup("", -99, -99, 1, 1)
-   ; Android Settings (LunaEclipse)- modification (rulesss,kychera)
-    Local $x = 25, $y = 95
-	GUICtrlCreateGroup(GetTranslated(91,2,"Android Options"), $x - 20, $y - 20, 438, 50)
-	    $g_hChkAndroid = GUICtrlCreateCheckbox("", $x - 10, $y, 13, 13)
-		 GUICtrlSetTip(-1, GetTranslated(91, 6, "Do not use this option with the launchers for multi farming (for example: MyBot.run-MEmu.exe)."))
-		 GUICtrlSetState(-1, $GUI_UNCHECKED)
-		 GUICtrlSetOnEvent(-1, "chkAndroid")
-		$CmbAndroid = GUICtrlCreateCombo("", $x + 10, $y - 5, 130, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-			GUICtrlSetTip($CmbAndroid, GetTranslated(91,3,"Use this to select the Android Emulator to use with this profile."))
-			setupAndroidComboBox()
-			GUICtrlSetState(-1, $GUI_DISABLE)
-			GUICtrlSetOnEvent(-1, "CmbAndroid")
-	$x += 20	
-		$LblAndroidInstance = GUICtrlCreateLabel(GetTranslated(91,4,"Instance:"), $x + 130, $y - 2 , 60, 21, $SS_RIGHT)
-		$TxtAndroidInstance = GUICtrlCreateInput("", $x + 200, $y - 5, 150, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER))
-			GUICtrlSetTip($TxtAndroidInstance, GetTranslated(91,5,"Enter the Instance to use with this profile."))
-			GUICtrlSetState(-1, $GUI_DISABLE)
-			GUICtrlSetOnEvent(-1, "TxtAndroidInstance")		
-	GUICtrlCreateGroup("", -99, -99, 1, 1)
-	; Misc Battle Settings - added by rulesss
-	Local $x = 25, $y = 145
-    GUICtrlCreateGroup(GetTranslated(91,9, "Miscellaneous Battle Settings"), $x - 20, $y - 20, 435, 45)
-		$chkFastADBClicks = GUICtrlCreateCheckbox("", $x - 10, $y, 13, 13)
-		GUICtrlSetTip($chkFastADBClicks, GetTranslated(91,11, "Tick this to enable faster ADB deployment for MEmu and Droid4x in Multi-finger mode.") & @CRLF & GetTranslated(91,12, " WARNING:  This is experimental, if you have issues with deployment, disable it."))
-			GUICtrlSetOnEvent(-1, "chkFastADBClicks")
-			GUICtrlCreateLabel(GetTranslated(91,10, "Enable Fast ADB Clicks") & ":", $x + 7, $y, -1, -1)
 
+   $y += $h + 5
+   $w = $g_iSizeWGrpTab2 - 2
+
+   GUICtrlCreateGroup(GetTranslatedFileIni("Android", "Android_Options", "Android Options"), $x - 20, $y - 20, $w, $h)
+	   ;$y -=2
+	   $g_hChkAndroidAdbClickDragScript = GUICtrlCreateCheckbox(GetTranslatedFileIni("Android", "ChkAdbClickDragScript", "Use script for accurate Click && Drag"), $x, $y, -1, -1)
+	   _GUICtrlSetTip(-1, GetTranslatedFileIni("Android", "ChkAdbClickDragScript_Info", "Use Android specific script file for Click & Drag.\r\nIf unchecked use more compatible 'input swipe'."))
+	   GUICtrlSetState(-1, (($g_bAndroidAdbClickDragScript) ? ($GUI_CHECKED) : ($GUI_UNCHECKED)))
+   GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+   $y += $h + 5
+   $w = $g_iSizeWGrpTab2 - 2
+
+   GUICtrlCreateGroup(GetTranslatedFileIni("MBR Distributors", "Group_02", "Advanced Android Options"), $x - 20, $y - 20, $w, $h)
+	   $y -=2
+	   GUICtrlCreateLabel(GetTranslatedFileIni("MBR Distributors", "LblAdvanced_Android_Options", "Suspend/Resume Android"), $x - 8, $y + 5, 180, 22, $SS_RIGHT)
+	   $g_hCmbSuspendAndroid = GUICtrlCreateCombo("", $x - 8 + 180 + 5, $y, 200, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+	   GUICtrlSetData(-1, GetTranslatedFileIni("MBR Distributors", "CmbSuspendAndroid_Item_01", "Disabled|Only during Search/Attack|For every Image processing call"))
+	   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR Distributors", "CmbSuspendAndroid_Info_01", 'Specify if Android will be suspended for brief time only during search and attack or\r\nfor every ImgLoc/Image processing call. If you experience more frequent network issues\r\ntry to use "Only during Search/Attack" option or disable this feature.'))
+	   _GUICtrlComboBox_SetCurSel(-1, AndroidSuspendFlagsToIndex($g_iAndroidSuspendModeFlags))
+	   GUICtrlSetOnEvent(-1, "cmbSuspendAndroid")
+   GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
-

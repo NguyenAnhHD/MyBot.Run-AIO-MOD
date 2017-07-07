@@ -98,7 +98,7 @@ Func _ImageSearchAreaImgLoc($findImage, $resultPosition, $x1, $y1, $right, $bott
 	Local $sArea = Int($x1) & "," & Int($y1) & "|" & Int($right) & "," & Int($y1) & "|" & Int($right) & "," & Int($bottom) & "|" & Int($x1) & "," & Int($bottom)
 	Local $MaxReturnPoints = 1
 
-	Local $res = DllCall($g_hLibImgLoc, "str", "FindTile", "handle", $hHBMP, "str", $findImage, "str", $sArea, "Int", $MaxReturnPoints)
+	Local $res = DllCallMyBot("FindTile", "handle", $hHBMP, "str", $findImage, "str", $sArea, "Int", $MaxReturnPoints)
 	If @error Then _logErrorDLLCall($g_sLibImgLocPath, @error)
 	If IsArray($res) Then
 		;If $g_iDebugSetlog = 1 Then SetLog("_ImageSearchAreaImgLoc " & $findImage & " succeeded " & $res[0] & ",$sArea=" & $sArea & ",$g_fToleranceImgLoc=" & $g_fToleranceImgLoc , $COLOR_ERROR)
@@ -109,7 +109,7 @@ Func _ImageSearchAreaImgLoc($findImage, $resultPosition, $x1, $y1, $right, $bott
 		Else
 			Local $expRet = StringSplit($res[0], "|", $STR_NOCOUNT)
 			;$expret contains 2 positions; 0 is the total objects; 1 is the point in X,Y format
-			If UBound($expRet) >= 2 Then
+			If UBound($expRet) >= 2 Then 
 				Local $posPoint = StringSplit($expRet[1], ",", $STR_NOCOUNT)
 				If UBound($posPoint) >= 2 Then
 					$x = Int($posPoint[0])

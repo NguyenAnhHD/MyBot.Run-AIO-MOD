@@ -16,70 +16,62 @@
 
 Global $g_hGUI_DEADBASE_ATTACK_SCRIPTED = 0
 Global $g_hCmbScriptNameDB = 0, $g_hCmbScriptRedlineImplDB = 0, $g_hCmbScriptDroplineDB = 0
-Global $g_hLblNotesScriptDB = 0
+Global $g_hLblNotesScriptDB = 0, $g_hBtnAttNowDB = 0
 
 Func CreateAttackSearchDeadBaseScripted()
    $g_hGUI_DEADBASE_ATTACK_SCRIPTED = _GUICreate("", $_GUI_MAIN_WIDTH - 195, $g_iSizeHGrpTab4, 150, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_DEADBASE)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
-   $45 = GUICtrlCreatePic($g_sImagePath & $g_sImageBg2, 0, -5, 280, 352, $WS_CLIPCHILDREN)
-   Local $x = 25, $y = 20
-	   GUICtrlCreateGroup(GetTranslated(607,1,"Deploy"), $x - 20, $y - 20, 270, $g_iSizeHGrpTab4)
 
-   ;	 $x -= 15
-   ;		$chkmakeIMGCSVDB = GUICtrlCreateCheckbox(GetTranslated(607,2, "IMG"), $x + 150, $y, -1, -1)
-   ;			$txtTip = GetTranslated(607,3, "Make IMG with extra info in Profile -> Temp Folder")
-   ;			GUICtrlSetState(-1, $GUI_UNCHECKED)
-   ;			GUICtrlSetState(-1, $GUI_HIDE)
-   ;			_GUICtrlSetTip(-1, $txtTip)
+   Local $x = 25, $y = 20
+	   GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "Group_01", "Deploy"), $x - 20, $y - 20, 270, $g_iSizeHGrpTab4)
+
 
 		   $y +=15
 		   $g_hCmbScriptNameDB = GUICtrlCreateCombo("", $x, $y, 200, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL, $WS_VSCROLL))
-			   _GUICtrlSetTip(-1, GetTranslated(607,4, "Choose the script; You can edit/add new scripts located in folder: 'CSV/Attack'"))
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "CmbScriptName", "Choose the script; You can edit/add new scripts located in folder: 'CSV/Attack'"))
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
 			   GUICtrlSetOnEvent(-1, "cmbScriptNameDB")
-		   GUICtrlCreateIcon($g_sLibIconPath, $eIcnReload, $x + 210, $y + 2, 16, 16)
-			   _GUICtrlSetTip(-1, GetTranslated(607,5, "Reload Script Files"))
+		   _GUICtrlCreateIcon($g_sLibIconPath, $eIcnReload, $x + 210, $y + 2, 16, 16)
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "IconReload_Info_01", "Reload Script Files"))
 			   GUICtrlSetOnEvent(-1, 'UpdateComboScriptNameDB') ; Run this function when the secondary GUI [X] is clicked
 
 		   $y +=25
-		   $g_hLblNotesScriptDB =  GUICtrlCreateLabel("", $x, $y + 5, 200, 140)
-		   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
+		   $g_hLblNotesScriptDB =  GUICtrlCreateLabel("", $x, $y + 5, 200, 160)
+
+		   $g_hBtnAttNowDB = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "BtnAttNow", "Attack Now"), $x + 75 , $y + 167, 91, 25)
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "BtnAttNow_Info_01", "Button to test the CSV script"))
+			   GUICtrlSetBkColor(-1, 0xBAD9C8)
+			   GUICtrlSetOnEvent(-1, "AttackNowDB")
+
 		   $g_hCmbScriptRedlineImplDB = GUICtrlCreateCombo("", $x, $y + 195, 230, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-               GUICtrlSetData(-1, GetTranslated(607,9, "ImgLoc Raw Redline (default)|ImgLoc Redline Drop Points|Original Redline|External Edges"))
+               GUICtrlSetData(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "CmbScriptRedlineImpl", "ImgLoc Raw Redline (default)|ImgLoc Redline Drop Points|Original Redline|External Edges"))
 			   _GUICtrlComboBox_SetCurSel(-1, $g_aiAttackScrRedlineRoutine[$DB])
-			   _GUICtrlSetTip(-1, GetTranslated(607,10, "Choose the Redline implementation. ImgLoc Redline is default and best."))
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "CmbScriptRedlineImpl_Info_01", "Choose the Redline implementation. ImgLoc Redline is default and best."))
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
 			   GUICtrlSetOnEvent(-1, "cmbScriptRedlineImplDB")
 		   $g_hCmbScriptDroplineDB = GUICtrlCreateCombo("", $x, $y + 220, 230, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-			   GUICtrlSetData(-1, GetTranslated(607,11, "Drop line fix outer corner|Drop line fist Redline point|Full Drop line fix outer corner|Full Drop line fist Redline point|No Drop line"))
+			   GUICtrlSetData(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "CmbScriptDropline", "Drop line fix outer corner|Drop line fist Redline point|Full Drop line fix outer corner|Full Drop line fist Redline point|No Drop line"))
 			   _GUICtrlComboBox_SetCurSel(-1, $g_aiAttackScrDroplineEdge[$DB])
-			   _GUICtrlSetTip(-1, GetTranslated(607,12, "Choose the drop line edges. Default is outer corner and safer. First Redline point can improve attack."))
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "CmbScriptDropline_Info_01", "Choose the drop line edges. Default is outer corner and safer. First Redline point can improve attack."))
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
 			   GUICtrlSetOnEvent(-1, "cmbScriptDroplineDB")
-		   GUICtrlCreateIcon($g_sLibIconPath, $eIcnEdit, $x + 210, $y + 2, 16, 16)
-			   _GUICtrlSetTip(-1, GetTranslated(607,6, "Show/Edit current Attack Script"))
+		   _GUICtrlCreateIcon($g_sLibIconPath, $eIcnEdit, $x + 210, $y + 2, 16, 16)
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "IconShow-Edit_Info_01", "Show/Edit current Attack Script"))
 			   GUICtrlSetOnEvent(-1, "EditScriptDB")
 
 		   $y +=25
-		   GUICtrlCreateIcon($g_sLibIconPath, $eIcnAddcvs, $x + 210, $y + 2, 16, 16)
-			   _GUICtrlSetTip(-1, GetTranslated(607,7, "Create a new Attack Script"))
+		   _GUICtrlCreateIcon($g_sLibIconPath, $eIcnAddcvs, $x + 210, $y + 2, 16, 16)
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "IconCreate_Info_01", "Create a new Attack Script"))
 			   GUICtrlSetOnEvent(-1, "NewScriptDB")
 
 		   $y +=25
-		   GUICtrlCreateIcon($g_sLibIconPath, $eIcnCopy, $x + 210, $y + 2, 16, 16)
-			   _GUICtrlSetTip(-1, GetTranslated(607,8, "Copy current Attack Script to a new name"))
+		   _GUICtrlCreateIcon($g_sLibIconPath, $eIcnCopy, $x + 210, $y + 2, 16, 16)
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "IconCopy_Info_01", "Copy current Attack Script to a new name"))
 			   GUICtrlSetOnEvent(-1, "DuplicateScriptDB")
 
-		   $y += 110
-		   GUICtrlCreateButton(GetTranslated(607, 34, "Attack Now !"), $x + 75, $y - 20, 80, -1)
-			   ;GUISetState(@SW_SHOW)
-			   GUICtrlSetOnEvent(-1, "AttackNowDB")
-
-		   Local $x = 55, $y = 233
-
-		   GUICtrlCreateLabel(GetTranslated(607, 35, "CSV Deployment Speed"), $x - 2, $y, -1, -1)
-		   GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
-		   $g_hCmbCSVSpeed[$DB] = GUICtrlCreateCombo("", $x + 122, $y - 5, 50, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+		   Local $x = 55, $y = 318
+		   GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "CSVSpeed", "CSV Deployment Speed"), $x - 2, $y, -1, -1)
+			   $cmbCSVSpeed[$DB] = GUICtrlCreateCombo("", $x + 122, $y - 5, 50, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			   GUICtrlSetData(-1, "0.5x|0.75x|1x|1.25x|1.5x|2x|3x", "1x")
 
 	   GUICtrlCreateGroup("", -99, -99, 1, 1)
