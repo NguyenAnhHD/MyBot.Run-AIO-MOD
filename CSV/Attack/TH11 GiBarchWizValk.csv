@@ -21,18 +21,21 @@ MAKE  |Z          |FRONT-RIGHT|6          |2          |INT-EXT    |2          |2
       |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
 DROP  |A-C        |1-5        |2          |barb       |40-65      |50-70      |0          |           |launch barbs 
 DROP  |B-D        |1-5        |2          |barb       |40-65      |50-70      |0          |           |launch barbs 
-
+WAIT  |3000-6000  |           |           |           |           |           |           |           |
 DROP  |A-C        |1-5        |2          |giant      |40-65      |50-70      |0          |           |launch giants 
 DROP  |B-D        |4          |10         |giant      |40-65      |50-70      |400-650    |           |launch giants 
 DROP  |Y          |1          |4          |wall       |40-65      |50-70      |400-650    |           |launch WALL
 DROP  |Z          |2          |4          |wall       |40-65      |50-70      |400-650    |           |launch WALL
+
+WAIT  |4000-6000  |           |           |           |           |           |           |           |
 
       |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
 MAKE  |A          |FRONT-LEFT |10         |-6         |INT-EXT    |0          |0          |           |
 MAKE  |C          |FRONT-RIGHT|10         |-6         |INT-EXT    |0          |0          |           |
 
       |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
-DROP  |A          |3          |1          |RSpell     |40-65      |0          |300-500    |           |Rage Spell at -6 tiles from redarea
+DROP  |A          |2          |1          |RSpell     |40-65      |0          |300-500    |           |Rage Spell at -6 tiles from redarea
+WAIT  |3000       |           |           |           |           |           |           |           |
 DROP  |C          |3          |1          |RSpell     |400-650    |0          |300-500    |           |Rage Spell at -7 tiles from redarea
 
       |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
@@ -49,6 +52,7 @@ MAKE  |Q          |FRONT-RIGHT|70         |2          |INT-EXT    |2          |2
 MAKE  |Y          |FRONT-LEFT |6          |2          |INT-EXT    |2          |2          |           |
 MAKE  |Z          |FRONT-RIGHT|6          |2          |INT-EXT    |2          |2          |           |
 
+WAIT  |4000-8000  |           |           |           |           |           |           |           |
 
       |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|DROP BARBS
 DROP  |A-C        |1-14       |8-14       |barb       |40-65      |50-70      |0          |           |launch barbs 

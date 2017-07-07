@@ -13,14 +13,16 @@
 ; Example .......: No
 ; ===============================================================================================================================
 Func ParseAttackCSV($debug = False)
-	Global $ATTACKVECTOR_A, $ATTACKVECTOR_B, $ATTACKVECTOR_C, $ATTACKVECTOR_D, $ATTACKVECTOR_E, $ATTACKVECTOR_F
-	Global $ATTACKVECTOR_G, $ATTACKVECTOR_H, $ATTACKVECTOR_I, $ATTACKVECTOR_J, $ATTACKVECTOR_K, $ATTACKVECTOR_L
-	Global $ATTACKVECTOR_M, $ATTACKVECTOR_N, $ATTACKVECTOR_O, $ATTACKVECTOR_P, $ATTACKVECTOR_Q, $ATTACKVECTOR_R
-	Global $ATTACKVECTOR_S, $ATTACKVECTOR_T, $ATTACKVECTOR_U, $ATTACKVECTOR_V, $ATTACKVECTOR_W, $ATTACKVECTOR_X
-	Global $ATTACKVECTOR_Y, $ATTACKVECTOR_Z
 
 	Local $rownum = 0
 	Local $bForceSideExist = False
+	Local $sErrorText, $sTargetVectors = ""
+	Local $iTroopIndex, $bWardenDrop = False
+
+	For $v = 0 To 25 ; Zero all 26 vectors from last atttack in case here is error MAKE'ing new vectors
+		Assign("ATTACKVECTOR_" & Chr(65 + $v), "", $ASSIGN_EXISTFAIL) ; start with character "A" = ASCII 65
+		If @error Then SetLog("Failed to erase old vector: " & Chr(65 + $v) & ", ask code monkey to fix!", $COLOR_ERROR)
+	Next
 
 	;Local $filename = "attack1"
 	If $g_iMatchMode = $DB Then
@@ -39,6 +41,7 @@ Func ParseAttackCSV($debug = False)
 		For $iLine = 0 To UBound($aLines) - 1
 			$line = $aLines[$iLine]
 			$rownum = $line + 1
+			$sErrorText = "" ; empty error text each row
 			If @error = -1 Then ExitLoop
 			If $debug = True Then Setlog("parse line:<<" & $line & ">>")
 			debugAttackCSV("line content: " & $line)
@@ -90,18 +93,44 @@ Func ParseAttackCSV($debug = False)
 								EndSwitch
 							EndIf
 							If CheckCsvValues("MAKE", 1, $value1) And CheckCsvValues("MAKE", 5, $value5) Then
-								Assign("ATTACKVECTOR_" & $value1, MakeDropPoints(Eval($sidex), $value3, $value4, $value5, $value6, $value7))
-								For $i = 0 To UBound(Execute("$ATTACKVECTOR_" & $value1)) - 1
-									Local $pixel = Execute("$ATTACKVECTOR_" & $value1 & "[" & $i & "]")
-									debugAttackCSV($i & " - " & $pixel[0] & "," & $pixel[1])
-								Next
+								$sTargetVectors = StringReplace($sTargetVectors, $value3, "", Default, $STR_NOCASESENSEBASIC) ; if re-making a vector, must remove from target vector string
+								If CheckCsvValues("MAKE", 8, $value8) Then ; Vector is targeted towards building v7.2
+									; new field definitions:
+									; $side = target side string
+									; value3 = Drop point count can be 1 or 5 value only
+									; value4 = addtiles Ignore if value3 = 5, only used when dropping in sigle point
+									; value5 = versus ignore direction
+									; value6 = RandomX ignored as image find location will be "random" without need to add more variability
+									; value7 = randomY ignored as image find location will be "random" without need to add more variability
+									; value8 = Building target for drop points
+									If $value3 = 1 Or $value3 = 5 Then ; check for valid number of drop points
+										Local $tmpArray = MakeTargetDropPoints(Eval($sidex), $value3, $value4, $value8)
+										If @error Then
+											$sErrorText = "MakeTargetDropPoints: " & @error ; set flag
+										Else
+											Assign("ATTACKVECTOR_" & $value1, $tmpArray) ; assing vector
+											$sTargetVectors &= $value1 ; add letter of every vector using building target to string to error check DROP command
+										EndIf
+									Else
+										$sErrorText = "value 3"
+									EndIf
+								Else ; normal redline based drop vectors
+									Assign("ATTACKVECTOR_" & $value1, MakeDropPoints(Eval($sidex), $value3, $value4, $value5, $value6, $value7))
+								EndIf
 							Else
-								Setlog("Discard row, bad value1 or value 5 parameter: row " & $rownum)
-								debugAttackCSV("Discard row, bad value1 or value5 parameter")
+								$sErrorText = "value1 or value 5"
 							EndIf
 						Else
-							Setlog("Discard row, bad value2 parameter:row " & $rownum)
-							debugAttackCSV("Discard row, bad value2 parameter:row " & $rownum)
+							$sErrorText = "value2"
+						EndIf
+						If $sErrorText <> "" Then ; log error message
+							Setlog("Discard row, bad " & $sErrorText & " parameter:row " & $rownum)
+							debugAttackCSV("Discard row, bad " & $sErrorText & " parameter:row " & $rownum)
+						Else ; debuglog vectors
+							For $i = 0 To UBound(Execute("$ATTACKVECTOR_" & $value1)) - 1
+								Local $pixel = Execute("$ATTACKVECTOR_" & $value1 & "[" & $i & "]")
+								debugAttackCSV($i & " - " & $pixel[0] & "," & $pixel[1])
+							Next
 						EndIf
 					Case "DROP"
 						KeepClicks()
@@ -133,24 +162,75 @@ Func ParseAttackCSV($debug = False)
 								EndIf
 							EndIf
 						EndIf
-						;qty...
-						Local $qty1, $qty2, $qtyvect
-						$qtyvect = StringSplit($value3, "-", 2)
-						If UBound($qtyvect) > 1 Then
-							If Int($qtyvect[0]) > 0 And Int($qtyvect[1]) > 0 Then
-								$qty1 = Int($qtyvect[0])
-								$qty2 = Int($qtyvect[1])
+						;quatities : with %
+						Local $qty1, $qty2, $qtyvect, $bUpdateQuantity = False
+						If StringInStr($value3, "%") > 0 Then
+							$qtyvect = StringSplit($value3, "%", 2)
+							If UBound($qtyvect) > 0 Then
+								Local $iPercentage = $qtyvect[0]
+								If UBound($qtyvect) > 1 Then $bUpdateQuantity = (($qtyvect[1] = "U") ? True : False)
+								Local $theTroopPosition = -2
+
+								; Get the integer index of the troop name specified
+								Local $troopName = $value4
+								Local $iTroopIndex = TroopIndexLookup($troopName)
+								If $iTroopIndex = -1 Then
+									Setlog("CSV CMD '%' troop name '" & $troopName & "' is unrecognized.")
+									Return
+								EndIf
+
+								For $i = 0 To UBound($g_avAttackTroops) - 1
+									If $g_avAttackTroops[$i][0] = $iTroopIndex Then
+										$theTroopPosition = $i
+										ExitLoop
+									EndIf
+								Next
+								If $bUpdateQuantity = True Then
+									If $theTroopPosition >= 0 Then
+										SetLog("Updating Available " & NameOfTroop($iTroopIndex, 1) & " Quantities", $COLOR_INFO)
+										$theTroopPosition = UpdateTroopQuantity($troopName)
+									EndIf
+								EndIf
+								If $theTroopPosition >= 0 And UBound($g_avAttackTroops) > $theTroopPosition Then
+									If Int($qtyvect[0]) > 0 Then
+										$qty1 = Round((Number($qtyvect[0]) / 100) * Number($g_avAttackTroops[Number($theTroopPosition)][1]))
+										$qty2 = $qty1
+										SetLog($qtyvect[0] & "% Of x" & Number($g_avAttackTroops[$theTroopPosition][1]) & " " & NameOfTroop($g_avAttackTroops[$theTroopPosition][0], 1) & " = " & $qty1, $COLOR_INFO)
+									Else
+										$index1 = 1
+										$qty2 = 1
+									EndIf
+								Else
+									$qty1 = 0
+									$qty2 = 0
+								EndIf
 							Else
-								$index1 = 1
-								$qty2 = 1
+								If Int($value3) > 0 Then
+									$qty1 = Int($value3)
+									$qty2 = Int($value3)
+								Else
+									$qty1 = 1
+									$qty2 = 1
+								EndIf
 							EndIf
 						Else
-							If Int($value3) > 0 Then
-								$qty1 = Int($value3)
-								$qty2 = Int($value3)
+							$qtyvect = StringSplit($value3, "-", 2)
+							If UBound($qtyvect) > 1 Then
+								If Int($qtyvect[0]) > 0 And Int($qtyvect[1]) > 0 Then
+									$qty1 = Int($qtyvect[0])
+									$qty2 = Int($qtyvect[1])
+								Else
+									$index1 = 1
+									$qty2 = 1
+								EndIf
 							Else
-								$qty1 = 1
-								$qty2 = 1
+								If Int($value3) > 0 Then
+									$qty1 = Int($value3)
+									$qty2 = Int($value3)
+								Else
+									$qty1 = 1
+									$qty2 = 1
+								EndIf
 							EndIf
 						EndIf
 						;delay between points
@@ -213,11 +293,89 @@ Func ParseAttackCSV($debug = False)
 								$sleepdrop2 = 1
 							EndIf
 						EndIf
-						DropTroopFromINI($value1, $index1, $index2, $indexArray, $qty1, $qty2, $value4, $delaypoints1, $delaypoints2, $delaydrop1, $delaydrop2, $sleepdrop1, $sleepdrop2, $debug)
-						ReleaseClicks($g_iAndroidAdbClicksTroopDeploySize)
-						If _Sleep($DELAYRESPOND) Then ; check for pause/stop, close file before return
-							Return
+						;sleep time before drop
+						Local $sleepbeforedrop1 = 0, $sleepbeforedrop2 = 0, $sleepbeforedroppvect
+						$sleepbeforedroppvect = StringSplit($value8, "-", 2)
+						If UBound($sleepbeforedroppvect) > 1 Then
+							If Int($sleepbeforedroppvect[0]) > 0 And Int($sleepbeforedroppvect[1]) > 0 Then
+								$sleepbeforedrop1 = Int($sleepbeforedroppvect[0])
+								$sleepbeforedrop2 = Int($sleepbeforedroppvect[1])
+							Else
+								$sleepbeforedrop1 = 0
+								$sleepbeforedrop2 = 0
+							EndIf
+						Else
+							If Int($value3) > 0 Then
+								$sleepbeforedrop1 = Int($value8)
+								$sleepbeforedrop2 = Int($value8)
+							Else
+								$sleepbeforedrop1 = 0
+								$sleepbeforedrop2 = 0
+							EndIf
 						EndIf
+						; check for targeted vectors and validate index numbers, need too many values for check logic to use CheckCSVValues()
+						Local $tmpVectorList = StringSplit($value1, "-", $STR_NOCOUNT) ; get array with all vector(s) used
+						For $v = 0 To UBound($tmpVectorList) - 1 ; loop thru each vector in target list
+							If StringInStr($sTargetVectors, $tmpVectorList[$v], $STR_NOCASESENSEBASIC) = True Then
+								If IsArray($indexArray) Then ; is index comma separated list?
+									For $i = $index1 To $index2 ; check that all values are less 5?
+										If $indexArray[$i] < 1 Or $indexArray[$i] > 5 Then
+											$sErrorText &= "Invalid INDEX for near building DROP"
+											SetDebugLog("$index1: " & $index1 & ", $index2: " & $index2 & ", $indexArray[" & $i & "]: " & $indexArray[$i], $COLOR_ERROR)
+											ExitLoop
+										EndIf
+									Next
+								ElseIf $indexArray = 0 Then ; index is either 2 values comma separated, range "-" separated between 1 & 5, or single index
+									Select
+										Case $index1 = 1 And $index1 = $index2
+											; do nothing, is valid
+										Case $index1 >= 1 And $index1 <= 5 And $index2 > 1 And $index2 <= 5
+											; do nothing valid index values for near location targets
+										Case Else
+											$sErrorText &= "Invalid INDEX for building target"
+											SetDebugLog("$index1: " & $index1 & ", $index2: " & $index2, $COLOR_ERROR)
+									EndSelect
+								Else
+									SetDebugLog("Monkey found a bad banana checking Bdlg target INDEX!", $COLOR_ERROR)
+								EndIf
+							EndIf
+						Next
+						If $sErrorText <> "" Then
+							Setlog("Discard row, " & $sErrorText & " parameter:row " & $rownum)
+							debugAttackCSV("Discard row, " & $sErrorText & " parameter:row " & $rownum)
+						Else
+							; REMAIN CMD from @chalicucu
+							If $value4 = "REMAIN" Then
+								SetLog("Drop|Remain:  Dropping left over troops", $COLOR_BLUE)
+								; Let's get the troops again and quantities
+								If PrepareAttack($g_iMatchMode, True) > 0 Then
+									; a Loop from all troops
+									For $ii = $eBarb To $eBowl ; lauch all remaining troops
+										; Loop on all detected troops
+										For $x = 0 To UBound($g_avAttackTroops) - 1
+											; If the Name exist and haves more than zero is deploy it
+											If $g_avAttackTroops[$x][0] = $ii and $g_avAttackTroops[$x][1] > 0 Then
+												Local $plural = 0
+												If $g_avAttackTroops[$x][1] > 1 Then $plural = 1
+												Local $name = NameOfTroop($g_avAttackTroops[$x][0], $plural)
+												Setlog("Name: " & $name, $COLOR_DEBUG)
+												Setlog("Qty: " & $g_avAttackTroops[$x][1], $COLOR_DEBUG)
+												DropTroopFromINI($value1, $index1, $index2, $indexArray, $g_avAttackTroops[$x][1], $g_avAttackTroops[$x][1], $g_asTroopShortNames[$ii], $delaypoints1, $delaypoints2, $delaydrop1, $delaydrop2, $sleepdrop1, $sleepdrop2, $sleepbeforedrop1, $sleepbeforedrop2, $debug)
+												CheckHeroesHealth()
+												If _Sleep($DELAYALGORITHM_ALLTROOPS5) Then Return
+											EndIf
+										Next
+									Next
+								EndIf
+							Else
+								DropTroopFromINI($value1, $index1, $index2, $indexArray, $qty1, $qty2, $value4, $delaypoints1, $delaypoints2, $delaydrop1, $delaydrop2, $sleepdrop1, $sleepdrop2, $sleepbeforedrop1, $sleepbeforedrop2, $debug)
+							EndIf
+						EndIf
+						ReleaseClicks($g_iAndroidAdbClicksTroopDeploySize)
+						If _Sleep($DELAYRESPOND) Then Return ; check for pause/stop
+						;set flag if warden was dropped and sleep after delay was to short for icon to update properly
+						$iTroopIndex = TroopIndexLookup($value4, "ParseAttackCSV") ; obtain enum
+						$bWardenDrop = ($iTroopIndex = $eWarden) And ($sleepdrop1 < 1000)
 					Case "WAIT"
 						ReleaseClicks()
 						;sleep time
@@ -256,13 +414,11 @@ Func ParseAttackCSV($debug = False)
 						Local $exitNoResources = 0
 						Local $hSleepTimer = __TimerInit()
 						While __TimerDiff($hSleepTimer) < $sleep
-							If $g_iActivateKQCondition = "Auto" Then CheckHeroesHealth()
+							CheckHeroesHealth()
 							;READ RESOURCES
 							$Gold = getGoldVillageSearch(48, 69)
 							$Elixir = getElixirVillageSearch(48, 69 + 29)
-							If _Sleep($DELAYRESPOND) Then ; check for pause/stop, close file before return
-								Return
-							EndIf
+							If _Sleep($DELAYRESPOND) Then Return ; check for pause/stop
 							$Trophies = getTrophyVillageSearch(48, 69 + 99)
 							If $Trophies <> "" Then ; If trophy value found, then base has Dark Elixir
 								$DarkElixir = getDarkElixirVillageSearch(48, 69 + 57)
@@ -270,7 +426,7 @@ Func ParseAttackCSV($debug = False)
 								$DarkElixir = ""
 								$Trophies = getTrophyVillageSearch(48, 69 + 69)
 							EndIf
-							If $g_iActivateKQCondition = "Auto" Then CheckHeroesHealth()
+							CheckHeroesHealth()
 							If $g_iDebugSetlog = 1 Then SetLog("detected [G]: " & $Gold & " [E]: " & $Elixir & " [DE]: " & $DarkElixir, $COLOR_INFO)
 							;EXIT IF RESOURCES = 0
 							If $g_abStopAtkNoResources[$g_iMatchMode] And Number($Gold) = 0 And Number($Elixir) = 0 And Number($DarkElixir) = 0 Then
@@ -294,9 +450,7 @@ Func ParseAttackCSV($debug = False)
 							If $g_abStopAtkPctHigherEnable[$g_iMatchMode] And Number(getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY)) > Int($g_aiStopAtkPctHigherAmt[$g_iMatchMode]) Then
 								ExitLoop
 							EndIf
-							If _Sleep($DELAYRESPOND) Then ; check for pause/stop, close file before return
-								Return
-							EndIf
+							If _Sleep($DELAYRESPOND) Then Return ; check for pause/stop
 						WEnd
 						If $exitOneStar = 1 Or $exitTwoStars = 1 Or $exitNoResources = 1 Then ExitLoop ;stop parse CSV file, start exit battle procedure
 
@@ -503,6 +657,96 @@ Func ParseAttackCSV($debug = False)
 									$heightBottomLeft += Int($value1)
 							EndSwitch
 
+							If IsArray($g_aiCSVInfernoPos) Then
+								For $i = 0 To UBound($g_aiCSVInfernoPos) - 1
+									Local $pixel = $g_aiCSVInfernoPos[$i]
+									If UBound($pixel) = 2 Then
+										Switch StringLeft(Slice8($pixel), 1)
+											Case 1, 2
+												$heightBottomRight += Int($value4)
+											Case 3, 4
+												$heightTopRight += Int($value4)
+											Case 5, 6
+												$heightTopLeft += Int($value4)
+											Case 7, 8
+												$heightBottomLeft += Int($value4)
+										EndSwitch
+									EndIf
+								Next
+							EndIf
+
+							If IsArray($g_aiCSVXBowPos) Then
+								For $i = 0 To UBound($g_aiCSVXBowPos) - 1
+									Local $pixel = $g_aiCSVXBowPos[$i]
+									If UBound($pixel) = 2 Then
+										Switch StringLeft(Slice8($pixel), 1)
+											Case 1, 2
+												$heightBottomRight += Int($value4)
+											Case 3, 4
+												$heightTopRight += Int($value4)
+											Case 5, 6
+												$heightTopLeft += Int($value4)
+											Case 7, 8
+												$heightBottomLeft += Int($value4)
+										EndSwitch
+									EndIf
+								Next
+							EndIf
+
+							If IsArray($g_aiCSVWizTowerPos) Then
+								For $i = 0 To UBound($g_aiCSVWizTowerPos) - 1
+									Local $pixel = $g_aiCSVWizTowerPos[$i]
+									If UBound($pixel) = 2 Then
+										Switch StringLeft(Slice8($pixel), 1)
+											Case 1, 2
+												$heightBottomRight += Int($value4)
+											Case 3, 4
+												$heightTopRight += Int($value4)
+											Case 5, 6
+												$heightTopLeft += Int($value4)
+											Case 7, 8
+												$heightBottomLeft += Int($value4)
+										EndSwitch
+									EndIf
+								Next
+							EndIf
+
+							If IsArray($g_aiCSVMortarPos) Then
+								For $i = 0 To UBound($g_aiCSVMortarPos) - 1
+									Local $pixel = $g_aiCSVMortarPos[$i]
+									If UBound($pixel) = 2 Then
+										Switch StringLeft(Slice8($pixel), 1)
+											Case 1, 2
+												$heightBottomRight += Int($value4)
+											Case 3, 4
+												$heightTopRight += Int($value4)
+											Case 5, 6
+												$heightTopLeft += Int($value4)
+											Case 7, 8
+												$heightBottomLeft += Int($value4)
+										EndSwitch
+									EndIf
+								Next
+							EndIf
+
+							If IsArray($g_aiCSVAirDefensePos) Then
+								For $i = 0 To UBound($g_aiCSVAirDefensePos) - 1
+									Local $pixel = $g_aiCSVAirDefensePos[$i]
+									If UBound($pixel) = 2 Then
+										Switch StringLeft(Slice8($pixel), 1)
+											Case 1, 2
+												$heightBottomRight += Int($value4)
+											Case 3, 4
+												$heightTopRight += Int($value4)
+											Case 5, 6
+												$heightTopLeft += Int($value4)
+											Case 7, 8
+												$heightBottomLeft += Int($value4)
+										EndSwitch
+									EndIf
+								Next
+							EndIf
+
 							Local $maxValue = $heightBottomRight
 							Local $sidename = "BOTTOM-RIGHT"
 
@@ -569,10 +813,15 @@ Func ParseAttackCSV($debug = False)
 			Else
 				If StringLeft($line, 7) <> "NOTE  |" And StringLeft($line, 7) <> "      |" And StringStripWS(StringUpper($line), 2) <> "" Then Setlog("attack row error, discard.: " & $line, $COLOR_ERROR)
 			EndIf
-			CheckHeroesHealth()
-			If _Sleep($DELAYRESPOND) Then ; check for pause/stop after each line of CSV, close file before return
-				Return
+			If $bWardenDrop = True Then  ;Check hero, but skip Warden if was dropped with sleepafter to short to allow icon update
+				Local $bHold = $g_bCheckWardenPower ; store existing flag state, should be true?
+				$g_bCheckWardenPower = False ;temp disable warden health check
+				CheckHeroesHealth()
+				$g_bCheckWardenPower = $bHold ; restore flag state
+			Else
+				CheckHeroesHealth()
 			EndIf
+			If _Sleep($DELAYRESPOND) Then  Return ; check for pause/stop after each line of CSV
 		Next
 		ReleaseClicks()
 	Else

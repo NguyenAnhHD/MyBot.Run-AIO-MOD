@@ -1,0 +1,26 @@
+NOTE  |Author: Z E C K 
+NOTE  |Attack: GiWiHe - ver - 3.0 - 30.06.2017  00:01 PM
+NOTE  |Train: 20 Giants, 19 Wizards, 5 WallBreakers, 1 Healer, 1 Heal Spells, 1 Rage Spell, 3 Eartquake Spell+CC
+NOTE  |Clan Castle: Must have CC lvl 4+. Request: Wizards and Earthquake. Attack search click: "Wait to get Castle Spell" Select "Earthquake"
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |           |10         |           |           |           |           |           |           |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |A          |FRONT-LEFT |10         |1          |INT-EXT    |2          |3          |           |  vector for giants, CC, Archers front left and King Altar, wallB
+MAKE  |C          |FRONT-LEFT |10         |1          |EXT-INT    |0          |2          |           |  vector for Wizards FRONT-LEFT
+MAKE  |D          |FRONT-RIGHT|10         |1          |EXT-INT    |1          |2          |           |  vector for Wizards FRONT-RIGHT
+MAKE  |F          |FRONT-LEFT |10         |-10        |INT-EXT    |0          |2          |           |  vector for HealSpell
+MAKE  |G          |FRONT-LEFT |10         |-15        |INT-EXT    |0          |2          |           |  vector for RageSpell
+MAKE  |T          |FRONT-RIGHT|10         |-17        |INT-EXT    |0          |2          |           |  vector for RageSpell
+
+DROP  |A          |1          |20         |Giant      |100-150    |0          |0          |           |  Drop giants 20
+DROP  |A          |2          |1          |Heal       |0          |0          |1000       |           |  Drop Heal 1
+DROP  |A          |2          |5          |Wall       |50-100     |0          |0          |           |  Drop Wall Breakers 5
+DROP  |A          |1          |1          |Castle     |0          |0          |0          |           |  Drop Clan Castle Troops
+DROP  |C-D        |2-10       |5          |Wiza       |100-150    |0          |4000       |           |  Drop Wizards 10
+DROP  |F          |1          |1          |HSpell     |0          |0          |0          |           |  Drop HSpell Front-Left
+DROP  |A          |1          |1          |King       |0          |0          |1000       |           |  Drop King Altar
+DROP  |C-D        |9-10       |5          |Wiza       |100-150    |0          |0          |           |  Drop Wizards 9
+DROP  |G          |2          |1          |RSpell     |0          |0          |1000       |           |  Drop RSpell Front-Left
+DROP  |T          |2          |1          |RSpell     |0          |0          |0          |           |  Drop RSpell Front-Left

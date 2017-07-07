@@ -56,7 +56,7 @@ Func getResourcesMainScreen($x_start, $y_start) ; -> Gets complete value of Gold
 EndFunc   ;==>getResourcesMainScreen
 
 Func getResourcesLoot($x_start, $y_start) ; -> Gets complete value of Gold/Elixir after attack xxx,xxx "AttackReport"
-	Return getOcrAndCapture("coc-loot", $x_start, $y_start, 107, 22, True)
+	Return getOcrAndCapture("coc-loot", $x_start, $y_start, 160, 22, True)
 EndFunc   ;==>getResourcesLoot
 
 Func getResourcesLootDE($x_start, $y_start) ; -> Gets complete value of Dark Elixir after attack xxx,xxx "AttackReport"
@@ -88,7 +88,7 @@ Func getBldgUpgradeTime($x_start, $y_start) ; -> Gets complete remain building u
 EndFunc   ;==>getBldgUpgradeTime
 
 Func getLabUpgradeTime($x_start, $y_start) ; -> Gets complete remain lab upgrade time V2 for Dec2015 update
-	Return getOcrAndCapture("coc-uptime2", $x_start, $y_start, 40, 20) ; 40 is enougth xxx : 2 numbers and one letter at max
+	Return getOcrAndCapture("coc-uptime2", $x_start, $y_start, 42, 22) ; 40 is enougth xxx : 2 numbers and one letter at max
 EndFunc   ;==>getLabUpgradeTime
 
 Func getHeroUpgradeTime($x_start, $y_start) ; -> Gets complete upgrade time for heroes 464, 527 + $g_iMidOffsetY
@@ -130,10 +130,6 @@ EndFunc   ;==>getArmyTroopKind
 Func getArmyCampCap($x_start, $y_start) ;  -> Gets army camp capacity --> train.au3, and used to read CC request time remaining
 	Return getOcrAndCapture("coc-ms", $x_start, $y_start, 82, 16, True)
 EndFunc   ;==>getArmyCampCap
-
-Func getArmyCampCapa($x_start, $y_start);  -> Gets army camp capacity --> train.au3, and used to read CC request time remaining
-	Return getOcrAndCapture("coc-army", $x_start, $y_start, 66, 14, True)
-EndFunc   ;==>getArmyCampCapa
 
 Func getCastleDonateCap($x_start, $y_start) ;  -> Gets clan castle capacity,  --> donatecc.au3
 	Return getOcrAndCapture("coc-army", $x_start, $y_start, 30, 14, True)
@@ -232,8 +228,8 @@ Func getOcrRateCoc($x_start, $y_start, $sLogText = Default, $LogTextColor = Defa
 	Return $result
 EndFunc   ;==>getOcrRateCoc
 
-Func getRemainTLaboratory($x_start, $y_start) ; read actual time remaining in Lab for current upgrade (336,260)
-	Return getOcrAndCapture("coc-RemainLaboratory", $x_start, $y_start, 192, 24)
+Func getRemainTLaboratory($x_start, $y_start) ; read actual time remaining in Lab for current upgrade (336,260), changed CoC v9.24 282,277
+	Return getOcrAndCapture("coc-RemainLaboratory", $x_start, $y_start, 194, 25)
 EndFunc   ;==>getRemainTLaboratory
 
 Func getRemainTHero($x_start, $y_start) ; Get time remaining for hero to be ready for attack from train window, BK:443,504 AQ:504,504 GW:565:504
@@ -378,7 +374,7 @@ Func getOcrAndCapture($language, $x_start, $y_start, $width, $height, $removeSpa
 EndFunc   ;==>getOcrAndCapture
 
 Func getOcr(ByRef Const $_hHBitmap, $language)
-	Local $result = DllCall($g_hLibMyBot, "str", "ocr", "ptr", $_hHBitmap, "str", $language, "int", $g_iDebugOcr)
+	Local $result = DllCallMyBot("ocr", "ptr", $_hHBitmap, "str", $language, "int", $g_iDebugOcr)
 	If IsArray($result) Then
 		Return $result[0]
 	Else
@@ -387,7 +383,7 @@ Func getOcr(ByRef Const $_hHBitmap, $language)
 EndFunc   ;==>getOcr
 
 Func getOcrImgLoc(ByRef Const $_hHBitmap, $sLanguage)
-	Local $result = DllCall($g_hLibImgLoc, "str", "DoOCR", "handle", $_hHBitmap, "str", $sLanguage)
+	Local $result = DllCallMyBot("DoOCR", "handle", $_hHBitmap, "str", $sLanguage)
 
 	Local $error = @error ; Store error values as they reset at next function call
 	Local $extError = @extended

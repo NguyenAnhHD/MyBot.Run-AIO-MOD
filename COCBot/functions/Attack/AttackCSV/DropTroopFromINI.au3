@@ -35,6 +35,7 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 	debugAttackCSV(" - delay when  change deploy point : " & $delayDropMin & "-" & $delayDropMax)
 	debugAttackCSV(" - delay after drop all troops : " & $sleepafterMin & "-" & $sleepAfterMax)
 	debugAttackCSV(" - delay before drop all troops : " & $sleepBeforeMin & "-" & $sleepBeforeMax)
+
 	;how many vectors need to manage...
 	Local $temp = StringSplit($vectors, "-")
 	Local $numbersOfVectors
@@ -75,6 +76,7 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		Setlog("CSV troop name '" & $troopName & "' is unrecognized.")
 		Return
 	EndIf
+	Local $bHeroDrop = ($iTroopIndex = $eWarden ? True : False) ;set flag TRUE if Warden was dropped
 
 	;search slot where is the troop...
 	Local $troopPosition = -1
@@ -132,10 +134,10 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		Local $sleepBefore = 0
 		If $sleepBeforeMin <> $sleepBeforeMax Then
 			$sleepBefore = Random($sleepBeforeMin, $sleepBeforeMax, 1)
-			$sleepBefore = Int($sleepBefore / $g_hDivider)
+			$sleepBefore = Int($sleepBefore / $g_CSVSpeedDivider)
 		Else
 			$sleepBefore = Int($sleepBeforeMin)
-			$sleepBefore = Int($sleepBefore / $g_hDivider)
+			$sleepBefore = Int($sleepBefore / $g_CSVSpeedDivider)
 		EndIf
 
 		If $sleepBefore > 50 And IsKeepClicksActive() = False Then
@@ -167,10 +169,10 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 				;delay time between 2 drops in different point
 				If $delayDropMin <> $delayDropMax Then
 					$delayDrop = Random($delayDropMin, $delayDropMax, 1)
-					$delayDrop = Int($delayDrop / $g_hDivider)
+					$delayDrop = Int($delayDrop / $g_CSVSpeedDivider)
 				Else
 					$delayDrop = $delayDropMin
-					$delayDrop = Int($delayDrop / $g_hDivider)
+					$delayDrop = Int($delayDrop / $g_CSVSpeedDivider)
 				EndIf
 				debugAttackCSV(">> delay change drop point: " & $delayDrop)
 			EndIf
@@ -187,10 +189,10 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 					;delay time between 2 drops in same point
 					If $delayPointmin <> $delayPointmax Then
 						Local $delayPoint = Random($delayPointmin, $delayPointmax, 1)
-						$delayPoint = Int($delayPoint / $g_hDivider)
+						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider)
 					Else
 						Local $delayPoint = $delayPointmin
-						$delayPoint = Int($delayPoint / $g_hDivider)
+						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider)
 					EndIf
 
 					Switch $iTroopIndex
@@ -246,16 +248,23 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		Local $sleepafter = 0
 		If $sleepafterMin <> $sleepAfterMax Then
 			$sleepafter = Random($sleepafterMin, $sleepAfterMax, 1)
-			$sleepafter = Int($sleepafter / $g_hDivider)
+			$sleepafter = Int($sleepafter / $g_CSVSpeedDivider)
 		Else
 			$sleepafter = Int($sleepafterMin)
-			$sleepafter = Int($sleepafter / $g_hDivider)
+			$sleepafter = Int($sleepafter / $g_CSVSpeedDivider)
 		EndIf
 		If $sleepafter > 0 And IsKeepClicksActive() = False Then
 			debugAttackCSV(">> delay after drop all troops: " & $sleepafter)
 			If $sleepafter <= 1000 Then ; check SLEEPAFTER value is less than 1 second?
 				If _Sleep($sleepafter) Then Return
-				CheckHeroesHealth() ; check hero health == does nothing if hero not dropped
+				If $bHeroDrop = True Then  ;Check hero but skip Warden if was dropped with sleepafter to short to allow icon update
+					Local $bHold = $g_bCheckWardenPower ; store existing flag state, should be true?
+					$g_bCheckWardenPower = False ;temp disable warden health check
+					CheckHeroesHealth()
+					$g_bCheckWardenPower = $bHold ; restore flag state
+				Else
+					CheckHeroesHealth()
+				EndIf
 			Else ; $sleepafter is More than 1 second, then improve pause/stop button response with max 1 second delays
 				For $z = 1 To Int($sleepafter / 1000) ; Check hero health every second while while sleeping
 					If _Sleep(980) Then Return ; sleep 1 second minus estimated herohealthcheck time when heroes not activiated

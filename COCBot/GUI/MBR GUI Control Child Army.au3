@@ -40,6 +40,16 @@ Func chkUseQTrain()
 	EndIf
 EndFunc   ;==>chkUseQTrain
 
+; QuickTrainCombo (Demen) - Added By Demen
+Func chkQuickTrainCombo()
+	If GUICtrlRead($g_ahChkArmy[0]) = $GUI_UNCHECKED And GUICtrlRead($g_ahChkArmy[1]) = $GUI_UNCHECKED And GUICtrlRead($g_ahChkArmy[2]) = $GUI_UNCHECKED Then
+		GUICtrlSetState($g_ahChkArmy[0], $GUI_CHECKED)
+		ToolTip("QuickTrainCombo: " & @CRLF & "At least 1 Army Check is required! Default Army1.")
+		Sleep(2000)
+		ToolTip('')
+	EndIf
+EndFunc   ;==>chkQuickTrainCombo
+
 Func SetComboTroopComp()
 	Local $bWasRedraw = SetRedrawBotWindow(False, Default, Default, Default, "SetComboTroopComp")
 	Local $ArmyCampTemp = 0
@@ -269,11 +279,11 @@ Func chkCloseWaitEnable()
 	If GUICtrlRead($g_hChkCloseWhileTraining) = $GUI_CHECKED Then
 		$g_bCloseWhileTrainingEnable = True
 		_GUI_Value_STATE("ENABLE", $groupCloseWhileTraining)
-		_GUI_Value_STATE("ENABLE", $g_hLblCloseWaitingTroops & "#" & $g_hCmbMinimumTimeClose & "#" & $g_hLblSymbolWaiting & "#" & $g_hLblWaitingInMinutes & "#" & $chkTrainLogoutMaxTime & "#" & $txtTrainLogoutMaxTime & "#" &  $lblTrainLogoutMaxTime)
+		_GUI_Value_STATE("ENABLE", $g_hLblCloseWaitingTroops & "#" & $g_hCmbMinimumTimeClose & "#" & $g_hLblSymbolWaiting & "#" & $g_hLblWaitingInMinutes)
 	Else
 		$g_bCloseWhileTrainingEnable = False
 		_GUI_Value_STATE("DISABLE", $groupCloseWhileTraining)
-		_GUI_Value_STATE("DISABLE", $g_hLblCloseWaitingTroops & "#" & $g_hCmbMinimumTimeClose & "#" & $g_hLblSymbolWaiting & "#" & $g_hLblWaitingInMinutes & "#" & $chkTrainLogoutMaxTime & "#" & $txtTrainLogoutMaxTime & "#" & $lblTrainLogoutMaxTime)
+		_GUI_Value_STATE("DISABLE", $g_hLblCloseWaitingTroops & "#" & $g_hCmbMinimumTimeClose & "#" & $g_hLblSymbolWaiting & "#" & $g_hLblWaitingInMinutes)
 	EndIf
 	If GUICtrlRead($g_hChkRandomClose) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hChkCloseEmulator, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
@@ -462,12 +472,12 @@ EndFunc   ;==>GUITrainOrder
 Func BtnRemoveTroops()
 	Local $bWasRedraw = SetRedrawBotWindow(False, Default, Default, Default, "BtnRemoveTroops")
 	Local $sComboData = ""
-	For $j = 0 To UBound($g_asTroopOrderList) - 1
-		$sComboData &= $g_asTroopOrderList[$j] & "|"
-	Next
+	  For $j = 0 To UBound($g_asTroopOrderList) - 1
+		  $sComboData &= $g_asTroopOrderList[$j] & "|"
+	  Next
 	For $i = $eTroopBarbarian To $eTroopCount - 1
 		$g_aiCmbCustomTrainOrder[$i] = -1
-		_GUICtrlComboBox_ResetContent($g_ahCmbTroopOrder[$i])
+		_GUICtrlComboBox_ResetContent ($g_ahCmbTroopOrder[$i])
 		GUICtrlSetData($g_ahCmbTroopOrder[$i], $sComboData, "")
 		GUICtrlSetImage($g_ahImgTroopOrder[$i], $g_sLibIconPath, $eIcnOptions)
 	Next
@@ -570,9 +580,9 @@ Func BtnTroopOrderSet()
 
 	Local $bMissingTroop = False ; flag for when troops are not assigned by user
 	Local $aiUsedTroop[$eTroopCount] = [ _
-			$eTroopBarbarian, $eTroopArcher, $eTroopGiant, $eTroopGoblin, $eTroopWallBreaker, $eTroopBalloon, $eTroopWizard, _
-			$eTroopHealer, $eTroopDragon, $eTroopPekka, $eTroopBabyDragon, $eTroopMiner, $eTroopMinion, $eTroopHogRider, _
-			$eTroopValkyrie, $eTroopGolem, $eTroopWitch, $eTroopLavaHound, $eTroopBowler]
+		$eTroopBarbarian, $eTroopArcher, $eTroopGiant, $eTroopGoblin, $eTroopWallBreaker, $eTroopBalloon, $eTroopWizard, _
+		$eTroopHealer, $eTroopDragon, $eTroopPekka, $eTroopBabyDragon, $eTroopMiner, $eTroopMinion, $eTroopHogRider, _
+		$eTroopValkyrie, $eTroopGolem, $eTroopWitch, $eTroopLavaHound, $eTroopBowler]
 
 	; check for duplicate combobox index and take action
 	For $i = 0 To UBound($g_ahCmbTroopOrder) - 1
@@ -645,7 +655,7 @@ Func BtnTroopOrderSet()
 		Setlog("Must use all troops and No duplicate troop names!", $COLOR_ERROR)
 		GUICtrlSetImage($g_ahImgTroopOrderSet, $g_sLibIconPath, $eIcnRedLight)
 	EndIf
-	;	GUICtrlSetState($g_hBtnTroopOrderSet, $GUI_DISABLE)
+;	GUICtrlSetState($g_hBtnTroopOrderSet, $GUI_DISABLE)
 	SetRedrawBotWindow($bWasRedraw, Default, Default, Default, "BtnTroopOrderSet")
 EndFunc   ;==>BtnTroopOrderSet
 

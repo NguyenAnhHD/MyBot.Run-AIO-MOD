@@ -48,13 +48,9 @@ Func BoostStructure($sName, $sOcrName, $aPos, ByRef $icmbBoostValue, $cmbBoostCt
 				If IsArray(findButton("EnterShop")) Then
 					SetLog("Not enough gems to boost " & $sName, $COLOR_ERROR)
 				Else
-					If $icmbBoostValue <= 24 Then
-						$icmbBoostValue -= 1
-						SetLog($sName & ' Boost completed. Remaining iterations: ' & $icmbBoostValue, $COLOR_SUCCESS)
-						_GUICtrlComboBox_SetCurSel($cmbBoostCtrl, $icmbBoostValue)
-					Else
-						SetLog($sName & ' Boost completed. Remaining iterations: Unlimited', $COLOR_SUCCESS)
-					EndIf
+					$icmbBoostValue -= 1
+					SetLog($sName & ' Boost completed. Remaining iterations: ' & $icmbBoostValue, $COLOR_SUCCESS)
+					_GUICtrlComboBox_SetCurSel($cmbBoostCtrl, $icmbBoostValue)
 					$boosted = True
 				EndIf
 			Else

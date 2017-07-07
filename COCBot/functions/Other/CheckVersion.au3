@@ -32,20 +32,46 @@ Func CheckVersion()
 			_PrintLogVersion($g_sOldModversmessage)
 			CheckModVersion()
 		ElseIf VersionNumFromVersionTXT($g_sModversion) > VersionNumFromVersionTXT($g_sLastModversion) Then
-			SetLog("YOU ARE USING A FUTURE MOD BY TEAM AIO & RK VERSION CHIEF!", $COLOR_SUCCESS)
-			SetLog("_________________ YOUR MOD VERSION: " & $g_sModversion & " _________________", $COLOR_SUCCESS)
-			SetLog("_______________ OFFICIAL MOD VERSION: " & $g_sLastModversion & " _______________", $COLOR_SUCCESS)
+			SetLog("YOU ARE USING A FUTURE MOD BY TEAM AIO VERSION CHIEF!", $COLOR_SUCCESS)
+			SetLog("YOUR MOD VERSION: " & $g_sModversion, $COLOR_SUCCESS)
+			SetLog("OFFICIAL MOD VERSION: " & $g_sLastModversion, $COLOR_SUCCESS)
 			SetLog(" ")
 		Else
 			SetLog("WELCOME CHIEF, YOU HAVE THE LATEST MOD VERSION", $COLOR_SUCCESS)
-			SetLog("__________________" & " AIO & RK MOD++ " & "__________________", $COLOR_ORANGE)
-			SetLog("Dev AiO MOD++: NguyenAnhHD, Demen, Eloy, ahsan iqbal", $COLOR_ORANGE)
-			SetLog("Dev RK MOD++: rulesss, Kychera", $COLOR_ORANGE)
+			SetLog("__________________" & " AIO++ MOD " & "__________________", $COLOR_ORANGE)
+			SetLog("Team AiO++ MOD: NguyenAnhHD, Demen", $COLOR_ORANGE)
 			SetLog("CHEEERS..", $COLOR_SUCCESS)
 			_PrintLogVersion($g_sLastModmessage)
 		EndIf
 	EndIf
 EndFunc   ;==>CheckVersion
+
+;~ Func CheckVersionTXT()
+;~ 	;download page from site contains last bot version
+;~ 	$hLastVersion = InetGet("https://mybot.run/lastversion.txt", @ScriptDir & "\LastVersion.txt")
+;~ 	InetClose($hLastVersion)
+
+;~ 	;search version into downloaded page
+;~ 	Local $f, $line, $Casesense = 0
+;~ 	$g_sLastVersion = ""
+;~ 	If FileExists(@ScriptDir & "\LastVersion.txt") Then
+;~ 		$f = FileOpen(@ScriptDir & "\LastVersion.txt", 0)
+;~ 		; Read in lines of text until the EOF is reached
+;~ 		While 1
+;~ 			$line = FileReadLine($f)
+;~ 			If @error = -1 Then ExitLoop
+;~ 			If StringInStr($line, "version=", $Casesense) Then
+;~ 				$g_sLastVersion = StringMid($line, 9, -1)
+;~ 			EndIf
+;~ 			If StringInStr($line, "message=", $Casesense) Then
+;~ 				$g_sLastMessage = StringMid($line, 9, -1)
+;~ 			EndIf
+;~ 		WEnd
+;~ 		FileClose($f)
+;~ 		FileDelete(@ScriptDir & "\LastVersion.txt")
+;~ 	EndIf
+;~ EndFunc   ;==>CheckVersionTXT
+
 
 Func CheckVersionHTML()
 	Local $versionfile = @ScriptDir & "\LastVersion.txt"
@@ -183,7 +209,7 @@ Func CheckModVersion()
 			Return False
 		EndIf
 	Else
-		MsgBox($MB_ICONINFORMATION, "Notify", "You Are Using The Latest Version Of AIO & RK By Team MOD++" & @CRLF & _
+		MsgBox($MB_ICONINFORMATION, "Notify", "You Are Using The Latest Version Of MOD By Team AiO++" & @CRLF & _
 				"Thanks..", 15) ;15s timeout
 	EndIf
 EndFunc   ;==>CheckModVersion

@@ -1,0 +1,37 @@
+NOTE  |Author: Z E C K
+NOTE  |Version: CSV created basically GoWiVa v1.0 by BWG      GiWiVa v2.2b           
+NOTE  |Edited: EDIT For TH 9 V2.2b
+NOTE  |Train: 12 Giants, 6 Wall Breaker, 12 Valkerie, 13 Wizard, 3 Rage, and 3 Earthquake.
+NOTE  |Clan Castle: Must have CC lvl 4+. Request Wizards and Earthquake. Select "Wait to get Castle Spell" Select "Earthquake"
+
+
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |           |           |           |           |           |0          |10         |           |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |A          |FRONT-LEFT |10         |1          |INT-EXT    |0          |5          |           |
+MAKE  |B          |FRONT-RIGHT|10         |1          |INT-EXT    |0          |5          |           |
+MAKE  |C          |FRONT-RIGHT|10         |1          |EXT-INT    |0          |5          |           |  
+MAKE  |D          |FRONT-LEFT |10         |1          |EXT-INT    |0          |5          |           |
+MAKE  |E          |FRONT-LEFT |10         |-11        |EXT-INT    |0          |5          |           |
+MAKE  |F          |FRONT-LEFT |10         |-10        |INT-EXT    |0          |5          |           |						
+MAKE  |G          |FRONT-RIGHT|10         |-16        |EXT-INT    |0          |2          |           |
+MAKE  |H          |FRONT-LEFT |10         |-18        |INT-EXT    |0          |2          |           |
+
+
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
+DROP  |E          |10         |3          |Espell     |0          |0          |0          |           |
+RECALC|           |           |           |           |           |           |           |           |
+DROP  |E          |10         |1          |Espell     |0          |0          |0          |           |
+DROP  |A-B        |2-8        |6          |giant      |100-150    |500        |0          |           |
+DROP  |A          |1          |6          |wall       |50         |0          |0          |           |
+DROP  |A          |1          |1          |CASTLE     |50         |0          |0          |           |
+DROP  |C-D        |2-10       |7          |wiza       |100-150    |0          |5000       |           |
+DROP  |A          |1          |1          |king       |50         |0          |50         |           |
+DROP  |A          |1          |1          |Queen      |50         |0          |0          |           |
+DROP  |F          |1          |1          |Rspell     |0          |0          |0          |           |
+DROP  |A          |1          |12         |valk       |50-100     |0          |5000       |           |
+DROP  |G          |10         |1          |Rspell     |0          |0          |1000       |           |
+DROP  |H          |10         |1          |Rspell     |0          |0          |0          |           |

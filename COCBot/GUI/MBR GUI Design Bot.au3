@@ -22,7 +22,7 @@ Global $g_hGUI_BOT = 0
 ;~ #include "MBR GUI Design Child Bot - Profiles.au3"
 #include "MBR GUI Design Child Bot - Stats.au3"
 
-Global $g_hGUI_BOT_TAB = 0, $g_hGUI_BOT_TAB_ITEM1 = 0, $g_hGUI_BOT_TAB_ITEM2 = 0, $g_hGUI_BOT_TAB_ITEM3 = 0, $g_hGUI_BOT_TAB_ITEM4 = 0, $g_hGUI_BOT_TAB_ITEM5 = 0
+Global $g_hGUI_BOT_TAB = 0, $g_hGUI_BOT_TAB_ITEM1 = 0, $g_hGUI_BOT_TAB_ITEM2 = 0, $g_hGUI_BOT_TAB_ITEM3 = 0, $g_hGUI_BOT_TAB_ITEM4 = 0 ;, $g_hGUI_BOT_TAB_ITEM5 = 0
 
 Func CreateBotTab()
    $g_hGUI_BOT = _GUICreate("", $g_iSizeWGrpTab1, $g_iSizeHGrpTab1, $_GUI_CHILD_LEFT, $_GUI_CHILD_TOP, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hFrmBotEx)
@@ -32,15 +32,15 @@ Func CreateBotTab()
 
    GUISwitch($g_hGUI_BOT)
    $g_hGUI_BOT_TAB = GUICtrlCreateTab(0, 0, $g_iSizeWGrpTab1, $g_iSizeHGrpTab1, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))
-   $g_hGUI_BOT_TAB_ITEM1 = GUICtrlCreateTabItem(GetTranslated(600,35,"Options"))
+   $g_hGUI_BOT_TAB_ITEM1 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_04_STab_01", "Options"))
    CreateBotOptions()
-   $g_hGUI_BOT_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslated(600,53,"Android"))
+   $g_hGUI_BOT_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_04_STab_02", "Android"))
    CreateBotAndroid()
-   $g_hGUI_BOT_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslated(600,51,"Debug"))
+   $g_hGUI_BOT_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_04_STab_03", "Debug"))
    CreateBotDebug()
-;~   $g_hGUI_BOT_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslated(600,36,"Profiles"))
+;~   $g_hGUI_BOT_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_04_STab_04", "Profiles"))
 ;~   CreateBotProfiles()
-   $g_hGUI_BOT_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslated(600,37, "Stats"))
+   $g_hGUI_BOT_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_04_STab_05", "Stats"))
 	; This dummy is used in btnStart and btnStop to disable/enable all labels, text, buttons etc. on all tabs.
    $g_hLastControlToHide = GUICtrlCreateDummy()
    ReDim $g_aiControlPrevState[$g_hLastControlToHide + 1]

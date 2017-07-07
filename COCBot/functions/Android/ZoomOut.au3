@@ -26,8 +26,8 @@ Func ZoomOut() ;Zooms out
 	Local $Result
 	If $g_bAndroidEmbedded = False Or $g_iAndroidEmbedMode = 1 Then
 		; default zoomout
-		$Result = Execute("ZoomOut" & $g_sAndroidEmulator & "()")
-		If $Result = "" And @error <> 0 Then
+		$Result = Call("ZoomOut" & $g_sAndroidEmulator)
+		If @extended <> 0 And @error <> 0 Then
 			; Not implemented or other error
 			$Result = AndroidOnlyZoomOut()
 		EndIf
@@ -42,7 +42,7 @@ EndFunc   ;==>ZoomOut
 
 Func ZoomOutBlueStacks() ;Zooms out
 	; ctrl click is best and most stable for BlueStacks
-	Return ZoomOutCtrlClick(False, False, False, False)
+	Return ZoomOutCtrlClick(False, False, False, False, 250)
    ;Return DefaultZoomOut("{DOWN}", 0)
    ; ZoomOutCtrlClick doesn't cause moving buildings, but uses global Ctrl-Key and has taking focus problems
    ;Return ZoomOutCtrlClick(True, False, False, False)
@@ -51,10 +51,10 @@ EndFunc
 Func ZoomOutBlueStacks2()
 	If $__BlueStacks2Version_2_5_or_later = False Then
 		; ctrl click is best and most stable for BlueStacks, but not working after 2.5.55.6279 version
-		Return ZoomOutCtrlClick(False, False, False, False)
+		Return ZoomOutCtrlClick(False, False, False, False, 250)
 	Else
 		; newer BlueStacks versions don't work with Ctrl-Click, so fall back to original arraw key
-		Return DefaultZoomOut("{DOWN}", 0)
+		Return DefaultZoomOut("{DOWN}", 0, True)
 	EndIf
    ;Return DefaultZoomOut("{DOWN}", 0)
    ; ZoomOutCtrlClick doesn't cause moving buildings, but uses global Ctrl-Key and has taking focus problems
@@ -63,7 +63,7 @@ EndFunc
 
 Func ZoomOutMEmu()
    ;ClickP($aAway) ; activate window first with Click Away (when not clicked zoom might not work)
-   Return DefaultZoomOut("{F3}", 0)
+   Return DefaultZoomOut("{F3}", 0, True)
 EndFunc
 
 #cs
@@ -77,11 +77,11 @@ EndFunc
 #ce
 
 Func ZoomOutDroid4X()
-   Return ZoomOutCtrlWheelScroll(True, True, True)
+   Return ZoomOutCtrlWheelScroll(True, True, True, True, Default, -5, 250)
 EndFunc
 
 Func ZoomOutNox()
-   Return ZoomOutCtrlWheelScroll(True, True, True)
+   Return ZoomOutCtrlWheelScroll(True, True, True, True, Default, -5, 250)
    ;Return DefaultZoomOut("{CTRLDOWN}{DOWN}{CTRLUP}", 0)
 EndFunc
 
@@ -90,7 +90,7 @@ Func DefaultZoomOut($ZoomOutKey = "{DOWN}", $tryCtrlWheelScrollAfterCycles = 40,
 	Local $exitCount = 80
 	Local $delayCount = 20
 	ForceCaptureRegion()
-	Local $aPicture = SearchZoomOut()
+	Local $aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 
 	If StringInStr($aPicture[0], "zoomou") = 0 Then
 		SetLog("Zooming Out", $COLOR_BLUE)
@@ -98,7 +98,7 @@ Func DefaultZoomOut($ZoomOutKey = "{DOWN}", $tryCtrlWheelScrollAfterCycles = 40,
 		If $AndroidZoomOut = True Then
 			AndroidZoomOut(False) ; use new ADB zoom-out
 			ForceCaptureRegion()
-			$aPicture = SearchZoomOut()
+			$aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 		EndIf
 	    Local $tryCtrlWheelScroll = False
 		While StringInStr($aPicture[0], "zoomou") = 0 and Not $tryCtrlWheelScroll
@@ -138,7 +138,7 @@ Func DefaultZoomOut($ZoomOutKey = "{DOWN}", $tryCtrlWheelScrollAfterCycles = 40,
 			EndIf
 			$i += 1  ; add one to index value to prevent endless loop if controlsend fails
 			ForceCaptureRegion()
-			$aPicture = SearchZoomOut()
+			$aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 		WEnd
 		If $tryCtrlWheelScroll Then
 		    Setlog($g_sAndroidEmulator & " zoom-out with key " & $ZoomOutKey & " didn't work, try now Ctrl+MouseWheel...", $COLOR_INFO)
@@ -158,7 +158,7 @@ Func ZoomOutCtrlWheelScroll($CenterMouseWhileZooming = True, $GlobalMouseWheel =
 	Local $ZoomActions[4] = ["ControlFocus", "Ctrl Down", "Mouse Wheel Scroll Down", "Ctrl Up"]
 	If $hWin = Default Then $hWin = ($g_bAndroidEmbedded = False ? $g_hAndroidWindow : $g_aiAndroidEmbeddedCtrlTarget[1])
 	ForceCaptureRegion()
-	Local $aPicture = SearchZoomOut()
+	Local $aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 
 	If StringInStr($aPicture[0], "zoomou") = 0 Then
 
@@ -169,7 +169,7 @@ Func ZoomOutCtrlWheelScroll($CenterMouseWhileZooming = True, $GlobalMouseWheel =
 		If $AndroidZoomOut = True Then
 			AndroidZoomOut(False) ; use new ADB zoom-out
 			ForceCaptureRegion()
-			$aPicture = SearchZoomOut()
+			$aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 		EndIf
 		Local $aMousePos = MouseGetPos()
 
@@ -235,7 +235,7 @@ Func ZoomOutCtrlWheelScroll($CenterMouseWhileZooming = True, $GlobalMouseWheel =
 			EndIf
 			$i += 1  ; add one to index value to prevent endless loop if controlsend fails
 			ForceCaptureRegion()
-			$aPicture = SearchZoomOut()
+			$aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 		 WEnd
 
 		 If $CenterMouseWhileZooming And $AndroidZoomOut = False Then MouseMove($aMousePos[0], $aMousePos[1], 0)
@@ -253,7 +253,7 @@ Func ZoomOutCtrlClick($ZoomOutOverWaters = False, $CenterMouseWhileZooming = Fal
 	Local $SendCtrlUp = False
 	Local $ZoomActions[4] = ["ControlFocus", "Ctrl Down", "Click", "Ctrl Up"]
 	ForceCaptureRegion()
-	Local $aPicture = SearchZoomOut()
+	Local $aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 
 	If StringInStr($aPicture[0], "zoomou") = 0 Then
 
@@ -266,7 +266,7 @@ Func ZoomOutCtrlClick($ZoomOutOverWaters = False, $CenterMouseWhileZooming = Fal
 			If $AndroidZoomOut = True Then
 				AndroidZoomOut(False) ; use new ADB zoom-out
 				ForceCaptureRegion()
-				$aPicture = SearchZoomOut()
+				$aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 			Else
 				For $i = 1 To 3
 				   ; scroll to waters
@@ -331,7 +331,7 @@ Func ZoomOutCtrlClick($ZoomOutOverWaters = False, $CenterMouseWhileZooming = Fal
 			EndIf
 			$i += 1  ; add one to index value to prevent endless loop if controlsend fails
 			ForceCaptureRegion()
-			$aPicture = SearchZoomOut()
+			$aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 		 WEnd
 
 		 If $SendCtrlUp Then ControlSend($g_hAndroidWindow, "", "", "{CTRLUP}{SPACE}")
@@ -347,14 +347,14 @@ Func AndroidOnlyZoomOut() ;Zooms out
 	Local $i = 0
 	Local $exitCount = 80
 	ForceCaptureRegion()
-	Local $aPicture = SearchZoomOut()
+	Local $aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 
 	If StringInStr($aPicture[0], "zoomou") = 0 Then
 
 		SetLog("Zooming Out", $COLOR_BLUE)
 		AndroidZoomOut(False) ; use new ADB zoom-out
 		ForceCaptureRegion()
-		$aPicture = SearchZoomOut()
+		$aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 		While StringInStr($aPicture[0], "zoomou") = 0
 
 			AndroidShield("AndroidOnlyZoomOut") ; Update shield status
@@ -367,7 +367,7 @@ Func AndroidOnlyZoomOut() ;Zooms out
 			EndIf
 			$i += 1  ; add one to index value to prevent endless loop if controlsend fails
 			ForceCaptureRegion()
-			$aPicture = SearchZoomOut()
+			$aPicture = SearchZoomOut($aCenterHomeVillageClickDrag, True, "", True, False)
 		WEnd
 		Return True
 	EndIf
@@ -392,6 +392,7 @@ Func SearchZoomOut($CenterVillageBoolOrScrollPos = $aCenterHomeVillageClickDrag,
 		$aScrollPos[1] = $CenterVillageBoolOrScrollPos[1]
 		$bCenterVillage = ($g_iDebugDisableVillageCentering = 0)
 	EndIf
+
 	; Setup arrays, including default return values for $return
 	Local $x, $y, $z, $stone[2]
 	Local $villageSize = 0
@@ -401,6 +402,10 @@ Func SearchZoomOut($CenterVillageBoolOrScrollPos = $aCenterHomeVillageClickDrag,
 	Local $aResult = ["", 0, 0, 0, 0] ; expected dummy value
 
 	Local $village = GetVillageSize($DebugLog)
+
+	; compare other stone measures
+	;GetVillageSize(True, "stoneBlueStacks2A")
+	;GetVillageSize(True, "stoneiTools")
 
 	If $g_aiSearchZoomOutCounter[0] > 0 Then
 		If _Sleep(1000) Then Return $aResult
@@ -421,8 +426,11 @@ Func SearchZoomOut($CenterVillageBoolOrScrollPos = $aCenterHomeVillageClickDrag,
 			If $bCenterVillage = True And ($x <> 0 Or $y <> 0) And ($UpdateMyVillage = False Or $x <> $g_iVILLAGE_OFFSET[0] Or $y <> $g_iVILLAGE_OFFSET[1]) Then
 				If $DebugLog Then SetDebugLog("Center Village" & $sSource & " by: " & $x & ", " & $y)
 				If $aScrollPos[0] = 0 And $aScrollPos[1] = 0 Then
-					$aScrollPos[0] = $stone[0]
-					$aScrollPos[1] = $stone[1]
+					;$aScrollPos[0] = $stone[0]
+					;$aScrollPos[1] = $stone[1]
+					; use fixed position now to prevent boat activation
+					$aScrollPos[0] = 650
+					$aScrollPos[1] = 600
 				EndIf
 				ClickDrag($aScrollPos[0], $aScrollPos[1], $aScrollPos[0] - $x, $aScrollPos[1] - $y)
 				If _Sleep(250) Then Return $aResult

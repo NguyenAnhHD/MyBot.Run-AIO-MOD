@@ -18,10 +18,11 @@ Global $g_hGUI_ATTACKOPTION = 0
 
 #include "MBR GUI Design Child Attack - Options-Search.au3"
 #include "MBR GUI Design Child Attack - Options-Attack.au3"
+#include "MBR GUI Design Child Attack - Options-SmartZap.au3"
 #include "MBR GUI Design Child Attack - Options-EndBattle.au3"
 #include "MBR GUI Design Child Attack - Options-TrophySettings.au3"
 
-Global $g_hGUI_ATTACKOPTION_TAB = 0, $g_hGUI_ATTACKOPTION_TAB_ITEM1 = 0, $g_hGUI_ATTACKOPTION_TAB_ITEM2 = 0, _
+Global $g_hGUI_ATTACKOPTION_TAB = 0, $g_hGUI_ATTACKOPTION_TAB_ITEM1 = 0, $g_hGUI_ATTACKOPTION_TAB_ITEM2 = 0, $g_hGUI_ATTACKOPTION_TAB_ITEM3 = 0, _
 	   $g_hGUI_ATTACKOPTION_TAB_ITEM4 = 0, $g_hGUI_ATTACKOPTION_TAB_ITEM5 = 0
 
 Func CreateAttackSearchOptions()
@@ -30,13 +31,15 @@ Func CreateAttackSearchOptions()
 
    $g_hGUI_ATTACKOPTION_TAB = GUICtrlCreateTab(0, 0, $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))
 
-   $g_hGUI_ATTACKOPTION_TAB_ITEM1 = GUICtrlCreateTabItem(GetTranslated(600,28,"Search"))
+   $g_hGUI_ATTACKOPTION_TAB_ITEM1 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_03_STab_02_STab_0X_STab_01", -1))
    CreateAttackSearchOptionsSearch()
-   $g_hGUI_ATTACKOPTION_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslated(600,29,"Attack"))
+   $g_hGUI_ATTACKOPTION_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_03_STab_02_STab_0X_STab_02", -1))
    CreateAttackSearchOptionsAttack()
-   $g_hGUI_ATTACKOPTION_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslated(600,30,"End Battle"))
+   $g_hGUI_ATTACKOPTION_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_03_STab_02_STab_05_STab_01", "SmartZap"))
+   CreateAttackNewSmartZap()
+   $g_hGUI_ATTACKOPTION_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_03_STab_02_STab_0X_STab_03", -1))
    CreateAttackSearchOptionsEndBattle()
-   $g_hGUI_ATTACKOPTION_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslated(600,32,"Trophy Settings"))
+   $g_hGUI_ATTACKOPTION_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_03_STab_02_STab_05_STab_02", "Trophy Settings"))
    CreateAttackSearchOptionsTrophySettings()
    GUICtrlCreateTabItem("")
 EndFunc
