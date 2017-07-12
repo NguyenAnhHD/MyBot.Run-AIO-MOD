@@ -34,7 +34,7 @@ Func SimpleTrain()
 
 	If $iChkPreciseTroops = 1 Then
 		Setlog(" - Checking precision of troops and spells", $COLOR_ACTION1)
-		Local $toRemove = CheckWrongTroops(True, True, False)
+		Local $toRemove = CheckWrongTroops(True, Not($g_bForceBrewSpells), False)	; If $g_bForceBrewSpells = True Then CheckWrongTroops(True, FALSE, False)
 		Local $text = ""
 		If $g_abRCheckWrongTroops[0] = False Then $text &= " Troops &"
 		If $g_abRCheckWrongTroops[1] = False Then $text &= " Spells &"
@@ -51,7 +51,7 @@ Func SimpleTrain()
 
 		Else ; Wrong troops or Wrong spells
 			If $g_bForceBrewSpells And $g_abRCheckWrongTroops[1] Then
-				Setlog (" »» Force brew spell is active, skip checking spell precision")
+				Setlog (" »» Force brew spell is active, skip removing wrong spells")
 				$g_abRCheckWrongTroops[1] = False
 			EndIf
 
@@ -71,7 +71,7 @@ Func SimpleTrain()
 		EndIf
 	EndIf
 
-	If $g_bDonationEnabled And $g_bChkDonate And $bRemoveUnpreciseTroops = False Then MakingDonatedTroops()
+;~ 	If $g_bDonationEnabled And $g_bChkDonate And $bRemoveUnpreciseTroops = False Then MakingDonatedTroops()
 
 	If $g_bRunState = False Then Return
 
@@ -197,7 +197,34 @@ Func SimpleTrain()
 				$eBrewMethod = $g_eFull
 
 			Case $SpellCamp[1] + 1 To $SpellCamp[1]*2 - 1 ; 21/11
-				If $ichkFillEQ = 0 Or $SpellCamp[0] - $SpellCamp[1]*2 < -1 Then
+				If $g_bForceBrewSpells Then
+					Setlog (" »» Force brew spell is active, keep brewing anyway")
+					; brew it
+					Local $iRemainQueue = $SpellCamp[1]*2 - $SpellCamp[0]
+					Local $iSpellHeight = 2
+					For $i = 0 To ($eSpellCount - 1)
+						If $g_bRunState = False Then Return
+						If $i > 5 Then $iSpellHeight = 1
+						If $g_aiArmyCompSpells[$i] > 0 And $iRemainQueue - $iSpellHeight >= 0 Then
+							Local $iBrewedCount = 0
+							While $iRemainQueue - $iSpellHeight >= 0
+								;train 1
+								Local $SpellName = $g_asSpellShortNames[$i]
+								Local $iSpellIndex = TroopIndexLookup($SpellName)
+								If CheckValuesCost($SpellName, 1) Then
+									TrainIt($iSpellIndex, 1, $g_iTrainClickDelay)
+									$iBrewedCount += 1
+									$iRemainQueue -= $iSpellHeight
+								Else
+									SetLog("No resources to Train " & $SpellName, $COLOR_ORANGE)
+									ExitLoop
+								EndIf
+								If $iBrewedCount >= $g_aiArmyCompSpells[$i] Then ExitLoop
+							WEnd
+						EndIf
+					Next
+					$eBrewMethod = $g_eNoTrain
+				ElseIf $ichkFillEQ = 0 Or $SpellCamp[0] - $SpellCamp[1]*2 < -1 Then
 					SetLog(" »» Not full queue, Delete queued spells")
 					DeleteQueue(True)
 					If CheckBlockTroops(True) = False Then ; check if spell camp is not full after delete queue
@@ -216,7 +243,7 @@ Func SimpleTrain()
 				EndIf
 
 			Case $SpellCamp[1]*2 ; 22/11
-				If $g_bFullArmySpells Then
+				If $g_bForceBrewSpells Or $g_bFullArmySpells Then
 					SetLog(" »» Full queue")
 					$eBrewMethod = $g_eNoTrain
 				ElseIf _ColorCheck(_GetPixelColor(824, 243, True), Hex(0x949522, 6), 20) Then ; the green check symbol [bottom right] at slot 0 troop

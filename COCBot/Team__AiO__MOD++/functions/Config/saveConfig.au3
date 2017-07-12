@@ -134,6 +134,10 @@ Func SaveConfig_MOD()
 	; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 	_Ini_Add("donate", "chkClanHop", $g_bChkClanHop ? 1 : 0)
 
+	; Max logout time (mandryd)
+	_Ini_Add("TrainLogout", "TrainLogoutMaxTime", $TrainLogoutMaxTime ? 1 : 0)
+	_Ini_Add("TrainLogout", "TrainLogoutMaxTimeTXT", $TrainLogoutMaxTimeTXT)
+
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen

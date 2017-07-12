@@ -250,9 +250,8 @@ Global $__MEmu_Adjust_Width = 6
 Global $__MEmu_ToolBar_Width = 45
 Global $__MEmu_SystemBar = 36
 Global $__MEmu_PhoneLayout = "2" ; 0: bottom Nav Bar (default till 2.6.1), 1: right Nav Bar, 2: hidden Nav Bar (default since 2.6.2)
-Global $__MEmu_Window[4][5] = _ ; Alternative window sizes (array must be ordered by version descending!)
+Global $__MEmu_Window[3][5] = _ ; Alternative window sizes (array must be ordered by version descending!)
 		[ _ ; Version|$g_iAndroidWindowWidth|$g_iAndroidWindowHeight|$__MEmu_ToolBar_Width|$__MEmu_PhoneLayout
-		["3.0.8", $g_iDEFAULT_WIDTH + 48, $g_iDEFAULT_HEIGHT - 10, 36, "2"], _
 		["2.6.2", $g_iDEFAULT_WIDTH + 48, $g_iDEFAULT_HEIGHT - 10, 40, "2"], _
 		["2.5.0", $g_iDEFAULT_WIDTH + 51, $g_iDEFAULT_HEIGHT - 12, 45, "0"], _
 		["2.2.1", $g_iDEFAULT_WIDTH + 51, $g_iDEFAULT_HEIGHT - 12, 45, "0"] _
@@ -593,7 +592,7 @@ Global Const $g_aiTroopCostPerLevel[$eTroopCount][9] = [ _
 		[6, 25000, 29000, 33000, 37000, 42000, 46000], _ 		; Dragon
 		[6, 28000, 32000, 36000, 40000, 45000, 50000], _ 		; Pekka
 		[5, 15000, 16000, 17000, 18000, 19000], _ 			 	; BabyDragon
-		[5, 4200, 4800, 5400, 5600 , 6000], _  					; Miner
+		[5, 4200, 4800, 5200, 5600, 6000], _  					; Miner
 		[7, 6, 7, 8, 9, 10, 11, 12], _ 						 	; Minion
 		[7, 40, 45, 52, 58, 65, 90, 115], _					 	; HogRider
 		[5, 70, 100, 130, 160, 190], _ 						 	; Valkyrie
@@ -613,11 +612,11 @@ Global Const $g_aiSpellTrainTime[$eSpellCount] = [360, 360, 360, 360, 360, 720, 
 ; Zero element contains number of levels, elements 1 thru n contain cost of that level spell
 Global Const $g_aiSpellCostPerLevel[$eSpellCount][8] = [ _
 		[7, 15000, 16500, 18000, 20000, 22000, 24000, 26000], _	 ; LightningSpell
-		[7, 15000, 16500, 18000, 20000, 22000, 24000, 25000], _  ; HealSpell
+		[7, 15000, 16500, 18000, 19000, 21000, 23000, 25000], _  ; HealSpell
 		[5, 23000, 25000, 27000, 30000, 33000], _     		 	 ; RageSpell
 		[3, 23000, 27000, 31000], _        					 	 ; JumpSpell
-		[5, 26000, 29000, 31000, 33000, 35000], _ 				 ; FreezeSpell
-		[5, 38000, 40000, 42000, 43000, 45000], _				 ; CloneSpell
+		[6, 23000, 26000, 29000, 31000, 33000, 35000], _ 		 ; FreezeSpell
+		[5, 38000, 39000, 41000, 43000, 45000], _				 ; CloneSpell
 		[5, 95, 110, 125, 140, 155], _         				 	 ; PoisonSpell
 		[4, 125, 140, 160, 180], _    						 	 ; EarthquakeSpell
 		[4, 80, 85, 90, 95], _								 	 ; HasteSpell
@@ -880,8 +879,8 @@ Global $g_aiBrewOrder[$eSpellCount] = [ _
 
 
 ; <><><><> Attack Plan / Train Army / Options <><><><>
-Global $g_bCloseWhileTrainingEnable = True, $g_bCloseWithoutShield = False, $g_bCloseEmulator = False, $g_bSuspendComputer = False, $g_bCloseRandom = False, _
-		$g_bCloseExactTime = False, $g_bCloseRandomTime = True, $g_iCloseRandomTimePercent = 10, $g_iCloseMinimumTime = 2
+Global $g_bCloseWhileTrainingEnable = True, $g_bCloseWithoutShield = True, $g_bCloseEmulator = False, $g_bSuspendComputer = False, $g_bCloseRandom = False, _
+		$g_bCloseExactTime = True, $g_bCloseRandomTime = False, $g_iCloseRandomTimePercent = 10, $g_iCloseMinimumTime = 2
 Global $g_iTrainClickDelay = 40
 Global $g_bTrainAddRandomDelayEnable = False, $g_iTrainAddRandomDelayMin = 5, $g_iTrainAddRandomDelayMax = 60
 
@@ -969,7 +968,7 @@ Global $g_bMilkFarmForceToleranceEnable = False, $g_iMilkFarmForceToleranceNorma
 Global $g_abCollectorLevelEnabled[13] = [-1, -1, -1, -1, -1, -1, True, True, True, True, True, True, True] ; elements 0 thru 5 are never referenced
 Global $g_aiCollectorLevelFill[13] = [-1, -1, -1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1] ; elements 0 thru 5 are never referenced
 Global $g_bCollectorFilterDisable = False
-Global $g_iCollectorMatchesMin = 3
+Global $g_iCollectorMatchesMin = 4
 Global $g_iCollectorToleranceOffset = 0
 
 ; <><><><> Attack Plan / Search & Attack / Activebase / Search <><><><>

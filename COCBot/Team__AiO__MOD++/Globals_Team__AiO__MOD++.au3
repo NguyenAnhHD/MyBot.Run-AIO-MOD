@@ -182,3 +182,6 @@ Global $g_canGainXP = False
 
 ; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 Global $g_bChkClanHop = False
+
+; Max logout time (mandryd)
+Global $TrainLogoutMaxTime, $TrainLogoutMaxTimeTXT

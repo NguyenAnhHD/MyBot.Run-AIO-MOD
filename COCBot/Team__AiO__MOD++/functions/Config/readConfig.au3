@@ -133,6 +133,10 @@ Func ReadConfig_MOD()
 	; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 	$g_bChkClanHop = (IniRead($g_sProfileConfigPath, "donate", "chkClanHop", "0") = "1")
 
+	; Max logout time (mandryd)
+	IniReadS($TrainLogoutMaxTime, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTime", 0, "int")
+	IniReadS($TrainLogoutMaxTimeTXT, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTimeTXT", 4, "int")
+
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen

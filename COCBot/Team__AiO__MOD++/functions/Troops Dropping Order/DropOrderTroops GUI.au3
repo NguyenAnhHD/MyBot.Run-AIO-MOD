@@ -118,7 +118,7 @@ Func chkTroopDropOrder()
 		For $i = 0 To UBound($cmbDropTroops) - 1
 			GUICtrlSetState($cmbDropTroops[$i], $GUI_ENABLE)
 		Next
-		If IsUseCustomDropOrder() = True Then GUICtrlSetImage($g_ahImgTroopOrderSet, $g_sLibIconPath, $eIcnRedLight)
+		If IsUseCustomDropOrder() = True Then _GUICtrlSetImage($g_ahImgTroopOrderSet, $g_sLibIconPath, $eIcnRedLight)
 	Else
 		$g_bCustomTrainDropOrderEnable = False
 		GUICtrlSetBkColor($g_BtnCustomDropOrderDB, $COLOR_RED)
@@ -137,12 +137,12 @@ Func GUIDropOrder()
 	Local $iCtrlIdImage = $iGUI_CtrlId + 1 ; record control ID for $g_ahImgTroopOrder[$z] based on control of combobox that called this function
 	Local $iTroopIndex = _GUICtrlComboBox_GetCurSel($iGUI_CtrlId) + 1 ; find zero based index number of troop selected in combo box, add one for enum of proper icon
 
-	GUICtrlSetImage($iCtrlIdImage, $g_sLibIconPath, $g_aiTroopOrderDropIcon[$iTroopIndex]) ; set proper troop icon
+	_GUICtrlSetImage($iCtrlIdImage, $g_sLibIconPath, $g_aiTroopOrderDropIcon[$iTroopIndex]) ; set proper troop icon
 
 	For $i = 0 To UBound($cmbDropTroops) - 1 ; check for duplicate combobox index and flag problem
 		If $iGUI_CtrlId = $cmbDropTroops[$i] Then ContinueLoop
 		If _GUICtrlComboBox_GetCurSel($iGUI_CtrlId) = _GUICtrlComboBox_GetCurSel($cmbDropTroops[$i]) Then
-			GUICtrlSetImage($g_ahImgTroopDropOrder[$i], $g_sLibIconPath, $eIcnOptions)
+			_GUICtrlSetImage($g_ahImgTroopDropOrder[$i], $g_sLibIconPath, $eIcnOptions)
 			_GUICtrlComboBox_SetCurSel($cmbDropTroops[$i], -1)
 			GUISetState()
 			$bDuplicate = True
@@ -153,7 +153,7 @@ Func GUIDropOrder()
 		Return
 	Else
 		GUICtrlSetState($g_hBtnTroopOrderSet2, $GUI_ENABLE) ; enable button to apply new order
-		GUICtrlSetImage($g_ahImgTroopOrderSet, $g_sLibIconPath, $eIcnRedLight) ; set status indicator to show need to apply new order
+		_GUICtrlSetImage($g_ahImgTroopOrderSet, $g_sLibIconPath, $eIcnRedLight) ; set status indicator to show need to apply new order
 	EndIf
 EndFunc   ;==>GUIDropOrder
 
@@ -167,9 +167,9 @@ Func BtnRemoveDropTroops()
 		$icmbDropTroops[$i] = -1
 		_GUICtrlComboBox_ResetContent($icmbDropTroops[$i])
 		GUICtrlSetData($cmbDropTroops[$i], $sComboData, "")
-		GUICtrlSetImage($g_ahImgTroopDropOrder[$i], $g_sLibIconPath, $eIcnOptions)
+		_GUICtrlSetImage($g_ahImgTroopDropOrder[$i], $g_sLibIconPath, $eIcnOptions)
 	Next
-	GUICtrlSetImage($g_ahImgTroopDropOrderSet, $g_sLibIconPath, $eIcnSilverStar)
+	_GUICtrlSetImage($g_ahImgTroopDropOrderSet, $g_sLibIconPath, $eIcnSilverStar)
 	SetDefaultTroopGroup(False)
 	;SetRedrawBotWindow($bWasRedraw, Default, Default, Default, "BtnRemoveDropTroops")
 EndFunc   ;==>BtnRemoveDropTroops
@@ -192,7 +192,7 @@ Func btnTroopDropSet()
 			If _GUICtrlComboBox_GetCurSel($cmbDropTroops[$i]) <> -1 And _
 					_GUICtrlComboBox_GetCurSel($cmbDropTroops[$i]) = _GUICtrlComboBox_GetCurSel($cmbDropTroops[$j]) Then
 				_GUICtrlComboBox_SetCurSel($cmbDropTroops[$j], -1)
-				GUICtrlSetImage($g_ahImgTroopDropOrder[$j], $g_sLibIconPath, $eIcnOptions)
+				_GUICtrlSetImage($g_ahImgTroopDropOrder[$j], $g_sLibIconPath, $eIcnOptions)
 				$bReady = False
 			Else
 				GUICtrlSetColor($cmbDropTroops[$j], $COLOR_BLACK)
@@ -221,7 +221,7 @@ Func btnTroopDropSet()
 					If $aiUsedTroop[$j] <> -1 Then ; loop till find a valid troop enum
 						$icmbDropTroops[$i] = $aiUsedTroop[$j] ; assign unused troop
 						_GUICtrlComboBox_SetCurSel($cmbDropTroops[$i], $aiUsedTroop[$j])
-						GUICtrlSetImage($g_ahImgTroopDropOrder[$i], $g_sLibIconPath, $g_aiTroopOrderDropIcon[$icmbDropTroops[$i] + 1])
+						_GUICtrlSetImage($g_ahImgTroopDropOrder[$i], $g_sLibIconPath, $g_aiTroopOrderDropIcon[$icmbDropTroops[$i] + 1])
 						$aiUsedTroop[$j] = -1 ; remove unused troop from array
 						ExitLoop
 					EndIf
@@ -244,7 +244,7 @@ Func btnTroopDropSet()
 				Case Else
 					Setlog("Monkey ate bad banana, something wrong with ChangeTroopTrainOrder() code!", $COLOR_ERROR)
 			EndSwitch
-			GUICtrlSetImage($g_ahImgTroopDropOrderSet, $g_sLibIconPath, $eIcnRedLight)
+			_GUICtrlSetImage($g_ahImgTroopDropOrderSet, $g_sLibIconPath, $eIcnRedLight)
 		Else
 			Setlog("Troop droping order changed successfully!", $COLOR_SUCCESS)
 			For $i = 0 To $eTroopCountDrop - 1
@@ -256,7 +256,7 @@ Func btnTroopDropSet()
 		EndIf
 	Else
 		Setlog("Must use all troops and No duplicate troop names!", $COLOR_ERROR)
-		GUICtrlSetImage($g_ahImgTroopDropOrderSet, $g_sLibIconPath, $eIcnRedLight)
+		_GUICtrlSetImage($g_ahImgTroopDropOrderSet, $g_sLibIconPath, $eIcnRedLight)
 	EndIf
 	GUICtrlSetState($g_hBtnTroopOrderSet2, $GUI_DISABLE)
 	;SetRedrawBotWindow($bWasRedraw, Default, Default, Default, "btnTroopDropSet")
@@ -300,7 +300,7 @@ Func ChangeTroopDropOrder()
 		For $i = 0 To $eTroopCountDrop - 1
 			$icmbDropTroops[$i] = $NewTroopDrop[$i]
 		Next
-		GUICtrlSetImage($g_ahImgTroopDropOrderSet, $g_sLibIconPath, $eIcnGreenLight)
+		_GUICtrlSetImage($g_ahImgTroopDropOrderSet, $g_sLibIconPath, $eIcnGreenLight)
 	Else
 		Setlog($iUpdateCount & "|" & $eTroopCountDrop & " - Error - Bad troop assignment in ChangeTroopDropOrder()", $COLOR_ERROR)
 		;SetError(3, 0, False)
