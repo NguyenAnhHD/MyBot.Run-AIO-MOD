@@ -1455,7 +1455,7 @@ Func SetTime($bForceUpdate = False)
 					If $i <> $nCurProfile - 1 And $g_aLabTimerStart[$i] <> 0 Then	; update lab time of all accounts on multi stats
 						Local $sLabtime = ""
 						Local $TimerEnd = TimerDiff($g_aLabTimerStart[$i]) / 60 / 1000 ; in minutes
-						Local $UpdateLabTime = $g_aLabTimeAcc[$i] - $TimerEnd
+						Local $UpdateLabTime = $g_aLabTimeAcc[$i] - $TimerEnd ; in minutes
 						If $UpdateLabTime <= 0 Then
 							GUICtrlSetColor($g_ahLblLab[$i], $COLOR_GREEN)
 							GUICtrlSetColor($g_ahLblLabTime[$i], $COLOR_GREEN)

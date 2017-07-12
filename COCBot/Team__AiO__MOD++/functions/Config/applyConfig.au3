@@ -37,7 +37,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 			GUICtrlSetState($g_hChkCustomTrainDropOrderEnable, $g_bCustomTrainDropOrderEnable = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			For $p = 0 To UBound($icmbDropTroops) - 1
 				_GUICtrlComboBox_SetCurSel($cmbDropTroops[$p], $icmbDropTroops[$p])
-				GUICtrlSetImage($g_ahImgTroopDropOrder[$p], $g_sLibIconPath, $g_aiTroopOrderDropIcon[$icmbDropTroops[$p] + 1])
+				_GUICtrlSetImage($g_ahImgTroopDropOrder[$p], $g_sLibIconPath, $g_aiTroopOrderDropIcon[$icmbDropTroops[$p] + 1])
 			Next
 			; process error
 			If $g_bCustomTrainDropOrderEnable = True Then ; only update troop train order if enabled
@@ -165,9 +165,13 @@ Func ApplyConfig_MOD($TypeReadSave)
 			GUICtrlSetState($chkSXAQ, $ichkSXAQ = $eHeroQueen ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($chkSXGW, $ichkSXGW = $eHeroWarden ? $GUI_CHECKED : $GUI_UNCHECKED)
 
-
 			; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 			GUICtrlSetState($g_hChkClanHop, $g_bChkClanHop ? $GUI_CHECKED : $GUI_UNCHECKED)
+
+			; Max logout time (mandryd)
+			GUICtrlSetState($chkTrainLogoutMaxTime, $TrainLogoutMaxTime = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkTrainLogoutMaxTime()
+			GUICtrlSetData($txtTrainLogoutMaxTime, $TrainLogoutMaxTimeTXT)
 
 		Case "Save"
 
@@ -283,9 +287,12 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$ichkSXGW = (GUICtrlRead($chkSXGW) = $GUI_CHECKED) ? $eHeroWarden : $eHeroNone
 			$itxtMaxXPtoGain = Int(GUICtrlRead($txtMaxXPtoGain))
 
-
 			; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 			$g_bChkClanHop = (GUICtrlRead($g_hChkClanHop) = $GUI_CHECKED)
+
+			; Max logout time (mandryd)
+			$TrainLogoutMaxTime = GUICtrlRead($chkTrainLogoutMaxTime) = $GUI_CHECKED ? 1 : 0
+			$TrainLogoutMaxTimeTXT = GUICtrlRead($txtTrainLogoutMaxTime)
 
 	EndSwitch
 EndFunc

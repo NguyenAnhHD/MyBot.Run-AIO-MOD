@@ -23,17 +23,17 @@
 #pragma compile(Icon, "Images\MyBot.ico")
 #pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
 #pragma compile(ProductName, My Bot)
-#pragma compile(ProductVersion, 7.2.1)
-#pragma compile(FileVersion, 7.2.1
+#pragma compile(ProductVersion, 7.2.2)
+#pragma compile(FileVersion, 7.2.2
 #pragma compile(LegalCopyright, © https://mybot.run)
 #pragma compile(Out, MyBot.run.exe) ; Required
 
 ; Enforce variable declarations
 Opt("MustDeclareVars", 1)
 
-Global $g_sBotVersion = "v7.2.1" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
-Global $g_sModversion = "v1.7" ;<== Just Change This to Version Number
-Global $g_sModSupportUrl = "https://mybot.run/forums/index.php?/topic/31053-mods-mbr-v721-official-aio-mod-v17-update-0707/" ;<== Our Website Link Support Or Link Download
+Global $g_sBotVersion = "v7.2.2" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
+Global $g_sModversion = "v1.7.1" ;<== Just Change This to Version Number
+Global $g_sModSupportUrl = "https://mybot.run/forums/index.php?/topic/31096-mods-mbr-v722-official-aio-mod-v171-update-1207/" ;<== Our Website Link Support Or Link Download
 Global $g_sModDownloadUrl = "https://github.com/NguyenAnhHD/MyBot.Run-AIO-MOD/releases" ;<== Our Website Link Download
 Global $g_sBotTitle = "" ;~ Don't assign any title here, use Func UpdateBotTitle()
 Global $g_hFrmBot = 0 ; The main GUI window
@@ -573,6 +573,10 @@ Func MainLoop()
 
 	While 1
 		_Sleep($DELAYSLEEP, True, False)
+
+		If $g_bRunState = False And ($g_bNotifyPBEnable = True Or $g_bNotifyTGEnable = True) And $g_bNotifyRemoteEnable = True Then
+			NotifyRemoteControlProcBtnStart()
+		EndIf
 
 		Switch $g_iBotAction
 			Case $eBotStart
