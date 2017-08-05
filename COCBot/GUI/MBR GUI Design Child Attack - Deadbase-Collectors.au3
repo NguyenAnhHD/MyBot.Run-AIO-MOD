@@ -141,7 +141,7 @@ Func CreateAttackSearchDeadBaseCollectors()
 			_GUICtrlSetTip(-1, $sTxtTip)
 		$g_ahCmbDBCollectorLevel[11] = GUICtrlCreateCombo("", $x + 125, $y, 75, 20, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "LblCollectorLevel11_Info_01", 'Select how full a level 11 collector needs to be for it to be marked "dead"'))
-			GUICtrlSetData(-1, "50%|100%", "50%")
+			GUICtrlSetData(-1, "50%|100%", "100%")
 			GUICtrlSetOnEvent(-1, "cmbDBCollector")
 		GUICtrlCreateLabel($g_hTxtFull, $x + 205, $y + 3)
 

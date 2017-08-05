@@ -38,14 +38,17 @@
 #include "functions\Mod's\ProfileSwitch.au3"
 
 ; SwitchAcc (Demen) - Added By Demen
-#include "functions\Mod's\SwitchAcc.au3"
-#include "functions\Mod's\UpdateProfileStats.au3"
-
-; SimpleTrain (Demen) - Added By Demen
-#include "functions\Mod's\SimpleTrain.au3"
+#include "functions\Switch Account\SwitchAcc.au3"
+#include "functions\Switch Account\UpdateProfileStats.au3"
 
 ; HeroLabStatus - Demen
-#include "functions\Mod's\UpdateLabStatus.au3"
+#include "functions\Switch Account\UpdateLabStatus.au3"
+
+; SmartTrain (Demen) - Added By Demen
+#include "functions\Smart Train\SmartTrain.au3"
+#include "functions\Smart Train\CheckQueue.au3"
+#include "functions\Smart Train\CheckTrainingTab.au3"
+#include "functions\Smart Train\CheckPreciseTroop.au3"
 
 ; Bot Humanization
 #include "functions\Bot Humanization\BotHumanization.au3"

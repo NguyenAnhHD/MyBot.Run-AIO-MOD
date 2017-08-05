@@ -216,7 +216,8 @@ Global Const $DELAYDONATECC3 = 50 ; click
 Global Const $DELAYDONATECC4 = 1250
 
 ;DonateWindow
-Global Const $DELAYDONATEWINDOW1 = 250
+Global Const $DELAYDONATEWINDOW1 = 1000
+Global Const $DELAYDONATEWINDOW2 = 100
 
 ;DropTrophy
 Global Const $DELAYDROPTROPHY1 = 1000

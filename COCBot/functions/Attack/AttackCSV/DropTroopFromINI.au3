@@ -134,11 +134,10 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		Local $sleepBefore = 0
 		If $sleepBeforeMin <> $sleepBeforeMax Then
 			$sleepBefore = Random($sleepBeforeMin, $sleepBeforeMax, 1)
-			$sleepBefore = Int($sleepBefore / $g_CSVSpeedDivider)
 		Else
 			$sleepBefore = Int($sleepBeforeMin)
-			$sleepBefore = Int($sleepBefore / $g_CSVSpeedDivider)
 		EndIf
+		$sleepBefore = Int($sleepBefore / $g_CSVSpeedDivider[$g_iMatchMode])
 
 		If $sleepBefore > 50 And IsKeepClicksActive() = False Then
 			debugAttackCSV(">> delay Before drop all troops: " & $sleepBefore)
@@ -169,12 +168,12 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 				;delay time between 2 drops in different point
 				If $delayDropMin <> $delayDropMax Then
 					$delayDrop = Random($delayDropMin, $delayDropMax, 1)
-					$delayDrop = Int($delayDrop / $g_CSVSpeedDivider)
 				Else
 					$delayDrop = $delayDropMin
-					$delayDrop = Int($delayDrop / $g_CSVSpeedDivider)
 				EndIf
-				debugAttackCSV(">> delay change drop point: " & $delayDrop)
+				debugAttackCSV(">> random delay drop point: " & $delayDrop)
+				$delayDrop = Int($delayDrop / $g_CSVSpeedDivider[$g_iMatchMode])
+				debugAttackCSV(">> delay change drop point: " & $delayDrop & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
 			EndIf
 
 			For $j = 1 To $numbersOfVectors
@@ -189,11 +188,13 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 					;delay time between 2 drops in same point
 					If $delayPointmin <> $delayPointmax Then
 						Local $delayPoint = Random($delayPointmin, $delayPointmax, 1)
-						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider)
+						debugAttackCSV(">> random delay deploy point: " & $delayPoint)
+						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider[$g_iMatchMode])
 					Else
 						Local $delayPoint = $delayPointmin
-						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider)
+						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider[$g_iMatchMode])
 					EndIf
+					debugAttackCSV(">> delay change deploy Point: " & $delayPoint & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
 
 					Switch $iTroopIndex
 						Case $eBarb To $eBowl ; drop normal troops
@@ -248,11 +249,10 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		Local $sleepafter = 0
 		If $sleepafterMin <> $sleepAfterMax Then
 			$sleepafter = Random($sleepafterMin, $sleepAfterMax, 1)
-			$sleepafter = Int($sleepafter / $g_CSVSpeedDivider)
 		Else
 			$sleepafter = Int($sleepafterMin)
-			$sleepafter = Int($sleepafter / $g_CSVSpeedDivider)
 		EndIf
+		$sleepafter = Int($sleepafter / $g_CSVSpeedDivider[$g_iMatchMode])
 		If $sleepafter > 0 And IsKeepClicksActive() = False Then
 			debugAttackCSV(">> delay after drop all troops: " & $sleepafter)
 			If $sleepafter <= 1000 Then ; check SLEEPAFTER value is less than 1 second?

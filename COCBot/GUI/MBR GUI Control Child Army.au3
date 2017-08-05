@@ -18,7 +18,7 @@ Func chkUseQTrain()
 	If GUICtrlRead($g_hChkUseQuickTrain) = $GUI_CHECKED Then
 		_GUI_Value_STATE("ENABLE", $g_ahChkArmy[0] & "#" & $g_ahChkArmy[1] & "#" & $g_ahChkArmy[2])		; QuickTrainCombo (checkbox) - Demen
 		chkQuickTrainCombo()																			; QuickTrainCombo (checkbox) - Demen
-		If GUICtrlRead($g_hchkSimpleTrain) = $GUI_CHECKED Then 											; Precise troops of SimpleTrain - Demen
+		If GUICtrlRead($g_hchkSmartTrain) = $GUI_CHECKED Then 											; Precise troops of SmartTrain - Demen
 			GUICtrlSetState($g_hchkPreciseTroops, $GUI_UNCHECKED)
 			GUICtrlSetState($g_hchkPreciseTroops, $GUI_DISABLE)
 		EndIf
@@ -32,7 +32,8 @@ Func chkUseQTrain()
 		GUICtrlSetData($g_hLblDarkCostSpell, "0")
 	Else
 		_GUI_Value_STATE("DISABLE", $g_ahChkArmy[0] & "#" & $g_ahChkArmy[1] & "#" & $g_ahChkArmy[2])	; QuickTrainCombo (checkbox) - Demen
-		chkSimpleTrain()																				; Precise troops of SimpleTrain - Demen
+		chkQuickTrainCombo()
+		chkSmartTrain()																				; Precise troops of SmartTrain - Demen
 		_GUI_Value_STATE("ENABLE", $grpTrainTroops)
 		_GUI_Value_STATE("ENABLE", $grpCookSpell)
 		lblTotalCountTroop1()
@@ -48,6 +49,15 @@ Func chkQuickTrainCombo()
 		Sleep(2000)
 		ToolTip('')
 	EndIf
+
+	If GUICtrlRead($g_ahChkArmy[2]) = $GUI_CHECKED And GUICtrlRead($g_hChkUseQuickTrain) = $GUI_CHECKED Then
+		_GUI_Value_STATE("HIDE", $g_hLblRemoveArmy & "#" & $g_hBtnRemoveArmy)
+		_GUI_Value_STATE("SHOW", $g_hChkMultiClick)
+	Else
+		_GUI_Value_STATE("HIDE", $g_hChkMultiClick)
+		_GUI_Value_STATE("SHOW", $g_hLblRemoveArmy & "#" & $g_hBtnRemoveArmy)
+	EndIf
+
 EndFunc   ;==>chkQuickTrainCombo
 
 Func SetComboTroopComp()

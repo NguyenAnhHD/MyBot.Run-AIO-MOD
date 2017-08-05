@@ -74,7 +74,7 @@ Global $hBitmapFirst
 ; CSV Deploy Speed (Roro-Titi) - Added by NguyenAnhHD
 Global $cmbCSVSpeed[2] = [$LB, $DB]
 Global $icmbCSVSpeed[2] = [2, 2]
-Global $g_CSVSpeedDivider = 1
+Global $g_CSVSpeedDivider[2] = [1, 1] ; default CSVSpeed for DB & LB
 
 ; Switch Profile (IceCube) - Added by NguyenAnhHD
 Global $profileString = ""
@@ -100,11 +100,14 @@ Global $aTimerStart[8], $aTimerEnd[8]
 Global $aRemainTrainTime[8], $aUpdateRemainTrainTime[8], $nMinRemainTrain
 Global $aLocateAccConfig[8], $aAccPosY[8]
 
-; SimpleTrain (Demen) - Added By Demen
-Global $ichkSimpleTrain, $ichkPreciseTroops, $ichkFillArcher, $iFillArcher, $ichkFillEQ
+; SmartTrain (Demen) - Added By Demen
+Global $ichkSmartTrain, $ichkPreciseTroops, $ichkFillArcher, $iFillArcher, $ichkFillEQ
 Global $g_bWaitForCCTroopSpell = False	; ForceSwitch while waiting for CC troops - Demen
 Global Enum $g_eFull, $g_eRemained, $g_eNoTrain
 Global $g_abRCheckWrongTroops[2] = [False, False] ; Result of checking wrong troops & spells
+Global $g_bChkMultiClick, $g_iMultiClick = 1
+Global $g_aiQueueTroops[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_aiQueueSpells[$eSpellCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 ; Hero and Lab status - Demen
 Global $g_bNeedLocateLab = True, $g_bLabReady[9]
@@ -133,16 +136,12 @@ Global $g_iLastLayout = 0
 
 ; Auto Upgrade
 Global $g_ichkAutoUpgrade = 0
-Global $g_ichkIgnoreTH = 0, $g_ichkIgnoreKing = 0, $g_ichkIgnoreQueen = 0, $g_ichkIgnoreWarden = 0, $g_ichkIgnoreCC = 0, $g_ichkIgnoreLab = 0
-Global $g_ichkIgnoreBarrack = 0, $g_ichkIgnoreDBarrack = 0, $g_ichkIgnoreFactory = 0, $g_ichkIgnoreDFactory = 0
-Global $g_ichkIgnoreGColl = 0, $g_ichkIgnoreEColl = 0, $g_ichkIgnoreDColl = 0
 Global $g_iSmartMinGold = 150000, $g_iSmartMinElixir = 150000, $g_iSmartMinDark = 1500
-
-Global $g_sBldgText, $g_sBldgLevel
-Global $g_aUpgradeName[3] = ["", "", ""]
-Global $g_iUpgradeCost
-Global $g_sUpgradeResource = 0
-Global $g_sUpgradeDuration
+Global $g_ichkUpgradesToIgnore[13] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_ichkResourcesToIgnore[3] = [0, 0, 0]
+Global $g_iCurrentLineOffset = 0, $g_iNextLineOffset = 0
+Global $g_aUpgradeNameLevel ; [Nb of elements in Array, Name, Level]
+Global $g_aUpgradeResourceCostDuration[3] = ["", "", ""] ; Resource, Cost, Duration
 
 ; Forecast - Added By Eloy (modification rulesss,kychera)
 Global Const $COLOR_DEEPPINK = 0xFF1493

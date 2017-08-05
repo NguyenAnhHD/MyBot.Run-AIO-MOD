@@ -64,7 +64,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 			GUICtrlSetData($g_hTxtDBMinCollOutsidePercent, $iDBMinCollOutsidePercent)
 			chkDBMeetCollOutside()
 
-			; CSV Deploy Speed (Roro-Titi) - Added by NguyenAnhHD
+			; CSV Deploy Speed - Added by NguyenAnhHD
 			_GUICtrlComboBox_SetCurSel($cmbCSVSpeed[$LB], $icmbCSVSpeed[$LB])
 			_GUICtrlComboBox_SetCurSel($cmbCSVSpeed[$DB], $icmbCSVSpeed[$DB])
 
@@ -97,13 +97,15 @@ Func ApplyConfig_MOD($TypeReadSave)
 			_GUICtrlComboBox_SetCurSel($g_hCmbTrophyMinProfile, $icmbTrophyMinProfile)
 			GUICtrlSetData($g_hTxtMinTrophyAmount, $itxtMinTrophyAmount)
 
-			; SimpleTrain (Demen) - Added By Demen
-			GUICtrlSetState($g_hchkSimpleTrain, $ichkSimpleTrain = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			; SmartTrain (Demen) - Added By Demen
+			GUICtrlSetState($g_hchkSmartTrain, $ichkSmartTrain = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hchkPreciseTroops, $ichkPreciseTroops = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hchkFillArcher, $ichkFillArcher = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetData($g_htxtFillArcher, $iFillArcher)
 			GUICtrlSetState($g_hchkFillEQ, $ichkFillEQ = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			chkSimpleTrain()
+			chkSmartTrain()
+			GUICtrlSetState($g_hChkMultiClick, $g_bChkMultiClick ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkUseQTrain()
 
 			; Bot Humanization
 			GUICtrlSetState($g_chkUseBotHumanization, $g_ichkUseBotHumanization = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -130,19 +132,12 @@ Func ApplyConfig_MOD($TypeReadSave)
 
 			; Auto Upgrade
 			GUICtrlSetState($g_chkAutoUpgrade, $g_ichkAutoUpgrade = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreTH, $g_ichkIgnoreTH = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreKing, $g_ichkIgnoreKing = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreQueen, $g_ichkIgnoreQueen = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreWarden, $g_ichkIgnoreWarden = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreCC, $g_ichkIgnoreCC = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreLab, $g_ichkIgnoreLab = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreBarrack, $g_ichkIgnoreBarrack = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreDBarrack, $g_ichkIgnoreDBarrack = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreFactory, $g_ichkIgnoreFactory = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreDFactory, $g_ichkIgnoreDFactory = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreGColl, $g_ichkIgnoreGColl = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreEColl, $g_ichkIgnoreEColl = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_chkIgnoreDColl, $g_ichkIgnoreDColl = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			For $i = 0 To 12
+				GUICtrlSetState($g_chkUpgradesToIgnore[$i], $g_ichkUpgradesToIgnore[$i] = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			Next
+			For $i = 0 To 2
+				GUICtrlSetState($g_chkResourcesToIgnore[$i], $g_ichkResourcesToIgnore[$i] = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			Next
 			GUICtrlSetData($g_SmartMinGold, $g_iSmartMinGold)
 			GUICtrlSetData($g_SmartMinElixir, $g_iSmartMinElixir)
 			GUICtrlSetData($g_SmartMinDark, $g_iSmartMinDark)
@@ -230,12 +225,13 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$icmbTrophyMinProfile = _GUICtrlComboBox_GetCurSel($g_hCmbTrophyMinProfile)
 			$itxtMinTrophyAmount = GUICtrlRead($g_hTxtMinTrophyAmount)
 
-			; SimpleTrain (Demen) - Added by Demen
-			$ichkSimpleTrain = GUICtrlRead($g_hchkSimpleTrain) = $GUI_CHECKED ? 1 : 0
+			;SmartTrain (Demen) - Added by Demen
+			$ichkSmartTrain = GUICtrlRead($g_hchkSmartTrain) = $GUI_CHECKED ? 1 : 0
 			$ichkPreciseTroops = GUICtrlRead($g_hchkPreciseTroops) = $GUI_CHECKED ? 1 : 0
 			$ichkFillArcher = GUICtrlRead($g_hchkFillArcher) = $GUI_CHECKED ? 1 : 0
 			$iFillArcher = GUICtrlRead($g_htxtFillArcher)
 			$ichkFillEQ = GUICtrlRead($g_hchkFillEQ) = $GUI_CHECKED ? 1 : 0
+			$g_bChkMultiClick = (GUICtrlRead($g_hChkMultiClick) = $GUI_CHECKED)
 
 			; Bot Humanization
 			$g_ichkUseBotHumanization = GUICtrlRead($g_chkUseBotHumanization) = $GUI_CHECKED ? 1 : 0
@@ -259,19 +255,12 @@ Func ApplyConfig_MOD($TypeReadSave)
 
 			; Auto Upgrade
 			$g_ichkAutoUpgrade = GUICtrlRead($g_chkAutoUpgrade) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreTH = GUICtrlRead($g_chkIgnoreTH) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreKing = GUICtrlRead($g_chkIgnoreKing) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreQueen = GUICtrlRead($g_chkIgnoreQueen) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreWarden = GUICtrlRead($g_chkIgnoreWarden) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreCC = GUICtrlRead($g_chkIgnoreCC) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreLab = GUICtrlRead($g_chkIgnoreLab) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreBarrack = GUICtrlRead($g_chkIgnoreBarrack) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreDBarrack = GUICtrlRead($g_chkIgnoreDBarrack) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreFactory = GUICtrlRead($g_chkIgnoreFactory) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreDFactory = GUICtrlRead($g_chkIgnoreDFactory) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreGColl = GUICtrlRead($g_chkIgnoreGColl) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreEColl = GUICtrlRead($g_chkIgnoreEColl) = $GUI_CHECKED ? 1 : 0
-			$g_ichkIgnoreDColl = GUICtrlRead($g_chkIgnoreDColl) = $GUI_CHECKED ? 1 : 0
+			For $i = 0 To 12
+				$g_ichkUpgradesToIgnore[$i] = GUICtrlRead($g_chkUpgradesToIgnore[$i]) = $GUI_CHECKED ? 1 : 0
+			Next
+			For $i = 0 To 2
+				$g_ichkResourcesToIgnore[$i] = GUICtrlRead($g_chkResourcesToIgnore[$i]) = $GUI_CHECKED ? 1 : 0
+			Next
 			$g_iSmartMinGold = GUICtrlRead($g_SmartMinGold)
 			$g_iSmartMinElixir = GUICtrlRead($g_SmartMinElixir)
 			$g_iSmartMinDark = GUICtrlRead($g_SmartMinDark)
