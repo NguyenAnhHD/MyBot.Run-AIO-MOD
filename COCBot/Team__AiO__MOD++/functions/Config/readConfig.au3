@@ -40,9 +40,16 @@ Func ReadConfig_MOD()
 	IniReadS($ichkDBMeetCollOutside, $g_sProfileConfigPath, "search", "DBMeetCollOutside", 0, "int")
 	IniReadS($iDBMinCollOutsidePercent, $g_sProfileConfigPath, "search", "DBMinCollOutsidePercent", 50, "int")
 
-	; CSV Deploy Speed (Roro-Titi) - Added by NguyenAnhHD
+	; CSV Deploy Speed - Added by NguyenAnhHD
 	IniReadS($icmbCSVSpeed[$LB], $g_sProfileConfigPath, "CSV Speed", "cmbCSVSpeed[LB]", $icmbCSVSpeed[$LB], "Int")
 	IniReadS($icmbCSVSpeed[$DB], $g_sProfileConfigPath, "CSV Speed", "cmbCSVSpeed[DB]", $icmbCSVSpeed[$DB], "Int")
+	For $i = $DB To $LB
+		If $icmbCSVSpeed[$i] < 5 Then
+			$g_CSVSpeedDivider[$i] = 0.5 + $icmbCSVSpeed[$i] * 0.25        ; $g_CSVSpeedDivider = 0.5, 0.75, 1, 1.25, 1.5
+		Else
+			$g_CSVSpeedDivider[$i] = 2 + $icmbCSVSpeed[$i] - 5            ; $g_CSVSpeedDivider = 2, 3, 4, 5
+		EndIf
+	Next
 
 	; Switch Profile (IceCube) - Added by NguyenAnhHD
 	IniReadS($ichkGoldSwitchMax, $g_sProfileConfigPath, "profiles", "chkGoldSwitchMax", 0, "int")
@@ -73,12 +80,13 @@ Func ReadConfig_MOD()
 	IniReadS($icmbTrophyMinProfile, $g_sProfileConfigPath, "profiles", "cmbTrophyMinProfile", 0, "int")
 	IniReadS($itxtMinTrophyAmount, $g_sProfileConfigPath, "profiles", "txtMinTrophyAmount", 1000, "int")
 
-	; SimpleTrain (Demen) - Added By Demen
-	IniReadS($ichkSimpleTrain, $g_sProfileConfigPath, "SimpleTrain", "Enable", 0, "int")
-	IniReadS($ichkPreciseTroops, $g_sProfileConfigPath, "SimpleTrain", "PreciseTroops", 0, "int")
-	IniReadS($ichkFillArcher, $g_sProfileConfigPath, "SimpleTrain", "ChkFillArcher", 0, "int")
-	IniReadS($iFillArcher, $g_sProfileConfigPath, "SimpleTrain", "FillArcher", 5, "int")
-	IniReadS($ichkFillEQ, $g_sProfileConfigPath, "SimpleTrain", "FillEQ", 0, "int")
+	; SmartTrain
+	IniReadS($ichkSmartTrain, $g_sProfileConfigPath, "SmartTrain", "Enable", 0, "int")
+	IniReadS($ichkPreciseTroops, $g_sProfileConfigPath, "SmartTrain", "PreciseTroops", 0, "int")
+	IniReadS($ichkFillArcher, $g_sProfileConfigPath, "SmartTrain", "ChkFillArcher", 0, "int")
+	IniReadS($iFillArcher, $g_sProfileConfigPath, "SmartTrain", "FillArcher", 5, "int")
+	IniReadS($ichkFillEQ, $g_sProfileConfigPath, "SmartTrain", "FillEQ", 0, "int")
+	$g_bChkMultiClick = (IniRead($g_sProfileConfigPath, "other", "ChkMultiClick", "0") = "1")
 
 	; Bot Humanization
 	IniReadS($g_ichkUseBotHumanization, $g_sProfileConfigPath, "Bot Humanization", "chkUseBotHumanization", $g_ichkUseBotHumanization, "Int")
@@ -102,19 +110,12 @@ Func ReadConfig_MOD()
 
 	; Auto Upgrade
 	IniReadS($g_ichkAutoUpgrade, $g_sProfileConfigPath, "Auto Upgrade", "chkAutoUpgrade", $g_ichkAutoUpgrade, "Int")
-	IniReadS($g_ichkIgnoreTH, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreTH", $g_ichkIgnoreTH, "Int")
-	IniReadS($g_ichkIgnoreKing, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreKing", $g_ichkIgnoreKing, "Int")
-	IniReadS($g_ichkIgnoreQueen, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreQueen", $g_ichkIgnoreQueen, "Int")
-	IniReadS($g_ichkIgnoreWarden, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreWarden", $g_ichkIgnoreWarden, "Int")
-	IniReadS($g_ichkIgnoreCC, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreCC", $g_ichkIgnoreCC, "Int")
-	IniReadS($g_ichkIgnoreLab, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreLab", $g_ichkIgnoreLab, "Int")
-	IniReadS($g_ichkIgnoreBarrack, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreBarrack", $g_ichkIgnoreBarrack, "Int")
-	IniReadS($g_ichkIgnoreDBarrack, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreDBarrack", $g_ichkIgnoreDBarrack, "Int")
-	IniReadS($g_ichkIgnoreFactory, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreFactory", $g_ichkIgnoreFactory, "Int")
-	IniReadS($g_ichkIgnoreDFactory, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreDFactory", $g_ichkIgnoreDFactory, "Int")
-	IniReadS($g_ichkIgnoreGColl, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreGColl", $g_ichkIgnoreGColl, "Int")
-	IniReadS($g_ichkIgnoreEColl, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreEColl", $g_ichkIgnoreEColl, "Int")
-	IniReadS($g_ichkIgnoreDColl, $g_sProfileConfigPath, "Auto Upgrade", "chkIgnoreDColl", $g_ichkIgnoreDColl, "Int")
+	For $i = 0 To 12
+		IniReadS($g_ichkUpgradesToIgnore[$i], $g_sProfileConfigPath, "Auto Upgrade", "chkUpgradesToIgnore[" & $i & "]", $g_ichkUpgradesToIgnore[$i], "Int")
+	Next
+	For $i = 0 To 2
+		IniReadS($g_ichkResourcesToIgnore[$i], $g_sProfileConfigPath, "Auto Upgrade", "chkResourcesToIgnore[" & $i & "]", $g_ichkResourcesToIgnore[$i], "Int")
+	Next
 	IniReadS($g_iSmartMinGold, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinGold", $g_iSmartMinGold, "Int")
 	IniReadS($g_iSmartMinElixir, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinElixir", $g_iSmartMinElixir, "Int")
 	IniReadS($g_iSmartMinDark, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinDark", $g_iSmartMinDark, "Int")

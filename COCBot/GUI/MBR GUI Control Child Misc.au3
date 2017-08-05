@@ -265,7 +265,7 @@ Func btnLocateTownHall()
 	_ExtMsgBoxSet(1 + 64, $SS_CENTER, 0x004080, 0xFFFF00, 12, "Comic Sans MS", 600)
 	Local $stext = @CRLF & GetTranslatedFileIni("MBR Popups", "Locating_your_TH", "If you locating your TH because you upgraded,") & @CRLF & _
 			GetTranslatedFileIni("MBR Popups", "Must_restart_bot", "then you must restart bot!!!") & @CRLF & @CRLF & _
-			GetTranslatedFileIni("MBR Popups", "OK_to_restart_bot", "Click OK to restart bot, ") & @CRLF & @CRLF & GetTranslatedFileIni("MBR Popups", "Cancel_to_exit", "Or Click Cancel to exit") & @CRLF
+			GetTranslatedFileIni("MBR Popups", "OK_to_restart_bot", "Click OK to restart bot") & @CRLF & @CRLF & GetTranslatedFileIni("MBR Popups", "Cancel_to_exit", "Or Click Cancel to exit") & @CRLF
 	Local $MsgBox = _ExtMsgBox(0, GetTranslatedFileIni("MBR Popups", "Ok_Cancel", "Ok|Cancel"), GetTranslatedFileIni("MBR Popups", "Close_Bot", "Close Bot Please!"), $stext, 120)
 	If $g_iDebugSetlog = 1 Then Setlog("$MsgBox= " & $MsgBox, $COLOR_DEBUG)
 	If $MsgBox = 1 Then
@@ -547,3 +547,11 @@ Func ChkTreasuryCollect()
 		GUICtrlSetState($g_hTxtTreasuryDark, $GUI_DISABLE)
 	EndIf
 EndFunc		;==> ChkTreasuryCollect
+
+Func chkStartClockTowerBoost()
+	If GUICtrlRead($g_hChkStartClockTowerBoost) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hChkCTBoostBlderBz, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hChkCTBoostBlderBz, $GUI_DISABLE)
+	EndIf
+EndFunc   ;==>chkStartClockTowerBoost

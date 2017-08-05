@@ -41,7 +41,7 @@ Func SaveConfig_MOD()
 	_Ini_Add("search", "DBMeetCollOutside", $ichkDBMeetCollOutside ? 1 : 0)
 	_Ini_Add("search", "DBMinCollOutsidePercent", $iDBMinCollOutsidePercent)
 
-	; CSV Deploy Speed (Roro-Titi) - Added by NguyenAnhHD
+	; CSV Deploy Speed - Added by NguyenAnhHD
 	_Ini_Add("CSV Speed", "cmbCSVSpeed[LB]", _GUICtrlComboBox_GetCurSel($cmbCSVSpeed[$LB]))
 	_Ini_Add("CSV Speed", "cmbCSVSpeed[DB]", _GUICtrlComboBox_GetCurSel($cmbCSVSpeed[$DB]))
 
@@ -74,12 +74,13 @@ Func SaveConfig_MOD()
 	_Ini_Add("profiles", "cmbTrophyMinProfile", $icmbTrophyMinProfile)
 	_Ini_Add("profiles", "txtMinTrophyAmount", $itxtMinTrophyAmount)
 
-	; SimpleTrain (Demen) - Added By Demen
-	_Ini_Add("SimpleTrain", "Enable", $ichkSimpleTrain)
-	_Ini_Add("SimpleTrain", "PreciseTroops", $ichkPreciseTroops)
-	_Ini_Add("SimpleTrain", "ChkFillArcher", $ichkFillArcher)
-	_Ini_Add("SimpleTrain", "FillArcher", $iFillArcher)
-	_Ini_Add("SimpleTrain", "FillEQ", $ichkFillEQ)
+	; SmartTrain (Demen) - Added By Demen
+	_Ini_Add("SmartTrain", "Enable", $ichkSmartTrain)
+	_Ini_Add("SmartTrain", "PreciseTroops", $ichkPreciseTroops)
+	_Ini_Add("SmartTrain", "ChkFillArcher", $ichkFillArcher)
+	_Ini_Add("SmartTrain", "FillArcher", $iFillArcher)
+	_Ini_Add("SmartTrain", "FillEQ", $ichkFillEQ)
+	_Ini_Add("other", "ChkMultiClick", $g_bChkMultiClick ? 1 : 0)
 
 	; Bot Humanization
 	_Ini_Add("Bot Humanization", "chkUseBotHumanization", $g_ichkUseBotHumanization)
@@ -103,19 +104,12 @@ Func SaveConfig_MOD()
 
 	; Auto Upgrade
 	_Ini_Add("Auto Upgrade", "chkAutoUpgrade", $g_ichkAutoUpgrade)
-	_Ini_Add("Auto Upgrade", "chkIgnoreTH", $g_ichkIgnoreTH)
-	_Ini_Add("Auto Upgrade", "chkIgnoreKing", $g_ichkIgnoreKing)
-	_Ini_Add("Auto Upgrade", "chkIgnoreQueen", $g_ichkIgnoreQueen)
-	_Ini_Add("Auto Upgrade", "chkIgnoreWarden", $g_ichkIgnoreWarden)
-	_Ini_Add("Auto Upgrade", "chkIgnoreCC", $g_ichkIgnoreCC)
-	_Ini_Add("Auto Upgrade", "chkIgnoreLab", $g_ichkIgnoreLab)
-	_Ini_Add("Auto Upgrade", "chkIgnoreBarrack", $g_ichkIgnoreBarrack)
-	_Ini_Add("Auto Upgrade", "chkIgnoreDBarrack", $g_ichkIgnoreDBarrack)
-	_Ini_Add("Auto Upgrade", "chkIgnoreFactory", $g_ichkIgnoreFactory)
-	_Ini_Add("Auto Upgrade", "chkIgnoreDFactory", $g_ichkIgnoreDFactory)
-	_Ini_Add("Auto Upgrade", "chkIgnoreGColl", $g_ichkIgnoreGColl)
-	_Ini_Add("Auto Upgrade", "chkIgnoreEColl", $g_ichkIgnoreEColl)
-	_Ini_Add("Auto Upgrade", "chkIgnoreDColl", $g_ichkIgnoreDColl)
+	For $i = 0 To 12
+		_Ini_Add("Auto Upgrade", "chkUpgradesToIgnore[" & $i & "]", $g_ichkUpgradesToIgnore[$i])
+	Next
+	For $i = 0 To 2
+		_Ini_Add("Auto Upgrade", "chkResourcesToIgnore[" & $i & "]", $g_ichkResourcesToIgnore[$i])
+	Next
 	_Ini_Add("Auto Upgrade", "SmartMinGold", GUICtrlRead($g_SmartMinGold))
 	_Ini_Add("Auto Upgrade", "SmartMinElixir", GUICtrlRead($g_SmartMinElixir))
 	_Ini_Add("Auto Upgrade", "SmartMinDark", GUICtrlRead($g_SmartMinDark))

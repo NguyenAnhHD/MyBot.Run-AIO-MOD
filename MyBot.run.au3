@@ -23,16 +23,16 @@
 #pragma compile(Icon, "Images\MyBot.ico")
 #pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
 #pragma compile(ProductName, My Bot)
-#pragma compile(ProductVersion, 7.2.2)
-#pragma compile(FileVersion, 7.2.2
+#pragma compile(ProductVersion, 7.2.3)
+#pragma compile(FileVersion, 7.2.3)
 #pragma compile(LegalCopyright, © https://mybot.run)
 #pragma compile(Out, MyBot.run.exe) ; Required
 
 ; Enforce variable declarations
 Opt("MustDeclareVars", 1)
 
-Global $g_sBotVersion = "v7.2.2" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
-Global $g_sModversion = "v1.7.1" ;<== Just Change This to Version Number
+Global $g_sBotVersion = "v7.2.3" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
+Global $g_sModversion = "v1.7.2" ;<== Just Change This to Version Number
 Global $g_sModSupportUrl = "https://mybot.run/forums/index.php?/topic/31096-mods-mbr-v722-official-aio-mod-v171-update-1207/" ;<== Our Website Link Support Or Link Download
 Global $g_sModDownloadUrl = "https://github.com/NguyenAnhHD/MyBot.Run-AIO-MOD/releases" ;<== Our Website Link Download
 Global $g_sBotTitle = "" ;~ Don't assign any title here, use Func UpdateBotTitle()
@@ -224,6 +224,9 @@ Func ProcessCommandLine()
 	; Handle Command Line Parameters
 	If $g_asCmdLine[0] > 0 Then
 		$g_sProfileCurrentName = StringRegExpReplace($g_asCmdLine[1], '[/:*?"<>|]', '_')
+		If $g_asCmdLine[0] >= 2 Then
+			If StringInStr($g_asCmdLine[2], "BlueStacks3") Then $g_asCmdLine[2] = "BlueStacks2"
+		EndIf
 	ElseIf FileExists($g_sProfilePath & "\profile.ini") Then
 		$g_sProfileCurrentName = StringRegExpReplace(IniRead($g_sProfilePath & "\profile.ini", "general", "defaultprofile", ""), '[/:*?"<>|]', '_')
 		If $g_sProfileCurrentName = "" Or Not FileExists($g_sProfilePath & "\" & $g_sProfileCurrentName) Then $g_sProfileCurrentName = "<No Profiles>"
@@ -523,8 +526,6 @@ Func FinalInitialization(Const $sAI)
 
 	;AdlibRegister("PushBulletRemoteControl", $g_iPBRemoteControlInterval)
 	;AdlibRegister("PushBulletDeleteOldPushes", $g_iPBDeleteOldPushesInterval)
-
-	;CheckDisplay() ; verify display size and DPI (Dots Per Inch) setting (disabled now as scaled desktop is now supported)
 
 	LoadAmountOfResourcesImages()
 
@@ -948,7 +949,7 @@ Func Idle() ;Sequence that runs until Full Army
 
 		If $g_iCommandStop = -1 Then ; Check if closing bot/emulator while training and not in halt mode
 			If $ichkSwitchAcc = 1 Then ; SwitchAcc Demen
-				If $g_bWaitForCCTroopSpell Then
+				If $g_bWaitForCCTroopSpell And $ichkSmartSwitch = 1 Then
 					Setlog("Still waiting for CC troops/ spells, switching to another Account")
 					ForceSwitchAcc($eDonate)
 				Else
@@ -1042,6 +1043,7 @@ Func Attack() ;Selects which algorithm
 	SetLog(" ====== Start Attack ====== ", $COLOR_SUCCESS)
 	If ($g_iMatchMode = $DB And $g_aiAttackAlgorithm[$DB] = 1) Or ($g_iMatchMode = $LB And $g_aiAttackAlgorithm[$LB] = 1) Then
 		If $g_iDebugSetlog = 1 Then Setlog("start scripted attack", $COLOR_ERROR)
+		If $g_CSVSpeedDivider[$g_iMatchMode] <> 1 Then Setlog("Executing Scripted attack at " & $g_CSVSpeedDivider[$g_iMatchMode] & "x Speed", $COLOR_INFO)
 		Algorithm_AttackCSV()
 	ElseIf $g_iMatchMode = $DB And $g_aiAttackAlgorithm[$DB] = 2 Then
 		If $g_iDebugSetlog = 1 Then Setlog("start milking attack", $COLOR_ERROR)

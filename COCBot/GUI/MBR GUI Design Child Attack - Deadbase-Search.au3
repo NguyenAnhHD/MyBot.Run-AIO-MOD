@@ -247,7 +247,7 @@ Func CreateAttackSearchDeadBaseSearch()
 			   _GUICtrlSetTip(-1, $sTxtTip)
 
 		   $y += 24
-		   $g_hChkDBMeetTH = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR Global GUI Design", "LblTownhall", "Townhall"), $x, $y, -1, -1)
+		   $g_hChkDBMeetTH = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR Global GUI Design", "LblTownhall", -1), $x, $y, -1, -1)
 			   GUICtrlSetOnEvent(-1, "chkDBMeetTH")
 			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkMeetTH_Info_01", "Search for a base that meets the value set for Max. Townhall Level."))
 		   $g_hCmbDBTH = GUICtrlCreateCombo("", $x + 85, $y - 1, 50, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))

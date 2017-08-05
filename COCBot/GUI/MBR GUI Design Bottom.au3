@@ -98,9 +98,9 @@ Func CreateBottomPanel()
 		; Adding button to enable/disable GUI while botting (as requested by YScorpion) - Demen
 		$g_hBtnEnableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI", "Enable GUI"), $x + 100, $y + 72, 80, 22)
 			_GUICtrlSetTip(-1, 	GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI_Info_01", "Enable GUI control while botting") & @CRLF & _
-								GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI_Info_02", "   Warning:  USE THIS WITH CAUTION!") & @CRLF & _
-								GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI_Info_03", "   This function may create errors that require bot/PC restart") & @CRLF & _
-								GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI_Info_04", " 	Better to stop the Bot completely if you need to change the setting"))
+								GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI_Info_02", "Warning: USE THIS WITH CAUTION!") & @CRLF & _
+								GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI_Info_03", "This function may create errors that require bot/PC restart") & @CRLF & _
+								GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI_Info_04", "Better to stop the Bot completely if you need to change the setting"))
 			GUICtrlSetOnEvent(-1, "btnEnableGUI")
 			GUICtrlSetState(-1, $GUI_HIDE)
 		$g_hBtnDisableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "DisableGUI", "Disable GUI"), $x + 100, $y + 72, 80, 22)

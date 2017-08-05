@@ -1,11 +1,11 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Auto Upgrade (v5)
+; Name ..........: Auto Upgrade (v6.1)
 ; Description ...: This file contains all functions of Pico Auto Upgrade feature
 ; Syntax ........: ---
 ; Parameters ....: ---
 ; Return values .: ---
 ; Author ........: RoroTiti
-; Modified ......: 08/05/2017
+; Modified ......: 22/07/2017 (full rewrite from A to Z)
 ; Remarks .......: This file is part of MyBotRun. Copyright 2016
 ;                  MyBotRun is distributed under the terms of the GNU GPL
 ; Related .......: ---
@@ -15,388 +15,258 @@
 
 Func AutoUpgrade()
 
-	If $g_ichkAutoUpgrade = 1 Then ; check if AutoUpgrade is enabled
-		getBuilderCount()
-		If $g_iFreeBuilderCount <> 0 Then ; check free builders
-			If ($g_bUpgradeWallSaveBuilder = 1 And $g_iFreeBuilderCount > 1) Or $g_bUpgradeWallSaveBuilder = 0 Then ; check if Save builder for walls is active
-				SetLog("Starting Auto Upgrade...", $COLOR_BLUE)
-				SetLog("Cleaning Yard before...", $COLOR_BLUE)
-				CleanYard()
-				SetLog("Cleaning Yard Finished !", $COLOR_BLUE)
-				randomSleep(5000)
-				clickUpgrade()
-				updateStats()
-				SetLog("Auto Upgrade Finished !", $COLOR_BLUE)
-				randomSleep(800)
-				ClickP($aAway, 1, 0, "#0167") ;Click Away
-			Else
-				SetLog("Only 1 builder available and he works on walls... Good Luck haha !!!", $COLOR_WARNING)
-			EndIf
+	If $g_ichkAutoUpgrade = 0 Then Return ; disabled, no need to continue...
+
+	SetLog("Entering Auto Upgrade...", $COLOR_INFO)
+	Local $iLoopAmount = 0
+
+	While 1
+
+		$iLoopAmount += 1
+		If $iLoopAmount >= 6 Then ExitLoop ; 6 loops max, to avoid infinite loop
+
+		ClickP($aAway, 1, 0, "#0000") ;Click Away
+		randomSleep(1000)
+		VillageReport()
+
+		If Not $g_iFreeBuilderCount <> 0 Then
+			SetLog("No builder available... Skipping Auto Upgrade...", $COLOR_WARNING)
+			ExitLoop
+		EndIf
+
+		; check if Save builder for walls is active
+		If $g_bUpgradeWallSaveBuilder = 1 And (Not $g_iFreeBuilderCount > 1) Then
+			SetLog("The only builder available must be kept for walls... Skipping Auto Upgrade...", $COLOR_WARNING)
+			ExitLoop
+		EndIf
+
+		; check if builder head is clickable
+		If Not (_ColorCheck(_GetPixelColor(275, 15, True), "F5F5ED", 20) = True) Then
+			SetLog("Unable to find the Builder menu button... Exiting Auto Upgrade...", $COLOR_ERROR)
+			ExitLoop
+		EndIf
+
+		; open the builders menu
+		Click(295, 30)
+		If _Sleep(1000) Then Return
+
+		; search for 000 in builders menu, if 000 found, a possible upgrade is available
+		If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Auto Upgrade\Zero", 180, 80 + $g_iNextLineOffset, 480, 350) Then
+			SetLog("Possible upgrade found !", $COLOR_SUCCESS)
+			$g_iCurrentLineOffset = $g_iNextLineOffset + $g_iQuickMISY
 		Else
-			SetLog("No builder available, skipping Auto Upgrade...", $COLOR_WARNING)
+			SetLog("No upgrade available... Exiting Auto Upgrade...", $COLOR_INFO)
+			ExitLoop
 		EndIf
-	Else
-		Return
-	EndIf
 
-EndFunc   ;==>AutoUpgrade
+		; check in the line of the 000 if we can see "New" or the Gear of the equipment, in this case, will not do the upgrade
+		If QuickMIS("NX", @ScriptDir & "\imgxml\Resources\Auto Upgrade\Obstacles", 180, 80 + $g_iCurrentLineOffset - 15, 480, 80 + $g_iCurrentLineOffset + 15) <> "none" Then
+			SetLog("This is a New Building or an Equipment... Looking next...", $COLOR_WARNING)
+			$g_iNextLineOffset = $g_iCurrentLineOffset
+			ContinueLoop
+		EndIf
 
-Func clickUpgrade()
+		; if it's an upgrade, will click on the upgrade, in builders menu
+		Click(180 + $g_iQuickMISX, 80 + $g_iCurrentLineOffset)
+		If _Sleep(500) Then Return
 
-	Local $canContinueLoop = True, $i = 0
+		; check if any wrong click by verifying the presence of the Upgrade button (the hammer)
+		If Not QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Auto Upgrade\UpgradeButton", 120, 630, 740, 670) Then
+			SetLog("No upgrade here... Wrong click, looking next...", $COLOR_WARNING)
+			;$g_iNextLineOffset = $g_iCurrentLineOffset -> not necessary finally, but in case, I keep lne commented
+			ContinueLoop
+		EndIf
 
-	While $canContinueLoop
+		; get the name and actual level of upgrade selected, if strings are empty, will exit Auto Upgrade, an error happens
+		$g_aUpgradeNameLevel = BuildingInfo(242, 520 + $g_iBottomOffsetY)
+		If $g_aUpgradeNameLevel[0] = "" Then
+			SetLog("Error when trying to get upgrade name and level... Exiting Auto Upgrade...", $COLOR_ERROR)
+			ExitLoop
+		EndIf
 
-		If $g_iTotalBuilderCount >= 1 Then
-			getBuilderCount()
-			If $g_iFreeBuilderCount <> 0 Then ; check free builders
-				If ($g_bUpgradeWallSaveBuilder = True And $g_iFreeBuilderCount > 1) Or $g_bUpgradeWallSaveBuilder = False Then
-					If openUpgradeTab() Then
-						randomSleep(1500)
-						If searchZeros() Then
-							Click($g_iQuickMISX + 150, $g_iQuickMISY + 70)
-							randomSleep(1500)
-							launchUpgradeProcess()
-							; Just in case ;)
-							$i += 1
-							If $i > 6 then
-								PureClickP($aAway, 1, 0, "#0133") ;Click away
-								ExitLoop
-							EndIf
-						Else
-							$canContinueLoop = False
-						EndIf
-					EndIf
-				Else
-					SetLog("Only 1 builder available and he works on walls... Good Luck !!!", $COLOR_WARNING)
-					Return
-				EndIf
-			Else
-				SetLog("No builder available, skipping Auto Upgrade...", $COLOR_WARNING)
-				Return
+		Local $bMustIgnoreUpgrade = False
+		; matchmaking between building name and the ignore list
+		Switch $g_aUpgradeNameLevel[1]
+			Case "Town Hall"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[0] = 1) ? True : False
+			Case "Barbarian King"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[1] = 1 Or $g_bUpgradeKingEnable = True) ? True : False ; if upgrade king is selected, will ignore it
+			Case "Archer Queen"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[2] = 1 Or $g_bUpgradeQueenEnable = True) ? True : False ; if upgrade queen is selected, will ignore it
+			Case "Grand Warden"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[3] = 1 Or $g_bUpgradeWardenEnable = True) ? True : False ; if upgrade warden is selected, will ignore it
+			Case "Clan Castle"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[4] = 1) ? True : False
+			Case "Laboratory"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[5] = 1) ? True : False
+			Case "Barracks"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[6] = 1) ? True : False
+			Case "Dark Barracks"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[7] = 1) ? True : False
+			Case "Spell Factory"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[8] = 1) ? True : False
+			Case "Dark Spell Factory"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[9] = 1) ? True : False
+			Case "Gold Mine"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[10] = 1) ? True : False
+			Case "Elixir Collector"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[11] = 1) ? True : False
+			Case "Dark Elixir Drill"
+				$bMustIgnoreUpgrade = ($g_ichkUpgradesToIgnore[12] = 1) ? True : False
+			Case Else
+				$bMustIgnoreUpgrade = False
+		EndSwitch
+
+		; check if the upgrade name is on the list of upgrades that must be ignored
+		If $bMustIgnoreUpgrade = True Then
+			SetLog("This upgrade must be ignored... Looking next...", $COLOR_WARNING)
+			$g_iNextLineOffset = $g_iCurrentLineOffset
+			ContinueLoop
+		EndIf
+
+		; if upgrade don't have to be ignored, click on the Upgrade button to open Upgrade window
+		Click(120 + $g_iQuickMISX, 630 + $g_iQuickMISY)
+		If _Sleep(1000) Then Return
+
+		Switch $g_aUpgradeNameLevel[1]
+			Case "Barbarian King", "Archer Queen", "Grand Warden"
+				$g_aUpgradeResourceCostDuration[0] = QuickMIS("N1", @ScriptDir & "\imgxml\Resources\Auto Upgrade\Resources", 690, 540, 730, 580) ; get resource
+				$g_aUpgradeResourceCostDuration[1] = getResourcesBonus(598, 519 + $g_iMidOffsetY) ; get cost
+				$g_aUpgradeResourceCostDuration[2] = getHeroUpgradeTime(464, 527 + $g_iMidOffsetY) ; get duration
+			Case Else
+				$g_aUpgradeResourceCostDuration[0] = QuickMIS("N1", @ScriptDir & "\imgxml\Resources\Auto Upgrade\Resources", 460, 510, 500, 550) ; get resource
+				$g_aUpgradeResourceCostDuration[1] = getResourcesBonus(366, 487 + $g_iMidOffsetY) ; get cost
+				$g_aUpgradeResourceCostDuration[2] = getBldgUpgradeTime(195, 307 + $g_iMidOffsetY) ; get duration
+		EndSwitch
+
+		; if one of the value is empty, there is an error, we must exit Auto Upgrade
+		For $i = 0 To 2
+			If $g_aUpgradeResourceCostDuration[$i] = "" Then
+				SetLog("Error when trying to get upgrade details... Exiting Auto Upgrade...", $COLOR_ERROR)
+				ExitLoop 2
 			EndIf
-			PureClickP($aAway, 1, 0, "#0133") ;Click away
-			randomSleep(1500)
+		Next
+
+		Local $bMustIgnoreResource = False
+		; matchmaking between resource name and the ignore list
+		Switch $g_aUpgradeResourceCostDuration[0]
+			Case "Gold"
+				$bMustIgnoreResource = ($g_ichkResourcesToIgnore[0] = 1) ? True : False
+			Case "Elixir"
+				$bMustIgnoreResource = ($g_ichkResourcesToIgnore[1] = 1) ? True : False
+			Case "Dark Elixir"
+				$bMustIgnoreResource = ($g_ichkResourcesToIgnore[2] = 1) ? True : False
+			Case Else
+				$bMustIgnoreResource = False
+		EndSwitch
+
+		; check if the resource of the upgrade must be ignored
+		If $bMustIgnoreResource = True Then
+			SetLog("This resource must be ignored... Looking next...", $COLOR_WARNING)
+			$g_iNextLineOffset = $g_iCurrentLineOffset
+			ContinueLoop
 		EndIf
+
+		; initiate a False boolean, that firstly says that there is no sufficent resource to launch upgrade
+		Local $bSufficentResourceToUpgrade = False
+		; if Cost of upgrade + Value set in settings to be kept after upgrade > Current village resource, make boolean True and can continue
+		Switch $g_aUpgradeResourceCostDuration[0]
+			Case "Gold"
+				If $g_aiCurrentLoot[$eLootGold] >= ($g_aUpgradeResourceCostDuration[1] + GUICtrlRead($g_SmartMinGold)) Then $bSufficentResourceToUpgrade = True
+			Case "Elixir"
+				If $g_aiCurrentLoot[$eLootElixir] >= ($g_aUpgradeResourceCostDuration[1] + GUICtrlRead($g_SmartMinElixir)) Then $bSufficentResourceToUpgrade = True
+			Case "Dark Elixir"
+				If $g_aiCurrentLoot[$eLootDarkElixir] >= ($g_aUpgradeResourceCostDuration[1] + GUICtrlRead($g_iSmartMinDark)) Then $bSufficentResourceToUpgrade = True
+		EndSwitch
+		; if boolean still False, we can't launch upgrade, exiting...
+		If Not $bSufficentResourceToUpgrade Then
+			SetLog("Unsufficent " & $g_aUpgradeResourceCostDuration[0] & " to launch this upgrade...", $COLOR_WARNING)
+			ExitLoop
+		EndIf
+
+		; final click on upgrade button, click coord is get looking at upgrade type (heroes have a diferent place for Upgrade button)
+		Switch $g_aUpgradeNameLevel[1]
+			Case "Barbarian King", "Archer Queen", "Grand Warden"
+				Click(660, 560)
+			Case Else
+				Click(440, 530)
+		EndSwitch
+
+		; update Logs and History file
+		SetLog("Launched upgrade of " & $g_aUpgradeNameLevel[1] & " to level " & $g_aUpgradeNameLevel[2] + 1 & " successfully !", $COLOR_SUCCESS)
+		SetLog(" - Cost : " & _NumberFormat($g_aUpgradeResourceCostDuration[1]) & " " & $g_aUpgradeResourceCostDuration[0], $COLOR_SUCCESS)
+		SetLog(" - Duration : " & $g_aUpgradeResourceCostDuration[2], $COLOR_SUCCESS)
+
+		_GUICtrlEdit_AppendText($g_AutoUpgradeLog, _
+				@CRLF & _NowDate() & " " & _NowTime() & _
+				" - Upgrading " & $g_aUpgradeNameLevel[1] & _
+				" to level " & $g_aUpgradeNameLevel[2] + 1 & _
+				" for " & _NumberFormat($g_aUpgradeResourceCostDuration[1]) & _
+				" " & $g_aUpgradeResourceCostDuration[0] & _
+				" - Duration : " & $g_aUpgradeResourceCostDuration[2])
+
+		_FileWriteLog($g_sProfileLogsPath & "\AutoUpgradeHistory.log", _
+				"Upgrading " & $g_aUpgradeNameLevel[1] & _
+				" to level " & $g_aUpgradeNameLevel[2] + 1 & _
+				" for " & _NumberFormat($g_aUpgradeResourceCostDuration[1]) & _
+				" " & $g_aUpgradeResourceCostDuration[0] & _
+				" - Duration : " & $g_aUpgradeResourceCostDuration[2])
 
 	WEnd
 
-	$canContinueLoop = True
+	; resetting the offsets of the lines
+	$g_iCurrentLineOffset = 0
+	$g_iNextLineOffset = 0
 
-EndFunc   ;==>clickUpgrade
+	SetLog("Auto Upgrade finished !", $COLOR_INFO)
+	ClickP($aAway, 1, 0, "#0000") ;Click Away
 
-Func openUpgradeTab()
+EndFunc   ;==>AutoUpgrade
 
-	If _ColorCheck(_GetPixelColor(275, 15, True), "E8E8E0", 20) = True Then
-		Click(275, 15)
-		randomSleep(1500)
-		Return True
-	Else
-		Setlog("Error when trying to open Builders menu...", $COLOR_RED)
-		Return False
-	EndIf
-
-EndFunc   ;==>openUpgradeTab
-
-Func searchZeros() ; check for zeros on the builers menu - translate upgrade available
-
-	If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Auto Upgrade\Price", 150, 70, 500, 300) Then
-		SetLog("Upgrade found !", $COLOR_GREEN)
-		Return True
-	Else
-		SetLog("No upgrade available !", $COLOR_WARNING)
-		Return False
-	EndIf
-
-EndFunc   ;==>searchZeros
-
-Func launchUpgradeProcess()
-
-	If locateUpgrade() Then
-		upgradeInfo(242, 520 + $g_iBottomOffsetY)
-		If checkCanUpgrade() Then
-			Click($g_iQuickMISX + 200, $g_iQuickMISY + 600)
-			randomSleep(1500)
-			getUpgradeInfo()
-			updateAutoUpgradeLog()
-			launchUpgrade()
-		EndIf
-	EndIf
-
-EndFunc   ;==>launchUpgradeProcess
-
-Func locateUpgrade() ; search for the upgrade building button
-
-	If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Auto Upgrade\Upgrade", 200, 600, 700, 700) Then
-		Return True
-	Else
-		SetLog("No upgrade here !", $COLOR_RED)
-		Return False
-	EndIf
-
-EndFunc   ;==>locateUpgrade
-
-Func upgradeInfo($iXstart, $iYstart) ; note the upgrade name and level into the log
-
-	$g_sBldgText = getNameBuilding($iXstart, $iYstart) ; Get Unit name and level with OCR
-	If $g_sBldgText = "" Then ; try a 2nd time after a short delay if slow PC
-		If _Sleep(1500) Then Return
-		$g_sBldgText = getNameBuilding($iXstart, $iYstart) ; Get Unit name and level with OCR
-	EndIf
-	Local $aString = StringSplit($g_sBldgText, "(") ; Spilt the name and building level
-	If $aString[0] = 2 Then ; If we have name and level then use it
-		If $aString[1] <> "" Then $g_aUpgradeName[1] = $aString[1] ; check for bad read and store name in result[]
-		If $aString[2] <> "" Then ; check for bad read of level
-			$g_sBldgLevel = $aString[2] ; store level text
-			$aString = StringSplit($g_sBldgLevel, ")") ;split off the closing parenthesis
-			If $aString[0] = 2 Then ; Check If we have "level XX" cleaned up
-				If $aString[1] <> "" Then $g_sBldgLevel = $aString[1] ; store "level XX"
-			EndIf
-			$aString = StringSplit($g_sBldgLevel, " ") ;split off the level number
-			If $aString[0] = 2 Then ; If we have level number then use it
-				If $aString[2] <> "" Then $g_aUpgradeName[2] = Number($aString[2]) ; store bldg level
-			EndIf
-		EndIf
-	EndIf
-	If $g_aUpgradeName[1] <> "" Then $g_aUpgradeName[0] = 1
-	If $g_aUpgradeName[2] <> "" Then $g_aUpgradeName[0] += 1
-
-EndFunc   ;==>upgradeInfo
-
-Func checkCanUpgrade()
-
-	If StringInStr($g_sBldgText, "Town") And $g_ichkIgnoreTH = 1 Then
-		SetLog("We must ignore Town Hall...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Barbar") And $g_ichkIgnoreKing = 1 Then
-		SetLog("We must ignore Barbarian King...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Queen") And $g_ichkIgnoreQueen = 1 Then
-		SetLog("We must ignore Archer Queen...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Warden") And $g_ichkIgnoreWarden = 1 Then
-		SetLog("We must ignore Grand Warden...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Castle") And $g_ichkIgnoreCC = 1 Then
-		SetLog("We must ignore Clan Castle...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Laboratory") And $g_ichkIgnoreLab = 1 Then
-		SetLog("We must ignore Laboratory...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Barracks") And Not StringInStr($g_sBldgText, "Dark") And $g_ichkIgnoreBarrack = 1 Then
-		SetLog("We must ignore Barracks...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Dark Barracks") And $g_ichkIgnoreDBarrack = 1 Then
-		SetLog("We must ignore Drak Barracks...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Factory") And Not StringInStr($g_sBldgText, "Dark") And $g_ichkIgnoreFactory = 1 Then
-		SetLog("We must ignore Spell Factory...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Dark Spell Factory") And $g_ichkIgnoreDFactory = 1 Then
-		SetLog("We must ignore Dark Spell Factory...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Mine") And $g_ichkIgnoreGColl = 1 Then
-		SetLog("We must ignore Gold Mines...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Collector") And $g_ichkIgnoreEColl = 1 Then
-		SetLog("We must ignore Elixir Collectors...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Drill") And $g_ichkIgnoreDColl = 1 Then
-		SetLog("We must ignore Dark Elixir Drills...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Laboratory") And $g_bAutoLabUpgradeEnable = True Then
-		SetLog("Auto Laboratory upgrade mode is active, Lab upgrade must be ignored...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Barbar") And $g_bUpgradeKingEnable = True Then
-		SetLog("Barabarian King upgrade selected, skipping upgrade...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Queen") And $g_bUpgradeQueenEnable = True Then
-		SetLog("Archer Queen upgrade selected, skipping upgrade...", $COLOR_WARNING)
-		Return False
-	ElseIf StringInStr($g_sBldgText, "Warden") And $g_bUpgradeWardenEnable = True Then
-		SetLog("Grand Warden upgrade selected, skipping upgrade...", $COLOR_WARNING)
-		Return False
-	Else
-		SetLog("This upgrade no need to be ignored !", $COLOR_WARNING)
-		Return True
-	EndIf
-
-EndFunc   ;==>checkCanUpgrade
-
-Func getUpgradeInfo()
-
-	Local $Result = QuickMIS("N1", @ScriptDir & "\imgxml\Resources\Auto Upgrade\Type", 350, 500, 740, 600)
-
-	Switch $Result
-		Case "Gold"
-			$g_sUpgradeResource = 1
-		Case "Elixir"
-			$g_sUpgradeResource = 2
-		Case "Dark"
-			$g_sUpgradeResource = 3
-	EndSwitch
-
-	If StringInStr($g_sBldgText, "Barbar") Or StringInStr($g_sBldgText, "Queen") Or StringInStr($g_sBldgText, "Warden") Then ; search for heros, which have a different place for upgrade button
-		$g_iUpgradeCost = Number(getResourcesBonus(598, 519 + $g_iMidOffsetY)) ; Try to read white text.
-	Else
-		$g_iUpgradeCost = Number(getResourcesBonus(366, 487 + $g_iMidOffsetY)) ; Try to read white text.
-	EndIf
-
-	If StringInStr($g_sBldgText, "Barbar") Or StringInStr($g_sBldgText, "Queen") Or StringInStr($g_sBldgText, "Warden") Then ; search for heros, which have a different place for upgrade button
-		$g_sUpgradeDuration = getHeroUpgradeTime(464, 527 + $g_iMidOffsetY) ; Try to read white text showing time for upgrade
-	Else
-		$g_sUpgradeDuration = getBldgUpgradeTime(196, 304 + $g_iMidOffsetY)
-	EndIf
-
-EndFunc   ;==>getUpgradeInfo
-
-Func launchUpgrade()
-
-	If StringInStr($g_sBldgText, "Barbar") Or StringInStr($g_sBldgText, "Queen") Or StringInStr($g_sBldgText, "Warden") Then ; search for heros, which have a different place for upgrade button
-		Click(710, 560)
-	Else
-		Click(480, 520)
-	EndIf
-
-EndFunc   ;==>launchUpgrade
-
-Func updateAutoUpgradeLog()
-
-	SetLog("We will upgrade " & $g_aUpgradeName[1] & "to level " & $g_aUpgradeName[2] + 1, $COLOR_GREEN)
-	SetLog("Upgrade duration : " & $g_sUpgradeDuration, $COLOR_GREEN)
-	If $g_sUpgradeResource = 1 Then
-		SetLog("Upgrade cost : " & _NumberFormat($g_iUpgradeCost) & " Gold", $COLOR_GREEN)
-		_GUICtrlEdit_AppendText($g_AutoUpgradeLog, @CRLF & _NowTime(4) & " - " & "Upgrading " & $g_aUpgradeName[1] & "from level " & $g_aUpgradeName[2] & " to level " & $g_aUpgradeName[2] + 1 & " for " & _NumberFormat($g_iUpgradeCost) & " Gold - Duration : " & $g_sUpgradeDuration)
-		_FileWriteLog($g_sProfileLogsPath & "\AutoUpgradeHistory.log", "Upgrading " & $g_aUpgradeName[1] & "from level " & $g_aUpgradeName[2] & " to level " & $g_aUpgradeName[2] + 1 & " for " & _NumberFormat($g_iUpgradeCost) & " Gold - Duration : " & $g_sUpgradeDuration)
-		NotifyPushToBoth("Auto Upgrade : Upgrading " & $g_aUpgradeName[1] & "from level " & $g_aUpgradeName[2] & " to level " & $g_aUpgradeName[2] + 1 & " for " & _NumberFormat($g_iUpgradeCost) & " Gold - Duration : " & $g_sUpgradeDuration)
-	ElseIf $g_sUpgradeResource = 2 Then
-		SetLog("Upgrade cost : " & _NumberFormat($g_iUpgradeCost) & " Elixir", $COLOR_GREEN)
-		_GUICtrlEdit_AppendText($g_AutoUpgradeLog, @CRLF & _NowTime(4) & " - " & "Upgrading " & $g_aUpgradeName[1] & "from level " & $g_aUpgradeName[2] & " to level " & $g_aUpgradeName[2] + 1 & " for " & _NumberFormat($g_iUpgradeCost) & " Elixir - Duration : " & $g_sUpgradeDuration)
-		_FileWriteLog($g_sProfileLogsPath & "\AutoUpgradeHistory.log", "Upgrading " & $g_aUpgradeName[1] & "from level " & $g_aUpgradeName[2] & " to level " & $g_aUpgradeName[2] + 1 & " for " & _NumberFormat($g_iUpgradeCost) & " Elixir - Duration : " & $g_sUpgradeDuration)
-		NotifyPushToBoth("Auto Upgrade : Upgrading " & $g_aUpgradeName[1] & "from level " & $g_aUpgradeName[2] & " to level " & $g_aUpgradeName[2] + 1 & " for " & _NumberFormat($g_iUpgradeCost) & " Elixir - Duration : " & $g_sUpgradeDuration)
-	ElseIf $g_sUpgradeResource = 3 Then
-		SetLog("Upgrade cost : " & _NumberFormat($g_iUpgradeCost) & " Dark Elixir", $COLOR_GREEN)
-		_GUICtrlEdit_AppendText($g_AutoUpgradeLog, @CRLF & _NowTime(4) & " - " & "Upgrading " & $g_aUpgradeName[1] & "from level " & $g_aUpgradeName[2] & " to level " & $g_aUpgradeName[2] + 1 & " for " & _NumberFormat($g_iUpgradeCost) & " Dark Elixir - Duration : " & $g_sUpgradeDuration)
-		_FileWriteLog($g_sProfileLogsPath & "\AutoUpgradeHistory.log", "Upgrading " & $g_aUpgradeName[1] & "from level " & $g_aUpgradeName[2] & " to level " & $g_aUpgradeName[2] + 1 & " for " & _NumberFormat($g_iUpgradeCost) & " Dark Elixir - Duration : " & $g_sUpgradeDuration)
-		NotifyPushToBoth("Auto Upgrade : Upgrading " & $g_aUpgradeName[1] & "from level " & $g_aUpgradeName[2] & " to level " & $g_aUpgradeName[2] + 1 & " for " & _NumberFormat($g_iUpgradeCost) & " Dark Elixir - Duration : " & $g_sUpgradeDuration)
-	EndIf
-
-EndFunc   ;==>updateAutoUpgradeLog
+#Region GUI
 
 Func chkAutoUpgrade()
 	If GUICtrlRead($g_chkAutoUpgrade) = $GUI_CHECKED Then
 		$g_ichkAutoUpgrade = 1
-		For $i = $g_chkIgnoreTH To $g_AutoUpgradeLog
+		For $i = $g_FirstAutoUpgradeLabel To $g_AutoUpgradeLog
 			GUICtrlSetState($i, $GUI_ENABLE)
 		Next
 	Else
 		$g_ichkAutoUpgrade = 0
-		For $i = $g_chkIgnoreTH To $g_AutoUpgradeLog
+		For $i = $g_FirstAutoUpgradeLabel To $g_AutoUpgradeLog
 			GUICtrlSetState($i, $GUI_DISABLE)
 		Next
 	EndIf
 EndFunc   ;==>chkAutoUpgrade
 
-Func chkIgnoreTH()
-	If GUICtrlRead($g_chkIgnoreTH) = $GUI_CHECKED Then
-		$g_ichkIgnoreTH = 1
-	Else
-		$g_ichkIgnoreTH = 0
-	EndIf
-EndFunc   ;==>chkIgnoreTH
+Func chkResourcesToIgnore()
+	For $i = 0 To 2
+		$g_ichkResourcesToIgnore[$i] = GUICtrlRead($g_chkResourcesToIgnore[$i]) = $GUI_CHECKED ? 1 : 0
+	Next
 
-Func chkIgnoreKing()
-	If GUICtrlRead($g_chkIgnoreKing) = $GUI_CHECKED Then
-		$g_ichkIgnoreKing = 1
-	Else
-		$g_ichkIgnoreKing = 0
-	EndIf
-EndFunc   ;==>chkIgnoreKing
+	Local $iIgnoredResources = 0
+	For $i = 0 To 2
+		If $g_ichkResourcesToIgnore[$i] = 1 Then $iIgnoredResources += 1
+	Next
+	Switch $iIgnoredResources
+		Case 2
+			MsgBox(0 + 16, GetTranslatedFileIni("MOD GUI Design - AutoUpgrade", "MsgBox_01", "Warning about your settings..."), _
+					GetTranslatedFileIni("MOD GUI Design - AutoUpgrade", "MsgBox_02", "Warning ! You selected 2 resources to ignore... That can be a problem,") & @CRLF & _
+					GetTranslatedFileIni("MOD GUI Design - AutoUpgrade", "MsgBox_03", "and Auto Upgrade can be ineffective, by not launching any upgrade...") & @CRLF & _
+					GetTranslatedFileIni("MOD GUI Design - AutoUpgrade", "MsgBox_04", "I recommend you to select only one resource, not more..."))
+		Case 3
+			MsgBox(0 + 16, GetTranslatedFileIni("MOD GUI Design - AutoUpgrade", "MsgBox_05", "Invalid settings..."), _
+					GetTranslatedFileIni("MOD GUI Design - AutoUpgrade", "MsgBox_06", "Warning ! You selected 3 resources to ignore... And you can't...") & @CRLF & _
+					GetTranslatedFileIni("MOD GUI Design - AutoUpgrade", "MsgBox_07", "With your settings, Auto Upgrade will be completely ineffective") & @CRLF & _
+					GetTranslatedFileIni("MOD GUI Design - AutoUpgrade", "MsgBox_08", "and will not launch any upgrade... You must deselect one or more") & @CRLF & _
+					GetTranslatedFileIni("MOD GUI Design - AutoUpgrade", "MsgBox_09", "ignored resource."))
+	EndSwitch
+EndFunc   ;==>chkResourcesToIgnore
 
-Func chkIgnoreQueen()
-	If GUICtrlRead($g_chkIgnoreQueen) = $GUI_CHECKED Then
-		$g_ichkIgnoreQueen = 1
-	Else
-		$g_ichkIgnoreQueen = 0
-	EndIf
-EndFunc   ;==>chkIgnoreQueen
+Func chkUpgradesToIgnore()
+	For $i = 0 To 12
+		$g_ichkUpgradesToIgnore[$i] = GUICtrlRead($g_chkUpgradesToIgnore[$i]) = $GUI_CHECKED ? 1 : 0
+	Next
+EndFunc   ;==>chkUpgradesToIgnore
 
-Func chkIgnoreWarden()
-	If GUICtrlRead($g_chkIgnoreWarden) = $GUI_CHECKED Then
-		$g_ichkIgnoreWarden = 1
-	Else
-		$g_ichkIgnoreWarden = 0
-	EndIf
-EndFunc   ;==>chkIgnoreWarden
-
-Func chkIgnoreCC()
-	If GUICtrlRead($g_chkIgnoreCC) = $GUI_CHECKED Then
-		$g_ichkIgnoreCC = 1
-	Else
-		$g_ichkIgnoreCC = 0
-	EndIf
-EndFunc   ;==>chkIgnoreCC
-
-Func chkIgnoreLab()
-	If GUICtrlRead($g_chkIgnoreLab) = $GUI_CHECKED Then
-		$g_ichkIgnoreLab = 1
-	Else
-		$g_ichkIgnoreLab = 0
-	EndIf
-EndFunc   ;==>chkIgnoreLab
-
-Func chkIgnoreBarrack()
-	If GUICtrlRead($g_chkIgnoreBarrack) = $GUI_CHECKED Then
-		$g_ichkIgnoreBarrack = 1
-	Else
-		$g_ichkIgnoreBarrack = 0
-	EndIf
-EndFunc   ;==>chkIgnoreBarrack
-
-Func chkIgnoreDBarrack()
-	If GUICtrlRead($g_chkIgnoreDBarrack) = $GUI_CHECKED Then
-		$g_ichkIgnoreDBarrack = 1
-	Else
-		$g_ichkIgnoreDBarrack = 0
-	EndIf
-EndFunc   ;==>chkIgnoreDBarrack
-
-Func chkIgnoreFactory()
-	If GUICtrlRead($g_chkIgnoreFactory) = $GUI_CHECKED Then
-		$g_ichkIgnoreFactory = 1
-	Else
-		$g_ichkIgnoreFactory = 0
-	EndIf
-EndFunc   ;==>chkIgnoreFactory
-
-Func chkIgnoreDFactory()
-	If GUICtrlRead($g_chkIgnoreDFactory) = $GUI_CHECKED Then
-		$g_ichkIgnoreDFactory = 1
-	Else
-		$g_ichkIgnoreDFactory = 0
-	EndIf
-EndFunc   ;==>chkIgnoreDFactory
-
-Func chkIgnoreGColl()
-	If GUICtrlRead($g_chkIgnoreGColl) = $GUI_CHECKED Then
-		$g_ichkIgnoreGColl = 1
-	Else
-		$g_ichkIgnoreGColl = 0
-	EndIf
-EndFunc   ;==>chkIgnoreGColl
-
-Func chkIgnoreEColl()
-	If GUICtrlRead($g_chkIgnoreEColl) = $GUI_CHECKED Then
-		$g_ichkIgnoreEColl = 1
-	Else
-		$g_ichkIgnoreEColl = 0
-	EndIf
-EndFunc   ;==>chkIgnoreEColl
-
-Func chkIgnoreDColl()
-	If GUICtrlRead($g_chkIgnoreDColl) = $GUI_CHECKED Then
-		$g_ichkIgnoreDColl = 1
-	Else
-		$g_ichkIgnoreDColl = 0
-	EndIf
-EndFunc   ;==>chkIgnoreDColl
+#EndRegion GUI

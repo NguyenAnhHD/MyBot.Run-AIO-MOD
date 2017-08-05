@@ -48,7 +48,7 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 			$g_iAimGoldPlusElixir[$i] = $g_aiFilterMinGoldPlusElixir[$i]
 			$g_iAimDark[$i] = ($g_abFilterMeetDEEnable[$i] ? ($g_aiFilterMeetDEMin[$i]) : (0))
 			$g_iAimTrophy[$i] = ($g_abFilterMeetTrophyEnable[$i] ? ($g_aiFilterMeetTrophyMin[$i]) : (0))
-			$g_iAimTrophyMax[$i] = ($g_abFilterMeetTrophyEnable[$i] ? ($g_aiFilterMeetTrophyMax[$i]) : (0))
+			$g_iAimTrophyMax[$i] = ($g_abFilterMeetTrophyEnable[$i] ? ($g_aiFilterMeetTrophyMax[$i]) : (99))
 		Next
 	EndIf
 
@@ -252,28 +252,24 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 				If AreCollectorsOutside($iDBMinCollOutsidePercent) Then
 					SetLog("Collectors are outside, match found !", $COLOR_SUCCESS, "Lucida Console", 7.5)
 					$g_iMatchMode = $DB
-					cmbCSVSpeed()
 					ExitLoop
 				Else
 					SetLog("Collectors are not outside, skipping search !", $COLOR_ERROR, "Lucida Console", 7.5)
 				EndIf
 			Else
 				$g_iMatchMode = $DB
-				cmbCSVSpeed()
 				ExitLoop
 			EndIf
 		ElseIf $match[$LB] And Not $dbBase Then
 			SetLog($GetResourcesTXT, $COLOR_SUCCESS, "Lucida Console", 7.5)
 			SetLog("      " & "Live Base Found!", $COLOR_SUCCESS, "Lucida Console", 7.5)
 			$logwrited = True
-			cmbCSVSpeed()
 			$g_iMatchMode = $LB
 			ExitLoop
 		ElseIf $match[$LB] And $g_bCollectorFilterDisable Then
 			SetLog($GetResourcesTXT, $COLOR_SUCCESS, "Lucida Console", 7.5)
 			SetLog("      " & "Live Base Found!*", $COLOR_SUCCESS, "Lucida Console", 7.5)
 			$logwrited = True
-			cmbCSVSpeed()
 			$g_iMatchMode = $LB
 			ExitLoop
 		ElseIf $g_abAttackTypeEnable[$TB] = 1 And ($g_iSearchCount >= $g_iAtkTBEnableCount) Then ; TH bully doesn't need the resources conditions

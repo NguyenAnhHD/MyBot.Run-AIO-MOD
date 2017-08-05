@@ -18,8 +18,8 @@ Global $g_hGUI_TRAINARMY = 0
 Global $g_hGUI_TRAINARMY_TAB = 0, $g_hGUI_TRAINARMY_TAB_ITEM1 = 0, $g_hGUI_TRAINARMY_TAB_ITEM2 = 0, $g_hGUI_TRAINARMY_TAB_ITEM3 = 0, $g_hGUI_TRAINARMY_TAB_ITEM4 = 0
 
 ; Troops/Spells sub-tab
-Global $g_hChkUseQuickTrain = 0, $g_ahChkArmy[3] = [0,0,0]			; QuickTrainCombo (check box) - Demen
-Global $g_hchkSimpleTrain = 0, $g_hchkPreciseTroops = 0, $g_hchkFillArcher = 0, $g_htxtFillArcher = 0, $g_hchkFillEQ = 0		; SimpleTrain - Demen
+Global $g_hChkUseQuickTrain = 0, $g_ahChkArmy[3] = [0,0,0], $g_hChkMultiClick, $g_hLblRemoveArmy, $g_hBtnRemoveArmy			; QuickTrainCombo (check box) - Demen
+Global $g_hchkSmartTrain = 0, $g_hchkPreciseTroops = 0, $g_hchkFillArcher = 0, $g_htxtFillArcher = 0, $g_hchkFillEQ = 0		; SmartTrain - Demen
 Global $g_ahTxtTrainArmyTroopCount[$eTroopCount] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 Global $g_ahLblTrainArmyTroopLevel[$eTroopCount] = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 Global $g_ahTxtTrainArmySpellCount[$eSpellCount] = [0,0,0,0,0,0,0,0,0,0]
@@ -119,8 +119,12 @@ Func CreateTroopsSpellsSubTab()
 		   If $i = 0 Then GUICtrlSetState(-1, $GUI_CHECKED)
 		   GUICtrlSetOnEvent(-1, "chkQuickTrainCombo")
 	   Next															; QuickTrainCombo (check box) - Demen
-	   GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "Btn_Remove_Army", "Remove Army"), $x + 335, $y + 20, -1, 15, $SS_LEFT)
-	   GUICtrlCreateIcon($g_sLibIconPath, $eIcnResetButton, $x + 405, $y + 17, 24, 24)
+	   $g_hChkMultiClick = GUICtrlCreateCheckbox("Multi-click Army3", $x + 120 + 3*60, $y + 20, -1, 15)
+	   GUICtrlSetState(-1, $GUI_UNCHECKED)
+	   GUICtrlSetState(-1, $GUI_HIDE)
+
+	   $g_hLblRemoveArmy = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "Btn_Remove_Army", "Remove Army"), $x + 335, $y + 20, -1, 15, $SS_LEFT)
+	   $g_hBtnRemoveArmy = GUICtrlCreateIcon($g_sLibIconPath, $eIcnResetButton, $x + 405, $y + 17, 24, 24)
 	   GUICtrlSetOnEvent(-1, "Removecamp")
 
    $x = 10
@@ -644,22 +648,22 @@ Func CreateTroopsSpellsSubTab()
 		  _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 146, $y + 14, 16, 16)
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-;========== Adding GUI for SimpleTrain - Demen ==============
+;========== Adding GUI for SmartTrain - Demen ==============
 	$x = 10
 	$y = 363
-	GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "Group_03", "Simple Train (do not empty barracks)"), $x - 5, $y, $g_iSizeWGrpTab3, 38)
+	GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "Group_03", "Smart Train (do not empty barracks)"), $x - 5, $y, $g_iSizeWGrpTab3, 38)
 		$x += 7
 		$y += 16
-			$g_hchkSimpleTrain = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkSimpleTrain", "Always train queue"), $x, $y, -1, 15)
-				GUICtrlSetOnEvent(-1, "chkSimpleTrain")
-				_GUICtrlSetTip(-1, 	GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkSimpleTrain_Info_01", "Train 2 sets of army to make full camp & full queue") _
-									& @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkSimpleTrain_Info_02", "Only delete queued troops or spells if the queue is not full") _
-									& @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkSimpleTrain_Info_03", "Not delete training troops up to full camp capacity"))
+			$g_hchkSmartTrain = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkSmartTrain", "Double Train Army"), $x, $y, -1, 15)
+				GUICtrlSetOnEvent(-1, "chkSmartTrain")
+				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkSmartTrain_Info_01", "Train 2 sets of army to make full camp & full queue") _
+						 & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkSmartTrain_Info_02", "Only delete queued troops or spells if the queue is not full") _
+						 & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkSmartTrain_Info_03", "Not delete training troops up to full camp capacity"))
 		$x += 130
 			$g_hchkPreciseTroops = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkPreciseTroops", "Precise troops"), $x, $y, -1, 15)
 				GUICtrlSetOnEvent(-1, "chkPreciseTroops")
-				_GUICtrlSetTip(-1, 	GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkPreciseTroops_Info_01", "Check precision of troops & spells before training.") _
-									& @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkPreciseTroops_Info_02", "Will remove wrong troops or spells if any"))
+				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkPreciseTroops_Info_01", "Check precision of troops & spells before training.") _
+						 & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkPreciseTroops_Info_02", "Will remove wrong troops or spells if any"))
 		$x += 103
 			$g_hchkFillArcher = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkFillArcher", "Fill Archer:"), $x, $y, -1, 15)
 				GUICtrlSetState(-1, $GUI_DISABLE)
@@ -673,7 +677,7 @@ Func CreateTroopsSpellsSubTab()
 				GUICtrlSetState(-1, $GUI_DISABLE)
 				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "chkFillEQ_Info_01", "Brew 1 EarthQuake Spell to top-up the spell camp or queue"))
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
-;========== Adding GUI for SimpleTrain - Demen ==============
+;========== Adding GUI for SmartTrain - Demen ==============
 
 EndFunc
 
@@ -690,8 +694,8 @@ Func  CreateBoostSubTab()
 	   GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Boost", "LblBarracksBoost", "Barracks") & " " & $sTextBoostLeft, $x + 20 + 29, $y + 4 + 7, -1, -1)
 		  $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Boost", "LblBarracksBoost_Info_01", "Use this to boost your Barracks with GEMS! Use with caution!")
 		  _GUICtrlSetTip(-1, $sTxtTip)
-	   $g_hCmbBoostBarracks = GUICtrlCreateCombo("", $x + 140 + 45, $y + 7, 40, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-		  GUICtrlSetData(-1, "0|1|2|3|4|5|6|7|8|9|10|11|12", "0")
+	   $g_hCmbBoostBarracks = GUICtrlCreateCombo("", $x + 140 + 45, $y + 7, 60, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+		  GUICtrlSetData(-1, "0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|No limit", "0")
 		  _GUICtrlSetTip(-1, $sTxtTip)
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 
@@ -702,8 +706,8 @@ Func  CreateBoostSubTab()
 	   GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Boost", "LblSpellFactoryBoost", "Spell Factory") & " " & $sTextBoostLeft, $x + 20 + 29, $y + 4, -1, -1)
 		  $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Boost", "LblSpellFactoryBoost_Info_01", "Use this to boost your Spell Factory with GEMS! Use with caution!")
 		  _GUICtrlSetTip(-1, $sTxtTip)
-	   $g_hCmbBoostSpellFactory = GUICtrlCreateCombo("", $x + 185, $y, 40, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-		  GUICtrlSetData(-1, "0|1|2|3|4|5|6|7|8|9|10|11|12", "0")
+	   $g_hCmbBoostSpellFactory = GUICtrlCreateCombo("", $x + 185, $y, 60, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+		  GUICtrlSetData(-1, "0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|No limit", "0")
 		  _GUICtrlSetTip(-1, $sTxtTip)
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 
@@ -713,8 +717,8 @@ Func  CreateBoostSubTab()
 	   GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design Names Troops", "King", -1) & " " & $sTextBoostLeft, $x + 20, $y + 4, -1, -1)
 		  $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Boost", "LblKingBoost_Info_01", "Use this to boost your Barbarian King with GEMS! Use with caution!")
 		  _GUICtrlSetTip(-1, $sTxtTip)
-	   $g_hCmbBoostBarbarianKing = GUICtrlCreateCombo("", $x + 185, $y, 40, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-		  GUICtrlSetData(-1, "0|1|2|3|4|5|6|7|8|9|10|11|12", "0")
+	   $g_hCmbBoostBarbarianKing = GUICtrlCreateCombo("", $x + 185, $y, 60, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+		  GUICtrlSetData(-1, "0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|No limit", "0")
 		  _GUICtrlSetTip(-1, $sTxtTip)
 		  GUICtrlSetOnEvent(-1, "chkUpgradeKing")
 
@@ -723,8 +727,8 @@ Func  CreateBoostSubTab()
 	   GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design Names Troops", "Queen", -1) & " " & $sTextBoostLeft, $x + 20, $y + 4, -1, -1)
 		  $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Boost", "LblQueenBoost_Info_01", "Use this to boost your Archer Queen with GEMS! Use with caution!")
 		  _GUICtrlSetTip(-1, $sTxtTip)
-	   $g_hCmbBoostArcherQueen = GUICtrlCreateCombo("", $x + 185, $y, 40, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-		  GUICtrlSetData(-1, "0|1|2|3|4|5|6|7|8|9|10|11|12", "0")
+	   $g_hCmbBoostArcherQueen = GUICtrlCreateCombo("", $x + 185, $y, 60, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+		  GUICtrlSetData(-1, "0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|No limit", "0")
 		  _GUICtrlSetTip(-1, $sTxtTip)
 		  GUICtrlSetOnEvent(-1, "chkUpgradeQueen")
 
@@ -733,8 +737,8 @@ Func  CreateBoostSubTab()
 	   GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design Names Troops", "Grand Warden", -1) & " " & $sTextBoostLeft, $x + 20, $y + 4, -1, -1)
 		  $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Boost", "LblWardenBoost_Info_01", "Use this to boost your Grand Warden with GEMS! Use with caution!")
 		  _GUICtrlSetTip(-1, $sTxtTip)
-	   $g_hCmbBoostWarden = GUICtrlCreateCombo("", $x + 185, $y, 40, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-		  GUICtrlSetData(-1, "0|1|2|3|4|5|6|7|8|9|10|11|12", "0")
+	   $g_hCmbBoostWarden = GUICtrlCreateCombo("", $x + 185, $y, 60, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+		  GUICtrlSetData(-1, "0|1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|No limit", "0")
 		  _GUICtrlSetTip(-1, $sTxtTip)
 		  GUICtrlSetOnEvent(-1, "chkUpgradeWarden")
    GUICtrlCreateGroup("", -99, -99, 1, 1)

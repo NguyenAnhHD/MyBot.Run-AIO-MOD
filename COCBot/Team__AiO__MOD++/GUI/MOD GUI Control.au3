@@ -103,33 +103,6 @@ Func chkAutoHide()
 	GUICtrlSetState($g_hTxtAutohideDelay, GUICtrlRead($g_hChkAutoHide) = $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
 EndFunc   ;==>chkAutoHide
 
-; CSV Deploy Speed (Roro-Titi) - Added by NguyenAnhHD
-Func cmbCSVSpeed()
-
-	Switch _GUICtrlComboBox_GetCurSel($cmbCSVSpeed[$g_iMatchMode])
-		Case 0
-			$g_CSVSpeedDivider = 0.5
-		Case 1
-			$g_CSVSpeedDivider = 0.75
-		Case 2
-			$g_CSVSpeedDivider = 1
-		Case 3
-			$g_CSVSpeedDivider = 1.25
-		Case 4
-			$g_CSVSpeedDivider = 1.5
-		Case 5
-			$g_CSVSpeedDivider = 2
-		Case 6
-			$g_CSVSpeedDivider = 3
-	EndSwitch
-
-	; Only LOG IF is a CSV attack
-	If ($g_iMatchMode = $DB And $g_aiAttackAlgorithm[$DB] = 1) Or ($g_iMatchMode = $LB And $g_aiAttackAlgorithm[$LB] = 1) Then
-		Setlog("Executing Scripted attack at " & $g_CSVSpeedDivider & " Speed", $COLOR_INFO)
-	EndIF
-
-EndFunc   ;==>cmbCSVSpeed
-
 ; Switch Profiles (IceCube) - Added by NguyenAnhHD
 Func btnRecycle()
 	FileDelete($g_sProfileConfigPath)
@@ -173,17 +146,18 @@ Func setupProfileComboBoxswitch()
 	GUICtrlSetData($g_hCmbTrophyMinProfile, $profileString, "<No Profiles>")
 EndFunc   ;==>setupProfileComboBoxswitch
 
-; SimpleTrain (Demen) - Added By Demen
-Func chkSimpleTrain()
-	If GUICtrlRead($g_hchkSimpleTrain) = $GUI_CHECKED Then
+; SmartTrain (Demen) - Added By Demen
+Func chkSmartTrain()
+	If GUICtrlRead($g_hchkSmartTrain) = $GUI_CHECKED Then
 		If GUICtrlRead($g_hChkUseQuickTrain) = $GUI_UNCHECKED Then _GUI_Value_STATE("ENABLE", $g_hchkPreciseTroops)
 		_GUI_Value_STATE("ENABLE", $g_hchkFillArcher & "#" & $g_hchkFillEQ)
+		chkPreciseTroops()
 		chkFillArcher()
 	Else
 		_GUI_Value_STATE("DISABLE", $g_hchkPreciseTroops & "#" & $g_hchkFillArcher & "#" & $g_htxtFillArcher & "#" & $g_hchkFillEQ)
 		_GUI_Value_STATE("UNCHECKED", $g_hchkPreciseTroops & "#" & $g_hchkFillArcher & "#" & $g_hchkFillEQ)
 	EndIf
-EndFunc   ;==>chkSimpleTrain
+EndFunc   ;==>chkSmartTrain
 
 Func chkPreciseTroops()
 	If GUICtrlRead($g_hchkPreciseTroops) = $GUI_CHECKED Then
