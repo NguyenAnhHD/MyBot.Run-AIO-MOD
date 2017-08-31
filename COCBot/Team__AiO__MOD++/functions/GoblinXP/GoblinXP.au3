@@ -204,8 +204,8 @@ Func MainSuperXPHandler()
 			DonateCC(True)
 		EndIf
 
-		checkMainScreen(False)
-		If IsMainPage() Then Zoomout()
+;~		checkMainScreen(False)
+;~		If IsMainPage() Then Zoomout()
 
 		If $irbSXTraining = 1 Then CheckForFullArmy()
 		$g_canGainXP = ($g_iHeroAvailable <> $eHeroNone And (IIf($ichkSXBK = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroKing) = $eHeroKing) Or IIf($ichkSXAQ = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroQueen) = $eHeroQueen) Or IIf($ichkSXGW = $eHeroNone, False, BitAND($g_iHeroAvailable, $eHeroWarden) = $eHeroWarden) And IIf($irbSXTraining = 1, $g_bIsFullArmywithHeroesAndSpells = False, True) And $ichkEnableSuperXP = 1 And Number($iGainedXP) < Number($itxtMaxXPtoGain)))
