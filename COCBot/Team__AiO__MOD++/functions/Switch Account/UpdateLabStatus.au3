@@ -15,7 +15,7 @@
 
 Func LabStatusAndTime()
 
-	Local $directory = @ScriptDir & "\imgxml\lab button"
+	Local $directory = @ScriptDir & "\imgxml\Lab\Research"
 	Local $bResearchButtonFound, $aResearchButtonCord[2]
 	Local $day = 0, $hour = 0, $min = 0
 	Static $bNeedLocateLab[8] = [True, True, True, True, True, True, True, True]
@@ -41,7 +41,7 @@ Func LabStatusAndTime()
 	If _Sleep($DELAYLABORATORY1) Then Return
 
 	; Find Research Button
-	_CaptureRegion2(400, 610, 600, 710)
+	_CaptureRegion2(400, 610, 700, 700)
 	Local $Res = DllCall($g_hLibMyBot, "str", "SearchMultipleTilesBetweenLevels", "handle", $g_hHBitmap2, "str", $directory, "str", "FV", "Int", 0, "str", "FV", "Int", 0, "Int", 1000)
 	If IsArray($Res) Then
 		If $Res[0] = "" Or $Res[0] = "0" Then

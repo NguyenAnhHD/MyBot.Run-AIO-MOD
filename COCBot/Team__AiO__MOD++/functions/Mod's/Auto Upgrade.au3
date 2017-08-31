@@ -1,5 +1,5 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Auto Upgrade (v6.1)
+; Name ..........: Pico Auto Upgrade (v6.1)
 ; Description ...: This file contains all functions of Pico Auto Upgrade feature
 ; Syntax ........: ---
 ; Parameters ....: ---
@@ -205,7 +205,7 @@ Func AutoUpgrade()
 				" " & $g_aUpgradeResourceCostDuration[0] & _
 				" - Duration : " & $g_aUpgradeResourceCostDuration[2])
 
-		_FileWriteLog($g_sProfileLogsPath & "\AutoUpgradeHistory.log", _
+		_FileWriteLog($g_sProfileLogsPath & "\PicoAutoUpgradeHistory.log", _
 				"Upgrading " & $g_aUpgradeNameLevel[1] & _
 				" to level " & $g_aUpgradeNameLevel[2] + 1 & _
 				" for " & _NumberFormat($g_aUpgradeResourceCostDuration[1]) & _

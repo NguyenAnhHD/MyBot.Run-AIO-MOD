@@ -48,7 +48,7 @@ WAIT  |3500-4000  |           |           |           |           |           | 
 DROP  |H          |11         |1          |HaSpell    |0          |0          |100        |           |
 DROP  |H          |4          |1          |HaSpell    |0          |0          |100        |           |
 DROP  |G          |4          |1          |HaSpell    |0          |0          |100        |           |
-DROP  |G          |11         |1          |HaSpell    |0          |0          |100        |           |
+DROP  |G          |11         |1          |HaSpell    |0          |0          |200-500    |           |
 DROP  |D          |2-8        |50%        |mini       |20-30      |10-20      |0          |           |
 DROP  |A          |1-7        |50%        |mini       |20-30      |10-20      |100-200    |           |
 WAIT  |3800-4200  |           |           |           |           |           |           |           |

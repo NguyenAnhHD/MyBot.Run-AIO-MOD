@@ -153,7 +153,7 @@ Func RemoveWrongTroops($Troop, $Spell, $toRemove)
 			Next
 		EndIf
 
-		If _Sleep(150) Then Return
+		If _Sleep(500) Then Return
 
 		If _ColorCheck(_GetPixelColor(806, 561, True), Hex(0xD0E878, 6), 25) = False Then ; If no 'Okay' button found in army tab to save changes
 			SetLog("Cannot find/verify 'Okay' Button in Army tab", $COLOR_ORANGE)

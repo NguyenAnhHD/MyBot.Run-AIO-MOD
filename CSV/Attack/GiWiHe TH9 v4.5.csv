@@ -1,0 +1,34 @@
+NOTE  |Author: Z E C K 
+NOTE  |Attack: GiWiHe - ver - 4.5 - 15.07.2017  21:40 PM
+NOTE  |Train: 20 Giants, 24 Wizards, 5 WallBreakers, 1 Healer, 3 Eartquake Spells + 1 in CC, 2 Rage Spells, 1 Heal Spell
+NOTE  |Clan Castle: Must have CC lvl 4+. Request: Wizards and Earthquake. Attack search click: "Wait to get Castle Spell" Select "Earthquake"
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |           |0          |           |           |           |           |10         |           |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|  
+MAKE  |A          |FRONT-LEFT |10         |1          |INT-EXT    |2          |3          |           |
+MAKE  |C          |FRONT-RIGHT|10         |1          |INT-EXT    |0          |2          |           |
+MAKE  |D          |FRONT-LEFT |10         |1          |EXT-INT    |1          |2          |           |
+MAKE  |E          |FRONT-RIGHT|10         |1          |EXT-INT    |1          |2          |           |
+MAKE  |H          |FRONT-LEFT |10         |-12        |EXT-INT    |0          |5          |           |
+MAKE  |F          |FRONT-LEFT |10         |-10        |INT-EXT    |0          |2          |           |
+MAKE  |G          |FRONT-LEFT |10         |-16        |INT-EXT    |0          |2          |           |
+MAKE  |Q          |FRONT-RIGHT|10         |-18        |INT-EXT    |0          |2          |           |
+
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
+DROP  |H          |10         |3          |Espell     |0          |0          |500-800    |           |
+RECALC|           |           |           |           |           |           |           |           |
+DROP  |A-C        |2-10       |4          |Giant      |100-130    |0          |1000       |           |
+DROP  |D-E        |2-10       |5          |Wiza       |100-120    |0          |0          |           |
+DROP  |A          |1          |1          |Castle     |50         |0          |0          |           |
+DROP  |A          |2          |5          |Wall       |50         |0          |3000       |           |
+DROP  |A          |1          |12         |Giant      |100-130    |0          |0          |           |
+DROP  |A          |2          |1          |Heal       |0          |0          |0          |           |
+DROP  |F          |1          |1          |RSpell     |0          |0          |0          |           |
+DROP  |A          |1          |1          |King       |0          |0          |0          |           |
+DROP  |A          |1          |1          |Queen      |0          |0          |1000       |           |
+DROP  |C          |1          |14         |Wiza       |100-120    |0          |2000       |           |
+DROP  |G          |2          |1          |HSpell     |0          |0          |1000       |           |
+DROP  |Q          |1          |1          |RSpell     |0          |0          |0          |           |

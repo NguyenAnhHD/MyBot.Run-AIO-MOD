@@ -109,16 +109,16 @@ Func ReadConfig_MOD()
 	IniReadS($g_ichallengeMessage, $g_sProfileConfigPath, "Bot Humanization", "challengeMessage", $g_ichallengeMessage)
 
 	; Auto Upgrade
-	IniReadS($g_ichkAutoUpgrade, $g_sProfileConfigPath, "Auto Upgrade", "chkAutoUpgrade", $g_ichkAutoUpgrade, "Int")
+	IniReadS($g_ichkAutoUpgrade, $g_sProfileConfigPath, "Auto Upgrade", "chkAutoUpgrade", 0, "Int")
 	For $i = 0 To 12
 		IniReadS($g_ichkUpgradesToIgnore[$i], $g_sProfileConfigPath, "Auto Upgrade", "chkUpgradesToIgnore[" & $i & "]", $g_ichkUpgradesToIgnore[$i], "Int")
 	Next
 	For $i = 0 To 2
 		IniReadS($g_ichkResourcesToIgnore[$i], $g_sProfileConfigPath, "Auto Upgrade", "chkResourcesToIgnore[" & $i & "]", $g_ichkResourcesToIgnore[$i], "Int")
 	Next
-	IniReadS($g_iSmartMinGold, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinGold", $g_iSmartMinGold, "Int")
-	IniReadS($g_iSmartMinElixir, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinElixir", $g_iSmartMinElixir, "Int")
-	IniReadS($g_iSmartMinDark, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinDark", $g_iSmartMinDark, "Int")
+	IniReadS($g_iSmartMinGold, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinGold", 150000, "Int")
+	IniReadS($g_iSmartMinElixir, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinElixir", 150000, "Int")
+	IniReadS($g_iSmartMinDark, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinDark", 1500, "Int")
 
 	; Request CC Troops at first
 	$g_bReqCCFirst = (IniRead($g_sProfileConfigPath, "planned", "ReqCCFirst", 0) = 1)
@@ -138,6 +138,10 @@ Func ReadConfig_MOD()
 	IniReadS($TrainLogoutMaxTime, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTime", 0, "int")
 	IniReadS($TrainLogoutMaxTimeTXT, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTimeTXT", 4, "int")
 
+	; ExtendedAttackBar
+	IniReadS($g_abChkExtendedAttackBar[$DB], $g_sProfileConfigPath, "attack", "ExtendedAttackBarDB", False, "Bool")
+	IniReadS($g_abChkExtendedAttackBar[$LB], $g_sProfileConfigPath, "attack", "ExtendedAttackBarLB", False, "Bool")
+
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen
@@ -145,6 +149,7 @@ Func ReadConfig_SwitchAcc()
 	IniReadS($ichkSwitchAcc, $profile, "SwitchAcc", "Enable", 0, "int")
 	IniReadS($ichkTrain, $profile, "SwitchAcc", "Pre-train", 0, "int")
 	IniReadS($icmbTotalCoCAcc, $profile, "SwitchAcc", "Total Coc Account", -1, "int")
+	IniReadS($g_iTrainTimeToSkip, $profile, "SwitchAcc", "Train Time To Skip", 1, "int")
 	IniReadS($ichkSmartSwitch, $profile, "SwitchAcc", "Smart Switch", 0, "int")
 	IniReadS($ichkForceSwitch, $profile, "SwitchAcc", "Force Switch", 0, "int")
 	IniReadS($iForceSwitch, $profile, "SwitchAcc", "Force Switch Search", 100, "int")

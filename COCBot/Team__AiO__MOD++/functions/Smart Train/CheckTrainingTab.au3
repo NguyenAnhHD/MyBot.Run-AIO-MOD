@@ -35,10 +35,8 @@ Func CheckTrainingTab($sText = "troop")
 	Switch $ArmyCamp[0]
 		Case 0 ;	0/240 troop	| 0/11 spell
 			SetLog("  » No " & $sText)
-			If $g_bQuickTrainEnable = False Then
-				$aeTrainMethod[0] = $g_eFull
-				$aeTrainMethod[1] = $g_eFull ; full army + full queue
-			EndIf
+			$aeTrainMethod[0] = $g_eFull
+			$aeTrainMethod[1] = $g_eFull ; full army + full queue
 
 		Case 1 To $ArmyCamp[1] - $iTopUp - 1 ; 1-234/240 troops | 1-9/11 spells
 			SetLog("  » Not full " & $sText & " camp")

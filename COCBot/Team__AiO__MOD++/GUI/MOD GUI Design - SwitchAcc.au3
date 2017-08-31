@@ -15,7 +15,7 @@
 
 ; SwitchAcc_Demen
 Global $lblProfileNo[8], $lblProfileName[8], $cmbAccountNo[8], $cmbProfileType[8]
-Global $chkSwitchAcc = 0, $chkTrain = 0, $cmbTotalAccount = 0, $radNormalSwitch = 0, $radSmartSwitch = 0, $chkUseTrainingClose = 0, $radCloseCoC = 0, $radCloseAndroid = 0, $cmbLocateAcc = 0
+Global $chkSwitchAcc = 0, $chkTrain = 0, $cmbTotalAccount = 0, $radNormalSwitch = 0, $radSmartSwitch = 0, $chkUseTrainingClose = 0, $radCloseCoC = 0, $radCloseAndroid = 0, $cmbLocateAcc = 0, $g_hCmbTrainTimeToSkip = 0
 Global $g_hChkForceSwitch = 0, $g_txtForceSwitch = 0, $g_lblForceSwitch = 0, $g_hChkForceStayDonate = 0
 Global $g_StartHideSwitchAcc = 0, $g_SecondHideSwitchAcc, $g_EndHideSwitchAcc = 0
 
@@ -58,15 +58,20 @@ Func CreateBotSwitchAcc()
 	GUICtrlSetOnEvent(-1, "radNormalSwitch")
 
 	$y += 80
+	GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "CmbTrainTimeToSkip", "Skip switch if train time") & " < ", $x + 10, $y, -1, -1)
+	$g_hCmbTrainTimeToSkip = GUICtrlCreateCombo("", $x + 135, $y - 4, 40, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+		GUICtrlSetData(-1, "1 min|2 mins|3 mins|4 mins|5 mins|6 mins|7 mins|8 mins|9 mins", "1 min")
+
+	$y += 30
 	$g_hChkForceSwitch = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - Switch Account", "ChkForceSwitch", "Force switch after:"), $x - 5, $y, -1, -1)
 	GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "ChkForceSwitch_Info_01", "Force the Bot to switch account when searching for too long") & _
 			@CRLF & GetTranslatedFileIni("MOD GUI Design - Switch Account", "ChkForceSwitch_Info_02", "First switch to all donate accounts") & _
 			@CRLF & GetTranslatedFileIni("MOD GUI Design - Switch Account", "ChkForceSwitch_Info_03", "Then switch to another active account if its army is ready"))
 	GUICtrlSetOnEvent(-1, "chkForceSwitch")
-	$g_txtForceSwitch = GUICtrlCreateInput("100", $x + 105, $y - 3 , 27, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+	$g_txtForceSwitch = GUICtrlCreateInput("100", $x + 105, $y-2, 25, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 	GUICtrlSetState(-1, $GUI_DISABLE)
 	GUICtrlSetLimit(-1, 3)
-	$g_lblForceSwitch = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "lblForceSwitch", "searches"), $x + 135, $y, -1, -1)
+	$g_lblForceSwitch = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "lblForceSwitch", "searches"), $x + 135, $y+3, -1, -1)
 	GUICtrlSetState(-1, $GUI_DISABLE)
 
 	$y += 30

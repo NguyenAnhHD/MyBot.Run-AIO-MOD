@@ -132,6 +132,10 @@ Func SaveConfig_MOD()
 	_Ini_Add("TrainLogout", "TrainLogoutMaxTime", $TrainLogoutMaxTime ? 1 : 0)
 	_Ini_Add("TrainLogout", "TrainLogoutMaxTimeTXT", $TrainLogoutMaxTimeTXT)
 
+	; ExtendedAttackBar
+	_Ini_Add("attack", "ExtendedAttackBarDB", $g_abChkExtendedAttackBar[$DB] ? 1 : 0)
+	_Ini_Add("attack", "ExtendedAttackBarLB", $g_abChkExtendedAttackBar[$LB] ? 1 : 0)
+
 EndFunc
 
 ; SwitchAcc (Demen) - Added By Demen
@@ -141,6 +145,7 @@ Func SaveConfig_SwitchAcc()
 	IniWriteS($profile, "SwitchAcc", "Enable", $ichkSwitchAcc ? 1 : 0)
 	IniWriteS($profile, "SwitchAcc", "Pre-train", $ichkTrain ? 1 : 0)
 	IniWriteS($profile, "SwitchAcc", "Total Coc Account", $icmbTotalCoCAcc) ; 1 = 1 Acc, 2 = 2 Acc, etc.
+	IniWriteS($profile, "SwitchAcc", "Train Time To Skip", $g_iTrainTimeToSkip)
 	IniWriteS($profile, "SwitchAcc", "Smart Switch", $ichkSmartSwitch ? 1 : 0)
 	IniWriteS($profile, "SwitchAcc", "Force Switch", $ichkForceSwitch ? 1 : 0)
 	IniWriteS($profile, "SwitchAcc", "Force Switch Search", $iForceSwitch)

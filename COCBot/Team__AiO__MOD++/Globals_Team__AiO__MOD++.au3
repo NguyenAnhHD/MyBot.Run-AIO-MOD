@@ -99,6 +99,7 @@ Global $bReMatchAcc = False
 Global $aTimerStart[8], $aTimerEnd[8]
 Global $aRemainTrainTime[8], $aUpdateRemainTrainTime[8], $nMinRemainTrain
 Global $aLocateAccConfig[8], $aAccPosY[8]
+Global $g_iTrainTimeToSkip = 0
 
 ; SmartTrain (Demen) - Added By Demen
 Global $ichkSmartTrain, $ichkPreciseTroops, $ichkFillArcher, $iFillArcher, $ichkFillEQ
@@ -184,3 +185,7 @@ Global $g_bChkClanHop = False
 
 ; Max logout time (mandryd)
 Global $TrainLogoutMaxTime, $TrainLogoutMaxTimeTXT
+
+; ExtendedAttackBar
+Global $g_hChkExtendedAttackBarLB, $g_hChkExtendedAttackBarDB, $g_abChkExtendedAttackBar[2]
+Global $g_iTotalAttackSlot = 10, $g_bDraggedAttackBar = False ; flag if AttackBar is dragged or not

@@ -23,16 +23,16 @@
 #pragma compile(Icon, "Images\MyBot.ico")
 #pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
 #pragma compile(ProductName, My Bot)
-#pragma compile(ProductVersion, 7.2.3)
-#pragma compile(FileVersion, 7.2.3)
+#pragma compile(ProductVersion, 7.2.4)
+#pragma compile(FileVersion, 7.2.4)
 #pragma compile(LegalCopyright, © https://mybot.run)
 #pragma compile(Out, MyBot.run.exe) ; Required
 
 ; Enforce variable declarations
 Opt("MustDeclareVars", 1)
 
-Global $g_sBotVersion = "v7.2.3" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
-Global $g_sModversion = "v1.7.2" ;<== Just Change This to Version Number
+Global $g_sBotVersion = "v7.2.4" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
+Global $g_sModversion = "v1.7.3" ;<== Just Change This to Version Number
 Global $g_sModSupportUrl = "https://mybot.run/forums/index.php?/topic/31096-mods-mbr-v722-official-aio-mod-v171-update-1207/" ;<== Our Website Link Support Or Link Download
 Global $g_sModDownloadUrl = "https://github.com/NguyenAnhHD/MyBot.Run-AIO-MOD/releases" ;<== Our Website Link Download
 Global $g_sBotTitle = "" ;~ Don't assign any title here, use Func UpdateBotTitle()
@@ -531,6 +531,11 @@ Func FinalInitialization(Const $sAI)
 
 	; InitializeVariables();initialize variables used in extrawindows
 	CheckVersion() ; check latest version on mybot.run site
+
+	SetLogCentered(" " & GetTranslatedFileIni("MBR GUI Design - Loading", "Warning_language", "Warning: Language for the Clash of Clans!") & " ", "-", $COLOR_INFO)
+	SetLog("      " & GetTranslatedFileIni("MBR GUI Design - Loading", "Warning_language_Info_01", "Please set 'ENGLISH' language for CoC.......!!"), $COLOR_INFO)
+	SetLog("                        " & GetTranslatedFileIni("MBR GUI Design - Loading", "Warning_language_Info_02", "...........if you want to use Bot MBR!!!!"), $COLOR_INFO)
+	SetLogCentered(" " & GetTranslatedFileIni("MBR GUI Design - Loading", "Warning_language_Info_03", "Regards!") & " ", "-", $COLOR_INFO)
 
 	If $ichkSwitchAcc = 1 Then btnUpdateProfile()	; update profiles & StatsProfile - SwitchAcc Demen
 

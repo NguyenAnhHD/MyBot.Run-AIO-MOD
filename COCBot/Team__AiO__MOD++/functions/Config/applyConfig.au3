@@ -168,6 +168,10 @@ Func ApplyConfig_MOD($TypeReadSave)
 			chkTrainLogoutMaxTime()
 			GUICtrlSetData($txtTrainLogoutMaxTime, $TrainLogoutMaxTimeTXT)
 
+			; ExtendedAttackBar
+			GUICtrlSetState($g_hChkExtendedAttackBarDB, $g_abChkExtendedAttackBar[$DB] ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkExtendedAttackBarLB, $g_abChkExtendedAttackBar[$LB] ? $GUI_CHECKED : $GUI_UNCHECKED)
+
 		Case "Save"
 
 			; Unit/Wave Factor (rulesss & kychera) - Added by Eloy
@@ -283,6 +287,10 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$TrainLogoutMaxTime = GUICtrlRead($chkTrainLogoutMaxTime) = $GUI_CHECKED ? 1 : 0
 			$TrainLogoutMaxTimeTXT = GUICtrlRead($txtTrainLogoutMaxTime)
 
+			; ExtendedAttackBar
+			$g_abChkExtendedAttackBar[$DB] = GUICtrlRead($g_hChkExtendedAttackBarDB) = $GUI_CHECKED ? True : False
+			$g_abChkExtendedAttackBar[$LB] = GUICtrlRead($g_hChkExtendedAttackBarLB) = $GUI_CHECKED ? True : False
+
 	EndSwitch
 EndFunc
 
@@ -301,6 +309,7 @@ Func ApplyConfig_SwitchAcc($TypeReadSave)
 			EndIf
 			If GUICtrlRead($chkSwitchAcc) = $GUI_CHECKED Then radNormalSwitch()
 			_GUICtrlComboBox_SetCurSel($cmbTotalAccount, $icmbTotalCoCAcc - 1)
+			_GUICtrlComboBox_SetCurSel($g_hCmbTrainTimeToSkip, $g_iTrainTimeToSkip - 1)
 			GUICtrlSetState($g_hChkForceSwitch, $ichkForceSwitch = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetData($g_txtForceSwitch, $iForceSwitch)
 			If GUICtrlRead($chkSwitchAcc) = $GUI_CHECKED Then chkForceSwitch()
@@ -324,6 +333,7 @@ Func ApplyConfig_SwitchAcc($TypeReadSave)
 			$ichkSwitchAcc = GUICtrlRead($chkSwitchAcc) = $GUI_CHECKED ? 1 : 0
 			$ichkTrain = GUICtrlRead($chkTrain) = $GUI_CHECKED ? 1 : 0
 			$icmbTotalCoCAcc = _GUICtrlComboBox_GetCurSel($cmbTotalAccount) + 1
+			$g_iTrainTimeToSkip = _GUICtrlComboBox_GetCurSel($g_hCmbTrainTimeToSkip) + 1
 			$ichkSmartSwitch = GUICtrlRead($radSmartSwitch) = $GUI_CHECKED ? 1 : 0
 			$ichkForceSwitch = GUICtrlRead($g_hChkForceSwitch) = $GUI_CHECKED ? 1 : 0
 			$ichkForceStayDonate = GUICtrlRead($g_hChkForceStayDonate) = $GUI_CHECKED ? 1 : 0

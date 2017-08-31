@@ -407,6 +407,18 @@ Func IsFullClanCastleSpells($bReturnOnly = False)
 
 	ElseIf Not $bCCSpellFull And (($g_abAttackTypeEnable[$DB] And $g_abSearchCastleSpellsWaitEnable[$DB]) Or ($g_abAttackTypeEnable[$LB] And $g_abSearchCastleSpellsWaitEnable[$LB])) Then
 
+		If $g_iCurrentCCSpell = 1 Then
+			If $g_iDebugSetlogTrain Then Setlog("CC Spell not full. But there is 1 spell donated, check it anyway", $COLOR_DEBUG)
+			$sCurCCSpell1 = GetCurCCSpell(1)
+			$aShouldRemove = CompareCCSpellWithGUI($sCurCCSpell1, $sCurCCSpell2, $g_iTotalCCSpell)
+			If $g_iDebugSetlogTrain Then Setlog("Slot 1 to remove: " & $aShouldRemove[0], $COLOR_DEBUG)
+			If $aShouldRemove[0] > 0 Then
+				SetLog("Removing unwanted Clancastle Spell!", $COLOR_INFO)
+				RemoveCastleSpell($aShouldRemove)
+				If _Sleep(1000) Then Return
+			EndIf
+		EndIf
+
 		$g_bCanRequestCC = _ColorCheck(_GetPixelColor($aRequestTroopsAO[0], $aRequestTroopsAO[1], True), Hex($aRequestTroopsAO[2], 6), $aRequestTroopsAO[5])
 		If $g_bCanRequestCC Then
 			$rColCheckFullCCTroops = _ColorCheck(_GetPixelColor(24, 470, True), Hex(0x93C230, 6), 30)
@@ -567,7 +579,7 @@ Func CompareCCSpellWithGUI($CCSpell1, $CCSpell2, $CastleCapacity)
 						$aShouldRemove[0] = $CCSpell1[0][3]
 					EndIf
 
-					If $CastleCapacity = 2 and $g_aiSearchCastleSpellsWaitRegular[$Mode] > 5 Then
+					If $CastleCapacity = 2 and $g_aiSearchCastleSpellsWaitRegular[$Mode] > 5 And $CCSpell2 <> "" Then
 						If $sCCSpell2 <> $CCSpell2[0][0] And $sCCSpell2 <> "Any" Then
 							$aShouldRemove[1] = $CCSpell2[0][3]
 						EndIf
@@ -908,6 +920,9 @@ Func IsGUICheckedForSpell($Spell, $Mode)
 		Case $eFSpell
 			$sSpell = "Freeze"
 			$aVal = $g_abAttackUseFreezeSpell
+		Case $eCSpell
+			$sSpell = "Clone"
+			$aVal = $g_abAttackUseCloneSpell
 		Case $ePSpell
 			$sSpell = "Poison"
 			$aVal = $g_abAttackUsePoisonSpell
@@ -1510,7 +1525,7 @@ Func OpenArmyWindow()
 	While IsArmyWindow(False, $ArmyTAB) = False
 		If _sleep($DELAYTRAIN4) Then Return
 		$iCount += 1
-		If $iCount = 5 And IsMainPage() Then
+		If $iCount = 5 And IsMainPage(1) Then
 			If _Sleep($DELAYTRAIN4) Then Return ; wait before click
 			If $g_iDebugSetlogTrain Then SetLog("Click $aArmyTrainButton", $COLOR_DEBUG)
 			If Not $g_bUseRandomClick Then

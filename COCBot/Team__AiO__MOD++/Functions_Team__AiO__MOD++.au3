@@ -34,6 +34,9 @@
 ; Attack Now
 #include "functions\Mod's\Attack Now.au3"
 
+;ExtendedAttackBar
+#include "functions\Mod's\ExtendedAttackBarCheck.au3"
+
 ; Switch Profile (IceCube) - Added by NguyenAnhHD
 #include "functions\Mod's\ProfileSwitch.au3"
 
@@ -59,7 +62,7 @@
 #include "functions\Bot Humanization\ClanWarActions.au3"
 
 ; Auto Upgrade
-#include "functions\Mod's\AutoUpgrade.au3"
+#include "functions\Mod's\Auto Upgrade.au3"
 
 ; Goblin XP
 #include "functions\GoblinXP\GoblinXP.au3"

@@ -55,18 +55,25 @@ Func cmbDBAlgorithm()
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_MILKING)
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_UNCHECKED)	; ExtendedAttackBar Demen
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_DISABLE)	; ExtendedAttackBar Demen
 			Case $iCmbValue = 1 ; Scripted Attack
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_MILKING)
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_ENABLE)	; ExtendedAttackBar Demen
 			Case $iCmbValue = 2 ; Milking Attack
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_DEADBASE_ATTACK_MILKING)
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_UNCHECKED)	; ExtendedAttackBar Demen
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_DISABLE)	; ExtendedAttackBar Demen
 			Case Else
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_MILKING)
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_UNCHECKED)	; ExtendedAttackBar Demen
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_DISABLE)	; ExtendedAttackBar Demen
 		EndSelect
 	EndIf
 EndFunc   ;==>cmbDBAlgorithm
@@ -80,12 +87,17 @@ Func cmbABAlgorithm()
 			Case $iCmbValue = 0 ; Standard Attack
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_ACTIVEBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED)
+				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_UNCHECKED)	; Demen
+				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_DISABLE)	; Demen
 			Case $iCmbValue = 1 ; Scripted Attack
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_STANDARD)
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED)
+				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_ENABLE)	; Demen
 			Case Else
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED)
+				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_UNCHECKED)	; Demen
+				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_DISABLE)	; Demen
 		EndSelect
 	EndIf
 EndFunc   ;==>cmbABAlgorithm

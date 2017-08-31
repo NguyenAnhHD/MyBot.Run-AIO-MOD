@@ -29,6 +29,9 @@ Func PrepareAttack($pMatchMode, $Remaining = False) ;Assigns troops
 				$g_aHeroesTimerActivation[$i] = 0
 			Next
 		EndIf
+		; ExtendedAttackBar Demen
+		$g_iTotalAttackSlot = 10 ; reset all flag
+		$g_bDraggedAttackBar = False
 	EndIf
 
 	Local $troopsnumber = 0
@@ -56,6 +59,16 @@ Func PrepareAttack($pMatchMode, $Remaining = False) ;Assigns troops
 	If $g_iDebugSetlog = 1 Then Setlog("DLL Troopsbar list: " & $result, $COLOR_DEBUG)
 	Local $aTroopDataList = StringSplit($result, "|")
 	Local $aTemp[12][3]
+
+	; ExtendedAttackBar Demen
+	If $pMatchMode <= $LB Then
+		If $g_abChkExtendedAttackBar[$pMatchMode] Then
+			ReDim $aTemp[22][3]
+			ReDim $g_avAttackTroops[22][2]
+		EndIf
+	EndIf
+	; ExtendedAttackBar Demen
+
 	If $result <> "" Then
 		; example : 0#0#92|1#1#108|2#2#8|22#3#1|20#4#1|21#5#1|26#5#0|23#6#1|24#7#2|25#8#1|29#10#1
 		; [0] = Troop Enum Cross Reference [1] = Slot position [2] = Quantities
