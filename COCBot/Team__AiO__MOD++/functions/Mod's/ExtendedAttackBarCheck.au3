@@ -108,6 +108,8 @@ Func ExtendedAttackBarCheck($aTroop1stPage, $Remaining)
 			Next
 
 			Local $iSlotExtended = 0
+			Static $iFirstExtendedSlot = 0	; Location of 1st extended troop after drag
+			If Not $Remaining Then $iFirstExtendedSlot = 0 ; Reset value for 1st time detecting troop bar
 
 			For $i = 0 To UBound($aResult) - 1
 				Local $Slottemp
@@ -122,9 +124,11 @@ Func ExtendedAttackBarCheck($aTroop1stPage, $Remaining)
 						ContinueLoop
 					EndIf
 
-					$iSlotExtended += 1
 					$Slottemp = SlotAttack(Number($aResult[$i][1]), False, False)
 					$Slottemp[0] += 18
+					If $iFirstExtendedSlot = 0 Then $iFirstExtendedSlot = $Slottemp[1]	; flag only once
+					$iSlotExtended = $Slottemp[1] - $iFirstExtendedSlot + 1
+
 					If $CheckSlotwHero2 And StringInStr($aResult[$i][0], "Spell") = 0 Then $Slottemp[0] -= 14
 					If $g_bRunState = False Then Return ; Stop function
 					If _Sleep(20) Then Return ; Pause function
@@ -136,14 +140,13 @@ Func ExtendedAttackBarCheck($aTroop1stPage, $Remaining)
 							$aResult[$i][3] = Number(getTroopCountBig(Number($Slottemp[0]), 636)) ; For Bigg Numbers , when the troops is selected
 							If $aResult[$i][3] = "" Or $aResult[$i][3] = 0 Then $aResult[$i][3] = Number(getTroopCountSmall(Number($Slottemp[0]), 641)) ; For small Numbers
 						EndIf
-						$aResult[$i][4] = $iSlotExtended + 10 ; slot from 11 to 21
+						$aResult[$i][4] = ($Slottemp[1] + 11) - $iFirstExtendedSlot
 					Else
 						Setlog("Problem with Attack bar detection!", $COLOR_RED)
 						SetLog("Detection : " & $aResult[$i][0] & "|x" & $aResult[$i][1] & "|y" & $aResult[$i][2], $COLOR_DEBUG)
 						$aResult[$i][3] = -1
 						$aResult[$i][4] = -1
 					EndIf
-
 					$strinToReturn &= "|" & TroopIndexLookup($aResult[$i][0]) & "#" & $aResult[$i][4] & "#" & $aResult[$i][3]
 				EndIf
 			Next
