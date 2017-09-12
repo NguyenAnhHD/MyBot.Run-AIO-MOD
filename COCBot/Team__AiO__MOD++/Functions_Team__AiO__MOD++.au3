@@ -71,3 +71,10 @@
 
 ; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
 #include "functions\Mod's\ClanHop.au3"
+
+; Chatbot - Added by NguyenAnhHD
+#include "functions\Chatbot\Chatbot.au3"
+#include "functions\Chatbot\Multy Lang.au3"
+
+; CheckCC Troops
+#include "functions\Mod's\CheckCC.au3"

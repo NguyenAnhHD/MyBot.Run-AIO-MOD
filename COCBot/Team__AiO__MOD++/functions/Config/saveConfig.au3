@@ -136,7 +136,15 @@ Func SaveConfig_MOD()
 	_Ini_Add("attack", "ExtendedAttackBarDB", $g_abChkExtendedAttackBar[$DB] ? 1 : 0)
 	_Ini_Add("attack", "ExtendedAttackBarLB", $g_abChkExtendedAttackBar[$LB] ? 1 : 0)
 
-EndFunc
+	; CheckCCTroops
+	_Ini_Add("CheckCC", "Enable", $g_bChkCC ? 1 : 0)
+	_Ini_Add("CheckCC", "CmbCastleCap", $g_iCmbCastleCap)
+	For $i = 0 To 2
+		_Ini_Add("CheckCC", "Slot" & $i, $g_aiCmbCCTroopsExpect[$i])
+		_Ini_Add("CheckCC", "Qty" & $i, $g_aiQtyCCTroopsExpect[$i])
+	Next
+
+EndFunc   ;==>SaveConfig_MOD
 
 ; SwitchAcc (Demen) - Added By Demen
 Func SaveConfig_SwitchAcc()
@@ -173,3 +181,21 @@ Func SaveConfig_Forecast()
 	_Ini_Add("Lang", "cmbSwLang", _GUICtrlComboBox_GetCurSel($cmbSwLang))
 
 EndFunc   ;==>SaveConfig_Forecast
+
+; Chatbot - Added By NguyenAnhHD
+Func SaveConfig_Chatbot()
+	ApplyConfig_Chatbot("Save")
+
+	IniWriteS($chatIni, "Global", "Enable", $g_iGlobalChat ? 1 : 0)
+	IniWriteS($chatIni, "Global", "Scramble", $g_iGlobalScramble ? 1 : 0)
+	IniWriteS($chatIni, "Global", "SwitchLang", $g_iSwitchLang ? 1 : 0)
+	IniWriteS($chatIni, "Lang", "cmbLang", $g_iCmbLang)
+
+	IniWriteS($chatIni, "Clan", "Enable", $g_iClanChat ? 1 : 0)
+	IniWriteS($chatIni, "Clan", "RusLang", $g_iRusLang ? 1 : 0)
+	IniWriteS($chatIni, "Clan", "Responses", $g_iUseResponses ? 1 : 0)
+	IniWriteS($chatIni, "Clan", "Generic", $g_iUseGeneric ? 1 : 0)
+	IniWriteS($chatIni, "Clan", "ChatPushbullet", $g_iChatPushbullet ? 1 : 0)
+	IniWriteS($chatIni, "Clan", "PbSendNewChats", $g_iPbSendNewChats ? 1 : 0)
+
+EndFunc   ;==>SaveConfig_Chatbot

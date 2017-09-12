@@ -123,9 +123,8 @@ Func CreateAttackSearchDeadBaseStandard()
 
 		   $y += 5
 		   $ChkGiantSlot = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot", "GiantSlot"), $x+10, $y + 10, 89, 25)
-			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot_Info_01", "perimeter (> = 12, recommended)") & @CRLF & _
-						  GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot_Info_02", "two points on each side (> = 8, recommended)")
-			   _GUICtrlSetTip(-1, $sTxtTip)
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot_Info_01", "perimeter (> = 12, recommended)") & @CRLF & _
+								  GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot_Info_02", "two points on each side (> = 8, recommended)"))
 			   GUICtrlSetOnEvent(-1, "ChkGiantSlot")
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
 		   $CmbGiantSlot = GUICtrlCreateCombo("", $x + 99, $y + 12, 73, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
@@ -135,27 +134,23 @@ Func CreateAttackSearchDeadBaseStandard()
 
 		   $y += 34
 		   $ChkUnitFactor = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor", "Modify Unit Factor"), $x + 10, $y + 4, 130, 25)
-			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor_Info_01", "Unit deploy delay = Unit setting x Unit Factor (millisecond)")
-			   _GUICtrlSetTip(-1, $sTxtTip)
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor_Info_01", "Unit deploy delay = Unit setting x Unit Factor (millisecond)"))
 			   GUICtrlSetOnEvent(-1, "chkUnitFactor")
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
 
 		   $TxtUnitFactor = GUICtrlCreateInput("10", $x + 140, $y + 6, 31, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor_Info_02", "Unit deploy delay = Unit setting x Unit Factor (millisecond)")
-			   _GUICtrlSetTip(-1, $sTxtTip)
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor_Info_02", "Unit deploy delay = Unit setting x Unit Factor (millisecond)"))
 			   GUICtrlSetState(-1, $GUI_DISABLE)
 			   GUICtrlSetData(-1, 10)
 			   GUICtrlSetOnEvent(-1, "chkUnitFactor")
 		   $y += 30
 		   $ChkWaveFactor = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor", "Modify Wave Factor"), $x + 10, $y + 2, 130, 25)
-			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor_Info_01", "Switch troop delay = Wave setting x Wave Factor (millisecond)")
-			   _GUICtrlSetTip(-1, $sTxtTip)
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor_Info_01", "Switch troop delay = Wave setting x Wave Factor (millisecond)"))
 			   GUICtrlSetOnEvent(-1, "chkWaveFactor")
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
 
 		   $TxtWaveFactor = GUICtrlCreateInput("100", $x + 140, $y + 4, 31, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-			   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor_Info_02", "Switch troop delay = Wave setting x Wave Factor (millisecond)")
-			   _GUICtrlSetTip(-1, $sTxtTip)
+			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor_Info_02", "Switch troop delay = Wave setting x Wave Factor (millisecond)"))
 			   GUICtrlSetState(-1, $GUI_DISABLE)
 			   GUICtrlSetData(-1, 100)
 			   GUICtrlSetOnEvent(-1, "chkWaveFactor")

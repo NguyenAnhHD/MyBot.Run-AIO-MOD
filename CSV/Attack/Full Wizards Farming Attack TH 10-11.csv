@@ -1,0 +1,47 @@
+NOTE  |Author: Z E C K
+NOTE  |Version: Collectors Killer TH 10 - 11
+NOTE  |Train: Full Wizards
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |           |10         |           |           |           |           |0          |           |
+      
+	  |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |A          |FRONT-LEFT |10         |1          |EXT-INT    |0          |5          |           |
+MAKE  |B          |FRONT-RIGHT|10         |1          |INT-EXT    |0          |5          |           |
+MAKE  |C          |LEFT-BACK  |10         |1          |EXT-INT    |0          |5          |           |
+MAKE  |D          |LEFT-FRONT |10         |1          |INT-EXT    |0          |5          |           |
+MAKE  |E          |RIGHT-FRONT|10         |1          |EXT-INT    |0          |5          |           |
+MAKE  |F          |RIGHT-BACK |10         |1          |INT-EXT    |0          |5          |           |
+MAKE  |G          |BACK-LEFT  |10         |1          |EXT-INT    |0          |5          |           |
+MAKE  |H          |BACK-RIGHT |10         |1          |INT-EXT    |0          |5          |           |
+
+MAKE  |I          |FRONT-LEFT |10         |0          |EXT-INT    |0          |5          |           |
+MAKE  |J          |FRONT-RIGHT|10         |0          |INT-EXT    |0          |5          |           |
+MAKE  |K          |LEFT-BACK  |10         |0          |EXT-INT    |0          |5          |           |
+MAKE  |L          |LEFT-FRONT |10         |0          |INT-EXT    |0          |5          |           |
+MAKE  |M          |RIGHT-FRONT|10         |0          |EXT-INT    |0          |5          |           |
+MAKE  |N          |RIGHT-BACK |10         |0          |INT-EXT    |0          |5          |           |
+MAKE  |O          |BACK-LEFT  |10         |0          |EXT-INT    |0          |5          |           |
+MAKE  |P          |BACK-RIGHT |10         |0          |INT-EXT    |0          |5          |           |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
+DROP  |I          |5          |1          |haspell    |130-133    |0          |1500       |           |
+DROP  |A          |1-10       |8          |wiza       |130-133    |0          |280-500    |           |
+DROP  |J          |5          |1          |haspell    |130-133    |0          |1500       |           |
+DROP  |B          |1-10       |8          |wiza       |130-135    |0          |0          |           |
+DROP  |B          |1          |1          |castle     |0          |0          |300-444    |           |
+DROP  |K          |5          |1          |haspell    |130-133    |0          |1500       |           |
+DROP  |C          |1-10       |8          |wiza       |130-134    |0          |270-450    |           |
+DROP  |L          |5          |1          |haspell    |130-133    |0          |1500       |           |
+DROP  |D          |1-10       |8          |wiza       |130-132    |0          |330-410    |           |
+DROP  |M          |5          |1          |haspell    |130-133    |0          |1500       |           |
+DROP  |E          |1-10       |7          |wiza       |130-137    |0          |400-500    |           |
+DROP  |N          |5          |1          |haspell    |130-133    |0          |1500       |           |
+DROP  |F          |1-10       |7          |wiza       |130-132    |0          |240-350    |           |
+DROP  |O          |5          |1          |haspell    |130-133    |0          |1500       |           |
+DROP  |G          |1-10       |7          |wiza       |130-136    |0          |350-430    |           |
+DROP  |P          |5          |1          |haspell    |130-133    |0          |1500       |           |
+DROP  |H          |1-10       |7          |wiza       |130-133    |0          |280-470    |           |
+DROP  |H          |1          |1          |king       |0          |0          |280-470    |           |
+DROP  |H          |3          |1          |queen      |0          |0          |250-433    |           |
+DROP  |H          |1          |1          |warden     |0          |0          |250-433    |           |

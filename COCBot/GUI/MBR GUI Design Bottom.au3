@@ -91,8 +91,7 @@ Func CreateBottomPanel()
 		   GUICtrlSetState(-1, $GUI_HIDE)
 
 	   $g_hModSupportConfig = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "ModSupport", "Support"), $x + 100, $y + 70, 80, -1)
-		   $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "ModSupport_Info_01", "Support Mod Mybot All Versions.")
-		   _GUICtrlSetTip(-1, $sTxtTip)
+		   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "ModSupport_Info_01", "Support Mod Mybot All Versions."))
 		   GUICtrlSetBkColor(-1, 0x00FF2F)
 
 		; Adding button to enable/disable GUI while botting (as requested by YScorpion) - Demen

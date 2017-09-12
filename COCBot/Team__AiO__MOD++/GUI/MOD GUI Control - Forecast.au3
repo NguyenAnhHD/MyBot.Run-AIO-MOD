@@ -288,7 +288,7 @@ Func CalculateIndex($minutes)
 
     $iRound1 = Round($index, 1)
 
-	SetLog(GetTranslated(107,10,"Viewing weather information ..."), $COLOR_PURPLE)
+	SetLog("Viewing weather information ...", $COLOR_PURPLE)
 	If $iRound1 <= $index25 Then
 	SetLog("Index of Loot : " & $iRound1 & " ---> Awful!", $COLOR_RED)
 	Elseif $iRound1 > $index25 and $iRound1 <= $index4 Then

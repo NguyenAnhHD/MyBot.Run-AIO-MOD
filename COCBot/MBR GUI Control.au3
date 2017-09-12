@@ -50,6 +50,7 @@ Global $g_hFrmBot_WNDPROC_ptr = 0
 ; Team AiO MOD++ (2017)
 #include "Team__AiO__MOD++\GUI\MOD GUI Control.au3"
 #include "Team__AiO__MOD++\GUI\MOD GUI Control - Forecast.au3"
+#include "Team__AiO__MOD++\GUI\MOD GUI Control - Chatbot.au3"
 
 Func InitializeMainGUI()
    InitializeControlVariables()
@@ -558,6 +559,8 @@ Func GUIControl_WM_COMMAND($hWind, $iMsg, $wParam, $lParam)
 			readConfig()
 		Case $g_hBtnTestConfigApply
 			applyConfig()
+		Case $g_hBtnTestWeakBase
+			btnTestWeakBase()
 	EndSwitch
 
 		If $lParam = $g_hCmbGUILanguage Then
@@ -1972,7 +1975,7 @@ Func Bind_ImageList($nCtrl)
 
 		Case $g_hGUI_MOD_TAB
 			; the icons for Mods tab
-			Local $aIconIndex[5] = [$eIcnSwitchOptions, $eIcnHumanization, $eIcnGoblinXP, $eIcnStats, $eIcnForecast]
+			Local $aIconIndex[6] = [$eIcnSwitchOptions, $eIcnHumanization, $eIcnGoblinXP, $eIcnChatbot, $eIcnStats, $eIcnForecast]
 
 		Case $g_hGUI_MOD_SWITCH_TAB
 			; the icons for Profiles tab

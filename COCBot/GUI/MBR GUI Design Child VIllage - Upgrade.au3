@@ -42,8 +42,6 @@ Global $g_hLblWallCost = 0, $g_hBtnFindWalls = 0
 Global $g_ahWallsCurrentCount[13] = [-1,-1,-1,-1,0,0,0,0,0,0,0,0,0] ; elements 0 to 3 are not referenced
 Global $g_ahPicWallsLevel[13] = [-1,-1,-1,-1,0,0,0,0,0,0,0,0,0] ; elements 0 to 3 are not referenced
 
-#include "..\Team__AiO__MOD++\GUI\MOD GUI Design - AutoUpgrade.au3"
-
 Func CreateVillageUpgrade()
    $g_hGUI_UPGRADE = _GUICreate("", $g_iSizeWGrpTab2, $g_iSizeHGrpTab2, 5, 25, BitOR($WS_CHILD, $WS_TABSTOP), -1, $g_hGUI_VILLAGE)
    ;GUISetBkColor($COLOR_WHITE, $g_hGUI_UPGRADE)

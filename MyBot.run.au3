@@ -23,16 +23,16 @@
 #pragma compile(Icon, "Images\MyBot.ico")
 #pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
 #pragma compile(ProductName, My Bot)
-#pragma compile(ProductVersion, 7.2.4)
-#pragma compile(FileVersion, 7.2.4)
+#pragma compile(ProductVersion, 7.2.5)
+#pragma compile(FileVersion, 7.2.5)
 #pragma compile(LegalCopyright, © https://mybot.run)
 #pragma compile(Out, MyBot.run.exe) ; Required
 
 ; Enforce variable declarations
 Opt("MustDeclareVars", 1)
 
-Global $g_sBotVersion = "v7.2.4" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
-Global $g_sModversion = "v1.7.5" ;<== Just Change This to Version Number
+Global $g_sBotVersion = "v7.2.5" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
+Global $g_sModversion = "v1.7.6" ;<== Just Change This to Version Number
 Global $g_sModSupportUrl = "https://mybot.run/forums/index.php?/topic/31096-mods-mbr-v722-official-aio-mod-v171-update-1207/" ;<== Our Website Link Support Or Link Download
 Global $g_sModDownloadUrl = "https://github.com/NguyenAnhHD/MyBot.Run-AIO-MOD/releases" ;<== Our Website Link Download
 Global $g_sBotTitle = "" ;~ Don't assign any title here, use Func UpdateBotTitle()
@@ -311,6 +311,7 @@ EndFunc   ;==>InitializeAndroid
 ; ===============================================================================================================================
 Func SetupProfileFolder()
 	$g_sProfileConfigPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\config.ini"
+	$chatIni = $g_sProfilePath & "\" & $g_sProfileCurrentName &  "\chat.ini"
 	$g_sProfileBuildingStatsPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\stats_buildings.ini"
 	$g_sProfileBuildingPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\building.ini"
 	$g_sProfileLogsPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\Logs\"
@@ -836,6 +837,11 @@ Func Idle() ;Sequence that runs until Full Army
 		NotifyPendingActions()
 		If _Sleep($DELAYIDLE1) Then Return
 		If $g_iCommandStop = -1 Then SetLog("====== Waiting for full army ======", $COLOR_SUCCESS)
+
+		If $g_iGlobalChat = True Or $g_iClanChat = True Then
+			ChatbotMessage()
+		EndIf
+
 		Local $hTimer = __TimerInit()
 		Local $iReHere = 0
 		;PrepareDonateCC()
@@ -1009,6 +1015,9 @@ Func AttackMain() ;Main control for attack functions
 				SetLog(_PadStringCenter(" Hero status check" & BitAND($g_aiAttackUseHeroes[$LB], $g_aiSearchHeroWaitEnable[$LB], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$LB] & "|" & $g_iHeroAvailable, 54, "="), $COLOR_DEBUG)
 				;Setlog("BullyMode: " & $g_abAttackTypeEnable[$TB] & ", Bully Hero: " & BitAND($g_aiAttackUseHeroes[$g_iAtkTBMode], $g_aiSearchHeroWaitEnable[$g_iAtkTBMode], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$g_iAtkTBMode] & "|" & $g_iHeroAvailable, $COLOR_DEBUG)
 			EndIf
+			If $g_iGlobalChat = True Or $g_iClanChat = True Then
+				ChatbotMessage()
+			EndIf
 			PrepareSearch()
 			If $g_bOutOfGold = True Then Return ; Check flag for enough gold to search
 			If $g_bRestart = True Then Return
@@ -1176,7 +1185,10 @@ Func _RunFunction($action)
 			BoostWarden()
 		Case "RequestCC"
 			If $g_bChkClanHop Then Return
-			If Not ($g_bReqCCFirst) Then RequestCC()
+			If Not ($g_bReqCCFirst) Then
+				CheckCC() ; Demen
+				RequestCC()
+			EndIf
 			If _Sleep($DELAYRUNBOT1) = False Then checkMainScreen(False)
 		Case "Laboratory"
 			If $g_bChkClanHop Then Return

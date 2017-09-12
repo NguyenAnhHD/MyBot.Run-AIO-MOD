@@ -15,7 +15,7 @@
 #include-once
 
 Global $g_hGUI_MOD = 0
-Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0 , $g_hGUI_MOD_TAB_ITEM2 = 0 ,$g_hGUI_MOD_TAB_ITEM3 = 0 ,$g_hGUI_MOD_TAB_ITEM4 = 0 ,$g_hGUI_MOD_TAB_ITEM5 = 0
+Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0, $g_hGUI_MOD_TAB_ITEM2 = 0, $g_hGUI_MOD_TAB_ITEM3 = 0, $g_hGUI_MOD_TAB_ITEM4 = 0, $g_hGUI_MOD_TAB_ITEM5 = 0, $g_hGUI_MOD_TAB_ITEM6 = 0
 
 ; Switch Account & Profiles
 #include "MOD GUI Design - Profiles.au3"
@@ -27,8 +27,17 @@ Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0 , $g_hGUI_MOD_TAB_ITEM2 = 
 ; Goblin XP
 #include "MOD GUI Design - GoblinXP.au3"
 
+; Chatbot
+#include "MOD GUI Design - Chatbot.au3"
+
 ; Forecast
 #include "MOD GUI Design - Forecast.au3"
+
+; Auto Upgrade
+#include "MOD GUI Design - AutoUpgrade.au3"
+
+; CheckCC Troops
+#include "MOD GUI Design - CheckTroopsCC.au3"
 
 Func CreateMODTab()
 
@@ -42,6 +51,8 @@ Func CreateMODTab()
 			HumanizationGUI()
 		$g_hGUI_MOD_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_03", "Goblin XP"))
 			GoblinXPGUI()
+		$g_hGUI_MOD_TAB_ITEM6 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_06", "Chat"))
+			ChatbotGUI()
 		$g_hGUI_MOD_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_04", "Stat's")) ; Has to be outside of the Last Control to hide
 			$g_hLastControlToHide = GUICtrlCreateDummy()
 			ReDim $g_aiControlPrevState[$g_hLastControlToHide + 1]

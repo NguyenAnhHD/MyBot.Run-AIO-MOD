@@ -148,23 +148,15 @@ Global $g_aUpgradeResourceCostDuration[3] = ["", "", ""] ; Resource, Cost, Durat
 Global Const $COLOR_DEEPPINK = 0xFF1493
 Global Const $COLOR_DARKGREEN = 0x006400
 Global $oIE = ObjCreate("Shell.Explorer.2")
-Global $grpForecast
-Global $ieForecast
-Global $dtStamps[0]
-Global $lootMinutes[0]
-Global $timeOffset = 0
-Global $TimerForecast = 0
-Global $lootIndexScaleMarkers
-Global $currentForecast
-Global $chkForecastBoost = 0, $txtForecastBoost = 0
+Global $grpForecast, $ieForecast
+Global $dtStamps[0], $lootMinutes[0]
+Global $timeOffset = 0, $TimerForecast = 0
+Global $lootIndexScaleMarkers, $currentForecast
 Global $iChkForecastBoost = 0, $iTxtForecastBoost = 6
-Global $chkForecastPause = 0, $txtForecastPause = 0
 Global $iChkForecastPause = 0, $iTxtForecastPause = 2
-Global $cmbForecastHopingSwitchMax = 0, $cmbForecastHopingSwitchMin = 0
-Global $chkForecastHopingSwitchMax = 0, $lblForecastHopingSwitchMax = 0, $txtForecastHopingSwitchMax = 2, $chkForecastHopingSwitchMin = 0, $lblForecastHopingSwitchMin = 0, $txtForecastHopingSwitchMin = 0
-Global $ichkForecastHopingSwitchMax = 0, $icmbForecastHopingSwitchMax = 0 , $itxtForecastHopingSwitchMax = 2, $ichkForecastHopingSwitchMin = 0, $icmbForecastHopingSwitchMin = 0, $itxtForecastHopingSwitchMin = 2
+Global $ichkForecastHopingSwitchMax = 0, $icmbForecastHopingSwitchMax = 0, $itxtForecastHopingSwitchMax = 2
+Global $ichkForecastHopingSwitchMin = 0, $icmbForecastHopingSwitchMin = 0, $itxtForecastHopingSwitchMin = 2
 Global $icmbSwLang = 0
-Global $cmbSwLang = 0
 
 ; Request CC Troops at first
 Global $g_bReqCCFirst = False
@@ -189,3 +181,18 @@ Global $TrainLogoutMaxTime, $TrainLogoutMaxTimeTXT
 ; ExtendedAttackBar
 Global $g_hChkExtendedAttackBarLB, $g_hChkExtendedAttackBarDB, $g_abChkExtendedAttackBar[2]
 Global $g_iTotalAttackSlot = 10, $g_bDraggedAttackBar = False ; flag if AttackBar is dragged or not
+
+; Chatbot - Added by NguyenAnhHD
+Global $chatIni = ""
+Global $GlobalMessages1 = "", $GlobalMessages2 = "", $GlobalMessages3 = "", $GlobalMessages4 = ""
+Global $ClanMessages1 = "", $ClanMessages2 = ""
+Global $g_iGlobalChat = False, $g_iGlobalScramble = False, $g_iSwitchLang = False, $g_iCmbLang = 1
+Global $g_iClanChat = False, $g_iRusLang = 0, $g_iUseResponses = False, $g_iUseGeneric = False, $g_iChatPushbullet = False, $g_iPbSendNewChats = False
+Global $ChatbotStartTime
+Global $ChatbotQueuedChats[0], $ChatbotReadQueued = False, $ChatbotReadInterval = 0, $ChatbotIsOnInterval = False
+
+; CheckCC Troops
+Global $g_aiCCTroops[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_aiCCTroopsExpected[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_bChkCC, $g_bChkCCTroops, $g_aiCmbCCTroopsExpect[3], $g_aiQtyCCTroopsExpect[3]
+Global $g_iCmbCastleCap

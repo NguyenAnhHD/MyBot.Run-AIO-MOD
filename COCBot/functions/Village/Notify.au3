@@ -687,6 +687,10 @@ Func NotifyRemoteControlProc()
 							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "LASTRAID", "LASTRAID") & GetTranslatedFileIni("MBR Func_Notify", "LASTRAID_Info_01", "- send the last raid loot screenshot of") & " <" & $g_sNotifyOrigin & ">"
 							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "LASTRAIDTXT", "LASTRAIDTXT") & " " & GetTranslatedFileIni("MBR Func_Notify", "LASTRAIDTXT_Info_01", "- send the last raid loot values of") & " <" & $g_sNotifyOrigin & ">"
 							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "SCREENSHOT", "SCREENSHOT") & " " & GetTranslatedFileIni("MBR Func_Notify", "SCREENSHOT_Info_01", "- send a screenshot of") & " <" & $g_sNotifyOrigin & ">"
+
+							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT", "SENDCHAT <TEXT>") & " " & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT_Info_01", "- send TEXT in clan chat of <Village Name>") & " <" & $g_sNotifyOrigin & ">"
+							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS", "GETCHATS <STOP|NOW|INTERVAL>") & " " & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS_Info_01", "- select any of this three option to do") & " <" & $g_sNotifyOrigin & ">"
+
 							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "SCREENSHOTHD", "SCREENSHOTHD") & " " & GetTranslatedFileIni("MBR Func_Notify", "SCREENSHOTHD_Info_01", "- send a screenshot in high resolution of") & " <" & $g_sNotifyOrigin & ">"
 							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "BUILDER", "BUILDER") & " " & GetTranslatedFileIni("MBR Func_Notify", "BUILDER_Info_01", "- send a screenshot of builder status of") & " <" & $g_sNotifyOrigin & ">"
 							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "SHIELD", "SHIELD") & " " & GetTranslatedFileIni("MBR Func_Notify", "SHIELD_Info_01", "- send a screenshot of shield status of") & " <" & $g_sNotifyOrigin & ">"
@@ -845,6 +849,41 @@ Func NotifyRemoteControlProc()
 								NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslatedFileIni("MBR Func_Notify", "Command-Not-Recognized", "Command not recognized") & "\n" & GetTranslatedFileIni("MBR Func_Notify", "Request-For-Help_Info_01", "Please push BOT HELP to obtain a complete command list."))
 								NotifyDeleteMessageFromPushBullet($iden[$x])
 							EndIf
+
+							If StringInStr($body[$x], StringUpper($g_sNotifyOrigin) & " SENDCHAT ") Then
+							Local $chatMessage = StringRight($body[$x], StringLen($body[$x]) - StringLen("BOT " & StringUpper($g_sNotifyOrigin) & " SENDCHAT "))
+								$chatMessage = StringLower($chatMessage)
+								ChatbotPushbulletQueueChat($chatMessage)
+								NotifyPushToPushBullet($g_sNotifyOrigin & " | " & "Chat queued, will send on next idle")
+								NotifyDeleteMessageFromPushBullet($iden[$x])
+							ElseIf StringInStr($body[$x], StringUpper($g_sNotifyOrigin) & " GETCHATS ") Then
+							Local $Interval = StringRight($body[$x], StringLen($body[$x]) - StringLen("BOT " & StringUpper($g_sNotifyOrigin) & " GETCHATS "))
+								If $Interval = "STOP" Then
+									ChatbotPushbulletStopChatRead()
+									NotifyPushToPushBullet($g_sNotifyOrigin & " | " & "Stopping interval sending")
+								ElseIf $Interval = "NOW" Then
+									ChatbotPushbulletQueueChatRead()
+									NotifyPushToPushBullet($g_sNotifyOrigin & " | " & "Command queued, will send clan chat image on next idle")
+								Else
+									If Number($Interval) <> 0 Then
+										ChatbotPushbulletIntervalChatRead(Number($Interval))
+										NotifyPushToPushBullet($g_sNotifyOrigin & " | " & "Command queued, will send clan chat image on interval")
+									Else
+										SetLog("Chatbot: incorrect command syntax, Example: BOT <VillageName> GETCHATS NOW|STOP|INTERVAL", $COLOR_RED)
+										NotifyPushToPushBullet($g_sNotifyOrigin & " | " & "Command not recognized" & "\n" & "Example: BOT <VillageName> GETCHATS NOW|STOP|INTERVAL")
+									EndIf
+								EndIf
+									NotifyDeleteMessageFromPushBullet($iden[$x])
+							Else
+								Local $lenstr = StringLen(GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " " & StringUpper($g_sNotifyOrigin) & " " & "")
+								Local $teststr = StringLeft($body[$x], $lenstr)
+								If $teststr = (GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " " & StringUpper($g_sNotifyOrigin) & " " & "") Then
+								SetLog("Pushbullet: received command syntax wrong, command ignored.", $COLOR_RED)
+									NotifyPushToPushBullet($g_sNotifyOrigin & " | " & "Command not recognized" & "\n" & "Please push BOT HELP to obtain a complete command list.")
+									NotifyDeleteMessageFromPushBullet($iden[$x])
+								EndIf
+							EndIf
+
 					EndSwitch
 					$body[$x] = ""
 					$iden[$x] = ""
@@ -894,6 +933,9 @@ Func NotifyRemoteControlProc()
 						$txtHelp &= "\n" & GetTranslatedFileIni("MBR Func_Notify", "HIBERNATE", "HIBERNATE") & " " & GetTranslatedFileIni("MBR Func_Notify", "HIBERNATE_Info_01", "- Hibernate host PC")
 						$txtHelp &= "\n" & GetTranslatedFileIni("MBR Func_Notify", "SHUTDOWN", "SHUTDOWN") & " " & GetTranslatedFileIni("MBR Func_Notify", "SHUTDOWN_Info_01", "- Shut down host PC")
 						$txtHelp &= "\n" & GetTranslatedFileIni("MBR Func_Notify", "STANDBY", "STANDBY") & " " & GetTranslatedFileIni("MBR Func_Notify", "STANDBY_Info_01", "- Standby host PC")
+
+						$txtHelp &= "\n" & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS", "GETCHATS <INTERVAL|NOW|STOP>") & " " & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS_Info_01", "- to get the latest clan chat as an image")
+						$txtHelp &= "\n" & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT", "SENDCHAT <chat message>") & " " & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT_Info_01", "- to send a chat to your clan")
 
 						NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslatedFileIni("MBR Func_Notify", "Request-For-Help_Info_02", "Request for Help") & "\n" & $txtHelp)
 						SetLog("Notify Telegram: Your request has been received from " & $g_sNotifyOrigin & ". Help has been sent", $COLOR_GREEN)
@@ -1051,6 +1093,32 @@ Func NotifyRemoteControlProc()
 						SetLog("Notify Telegram: Your request has been received from " & $g_sNotifyOrigin & ". Standby PC", $COLOR_GREEN)
 						NotifyPushToTelegram(GetTranslatedFileIni("MBR Func_Notify", "STANDBY_Info_02", "PC Standby sequence initiated"))
 						Shutdown(32)
+
+					Case Else
+						If StringInStr($TGActionMSG, "SENDCHAT") Then
+						local $chatMessage = StringRight($TGActionMSG, StringLen($TGActionMSG) - StringLen("SENDCHAT "))
+							$chatMessage = StringLower($chatMessage)
+							ChatbotPushbulletQueueChat($chatMessage)
+							NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Chat queued, will send on next idle")
+						ElseIf StringInStr($TGActionMSG, "GETCHATS") Then
+							$Interval = StringRight($TGActionMSG, StringLen($TGActionMSG) - StringLen("GETCHATS "))
+							If $Interval = "STOP" Then
+								ChatbotPushbulletStopChatRead()
+								NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Stopping interval sending")
+							ElseIf $Interval = "NOW" Then
+								ChatbotPushbulletQueueChatRead()
+								NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Command queued, will send clan chat image on next idle")
+							Else
+								If Number($Interval) <> 0 Then
+									ChatbotPushbulletIntervalChatRead(Number($Interval))
+									NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Command queued, will send clan chat image on interval")
+								Else
+									SetLog("Telegram: received command syntax wrong, command ignored.", $COLOR_RED)
+									NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Command not recognized" & "\n" & "Please push BOT HELP to obtain a complete command list.")
+								EndIf
+							EndIf
+						EndIf
+
 				EndSwitch
 			EndIf
 		EndIf

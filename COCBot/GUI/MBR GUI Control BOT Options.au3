@@ -621,7 +621,7 @@ Func btnTestGetLocationBuilding()
 	ResetTHsearch()
 	SetLog("Testing FindTownhall()", $COLOR_INFO)
 	SetLog("FindTownhall() = " & FindTownhall(True), $COLOR_INFO)
-;	SetLog("$g_sImglocRedline = " & $g_sImglocRedline, $COLOR_INFO)
+	;	SetLog("$g_sImglocRedline = " & $g_sImglocRedline, $COLOR_INFO)
 
 	_LogObjList($g_oBldgAttackInfo) ; log dictionary contents
 
@@ -898,3 +898,12 @@ Func btnTestOcrMemory()
 	Next
 
 EndFunc   ;==>btnTestOcrMemory
+
+Func btnTestWeakBase()
+	Local $currentRunState = $g_bRunState
+	$g_bRunState = True
+	BeginImageTest()
+	IsWeakBase()
+	EndImageTest()
+	$g_bRunState = $currentRunState
+EndFunc   ;==>btnTestWeakBase

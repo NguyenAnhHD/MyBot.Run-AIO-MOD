@@ -172,6 +172,15 @@ Func ApplyConfig_MOD($TypeReadSave)
 			GUICtrlSetState($g_hChkExtendedAttackBarDB, $g_abChkExtendedAttackBar[$DB] ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkExtendedAttackBarLB, $g_abChkExtendedAttackBar[$LB] ? $GUI_CHECKED : $GUI_UNCHECKED)
 
+			; CheckCCTroops
+			GUICtrlSetState($g_hChkTroopsCC, $g_bChkCC ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($g_hCmbCCTroopCapacity, $g_iCmbCastleCap)
+			For $i = 0 To 2
+				_GUICtrlComboBox_SetCurSel($g_ahCmbCheckTroops[$i], $g_aiCmbCCTroopsExpect[$i])
+				GUICtrlSetData($g_ahTxtCheckTroops[$i], $g_aiQtyCCTroopsExpect[$i])
+			Next
+			cmbCheckTroopsCC()
+
 		Case "Save"
 
 			; Unit/Wave Factor (rulesss & kychera) - Added by Eloy
@@ -291,8 +300,16 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$g_abChkExtendedAttackBar[$DB] = GUICtrlRead($g_hChkExtendedAttackBarDB) = $GUI_CHECKED ? True : False
 			$g_abChkExtendedAttackBar[$LB] = GUICtrlRead($g_hChkExtendedAttackBarLB) = $GUI_CHECKED ? True : False
 
+			; CheckCCTroops
+			$g_bChkCC = GUICtrlRead($g_hChkTroopsCC) = $GUI_CHECKED ? True : False
+			$g_iCmbCastleCap = _GUICtrlComboBox_GetCurSel($g_hCmbCCTroopCapacity)
+			For $i = 0 To 2
+				$g_aiCmbCCTroopsExpect[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbCheckTroops[$i])
+				$g_aiQtyCCTroopsExpect[$i] = GUICtrlRead($g_ahTxtCheckTroops[$i])
+			Next
+
 	EndSwitch
-EndFunc
+EndFunc   ;==>ApplyConfig_MOD
 
 ; SwitchAcc (Demen) - Added By Demen
 Func ApplyConfig_SwitchAcc($TypeReadSave)
@@ -379,3 +396,37 @@ Func ApplyConfig_Forecast($TypeReadSave)
 			$icmbSwLang = _GUICtrlComboBox_GetCurSel($cmbSwLang)
 	EndSwitch
 EndFunc   ;==>ApplyConfig_Forecast
+
+; Chatbot - Added By NguyenAnhHD
+Func ApplyConfig_Chatbot($TypeReadSave)
+	Switch $TypeReadSave
+		Case "Read"
+			GUICtrlSetState($g_hChkGlobalChat, $g_iGlobalChat ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkGlobalScramble, $g_iGlobalScramble ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkSwitchLang, $g_iSwitchLang ? $GUI_CHECKED : $GUI_UNCHECKED)
+			cmbSwitchLang()
+			_GUICtrlComboBox_SetCurSel($g_hCmbLang, $g_iCmbLang)
+
+			GUICtrlSetState($g_hChkClanChat, $g_iClanChat ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkRusLang, $g_iRusLang ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkUseResponses, $g_iUseResponses ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkUseGeneric, $g_iUseGeneric ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkChatPushbullet, $g_iChatPushbullet ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkPbSendNewChats, $g_iPbSendNewChats ? $GUI_CHECKED : $GUI_UNCHECKED)
+			cmbChatBot()
+
+		Case "Save"
+			$g_iGlobalChat = GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED ? True : False
+			$g_iGlobalScramble = GUICtrlRead($g_hChkGlobalScramble) = $GUI_CHECKED ? True : False
+			$g_iSwitchLang = GUICtrlRead($g_hChkSwitchLang) = $GUI_CHECKED ? True : False
+			$g_iCmbLang = _GUICtrlComboBox_GetCurSel($g_hCmbLang)
+
+			$g_iClanChat = GUICtrlRead($g_hChkClanChat) = $GUI_CHECKED ? True : False
+			$g_iRusLang = GUICtrlRead($g_hChkRusLang) = $GUI_CHECKED ? 1 : 0
+			$g_iUseResponses = GUICtrlRead($g_hChkUseResponses) = $GUI_CHECKED ? True : False
+			$g_iUseGeneric = GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED ? True : False
+			$g_iChatPushbullet = GUICtrlRead($g_hChkChatPushbullet) = $GUI_CHECKED ? True : False
+			$g_iPbSendNewChats = GUICtrlRead($g_hChkPbSendNewChats) = $GUI_CHECKED ? True : False
+
+	EndSwitch
+EndFunc   ;==>ApplyConfig_Chatbot
