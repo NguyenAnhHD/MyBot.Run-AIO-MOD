@@ -1,6 +1,6 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Pico Bot Humanization
-; Description ...: This file contains all functions of Pico Bot Humanization feature
+; Name ..........: Bot Humanization
+; Description ...: This file contains all functions of Bot Humanization feature
 ; Syntax ........: ---
 ; Parameters ....: ---
 ; Return values .: ---
@@ -65,14 +65,6 @@ Func GemClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 	EndIf
 
 EndFunc   ;==>GemClick
-
-Func randomSleep($SleepTime, $Range = 0)
-	If $g_bRunState = False Then Return
-	If $Range = 0 Then $Range = Round($SleepTime / 5)
-	Local $SleepTimeF = Random($SleepTime - $Range, $SleepTime + $Range, 1)
-	If $g_iDebugClick = 1 Then Setlog("Default sleep : " & $SleepTime & " - Random sleep : " & $SleepTimeF, $COLOR_ORANGE)
-	If _Sleep($SleepTimeF) Then Return
-EndFunc   ;==>randomSleep
 
 ; ================================================== HUMAN FUNCTIONS PART ================================================== ;
 
@@ -592,12 +584,12 @@ Func IsTextBox()
 EndFunc   ;==>IsTextBox
 
 Func IsChallengeWindow()
-	Local $Result = _ColorCheck(_GetPixelColor(698, 56, True), "FFFFFF", 20)
+	Local $Result = _ColorCheck(_GetPixelColor(698, 156, True), "FFFFFF", 20)
 	Return $Result
 EndFunc   ;==>IsChallengeWindow
 
 Func IsChangeLayoutMenu()
-	Local $Result = _ColorCheck(_GetPixelColor(184, 58, True), "FFFFFF", 20)
+	Local $Result = _ColorCheck(_GetPixelColor(184, 112, True), "FFFFFF", 20)
 	Return $Result
 EndFunc   ;==>IsChangeLayoutMenu
 

@@ -1,5 +1,5 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: MBR GUI Control
+; Name ..........: MBR GUI Control MOD
 ; Description ...: This file controls the "MOD" tab
 ; Syntax ........:
 ; Parameters ....: None
@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 #include-once
 
-; Classic Four Finger
+; Classic Four Finger - Team AiO MOD++ (#-04)
 Func cmbStandardDropSidesAB() ; avoid conflict between FourFinger and SmartAttack
 	If _GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesAB) = 4 Then
 		GUICtrlSetState($g_hChkSmartAttackRedAreaAB, $GUI_UNCHECKED)
@@ -33,7 +33,7 @@ Func Bridge()
 		For $i = $g_hChkRandomSpeedAtkDB To $g_hPicAttackNearDarkElixirDrillDB
 			GUICtrlSetState($i, $GUI_DISABLE + $GUI_HIDE)
 		Next
-		For $i = $g_hGrpSettings To $TxtWaveFactor
+		For $i = $g_hGrpSettings To $g_hTxtWaveFactor
 			GUICtrlSetState($i, $GUI_SHOW)
 	    Next
 	Else
@@ -41,112 +41,176 @@ Func Bridge()
 			GUICtrlSetState($i, $GUI_ENABLE + $GUI_SHOW)
 		Next
 
-	    For $i = $g_hGrpSettings To $TxtWaveFactor
+	    For $i = $g_hGrpSettings To $g_hTxtWaveFactor
 			GUICtrlSetState($i, $GUI_HIDE)
 	    Next
         chkSmartAttackRedAreaDB()
 	EndIf
 
-EndFunc ;==>Bridge
+EndFunc   ;==>Bridge
 
-; Unit/Wave Factor
-Func chkUnitFactor()
-	If GUICtrlRead($ChkUnitFactor) = $GUI_CHECKED Then
-		$iChkUnitFactor = 1
-		GUICtrlSetState($TxtUnitFactor, $GUI_ENABLE)
-	Else
-		$iChkUnitFactor = 0
-		GUICtrlSetState($TxtUnitFactor, $GUI_DISABLE)
-	EndIf
-	$iTxtUnitFactor = GUICtrlRead($TxtUnitFactor)
-EndFunc
-
-Func chkWaveFactor()
-	If GUICtrlRead($ChkWaveFactor) = $GUI_CHECKED Then
-		$iChkWaveFactor = 1
-		GUICtrlSetState($TxtWaveFactor, $GUI_ENABLE)
-	Else
-		$iChkWaveFactor = 0
-		GUICtrlSetState($TxtWaveFactor, $GUI_DISABLE)
-	EndIf
-	$iTxtWaveFactor = GUICtrlRead($TxtWaveFactor)
-EndFunc
-
-Func ChkGiantSlot()
-	If GUICtrlRead($ChkGiantSlot) = $GUI_CHECKED Then
-		$iChkGiantSlot = 1
-		GUICtrlSetState($CmbGiantSlot, $GUI_ENABLE)
-	Else
-		$iChkGiantSlot = 0
-		GUICtrlSetState($CmbGiantSlot, $GUI_DISABLE)
-	EndIf
-EndFunc
-
-Func CmbGiantSlot()
-	If $iChkGiantSlot = 1 Then
-		Switch _GUICtrlComboBox_GetCurSel($CmbGiantSlot)
+; Unit/Wave Factor - Team AiO MOD++ (#-05)
+Func cmbGiantSlot()
+	If $g_iChkGiantSlot = 1 Then
+		Switch _GUICtrlComboBox_GetCurSel($g_hCmbGiantSlot)
 			Case 0
-				$iSlotsGiants = 0
+				$g_aiSlotsGiants = 0
 			Case 1
-				$iSlotsGiants = 2
+				$g_aiSlotsGiants = 2
 		EndSwitch
 	Else
 	LocaL $GiantComp = $g_ahTxtTrainArmyTroopCount[$eTroopGiant]
-		If Number($GiantComp) >= 1 And Number($GiantComp) <= 7 Then $iSlotsGiants = 1
-		If Number($GiantComp) >= 8 Then $iSlotsGiants = 2 ; will be split in 2 slots, when >16 or >=8 with FF
-		If Number($GiantComp) >= 12 Then $iSlotsGiants = 0 ; spread on vector, when >20 or >=12 with FF
+		If Number($GiantComp) >= 1 And Number($GiantComp) <= 7 Then $g_aiSlotsGiants = 1
+		If Number($GiantComp) >= 8 Then $g_aiSlotsGiants = 2 ; will be split in 2 slots, when >16 or >=8 with FF
+		If Number($GiantComp) >= 12 Then $g_aiSlotsGiants = 0 ; spread on vector, when >20 or >=12 with FF
 	EndIf
-EndFunc
+EndFunc   ;==>cmbGiantSlot
 
-; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
-Func chkAutoHide()
-	GUICtrlSetState($g_hTxtAutohideDelay, GUICtrlRead($g_hChkAutoHide) = $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
-EndFunc   ;==>chkAutoHide
+Func chkGiantSlot()
+	GUICtrlSetState($g_hCmbGiantSlot, GUICtrlRead($g_hChkGiantSlot) = $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+EndFunc   ;==>chkGiantSlot
 
-; Switch Profiles (IceCube) - Added by NguyenAnhHD
-Func btnRecycle()
-	FileDelete($g_sProfileConfigPath)
-	saveConfig()
-	SetLog("Profile " & $g_sProfileCurrentName & " was recycled with success", $COLOR_GREEN)
-	SetLog("All unused settings were removed", $COLOR_GREEN)
-EndFunc   ;==>btnRecycle
+Func chkUnitFactor()
+	GUICtrlSetState($g_hTxtUnitFactor, GUICtrlRead($g_hChkUnitFactor) = $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+EndFunc   ;==>chkUnitFactor
 
-Func setupProfileComboBoxswitch()
-	; Clear the combo box current data in case profiles were deleted
-	GUICtrlSetData($g_hCmbGoldMaxProfile, "", "")
-	; Set the new data of available profiles
-	GUICtrlSetData($g_hCmbGoldMaxProfile, $profileString, "<No Profiles>")
-	; Clear the combo box current data in case profiles were deleted
-	GUICtrlSetData($g_hCmbGoldMinProfile, "", "")
-	; Set the new data of available profiles
-	GUICtrlSetData($g_hCmbGoldMinProfile, $profileString, "<No Profiles>")
-	; Clear the combo box current data in case profiles were deleted
-	GUICtrlSetData($g_hCmbElixirMaxProfile, "", "")
-	; Set the new data of available profiles
-	GUICtrlSetData($g_hCmbElixirMaxProfile, $profileString, "<No Profiles>")
-	; Clear the combo box current data in case profiles were deleted
-	GUICtrlSetData($g_hCmbElixirMinProfile, "", "")
-	; Set the new data of available profiles
-	GUICtrlSetData($g_hCmbElixirMinProfile, $profileString, "<No Profiles>")
-	; Clear the combo box current data in case profiles were deleted
-	GUICtrlSetData($g_hCmbDEMaxProfile, "", "")
-	; Set the new data of available profiles
-	GUICtrlSetData($g_hCmbDEMaxProfile, $profileString, "<No Profiles>")
-	; Clear the combo box current data in case profiles were deleted
-	GUICtrlSetData($g_hCmbDEMinProfile, "", "")
-	; Set the new data of available profiles
-	GUICtrlSetData($g_hCmbDEMinProfile, $profileString, "<No Profiles>")
-	; Clear the combo box current data in case profiles were deleted
-	GUICtrlSetData($g_hCmbTrophyMaxProfile, "", "")
-	; Set the new data of available profiles
-	GUICtrlSetData($g_hCmbTrophyMaxProfile, $profileString, "<No Profiles>")
-	; Clear the combo box current data in case profiles were deleted
-	GUICtrlSetData($g_hCmbTrophyMinProfile, "", "")
-	; Set the new data of available profiles
-	GUICtrlSetData($g_hCmbTrophyMinProfile, $profileString, "<No Profiles>")
-EndFunc   ;==>setupProfileComboBoxswitch
+Func chkWaveFactor()
+	GUICtrlSetState($g_hTxtWaveFactor, GUICtrlRead($g_hChkWaveFactor) = $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
+EndFunc   ;==>chkWaveFactor
 
-; SmartTrain (Demen) - Added By Demen
+; Auto Dock, Hide Emulator & Bot - Team AiO MOD++ (#-07)
+Func chkEnableAuto()
+	If GUICtrlRead($g_hChkEnableAuto) = $GUI_CHECKED Then
+		$g_bEnableAuto = True
+		_GUI_Value_STATE("ENABLE", $g_hChkAutoDock & "#" & $g_hChkAutoHideEmulator)
+	Else
+		$g_bEnableAuto = False
+		_GUI_Value_STATE("DISABLE", $g_hChkAutoDock & "#" & $g_hChkAutoHideEmulator)
+	EndIf
+EndFunc   ;==>chkEnableAuto
+
+Func btnEnableAuto()
+	If $g_bEnableAuto = True Then
+		If GUICtrlRead($g_hChkAutoDock) = $GUI_CHECKED Then
+			$g_iChkAutoDock = True
+			$g_iChkAutoHideEmulator = False
+		ElseIf GUICtrlRead($g_hChkAutoHideEmulator) = $GUI_CHECKED Then
+			$g_iChkAutoDock = False
+			$g_iChkAutoHideEmulator = True
+		EndIf
+	Else
+		$g_iChkAutoDock = False
+		$g_iChkAutoHideEmulator = False
+	EndIf
+EndFunc   ;==>btnEnableAuto
+
+; Switch Accounts - Team AiO MOD++ (#-12)
+Func UpdateMultiStats()
+	Local $bEnableSwitchAcc = GUICtrlRead($g_hChkSwitchAcc) = $GUI_CHECKED
+	Local $iCmbTotalAcc = _GUICtrlComboBox_GetCurSel($g_hCmbTotalAccount) + 1 ; combobox data starts with 2
+	For $i = 0 To 7
+		If $bEnableSwitchAcc And $i <= $iCmbTotalAcc Then
+			For $j = $g_ahGrpVillageAcc[$i] To $g_ahLblHourlyStatsTrophyAcc[$i]
+				GUICtrlSetState($j, $GUI_SHOW)
+			Next
+			If GUICtrlRead($g_ahChkAccount[$i]) = $GUI_CHECKED Then
+				If GUICtrlRead($g_ahChkDonate[$i]) = $GUI_UNCHECKED Then
+					GUICtrlSetData($g_ahGrpVillageAcc[$i], GUICtrlRead($g_ahCmbProfile[$i]) & " (Active)")
+				Else
+					GUICtrlSetData($g_ahGrpVillageAcc[$i], GUICtrlRead($g_ahCmbProfile[$i]) & " (Donate)")
+				EndIf
+
+			Else
+				GUICtrlSetData($g_ahGrpVillageAcc[$i], GUICtrlRead($g_ahCmbProfile[$i]) & " (Idle)")
+			EndIf
+		Else
+			For $j = $g_ahGrpVillageAcc[$i] To $g_ahLblHourlyStatsTrophyAcc[$i]
+				GUICtrlSetState($j, $GUI_HIDE)
+			Next
+		EndIf
+	Next
+EndFunc   ;==>UpdateMultiStats
+
+Func chkSwitchAcc()
+	If GUICtrlRead($g_hChkSwitchAcc) = $GUI_CHECKED Then
+		For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
+			GUICtrlSetState($i, $GUI_ENABLE)
+		Next
+		_GUI_Value_STATE("ENABLE", $g_ahChk_BotTypeMax[0] & "#" & $g_ahChk_BotTypeMax[1] & "#" & $g_ahChk_BotTypeMax[2] & "#" & $g_ahChk_BotTypeMax[3] & "#" & $g_ahChk_BotTypeMin[0] & "#" & $g_ahChk_BotTypeMin[1] & "#" & $g_ahChk_BotTypeMin[2] & "#" & $g_ahChk_BotTypeMin[3])
+		For $i = 0 To 7
+			GUICtrlSetState($g_ahChkSetFarm[$i], $GUI_ENABLE)
+		Next
+		chkSwitchBotType()
+		cmbTotalAcc()
+	Else
+		For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
+			GUICtrlSetState($i, $GUI_DISABLE)
+		Next
+		_GUI_Value_STATE("UNCHECKED", $g_ahChk_BotTypeMax[0] & "#" & $g_ahChk_BotTypeMax[1] & "#" & $g_ahChk_BotTypeMax[2] & "#" & $g_ahChk_BotTypeMax[3] & "#" & $g_ahChk_BotTypeMin[0] & "#" & $g_ahChk_BotTypeMin[1] & "#" & $g_ahChk_BotTypeMin[2] & "#" & $g_ahChk_BotTypeMin[3])
+		_GUI_Value_STATE("DISABLE", $g_ahChk_BotTypeMax[0] & "#" & $g_ahChk_BotTypeMax[1] & "#" & $g_ahChk_BotTypeMax[2] & "#" & $g_ahChk_BotTypeMax[3] & "#" & $g_ahChk_BotTypeMin[0] & "#" & $g_ahChk_BotTypeMin[1] & "#" & $g_ahChk_BotTypeMin[2] & "#" & $g_ahChk_BotTypeMin[3])
+		For $i = 0 To 7
+			For $j = $g_ahChkSetFarm[$i] To $g_ahCmbTime2[$i]
+				GUICtrlSetState($j, $GUI_UNCHECKED + $GUI_DISABLE)
+			Next
+		Next
+	EndIf
+EndFunc   ;==>chkSwitchAcc
+
+Func cmbTotalAcc()
+	Local $iCmbTotalAcc = _GUICtrlComboBox_GetCurSel($g_hCmbTotalAccount) + 1 ; combobox data starts with 2
+	For $i = 0 To 7
+		If $iCmbTotalAcc >= 0 And $i <= $iCmbTotalAcc Then
+			_GUI_Value_STATE("SHOW", $g_ahChkAccount[$i] & "#" & $g_ahCmbProfile[$i] & "#" & $g_ahChkDonate[$i])
+			For $j = $g_ahChkSetFarm[$i] To $g_ahCmbTime2[$i]
+				GUICtrlSetState($j, $GUI_SHOW)
+			Next
+		ElseIf $i > $iCmbTotalAcc Then
+			GUICtrlSetState($g_ahChkAccount[$i], $GUI_UNCHECKED)
+			_GUI_Value_STATE("HIDE", $g_ahChkAccount[$i] & "#" & $g_ahCmbProfile[$i] & "#" & $g_ahChkDonate[$i])
+			For $j = $g_ahChkSetFarm[$i] To $g_ahCmbTime2[$i]
+				GUICtrlSetState($j, $GUI_HIDE)
+			Next
+		EndIf
+		chkAccount($i)
+	Next
+	cmbChkSetFarm()
+EndFunc   ;==>cmbTotalAcc
+
+Func chkAccount($i)
+	If GUICtrlRead($g_ahChkAccount[$i]) = $GUI_CHECKED Then
+		_GUI_Value_STATE("ENABLE", $g_ahCmbProfile[$i] & "#" & $g_ahChkDonate[$i])
+	Else
+		GUICtrlSetState($g_ahChkDonate[$i], $GUI_UNCHECKED)
+		_GUI_Value_STATE("DISABLE", $g_ahCmbProfile[$i] & "#" & $g_ahChkDonate[$i])
+	EndIf
+EndFunc   ;==>chkAccount
+
+Func chkAccount0()
+	chkAccount(0)
+EndFunc   ;==>chkAccount0
+Func chkAccount1()
+	chkAccount(1)
+EndFunc   ;==>chkAccount1
+Func chkAccount2()
+	chkAccount(2)
+EndFunc   ;==>chkAccount2
+Func chkAccount3()
+	chkAccount(3)
+EndFunc   ;==>chkAccount3
+Func chkAccount4()
+	chkAccount(4)
+EndFunc   ;==>chkAccount4
+Func chkAccount5()
+	chkAccount(5)
+EndFunc   ;==>chkAccount5
+Func chkAccount6()
+	chkAccount(6)
+EndFunc   ;==>chkAccount6
+Func chkAccount7()
+	chkAccount(7)
+EndFunc   ;==>chkAccount7
+
+; Smart Train - Team AiO MOD++ (#-13)
 Func chkSmartTrain()
 	If GUICtrlRead($g_hchkSmartTrain) = $GUI_CHECKED Then
 		If GUICtrlRead($g_hChkUseQuickTrain) = $GUI_UNCHECKED Then _GUI_Value_STATE("ENABLE", $g_hchkPreciseTroops)
@@ -177,266 +241,96 @@ Func chkFillArcher()
 	EndIf
 EndFunc   ;==>chkFillArcher
 
-; SwitchAcc (Demen) - Added By Demen
-Func AddProfileToList()
-	Switch @GUI_CtrlId
-		Case $g_hBtnAddProfile
-			SaveConfig_SwitchAcc()
+; Switch Profile - Team AiO MOD++ (#-25)
+Func btnRecycle()
+	FileDelete($g_sProfileConfigPath)
+	saveConfig()
+	SetLog("Profile " & $g_sProfileCurrentName & " was recycled with success", $COLOR_GREEN)
+	SetLog("All unused settings were removed", $COLOR_GREEN)
+EndFunc   ;==>btnRecycle
 
-		Case $g_hBtnConfirmAddProfile
-			Local $iNewProfile = _GUICtrlComboBox_GetCurSel($g_hCmbProfile)
-			Local $UpdatedProfileList = _GUICtrlComboBox_GetListArray($g_hCmbProfile)
-			Local $nUpdatedTotalProfile = _GUICtrlComboBox_GetCount($g_hCmbProfile)
-			If $iNewProfile <= 7 Then
-				_GUICtrlComboBox_SetCurSel($cmbAccountNo[$iNewProfile], -1) ; clear config of new profile
-				_GUICtrlComboBox_SetCurSel($cmbProfileType[$iNewProfile], -1)
-				For $i = 7 To $iNewProfile + 1 Step -1
-					_GUICtrlComboBox_SetCurSel($cmbAccountNo[$i], $aMatchProfileAcc[$i - 1] - 1) ; push config up 1 level. -1 because $aMatchProfileAcc is saved from 1 to 8
-					_GUICtrlComboBox_SetCurSel($cmbProfileType[$i], $aProfileType[$i - 1] - 1)
-				Next
-			EndIf
-			btnUpdateProfile()
-	EndSwitch
-EndFunc   ;==>AddProfileToList
-
-Func RemoveProfileFromList($iDeleteProfile)
-	Local $UpdatedProfileList = _GUICtrlComboBox_GetListArray($g_hCmbProfile)
-	Local $nUpdatedTotalProfile = _GUICtrlComboBox_GetCount($g_hCmbProfile)
-	If $iDeleteProfile <= 7 Then
-		For $i = $iDeleteProfile To 7
-			If $i <= 6 Then
-				_GUICtrlComboBox_SetCurSel($cmbAccountNo[$i], $aMatchProfileAcc[$i + 1] - 1)
-				_GUICtrlComboBox_SetCurSel($cmbProfileType[$i], $aProfileType[$i + 1] - 1)
-			Else
-				_GUICtrlComboBox_SetCurSel($cmbAccountNo[$i], -1)
-				_GUICtrlComboBox_SetCurSel($cmbProfileType[$i], -1)
-			EndIf
-		Next
-	EndIf
-	btnUpdateProfile()
-EndFunc   ;==>RemoveProfileFromList
-
-Func g_btnUpdateProfile()
-	btnUpdateProfile()
-EndFunc   ;==>g_btnUpdateProfile
-
-Func btnUpdateProfile($Config = True)
-
-	If $Config = True Then
-		SaveConfig_SwitchAcc()
-		ReadConfig_SwitchAcc()
-		ApplyConfig_SwitchAcc("Read")
-	EndIf
-
-	$aActiveProfile = _ArrayFindAll($aProfileType, $eActive)
-	$aDonateProfile = _ArrayFindAll($aProfileType, $eDonate)
-	$ProfileList = _GUICtrlComboBox_GetListArray($g_hCmbProfile)
-	$nTotalProfile = _Min(8, _GUICtrlComboBox_GetCount($g_hCmbProfile))
-
-	For $i = 0 To 7
-		If $i <= $nTotalProfile - 1 Then
-			GUICtrlSetData($lblProfileName[$i], $ProfileList[$i + 1])
-			For $j = $lblProfileNo[$i] To $cmbProfileType[$i]
-				GUICtrlSetState($j, $GUI_SHOW)
-			Next
-			; Update stats GUI
-			For $j = $aStartHide[$i] To $aEndHide[$i]
-				GUICtrlSetState($j, $GUI_SHOW)
-			Next
-			Switch $aProfileType[$i]
-				Case 1
-					GUICtrlSetData($grpVillageAcc[$i], $ProfileList[$i + 1] & " (Active)")
-				Case 2
-					GUICtrlSetData($grpVillageAcc[$i], $ProfileList[$i + 1] & " (Donate)")
-				Case Else
-					GUICtrlSetData($grpVillageAcc[$i], $ProfileList[$i + 1] & " (Idle)")
-			EndSwitch
+Func chkSwitchProfile()
+	For $i = 0 To 3
+		If GUICtrlRead($g_ahChk_SwitchMax[$i]) = $GUI_CHECKED Then
+			GUICtrlSetState($g_ahCmb_SwitchMax[$i], $GUI_ENABLE)
 		Else
-			GUICtrlSetData($lblProfileName[$i], "")
-			_GUICtrlComboBox_SetCurSel($cmbAccountNo[$i], -1)
-			_GUICtrlComboBox_SetCurSel($cmbProfileType[$i], -1)
-			For $j = $lblProfileNo[$i] To $cmbProfileType[$i]
-				GUICtrlSetState($j, $GUI_HIDE)
-			Next
-			; Update stats GUI
-			For $j = $aStartHide[$i] To $aEndHide[$i]
-				GUICtrlSetState($j, $GUI_HIDE)
-			Next
+			GUICtrlSetState($g_ahCmb_SwitchMax[$i], $GUI_DISABLE)
+		EndIf
+		If GUICtrlRead($g_ahChk_SwitchMin[$i]) = $GUI_CHECKED Then
+			GUICtrlSetState($g_ahCmb_SwitchMin[$i], $GUI_ENABLE)
+		Else
+			GUICtrlSetState($g_ahCmb_SwitchMin[$i], $GUI_DISABLE)
 		EndIf
 	Next
-EndFunc   ;==>btnUpdateProfile
+EndFunc   ;==>chkSwitchProfile
 
-Func btnClearProfile()
-	For $i = 0 To 7
-		_GUICtrlComboBox_SetCurSel($cmbAccountNo[$i], -1)
-		_GUICtrlComboBox_SetCurSel($cmbProfileType[$i], -1)
-	Next
-EndFunc   ;==>btnClearProfile
-
-Func chkSwitchAcc()
-	If GUICtrlRead($chkSwitchAcc) = $GUI_CHECKED Then
-		If _GUICtrlComboBox_GetCount($g_hCmbProfile) <= 1 Then
-			GUICtrlSetState($chkSwitchAcc, $GUI_UNCHECKED)
-			MsgBox($MB_OK, GetTranslatedFileIni("MOD GUI Control - Switch Account", "chkSwitchAcc", "SwitchAcc Mode"), GetTranslatedFileIni("MOD GUI Control - Switch Account", "chkSwitchAcc_Info_01", "Cannot enable SwitchAcc Mode") & @CRLF & GetTranslatedFileIni("MOD GUI Control - Switch Account", "chkSwitchAcc_Info_02", "You have only ") & _GUICtrlComboBox_GetCount($g_hCmbProfile) & " Profile", 30, $g_hGUI_BOT)
+Func chkSwitchBotType()
+	For $i = 0 To 3
+		If GUICtrlRead($g_ahChk_BotTypeMax[$i]) = $GUI_CHECKED Then
+			GUICtrlSetState($g_ahCmb_BotTypeMax[$i], $GUI_ENABLE)
 		Else
-			For $i = $chkTrain To $g_EndHideSwitchAcc
-				GUICtrlSetState($i, $GUI_ENABLE)
-			Next
-			radNormalSwitch()
-			chkForceSwitch()
-			btnUpdateProfile(False)
+			GUICtrlSetState($g_ahCmb_BotTypeMax[$i], $GUI_DISABLE)
 		EndIf
+		If GUICtrlRead($g_ahChk_BotTypeMin[$i]) = $GUI_CHECKED Then
+			GUICtrlSetState($g_ahCmb_BotTypeMin[$i], $GUI_ENABLE)
+		Else
+			GUICtrlSetState($g_ahCmb_BotTypeMin[$i], $GUI_DISABLE)
+		EndIf
+	Next
+EndFunc   ;==>chkSwitchBotType
+
+; Check Grand Warden Mode - Team AiO MOD++ (#-26)
+Func chkCheckWardenMode()
+	$g_bCheckWardenMode = (GUICtrlRead($g_hChkCheckWardenMode) = $GUI_CHECKED)
+	GUICtrlSetState($g_hCmbCheckWardenMode, $g_bCheckWardenMode ? $GUI_ENABLE : $GUI_DISABLE)
+EndFunc   ;==>chkCheckWardenMode
+
+; Restart Search Legend league - Team AiO MOD++ (#-29)
+Func chkSearchTimeout()
+	If GUICtrlRead($g_hChkSearchTimeout) = $GUI_CHECKED Then
+		_GUI_Value_STATE("ENABLE", $g_hLblSearchTimeout & "#" & $g_hTxtSearchTimeout & "#" & $g_hLblSearchTimeoutminutes)
 	Else
-		_GUI_Value_STATE("UNCHECKED", $g_hChkForceSwitch & "#" & $g_hChkForceStayDonate)
-		For $i = $chkTrain To $g_EndHideSwitchAcc
-			GUICtrlSetState($i, $GUI_DISABLE)
-		Next
-		For $j = $aStartHide[0] To $aEndHide[7]
-			GUICtrlSetState($j, $GUI_HIDE)
-		Next
+		_GUI_Value_STATE("DISABLE", $g_hLblSearchTimeout & "#" & $g_hTxtSearchTimeout & "#" & $g_hLblSearchTimeoutminutes)
 	EndIf
-EndFunc   ;==>chkSwitchAcc
+EndFunc   ;==>chkSearchTimeout
 
-Func radNormalSwitch()
-	If GUICtrlRead($radNormalSwitch) = $GUI_CHECKED Then
-		_GUI_Value_STATE("UNCHECKED", $g_hChkForceStayDonate & "#" & $chkUseTrainingClose)
-		_GUI_Value_STATE("DISABLE", $g_hChkForceStayDonate & "#" & $chkUseTrainingClose & "#" & $radCloseCoC & "#" & $radCloseAndroid)
+; Stop on Low battery - Team AiO MOD++ (#-30)
+Func _BatteryStatus()
+	Local $aData = _WinAPI_GetSystemPowerStatus()
+	If @error Then Return
+
+	If BitAND($aData[1], 128) Then
+		$aData[0] = '!!'
 	Else
-		_GUI_Value_STATE("ENABLE", $g_hChkForceStayDonate & "#" & $chkUseTrainingClose & "#" & $radCloseCoC & "#" & $radCloseAndroid)
-	EndIf
-EndFunc   ;==>radNormalSwitch
+		Switch $aData[0]; ac or battery
+			Case 0
+				$aData[0] = 'BATT'
+			Case 1
+				$aData[0] = 'AC'
+			Case Else
+				$aData[0] = '--'
+		EndSwitch
 
-Func chkForceSwitch()
-	If GUICtrlRead($g_hChkForceSwitch) = $GUI_CHECKED Then
-		_GUI_Value_STATE("ENABLE", $g_txtForceSwitch & "#" & $g_lblForceSwitch)
-	Else
-		_GUI_Value_STATE("DISABLE", $g_txtForceSwitch & "#" & $g_lblForceSwitch)
-	EndIf
-EndFunc   ;==>chkForceSwitch
+		If $aData[0] = 'BATT' Then
+			SetLog("Battery/Charging: " & $aData[0] & " Battery status: " & $aData[2] & "%")
+			GUICtrlSetData($g_hLblBatteryAC, $aData[0])
+			GUICtrlSetData($g_hLblBatteryStatus, $aData[2] & "%")
 
-Func cmbMatchProfileAcc1()
-	MatchProfileAcc(0)
-EndFunc   ;==>cmbMatchProfileAcc1
-Func cmbMatchProfileAcc2()
-	MatchProfileAcc(1)
-EndFunc   ;==>cmbMatchProfileAcc2
-Func cmbMatchProfileAcc3()
-	MatchProfileAcc(2)
-EndFunc   ;==>cmbMatchProfileAcc3
-Func cmbMatchProfileAcc4()
-	MatchProfileAcc(3)
-EndFunc   ;==>cmbMatchProfileAcc4
-Func cmbMatchProfileAcc5()
-	MatchProfileAcc(4)
-EndFunc   ;==>cmbMatchProfileAcc5
-Func cmbMatchProfileAcc6()
-	MatchProfileAcc(5)
-EndFunc   ;==>cmbMatchProfileAcc6
-Func cmbMatchProfileAcc7()
-	MatchProfileAcc(6)
-EndFunc   ;==>cmbMatchProfileAcc7
-Func cmbMatchProfileAcc8()
-	MatchProfileAcc(7)
-EndFunc   ;==>cmbMatchProfileAcc8
-
-Func MatchProfileAcc($Num)
-	If _GUICtrlComboBox_GetCurSel($cmbAccountNo[$Num]) > _GUICtrlComboBox_GetCurSel($cmbTotalAccount) Then
-		MsgBox($MB_OK, GetTranslatedFileIni("MOD GUI Control - Switch Account", "cmbAccountNo", "SwitchAcc Mode"), GetTranslatedFileIni("MOD GUI Control - Switch Account", "cmbAccountNo_Info_01", "Account [") & _GUICtrlComboBox_GetCurSel($cmbAccountNo[$Num]) & GetTranslatedFileIni("MOD GUI Control - Switch Account", "cmbAccountNo_Info_02", "] exceeds Total Account declared"), 30, $g_hGUI_BOT)
-		_GUICtrlComboBox_SetCurSel($cmbAccountNo[$Num], -1)
-		_GUICtrlComboBox_SetCurSel($cmbProfileType[$Num], -1)
-		btnUpdateProfile()
-	EndIf
-
-	Local $AccSelected = _GUICtrlComboBox_GetCurSel($cmbAccountNo[$Num])
-	If $AccSelected >= 0 Then
-		For $i = 0 To 7
-			If $i = $Num Then ContinueLoop
-			If $AccSelected = _GUICtrlComboBox_GetCurSel($cmbAccountNo[$i]) Then
-				MsgBox($MB_OK, GetTranslatedFileIni("MOD GUI Control - Switch Account", "cmbAccountNo", -1), GetTranslatedFileIni("MOD GUI Control - Switch Account", "cmbAccountNo_Info_01", -1) & $AccSelected + 1 & GetTranslatedFileIni("MOD GUI Control - Switch Account", "cmbAccountNo_Info_03", "] has been assigned to Profile [") & $i + 1 & "]", 30, $g_hGUI_BOT)
-				_GUICtrlComboBox_SetCurSel($cmbAccountNo[$Num], -1)
-				_GUICtrlComboBox_SetCurSel($cmbProfileType[$Num], -1)
-				btnUpdateProfile()
-				ExitLoop
+			If $aData[2] < $g_iStopOnBatt Then
+				SetLog("Battery status: " & $aData[2] & "% and is below than " & $g_iStopOnBatt & "%", $COLOR_WARNING)
+				SetLog("Stopping bot", $COLOR_ACTION1)
+				PoliteCloseCoC()
+				CloseAndroid(_BatteryStatus)
+				BotStop()
 			EndIf
-		Next
-
-		If _GUICtrlComboBox_GetCurSel($cmbAccountNo[$Num]) >= 0 Then
-			_GUICtrlComboBox_SetCurSel($cmbProfileType[$Num], 0)
-			btnUpdateProfile()
 		EndIf
 	EndIf
-EndFunc   ;==>MatchProfileAcc
+EndFunc   ;==>_BatteryStatus
 
-Func btnLocateAcc()
-	Local $AccNo = _GUICtrlComboBox_GetCurSel($cmbLocateAcc) + 1
-	Local $stext, $MsgBox
-
-	Local $wasRunState = $g_bRunState
-	$g_bRunState = True
-
-	SetLog(GetTranslatedFileIni("MOD GUI Control - Switch Account", "btnLocateAcc_Info_01", "Locating Y-Coordinate of CoC Account No. ") & $AccNo & GetTranslatedFileIni("MOD GUI Control - Switch Account", "btnLocateAcc_Info_02", ", please wait..."), $COLOR_BLUE)
-	WinGetAndroidHandle()
-
-	Zoomout()
-
-	Click(820, 585, 1, 0, "Click Setting") ;Click setting
-	Sleep(500)
-
-	While 1
-		_ExtMsgBoxSet(1 + 64, $SS_CENTER, 0x004080, 0xFFFF00, 12, "Comic Sans MS", 600)
-		$stext = GetTranslatedFileIni("MOD GUI Control - Switch Account", "btnLocateAcc_Info_03", "Click Connect/Disconnect on emulator to show the accout list") & @CRLF & @CRLF & _
-				GetTranslatedFileIni("MOD GUI Control - Switch Account", "btnLocateAcc_Info_04", "Click OK then click on your Account No. ") & $AccNo & @CRLF & @CRLF & _
-				GetTranslatedFileIni("MOD GUI Control - Switch Account", "btnLocateAcc_Info_05", "Do not move mouse quickly after clicking location") & @CRLF & @CRLF
-		$MsgBox = _ExtMsgBox(0, GetTranslatedFileIni("MOD GUI Control - Switch Account", "btnLocateAcc_Info_06", "Ok|Cancel"), GetTranslatedFileIni("MOD GUI Control - Switch Account", "btnLocateAcc_Info_07", "Locate CoC Account No. ") & $AccNo, $stext, 60, $g_hFrmBot)
-		If $MsgBox = 1 Then
-			WinGetAndroidHandle()
-			Local $aPos = FindPos()
-			$aLocateAccConfig[$AccNo - 1] = Int($aPos[1])
-			ClickP($aAway, 1, 0, "#0379")
-		Else
-			SetLog(GetTranslatedFileIni("MOD GUI Control - Switch Account", "btnLocateAcc_Info_08", "Locate CoC Account Cancelled"), $COLOR_BLUE)
-			ClickP($aAway, 1, 0, "#0382")
-			Return
-		EndIf
-		SetLog(GetTranslatedFileIni("MOD GUI Control - Switch Account", "btnLocateAcc_Info_09", "Locate CoC Account Success: ") & "(383, " & $aLocateAccConfig[$AccNo - 1] & ")", $COLOR_GREEN)
-
-		ExitLoop
-	WEnd
-	Clickp($aAway, 2, 0, "#0207")
-	IniWriteS($profile, "Switch Account", "AccLocation." & $AccNo, $aLocateAccConfig[$AccNo - 1])
-	$g_bRunState = $wasRunState
-	AndroidShield("LocateAcc") ; Update shield status due to manual $RunState
-
-EndFunc   ;==>btnLocateAcc
-
-Func btnClearAccLocation()
-	For $i = 1 To 8
-		$aLocateAccConfig[$i - 1] = -1
-		$aAccPosY[$i - 1] = -1
-	Next
-	Setlog(GetTranslatedFileIni("MOD GUI Control - Switch Account", "btnClearAccLocation", "Position of all accounts cleared"))
-	SaveConfig_SwitchAcc()
-EndFunc   ;==>btnClearAccLocation
-
-; Forecast Switch Language Control - Added By Eloy
-Func cmbSwLang()
-	Switch GUICtrlRead($cmbSwLang)
-
-		Case "EN"
-			setForecast2()
-		Case "RU"
-			setForecast3()
-		Case "FR"
-			setForecast4()
-		Case "DE"
-			setForecast5()
-		Case "ES"
-			setForecast6()
-		Case "FA"
-			setForecast7()
-		Case "PT"
-			setForecast8()
-		Case "IN"
-			setForecast9()
-	EndSwitch
-EndFunc
+Func chkStopOnBatt()
+	If GUICtrlRead($g_hChkStopOnBatt) = $GUI_CHECKED Then
+		_GUI_Value_STATE("ENABLE", $g_hTxtStopOnBatt & "#" & $g_hLblStopOnBatt)
+	Else
+		_GUI_Value_STATE("DISABLE", $g_hTxtStopOnBatt & "#" & $g_hLblStopOnBatt)
+	EndIf
+EndFunc   ;==>chkStopOnBatt

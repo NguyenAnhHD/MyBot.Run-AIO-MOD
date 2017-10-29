@@ -1,5 +1,5 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Custom troops drop
+; Name ..........: Custom troops drop (#-06)
 ; Description ...: This file contains the Sequence that runs all MBR Bot
 ; Author ........: Kychera 05/2017
 ; Modified ......:
@@ -65,7 +65,7 @@ Func MatchSlotsPerEdge($Num)
 			Return 0
 		Case 2 ;$eGiants
 			If $nbSides = 5 Then
-				Return $iSlotsGiants
+				Return $g_aiSlotsGiants
 			Else
 				Return $g_iSlotsGiants
 			EndIf

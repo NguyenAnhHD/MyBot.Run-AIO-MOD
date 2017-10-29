@@ -1,11 +1,11 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: MultiSearch
+; Name ..........: MultiSearch (#-19)
 ; Description ...: This file is all related to necessary Imgloc searchrs Or OCR
 ; Syntax ........:
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: ProMac (Fev-2017)
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -13,12 +13,9 @@
 ; Example .......: No
 ; ===============================================================================================================================
 
-; EXTRAS
-
 Func getCurrentXP($x_start, $y_start) ; -> Get Current/Total XP, Used in SuperXP.au3
 	Return getOcrAndCapture("coc-ms", $x_start, $y_start, 100, 15, True)
 EndFunc   ;==>getCurrentXP
-
 
 Func multiMatchesPixelOnly($directory, $maxReturnPoints = 0, $fullCocAreas = "ECD", $redLines = "", $statFile = "", $minLevel = 0, $maxLevel = 1000, $x1 = 0, $y1 = 0, $x2 = $g_iGAME_WIDTH, $y2 = $g_iGAME_HEIGHT, $bCaptureNew = True, $xDiff = Default, $yDiff = Default, $forceReturnString = False, $saveSourceImg = False)
 	; Setup arrays, including default return values for $return

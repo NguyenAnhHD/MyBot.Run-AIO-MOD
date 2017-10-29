@@ -1,5 +1,5 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Bot Humanization
+; Name ..........: Bot Humanization (#-15)
 ; Description ...: This file Includes GUI Design
 ; Syntax ........:
 ; Parameters ....: None
@@ -12,6 +12,7 @@
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
+#include-once
 
 Global $g_chkUseBotHumanization = 0, $g_chkUseAltRClick = 0, $g_acmbPriority = 0, $g_challengeMessage = 0, $g_ahumanMessage
 Global $g_Label1 = 0, $g_Label2 = 0, $g_Label3 = 0, $g_Label4 = 0
@@ -26,10 +27,10 @@ Global $g_acmbPause[2] = [0, 0]
 Global $g_ahumanMessage[2] = ["", ""]
 
 Func HumanizationGUI()
-	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - BotHumanization", "Group_01", "Settings"), 5, 25, 442, 360)
+	Local $x = 25, $y = 45
+	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - BotHumanization", "Group_01", "Settings"), $x - 20, $y - 20, $g_iSizeWGrpTab2, $g_iSizeHGrpTab3)
 
-	Local $x = 0, $y = 20
-
+	$y += 25
 	$g_chkUseBotHumanization = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - BotHumanization", "chkUseBotHumanization", "Enable Bot Humanization"), 20, 47, 137, 17)
 	GUICtrlSetOnEvent(-1, "chkUseBotHumanization")
 	GUICtrlSetState(-1, $GUI_UNCHECKED)
@@ -38,9 +39,8 @@ Func HumanizationGUI()
 	GUICtrlSetOnEvent(-1, "chkUseAltRClick")
 	GUICtrlSetState(-1, $GUI_UNCHECKED)
 
-	$x += 10
-	$y += 60
-
+	$x -= 15
+	$y += 15
 	GUICtrlCreateIcon($g_sLibIconPath, $eIcnChat, $x, $y + 5, 32, 32)
 	$g_Label1 = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - BotHumanization", "Label_01", "Read the Clan Chat"), $x + 40, $y + 5, 110, 17)
 	$g_acmbPriority[0] = GUICtrlCreateCombo("", $x + 155, $y, 75, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))

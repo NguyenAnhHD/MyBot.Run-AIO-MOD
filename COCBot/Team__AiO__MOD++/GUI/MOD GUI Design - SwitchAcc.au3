@@ -1,6 +1,6 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: MBR GUI Design Child Bot - Profiles Switch Account
-; Description ...:
+; Name ..........: MOD GUI Design - Switch Accounts (#-12)
+; Description ...: This file creates the "Switch Accounts" tab under the "MOD" tab
 ; Syntax ........:
 ; Parameters ....: None
 ; Return values .: None
@@ -12,142 +12,61 @@
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
+#include-once
 
-; SwitchAcc_Demen
-Global $lblProfileNo[8], $lblProfileName[8], $cmbAccountNo[8], $cmbProfileType[8]
-Global $chkSwitchAcc = 0, $chkTrain = 0, $cmbTotalAccount = 0, $radNormalSwitch = 0, $radSmartSwitch = 0, $chkUseTrainingClose = 0, $radCloseCoC = 0, $radCloseAndroid = 0, $cmbLocateAcc = 0, $g_hCmbTrainTimeToSkip = 0
-Global $g_hChkForceSwitch = 0, $g_txtForceSwitch = 0, $g_lblForceSwitch = 0, $g_hChkForceStayDonate = 0
-Global $g_StartHideSwitchAcc = 0, $g_SecondHideSwitchAcc, $g_EndHideSwitchAcc = 0
+Global $g_hChkSwitchAcc = 0, $g_hCmbTotalAccount = 0, $g_hChkSmartSwitch = 0, $g_hCmbTrainTimeToSkip = 0
+Global $g_ahChkAccount[8], $g_ahCmbProfile[8], $g_ahChkDonate[8]
+Global $g_hTxtSALog = 0
 
-Func CreateBotSwitchAcc()
-	$ProfileList = _GUICtrlComboBox_GetListArray($g_hCmbProfile)
-	$nTotalProfile = _Min(_GUICtrlComboBox_GetCount($g_hCmbProfile), 8)
+Func CreateModSwitchAcc()
 
-	Local $x = 20, $y = 105
+	Local $x = 10, $y = 30
 
-	$g_StartHideSwitchAcc = GUICtrlCreateDummy()
-	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - Switch Account", "Group_01", "Switch Account Mode"), $x - 15, $y - 20, 203, 295)
-	$chkSwitchAcc = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - Switch Account", "SwitchAcc", "Enable Switch Account"), $x - 5, $y, -1, -1)
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "SwitchAcc_Info_01", "Switch to another account & profile when troop training time is >= 1 minutes") & _
-				   @CRLF & GetTranslatedFileIni("MOD GUI Design - Switch Account", "SwitchAcc_Info_02", "This function supports maximum 8 CoC accounts & 8 Bot profiles") & _
-				   @CRLF & GetTranslatedFileIni("MOD GUI Design - Switch Account", "SwitchAcc_Info_03", "Make sure to create sufficient Profiles equal to number of CoC Accounts"))
+		$g_hChkSwitchAcc = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "ChkSwitchAcc", "Enable Switch Account"), $x, $y, -1, -1)
 		GUICtrlSetOnEvent(-1, "chkSwitchAcc")
 
-	$chkTrain = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - Switch Account", "chkTrain", "Pre-train"), $x + 127, $y, -1, -1)
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "chkTrain_Info_01", "Enable it to pre-train donated troops in quick train 3 before switch to next account.") & _
-				   @CRLF & GetTranslatedFileIni("MOD GUI Design - Switch Account", "chkTrain_Info_02", "This function requires use Quick Train, not Custom Train.") & _
-				   @CRLF & GetTranslatedFileIni("MOD GUI Design - Switch Account", "chkTrain_Info_03", "Use army 1 for farming troops, army 2 for spells and army 3 for donated troops."))
+		$g_hCmbTotalAccount = GUICtrlCreateCombo("", $x + 340, $y - 1, 77, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+		GUICtrlSetData(-1, "2 accounts|3 accounts|4 accounts|5 accounts|6 accounts|7 accounts|8 accounts", "2 accounts")
+		GUICtrlSetOnEvent(-1, "cmbTotalAcc")
+		GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "CmbTotalAccount", "Total CoC Account") & ": ", $x + 220, $y + 3, -1, -1)
 
-	GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "Label_01", "Total CoC Acc:"), $x + 10, $y + 29, -1, -1)
-		Local $sTxtTip = GetTranslatedFileIni("MOD GUI Design - Switch Account", "Label_01_Info_01", "Choose number of CoC Accounts pre-logged")
-		_GUICtrlSetTip(-1, $sTxtTip)
+		$y += 25
+		$g_hChkSmartSwitch = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "ChkSmartSwitch", "Smart switch"), $x, $y, -1, -1)
+		GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "ChkSmartSwitch_Info_01", "Switch to account with the shortest remain training time"))
+		GUICtrlSetState(-1, $GUI_UNCHECKED)
 
-	$cmbTotalAccount = GUICtrlCreateCombo("", $x + 95, $y + 25, 60, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-		GUICtrlSetData(-1, "1 Acc." & "|" & "2 Acc." & "|" & "3 Acc." & "|" & "4 Acc." & "|" & "5 Acc." & "|" & "6 Acc." & "|" & "7 Acc." & "|" & "8 Acc.")
-		_GUICtrlSetTip(-1, $sTxtTip)
+		GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "CmbTrainTime", "Skip switch if train time") & " < ", $x + 220, $y + 3, -1, -1)
+		$g_hCmbTrainTimeToSkip = GUICtrlCreateCombo("", $x + 340, $y - 1, 77, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+		GUICtrlSetData(-1, "0 minute|1 minute|2 minutes|3 minutes|4 minutes|5 minutes|6 minutes|7 minutes|8 minutes|9 minutes", "1 minute")
 
-	$radNormalSwitch = GUICtrlCreateRadio(GetTranslatedFileIni("MOD GUI Design - Switch Account", "radNormalSwitch", "Normal switch"), $x + 10, $y + 55, -1, 16)
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "radNormalSwitch_Info_01", "Switching accounts continously"))
-		GUICtrlSetState(-1, $GUI_CHECKED)
-		GUICtrlSetOnEvent(-1, "radNormalSwitch")
+		$y += 32
+		GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Label_01", "Account"), $x - 5, $y, 60, -1, $SS_CENTER)
+		GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Label_02", "Profile name"), $x + 82, $y, 70, -1, $SS_CENTER)
+		GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Label_03", "Donate only"), $x + 170, $y, 60, -1, $SS_CENTER)
+		GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Label_04", "SwitchAcc log"), $x + 280, $y, -1, -1, $SS_CENTER)
 
-	$radSmartSwitch = GUICtrlCreateRadio(GetTranslatedFileIni("MOD GUI Design - Switch Account", "radSmartSwitch", "Smart switch"), $x + 100, $y + 55, -1, 16)
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "radSmartSwitch_Info_01", "Switch to account with the shortest remain training time"))
-		GUICtrlSetOnEvent(-1, "radNormalSwitch")
+		$y += 18
+		GUICtrlCreateGraphic($x, $y, 417, 1, $SS_GRAYRECT)
 
-	$y += 80
-	GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "CmbTrainTimeToSkip", "Skip switch if train time") & " < ", $x + 10, $y, -1, -1)
-	$g_hCmbTrainTimeToSkip = GUICtrlCreateCombo("", $x + 135, $y - 4, 40, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-		GUICtrlSetData(-1, "1 min|2 mins|3 mins|4 mins|5 mins|6 mins|7 mins|8 mins|9 mins", "1 min")
-
-	$y += 30
-	$g_hChkForceSwitch = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - Switch Account", "ChkForceSwitch", "Force switch after:"), $x - 5, $y, -1, -1)
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "ChkForceSwitch_Info_01", "Force the Bot to switch account when searching for too long") & _
-				   @CRLF & GetTranslatedFileIni("MOD GUI Design - Switch Account", "ChkForceSwitch_Info_02", "First switch to all donate accounts") & _
-				   @CRLF & GetTranslatedFileIni("MOD GUI Design - Switch Account", "ChkForceSwitch_Info_03", "Then switch to another active account if its army is ready"))
-		GUICtrlSetOnEvent(-1, "chkForceSwitch")
-	$g_txtForceSwitch = GUICtrlCreateInput("100", $x + 105, $y, 25, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-		GUICtrlSetState(-1, $GUI_DISABLE)
-		GUICtrlSetLimit(-1, 3)
-	$g_lblForceSwitch = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "lblForceSwitch", "searches"), $x + 135, $y+3, -1, -1)
-		GUICtrlSetState(-1, $GUI_DISABLE)
-
-	$y += 30
-	$g_hChkForceStayDonate = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - Switch Account", "ChkForceStayDonate", "Stay on donation while training"), $x - 5, $y, -1, -1)
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "ChkForceStayDonate_Info_01", "Stay at donate account until an active account is getting troops ready in 1 minute") & _
-				   @CRLF & GetTranslatedFileIni("MOD GUI Design - Switch Account", "ChkForceStayDonate_Info_02", "Circulate among the donate accounts if there are more than 1"))
-
-	$y += 30
-	$chkUseTrainingClose = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - Switch Account", "chkUseTrainingClose", "Combo Sleep after Switch Acc."), $x - 5, $y, -1, -1)
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "chkUseTrainingClose_Info_01", "Close CoC combo with Switch Account when there is more than 3 mins remaining on training time of all accounts."))
-
-	GUIStartGroup()
-	$radCloseCoC = GUICtrlCreateRadio(GetTranslatedFileIni("MOD GUI Design - Switch Account", "radCloseCoC", "Close CoC"), $x + 10, $y + 30, -1, 16)
-		GUICtrlSetState(-1, $GUI_CHECKED)
-
-	$radCloseAndroid = GUICtrlCreateRadio(GetTranslatedFileIni("MOD GUI Design - Switch Account", "radCloseAndroid", "Close Android"), $x + 100, $y + 30, -1, 16)
-
-	$y += 60
-	GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "Label_02", "Manually locate account coordinates"), $x, $y, -1, -1)
-
-	$cmbLocateAcc = GUICtrlCreateCombo("", $x + 15, $y + 21, 60, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "cmbLocateAcc", "Select CoC Account to manually locate its y-coordinate"))
-		GUICtrlSetData(-1, "Acc. 1" & "|" & "Acc. 2" & "|" & "Acc. 3" & "|" & "Acc. 4" & "|" & "Acc. 5" & "|" & "Acc. 6" & "|" & "Acc. 7" & "|" & "Acc. 8", "Acc. 1")
-
-	GUICtrlCreateButton(GetTranslatedFileIni("MOD GUI Design - Switch Account", "BtnLocate", "Locate"), $x + 80, $y + 20, 50, 23)
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "BtnLocate_Info_01", "Starting locate your CoC Account"))
-		GUICtrlSetOnEvent(-1, "btnLocateAcc")
-
-	GUICtrlCreateButton(GetTranslatedFileIni("MOD GUI Design - Switch Account", "BtnClearAll", "Clear All"), $x + 135, $y + 20, 50, 23, $BS_MULTILINE)
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "BtnClearAll_Info_01", "Clear location data of all accounts"))
-		GUICtrlSetOnEvent(-1, "btnClearAccLocation")
-
-	GUICtrlCreateGroup("", -99, -99, 1, 1)
-
-	; Profiles & Account matching
-	Local $x = 230, $y = 105
-
-	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - Switch Account", "Group_02", "Profiles"), $x - 20, $y - 20, 225, 295)
-	GUICtrlCreateButton(GetTranslatedFileIni("MOD GUI Design - Switch Account", "BtnUpdateProfiles", "Update Profiles"), $x + 40, $y - 5, -1, 25)
-	GUICtrlSetOnEvent(-1, "g_btnUpdateProfile")
-	GUICtrlCreateButton(GetTranslatedFileIni("MOD GUI Design - Switch Account", "BtnClearProfiles", "Clear Profiles"), $x + 130, $y - 5, -1, 25)
-	GUICtrlSetOnEvent(-1, "btnClearProfile")
-
-	$y += 35
-	GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "Label_03", "No."), $x - 10, $y, 15, -1, $SS_CENTER)
-	GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "Label_04", "Profile Name"), $x + 10, $y, 90, -1, $SS_CENTER)
-	GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "Label_05", "Acc."), $x + 105, $y, 30, -1, $SS_CENTER)
-	GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "Label_06", "Bot Type"), $x + 140, $y, 60, -1, $SS_CENTER)
-
-	$y += 20
-	GUICtrlCreateGraphic($x - 10, $y, 205, 1, $SS_GRAYRECT)
-	GUICtrlCreateGraphic($x + 10, $y - 25, 1, 40, $SS_GRAYRECT)
-
-	$g_SecondHideSwitchAcc = GUICtrlCreateDummy()
-	$y += 10
-	For $i = 0 To 7
-		$lblProfileNo[$i] = GUICtrlCreateLabel($i + 1 & ".", $x - 10, $y + 4 + ($i) * 25, 15, 18, $SS_CENTER)
-		GUICtrlCreateGraphic($x + 10, $y + ($i) * 25, 1, 25, $SS_GRAYRECT)
-
-		$lblProfileName[$i] = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - Switch Account", "lblProfileName", "Village Name"), $x + 10, $y + 4 + ($i) * 25, 90, 18, $SS_CENTER)
-		If $i <= $nTotalProfile - 1 Then GUICtrlSetData(-1, $ProfileList[$i + 1])
-		$cmbAccountNo[$i] = GUICtrlCreateCombo("", $x + 105, $y + ($i) * 25, 30, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "lblProfileName_Info_01", "Select the index of CoC Account to match with this Profile"))
-			GUICtrlSetData(-1, "1" & "|" & "2" & "|" & "3" & "|" & "4" & "|" & "5" & "|" & "6" & "|" & "7" & "|" & "8")
-			GUICtrlSetOnEvent(-1, "cmbMatchProfileAcc" & $i + 1)
-		$cmbProfileType[$i] = GUICtrlCreateCombo("", $x + 140, $y + ($i) * 25, 60, 18, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "cmbProfileType", "Define the botting type of this profile"))
-			GUICtrlSetData(-1, GetTranslatedFileIni("MOD GUI Design - Switch Account", "cmbProfileType_Info_01", "Active") & "|" & GetTranslatedFileIni("MOD GUI Design - Switch Account", "cmbProfileType_Info_02", "Donate") & "|" & GetTranslatedFileIni("MOD GUI Design - Switch Account", "cmbProfileType_Info_03", "Idle"))
-		If $i > $nTotalProfile - 1 Then
-			For $j = $lblProfileNo[$i] To $cmbProfileType[$i]
-				GUICtrlSetState($j, $GUI_HIDE)
-			Next
-		EndIf
-	Next
-	GUICtrlCreateGroup("", -99, -99, 1, 1)
-	GUICtrlCreateGroup("", -99, -99, 1, 1)
-	$g_EndHideSwitchAcc = GUICtrlCreateDummy()
+		$y += 8
+		For $i = 0 To 7
+			$g_ahChkAccount[$i] = GUICtrlCreateCheckbox("Acc " & $i + 1 & ".", $x, $y + ($i) * 25, -1, -1)
+			GUICtrlSetOnEvent(-1, "chkAccount" & $i)
+			$g_ahCmbProfile[$i] = GUICtrlCreateCombo("", $x + 65, $y + ($i) * 25, 110, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			GUICtrlSetData(-1, _GUICtrlComboBox_GetList($g_hCmbProfile))
+			$g_ahChkDonate[$i] = GUICtrlCreateCheckbox("", $x + 190, $y + ($i) * 25 - 3, -1, 25)
+		Next
 
 EndFunc   ;==>CreateBotSwitchAcc
 
+Func CreateModSwitchAccLog()
 
+	Local $x = 0, $y = 0
+
+	Local $activeHWnD1 = WinGetHandle("") ; RichEdit Controls tamper with active window
+
+	$g_hTxtSALog = _GUICtrlRichEdit_Create($g_hGUI_LOG_SA, "", $x, $y, 203, 227, BitOR($ES_MULTILINE, $ES_READONLY, $WS_VSCROLL, $WS_HSCROLL, $ES_UPPERCASE, $ES_AUTOHSCROLL, $ES_AUTOVSCROLL, $ES_NUMBER, 0x200), $WS_EX_STATICEDGE)
+
+	WinActivate($activeHWnD1) ; restore current active window
+
+EndFunc   ;==>CreateBotSwitchAccLog

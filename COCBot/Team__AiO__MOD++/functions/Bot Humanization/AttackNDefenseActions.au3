@@ -1,6 +1,6 @@
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: Bot Humanization
-; Description ...: This file contains all functions of Pico Bot Humanization feature - Attack and Defenses Part
+; Description ...: This file contains all functions of Bot Humanization feature - Attack and Defenses Part
 ; Syntax ........: ---
 ; Parameters ....: ---
 ; Return values .: ---

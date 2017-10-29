@@ -1,14 +1,15 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: FORECAST GUI Design
+; Name ..........: FORECAST GUI Design (#-17)
 ; Description ...: This file contains the Sequence that runs all MBR Bot
 ; Author ........: AwesomeGamer 2015
-; Modified ......: rulesss, Eloy
+; Modified ......: rulesss, Eloy, Team AiO MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
+#include-once
 
 Global $chkForecastBoost = 0, $txtForecastBoost = 0
 Global $chkForecastPause = 0, $txtForecastPause = 0

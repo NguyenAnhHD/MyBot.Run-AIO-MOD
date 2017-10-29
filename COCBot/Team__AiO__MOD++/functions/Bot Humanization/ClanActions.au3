@@ -1,6 +1,6 @@
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: Bot Humanization
-; Description ...: This file contains all functions of Pico Bot Humanization feature - Clan Part
+; Description ...: This file contains all functions of Bot Humanization feature - Clan Part
 ; Syntax ........: ---
 ; Parameters ....: ---
 ; Return values .: ---

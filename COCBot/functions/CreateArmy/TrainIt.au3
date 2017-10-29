@@ -17,7 +17,7 @@
 #include-once
 
 Func TrainIt($iIndex, $howMuch = 1, $iSleep = 400)
-	If $g_iDebugSetlogTrain = 1 Then SetLog("Func TrainIt $iIndex=" & $iIndex & " $howMuch=" & $howMuch & " $iSleep=" & $iSleep, $COLOR_DEBUG)
+	If $g_bDebugSetlogTrain Then SetLog("Func TrainIt $iIndex=" & $iIndex & " $howMuch=" & $howMuch & " $iSleep=" & $iSleep, $COLOR_DEBUG)
 	Local $bDark = ($iIndex >= $eMini And $iIndex <= $eBowl)
 
 	Local $pos = GetTrainPos($iIndex)
@@ -28,10 +28,10 @@ Func TrainIt($iIndex, $howMuch = 1, $iSleep = 400)
 			If IsArray($RNDName) Then
 				TrainClickP($pos, $howMuch, $g_iTrainClickDelay, $FullName, "#0266", $RNDName)
 				If _Sleep($iSleep) Then Return False
-				If $g_bOutOfElixir = True Then
+				If $g_bOutOfElixir Then
 					Setlog("Not enough " & ($bDark ? "Dark " : "") & "Elixir to train position " & GetTroopName($iIndex) & " troops!", $COLOR_ERROR)
 					Setlog("Switching to Halt Attack, Stay Online Mode...", $COLOR_ERROR)
-					If Not ($g_bFullArmy = True) Then $g_bRestart = True ;If the army camp is full, If yes then use it to refill storages
+					If Not $g_bFullArmy Then $g_bRestart = True ;If the army camp is full, If yes then use it to refill storages
 					Return ; We are out of Elixir stop training.
 				EndIf
 				Return True
@@ -54,7 +54,7 @@ EndFunc   ;==>TrainIt
 ; Assigning the correct positions slot x and y on Train window , checking if available to train or not present
 
 Func GetTrainPos(Const $iIndex)
-	If $g_iDebugSetlogTrain = 1 Then SetLog("Func GetTrainPos $iIndex=" & $iIndex, $COLOR_DEBUG)
+	If $g_bDebugSetlogTrain Then SetLog("Func GetTrainPos $iIndex=" & $iIndex, $COLOR_DEBUG)
 
 	; $eArmyCount is Complete list of all deployable/trainable objects
 	Static $a_AllPositions[$eArmyCount][4] = [ _
@@ -98,14 +98,14 @@ Func GetTrainPos(Const $iIndex)
 			Local $sDirectory = @ScriptDir & "\imgxml\Train\Train_Train\"
 			Local $sFilter = String($g_asTroopShortNames[$iIndex]) & "*"
 			Local $asImageToUse = _FileListToArray($sDirectory, $sFilter, $FLTA_FILES, True)
-			If $g_iDebugSetlogTrain Then setlog("$asImageToUse Troops: " & $asImageToUse[1])
+			If $g_bDebugSetlogTrain Then SetLog("$asImageToUse Troops: " & $asImageToUse[1])
 			Local $temp = GetVariable($asImageToUse[1], $iIndex)
 			For $i = 0 To 3
 				$a_AllPositions[$iIndex][$i] = $temp[$i]
 			Next
 			Return $temp
 		Else
-			If $g_iDebugSetlogTrain Then Setlog("Index: " & String($g_asTroopShortNames[$iIndex]) & " was set before.")
+			If $g_bDebugSetlogTrain Then SetLog("Index: " & String($g_asTroopShortNames[$iIndex]) & " was set before.")
 			Local $temp[4] = [$a_AllPositions[$iIndex][0], $a_AllPositions[$iIndex][1], $a_AllPositions[$iIndex][2], $a_AllPositions[$iIndex][3]]
 			Return $temp
 		EndIf
@@ -116,14 +116,14 @@ Func GetTrainPos(Const $iIndex)
 			Local $sDirectory = @ScriptDir & "\imgxml\Train\Spell_Train\"
 			Local $sFilter = String($g_asSpellShortNames[$iIndex - $eLSpell]) & "*"
 			Local $asImageToUse = _FileListToArray($sDirectory, $sFilter, $FLTA_FILES, True)
-			If $g_iDebugSetlogTrain Then setlog("$asImageToUse Spell: " & $asImageToUse[1])
+			If $g_bDebugSetlogTrain Then SetLog("$asImageToUse Spell: " & $asImageToUse[1])
 			Local $temp = GetVariable($asImageToUse[1], $iIndex)
 			For $i = 0 To 3
 				$a_AllPositions[$iIndex][$i] = $temp[$i]
 			Next
 			Return $temp
 		Else
-			If $g_iDebugSetlogTrain Then Setlog("Index: " & String($g_asSpellShortNames[$iIndex - $eLSpell]) & " was set before.")
+			If $g_bDebugSetlogTrain Then SetLog("Index: " & String($g_asSpellShortNames[$iIndex - $eLSpell]) & " was set before.")
 			Local $temp[4] = [$a_AllPositions[$iIndex][0], $a_AllPositions[$iIndex][1], $a_AllPositions[$iIndex][2], $a_AllPositions[$iIndex][3]]
 			Return $temp
 		EndIf
@@ -138,11 +138,11 @@ EndFunc   ;==>GetTrainPos
 ; ***************************************************************************************
 
 Func GetFullName(Const $iIndex, Const $pos)
-	If $g_iDebugSetlogTrain = 1 Then SetLog("Func GetFullName $iIndex=" & $iIndex, $COLOR_DEBUG)
+	If $g_bDebugSetlogTrain Then SetLog("Func GetFullName $iIndex=" & $iIndex, $COLOR_DEBUG)
 
 	If $iIndex >= $eBarb And $iIndex <= $eBowl Then
 		Local $text = ($iIndex >= $eMini ? "Dark" : "Normal")
-		If $g_iDebugSetlogTrain = 1 Then Setlog("Troop Name: " & $g_asTroopNames[$iIndex])
+		If $g_bDebugSetlogTrain Then SetLog("Troop Name: " & $g_asTroopNames[$iIndex])
 		Return GetFullNameSlot($pos, $text)
 	EndIf
 
@@ -160,7 +160,7 @@ EndFunc   ;==>GetFullName
 ; ***************************************************************************************
 
 Func GetRNDName(Const $iIndex, Const $pos)
-	If $g_iDebugSetlogTrain = 1 Then SetLog("Func GetRNDName $iIndex=" & $iIndex, $COLOR_DEBUG)
+	If $g_bDebugSetlogTrain Then SetLog("Func GetRNDName $iIndex=" & $iIndex, $COLOR_DEBUG)
 	Local $aReturn[4]
 
 	If $iIndex <> -1 Then
@@ -189,7 +189,7 @@ Func GetVariable(Const $ImageToUse, Const $iIndex)
 
 	If @error Then _logErrorDLLCall($g_sLibImgLocPath, @error)
 	If IsArray($res) Then
-		If $g_iDebugSetlog = 1 Then SetLog("DLL Call succeeded " & $res[0], $COLOR_ERROR)
+		If $g_bDebugSetlog Then SetLog("DLL Call succeeded " & $res[0], $COLOR_ERROR)
 		If $res[0] = "0" Then
 			; failed to find a train icon on the field
 			SetLog("No " & GetTroopName($iIndex) & " Icon found!", $COLOR_ERROR)
@@ -198,7 +198,7 @@ Func GetVariable(Const $ImageToUse, Const $iIndex)
 		ElseIf $res[0] = "-2" Then
 			SetLog("Invalid Resolution", $COLOR_ERROR)
 		Else
-			If $g_iDebugSetlogTrain Then Setlog("String: " & $res[0])
+			If $g_bDebugSetlogTrain Then Setlog("String: " & $res[0])
 			Local $expRet = StringSplit($res[0], "|", $STR_NOCOUNT)
 			If UBound($expRet) > 1 Then
 				Local $posPoint = StringSplit($expRet[1], ",", $STR_NOCOUNT)
@@ -209,9 +209,9 @@ Func GetVariable(Const $ImageToUse, Const $iIndex)
 					Local $Tolerance = 40
 					Local $FinalVariable[4] = [$ButtonX, $ButtonY, $Colorcheck, $Tolerance]
 					SetLog(" - " & GetTroopName($iIndex) & " Icon found!", $COLOR_SUCCESS)
-					If $g_iDebugSetlogTrain Then SetLog("Found: [" & $ButtonX & "," & $ButtonY & "]", $COLOR_SUCCESS)
-					If $g_iDebugSetlogTrain Then SetLog("Color check: " & $Colorcheck, $COLOR_SUCCESS)
-					If $g_iDebugSetlogTrain Then SetLog("$Tolerance: " & $Tolerance, $COLOR_SUCCESS)
+					If $g_bDebugSetlogTrain Then SetLog("Found: [" & $ButtonX & "," & $ButtonY & "]", $COLOR_SUCCESS)
+					If $g_bDebugSetlogTrain Then SetLog("Color check: " & $Colorcheck, $COLOR_SUCCESS)
+					If $g_bDebugSetlogTrain Then SetLog("$Tolerance: " & $Tolerance, $COLOR_SUCCESS)
 					Return $FinalVariable
 				EndIf
 			EndIf
@@ -230,9 +230,9 @@ EndFunc   ;==>GetVariable
 Func GetFullNameSlot(Const $iTrainPos, Const $sTroopType)
 
 	Local $SlotH, $SlotV
-	If $g_iDebugSetlogTrain Then Setlog("$iTrainPos[0]: " & $iTrainPos[0])
-	If $g_iDebugSetlogTrain Then Setlog("$iTrainPos[1]: " & $iTrainPos[1])
-	If $g_iDebugSetlogTrain Then Setlog("$sTroopType" & $sTroopType)
+	If $g_bDebugSetlogTrain Then Setlog("$iTrainPos[0]: " & $iTrainPos[0])
+	If $g_bDebugSetlogTrain Then Setlog("$iTrainPos[1]: " & $iTrainPos[1])
+	If $g_bDebugSetlogTrain Then Setlog("$sTroopType" & $sTroopType)
 
 	If $sTroopType = "Spell" Then
 		If UBound($iTrainPos) < 2 Then Setlog("Issue on $iTrainPos!!!")
@@ -261,8 +261,8 @@ Func GetFullNameSlot(Const $iTrainPos, Const $sTroopType)
 				$SlotV = 488
 		EndSwitch
 		Local $ToReturn[4] = [$SlotH, $SlotV, 0x9d9d9d, 20] ; Gray [i] icon
-		If $g_iDebugSetlogTrain Then SetLog(" » GetFullNameSlot Spell Icon found!", $COLOR_SUCCESS)
-		If $g_iDebugSetlogTrain Then SetLog("Full Train Found: [" & $SlotH & "," & $SlotV & "]", $COLOR_SUCCESS)
+		If $g_bDebugSetlogTrain Then SetLog(" » GetFullNameSlot Spell Icon found!", $COLOR_SUCCESS)
+		If $g_bDebugSetlogTrain Then SetLog("Full Train Found: [" & $SlotH & "," & $SlotV & "]", $COLOR_SUCCESS)
 		Return $ToReturn
 	EndIf
 
@@ -295,8 +295,8 @@ Func GetFullNameSlot(Const $iTrainPos, Const $sTroopType)
 				$SlotV = 488
 		EndSwitch
 		Local $ToReturn[4] = [$SlotH, $SlotV, 0x9f9f9f, 20] ; Gray [i] icon
-		If $g_iDebugSetlogTrain Then SetLog(" » GetFullNameSlot Normal Icon found!", $COLOR_SUCCESS)
-		If $g_iDebugSetlogTrain Then SetLog("Full Train Found: [" & $SlotH & "," & $SlotV & "]", $COLOR_SUCCESS)
+		If $g_bDebugSetlogTrain Then SetLog(" » GetFullNameSlot Normal Icon found!", $COLOR_SUCCESS)
+		If $g_bDebugSetlogTrain Then SetLog("Full Train Found: [" & $SlotH & "," & $SlotV & "]", $COLOR_SUCCESS)
 		Return $ToReturn
 	EndIf
 
@@ -323,8 +323,8 @@ Func GetFullNameSlot(Const $iTrainPos, Const $sTroopType)
 				$SlotV = 498
 		EndSwitch
 		Local $ToReturn[4] = [$SlotH, $SlotV, 0x9f9f9f, 20] ; Gray [i] icon
-		If $g_iDebugSetlogTrain Then SetLog(" » GetFullNameSlot Dark Icon found!", $COLOR_SUCCESS)
-		If $g_iDebugSetlogTrain Then SetLog("Full Train Found: [" & $SlotH & "," & $SlotV & "]", $COLOR_SUCCESS)
+		If $g_bDebugSetlogTrain Then SetLog(" » GetFullNameSlot Dark Icon found!", $COLOR_SUCCESS)
+		If $g_bDebugSetlogTrain Then SetLog("Full Train Found: [" & $SlotH & "," & $SlotV & "]", $COLOR_SUCCESS)
 		Return $ToReturn
 	EndIf
 

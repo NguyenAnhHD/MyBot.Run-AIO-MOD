@@ -23,10 +23,19 @@ Global $g_hLblResultElixirNow = 0, $g_hLblResultElixirHourNow = 0, $g_hPicResult
 Global $g_hLblResultDENow = 0, $g_hLblResultDEHourNow = 0, $g_hPicResultDENow = 0, $g_hPicResultDETemp = 0
 Global $g_hLblResultTrophyNow = 0, $g_hPicResultTrophyNow = 0, $g_hLblResultRuntimeNow = 0, $g_hPicResultRuntimeNow = 0, $g_hLblResultBuilderNow = 0, $g_hPicResultBuilderNow = 0
 Global $g_hLblResultAttackedHourNow = 0, $g_hPicResultAttackedHourNow = 0, $g_hLblResultGemNow = 0, $g_hPicResultGemNow = 0, $g_hLblResultSkippedHourNow = 0, $g_hPicResultSkippedHourNow = 0
-Global $g_hLblVillageReportTemp = 0, $g_hBtnTestVillage = 0
-Global $g_hBtnEnableGUI = 0, $g_hBtnDisableGUI = 0	; Adding button to enable/disable GUI while botting (as requested by YScorpion) - Demen
-Global $g_ahLblHero[3], $g_hLblLab, $g_hLblLabTime	; Hero & Lab Status - Demen
-Global $g_hModSupportConfig = 0
+Global $g_hLblVillageReportTemp = 0
+
+; Enable/Disable GUI while botting - Team AiO MOD++ (#-01)
+Global $g_hBtnEnableGUI = 0, $g_hBtnDisableGUI = 0
+
+; Support MOD Button - Team AiO MOD++ (#-02)
+Global $g_hBtnSupportMOD = 0
+
+; Hero and Lab Status - Team AiO MOD++ (#-14)
+Global $g_ahLblHero[3], $g_hLblLab, $g_hLblLabTime
+
+; Stop on Low battery - Team AiO MOD++ (#-30)
+Global $g_hLblBatteryAC = 0, $g_hLblBatteryStatus = 0
 
 Func CreateBottomPanel()
    Local $sTxtTip = ""
@@ -76,13 +85,10 @@ Func CreateBottomPanel()
 	   $g_hChkBackgroundMode = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode", "Background Mode"), $x + 1, $y + 72, 90, 24)
 		   GUICtrlSetFont(-1, 7)
 		   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode_Info_01", "Check this to ENABLE the Background Mode of the Bot.") & @CRLF & _
-						      GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode_Info_02", "With this you can also hide the Android Emulator window out of sight."))
+							  GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode_Info_02", "With this you can also hide the Android Emulator window out of sight."))
+		   If $g_bGuiRemote Then GUICtrlSetState(-1, $GUI_DISABLE)
 		   GUICtrlSetOnEvent(-1, "chkBackground")
 		   GUICtrlSetState(-1, (($g_bAndroidAdbScreencap = True) ? ($GUI_CHECKED) : ($GUI_UNCHECKED)))
-	   $g_hLblDonate = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate", "Support the development"), $x + 224, $y + 85, 220, 20, $SS_RIGHT) ; was y+80 x height 24. Sorry I have to move this down a little bit - Demen		   GUICtrlSetCursor(-1, 0) ; https://www.autoitscript.com/autoit3/docs/functions/MouseGetCursor.htm
-		   GUICtrlSetCursor(-1, 0) ; https://www.autoitscript.com/autoit3/docs/functions/MouseGetCursor.htm
-		   GUICtrlSetFont(-1, 8.5, $FW_BOLD) ;, $GUI_FONTITALIC + $GUI_FONTUNDER)
-		   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate_Info_01", "Paypal Donate?"))
 	   $g_hBtnAttackNowDB = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnAttackNowDB", "DB Attack!"), $x + 190, $y - 4, 60, -1)
 		   GUICtrlSetState(-1, $GUI_HIDE)
 	   $g_hBtnAttackNowLB = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnAttackNowLB", "LB Attack!"), $x + 190, $y + 23, 60, -1)
@@ -90,26 +96,36 @@ Func CreateBottomPanel()
 	   $g_hBtnAttackNowTS = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnAttackNowTS", "TH Snipe!"), $x + 190, $y + 50, 60, -1)
 		   GUICtrlSetState(-1, $GUI_HIDE)
 
-	   $g_hModSupportConfig = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "ModSupport", "Support"), $x + 100, $y + 70, 80, -1)
-		   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "ModSupport_Info_01", "Support Mod Mybot All Versions."))
+	   ; Stop on Low battery - Team AiO MOD++ (#-27)
+	   $g_hLblBatteryAC = GUICtrlCreateLabel("", $x + 102, $y + 75, 50, 15)
+	   $g_hLblBatteryStatus = GUICtrlCreateLabel("", $x + 154, $y + 75, 30, 15)
+
+	   $g_hLblDonate = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate", "Support the development"), $x + 224, $y + 85, 220, 24, $SS_RIGHT)
+		   GUICtrlSetCursor(-1, 0) ; https://www.autoitscript.com/autoit3/docs/functions/MouseGetCursor.htm
+		   GUICtrlSetFont(-1, 8.5, $FW_BOLD) ;, $GUI_FONTITALIC + $GUI_FONTUNDER)
+		   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate_Info_01", "Paypal Donate?"))
+
+	   ; Support MOD Button - Team AiO MOD++ (#-02)
+	   $g_hBtnSupportMOD = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnSupportMOD", "Support"), $x + 100, $y + 70, 80, -1)
+		   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnSupportMOD_Info_01", "Support Mod Mybot All Versions."))
 		   GUICtrlSetBkColor(-1, 0x00FF2F)
 
-		; Adding button to enable/disable GUI while botting (as requested by YScorpion) - Demen
-		$g_hBtnEnableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI", "Enable GUI"), $x + 100, $y + 72, 80, 22)
-			_GUICtrlSetTip(-1, 	GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI_Info_01", "Enable GUI control while botting") & @CRLF & _
-								GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI_Info_02", "Warning: USE THIS WITH CAUTION!") & @CRLF & _
-								GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI_Info_03", "This function may create errors that require bot/PC restart") & @CRLF & _
-								GetTranslatedFileIni("MBR GUI Design Bottom", "EnableGUI_Info_04", "Better to stop the Bot completely if you need to change the setting"))
-			GUICtrlSetOnEvent(-1, "btnEnableGUI")
-			GUICtrlSetState(-1, $GUI_HIDE)
-		$g_hBtnDisableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "DisableGUI", "Disable GUI"), $x + 100, $y + 72, 80, 22)
-			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "DisableGUI_Info_01", "Enable GUI control while botting"))
-			GUICtrlSetOnEvent(-1, "btnDisableGUI")
-			GUICtrlSetState(-1, $GUI_HIDE)
+	   ; Enable/Disable GUI while botting - Team AiO MOD++ (#-01)
+	   $g_hBtnEnableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI", "Enable GUI"), $x + 100, $y + 72, 80, 22)
+		   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_01", "Enable GUI control while botting") & @CRLF & _
+							  GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_02", "Warning: USE THIS WITH CAUTION!") & @CRLF & _
+							  GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_03", "This function may create errors that require bot/PC restart") & @CRLF & _
+							  GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_04", "Better to stop the Bot completely if you need to change the setting"))
+		   GUICtrlSetOnEvent(-1, "btnEnableGUI")
+		   GUICtrlSetState(-1, $GUI_HIDE)
+	   $g_hBtnDisableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnDisableGUI", "Disable GUI"), $x + 100, $y + 72, 80, 22)
+		   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnDisableGUI_Info_01", "Disable GUI control to continue botting"))
+		   GUICtrlSetOnEvent(-1, "btnDisableGUI")
+		   GUICtrlSetState(-1, $GUI_HIDE)
 
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-   If $g_bAndroidAdbScreencap = True Then chkBackground() ; update background mode GUI
+   If $g_bAndroidAdbScreencap Then chkBackground() ; update background mode GUI
 
    $g_hPicTwoArrowShield = _GUICtrlCreateIcon($g_sLibIconPath, $eIcn2Arrow, $x + 190, $y + 10, 48, 48)
 
@@ -123,9 +139,9 @@ Func CreateBottomPanel()
 	  _GUICtrlSetTip(-1, $sTxtTip)
 
    ;~ Village
-   Local $x = 295, $y = $y_bottom + 20	; y was +20 - Demen
-   $g_hGrpVillage = GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Bottom", "GrpVillage", "Village"), $x - 20, $y - 20, 180, 95) ; y height was 85
-	   $y = $y_bottom + 17	; Move up a little bit - Demen
+   Local $x = 295, $y = $y_bottom + 20	; y was +20 - Team AiO MOD++ (2017)
+   $g_hGrpVillage = GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Bottom", "GrpVillage", "Village") & ": " & $g_sProfileCurrentName, $x - 20, $y - 20, 180, 95) ; y height was 85
+	   $y = $y_bottom + 17	; Move up a little bit - Team AiO MOD++ (2017)
 	   $g_hLblResultGoldNow = GUICtrlCreateLabel("", $x - 5, $y + 2, 60, 15, $SS_RIGHT)
 	   $g_hLblResultGoldHourNow = GUICtrlCreateLabel("", $x, $y + 2, 60, 15, $SS_RIGHT)
 		   GUICtrlSetState(-1, $GUI_HIDE)
@@ -145,7 +161,7 @@ Func CreateBottomPanel()
 		   GUICtrlSetState(-1, $GUI_HIDE)
 	   $g_hPicResultDETemp = _GUICtrlCreateIcon ($g_sLibIconPath, $eIcnDark, $x - 5, $y + 40, 16, 16)
 
-	   ;Hero & Lab status - Demen
+	   ; Hero and Lab Status - Team AiO MOD++ (#-14)
 	   $g_ahLblHero[0] = GUICtrlCreateLabel("K", $x - 5, $y + 60, 12, 14, $SS_CENTER)
 	   GUICtrlSetFont(-1, 8.5)
 	   GUICtrlSetColor(-1, $COLOR_MEDGRAY)
@@ -187,10 +203,6 @@ Func CreateBottomPanel()
 
 	   $x = 285
 	   $g_hLblVillageReportTemp = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Bottom", "LblVillageReportTemp_01", "Village Report") & @CRLF & GetTranslatedFileIni("MBR GUI Design Bottom", "LblVillageReportTemp_02", "will appear here") & @CRLF & GetTranslatedFileIni("MBR GUI Design Bottom", "LblVillageReportTemp_03", "on first run."), $x + 27, $y + 5, 100, 45, BITOR($SS_CENTER, $BS_MULTILINE))
-
-	   $g_hBtnTestVillage = GUICtrlCreateButton("TEST BUTTON", $x + 25 , $y + 54, 100, 18)
-		   GUICtrlSetOnEvent(-1, "ButtonBoost")
-		   GUICtrlSetState(-1, $GUI_HIDE)
 
    GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc

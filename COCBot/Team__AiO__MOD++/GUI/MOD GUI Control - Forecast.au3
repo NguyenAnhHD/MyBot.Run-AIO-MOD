@@ -1,5 +1,5 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Forecast
+; Name ..........: MOD GUI Control Forecast (#-17)
 ; Description ...: This file Includes GUI Design
 ; Syntax ........:
 ; Parameters ....: None
@@ -12,10 +12,8 @@
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
+#include-once
 #include <IE.au3>
-;~ -------------------------------------------------------------
-; Forecast Tab
-;~ -------------------------------------------------------------
 
 Func chkForecastBoost()
 	If GUICtrlRead($chkForecastBoost) = $GUI_CHECKED Then
@@ -73,7 +71,7 @@ Func chkForecastHopingSwitchMin()
 	EndIf
 EndFunc
 
-;Added Multi Switch Language by rulesss and Kychera
+; Added Multi Switch Language
 Func setForecast()
 	_IENavigate($oIE, "about:blank")
 	_IEBodyWriteHTML($oIE, "<div style='width:440px;height:345px;padding:0;overflow:hidden;position: absolute;top:5x;left:-25px;z-index:0;'><center><img src='" & @ScriptDir & "\COCBot\Forecast\loading.gif'></center></div>")
@@ -360,4 +358,27 @@ If $ichkForecastHopingSwitchMax	= 1 Or $ichkForecastHopingSwitchMin = 1 And $g_b
 		EndIf
 	EndIf
 EndIf
+EndFunc
+
+; Forecast Switch Language Control
+Func cmbSwLang()
+	Switch GUICtrlRead($cmbSwLang)
+
+		Case "EN"
+			setForecast2()
+		Case "RU"
+			setForecast3()
+		Case "FR"
+			setForecast4()
+		Case "DE"
+			setForecast5()
+		Case "ES"
+			setForecast6()
+		Case "FA"
+			setForecast7()
+		Case "PT"
+			setForecast8()
+		Case "IN"
+			setForecast9()
+	EndSwitch
 EndFunc

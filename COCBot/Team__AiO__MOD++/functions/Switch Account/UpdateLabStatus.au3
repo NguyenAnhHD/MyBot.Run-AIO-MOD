@@ -1,5 +1,5 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: UpdateLabStatus
+; Name ..........: UpdateLabStatus (#-12)
 ; Description ...: Laboratory status and researching time
 ; Syntax ........:
 ; Parameters ....: None
@@ -19,23 +19,24 @@ Func LabStatusAndTime()
 	Local $bResearchButtonFound, $aResearchButtonCord[2]
 	Local $day = 0, $hour = 0, $min = 0
 	Static $bNeedLocateLab[8] = [True, True, True, True, True, True, True, True]
-	Local $Profile = 0
+	Local $Account = 0
 
 
 	; locate lab
 	If $g_aiLaboratoryPos[0] <= 0 Or $g_aiLaboratoryPos[1] <= 0 Then
-		If $ichkSwitchAcc = 1 Then $Profile = $nCurProfile - 1
-		If $bNeedLocateLab[$Profile] Then
+		If $g_bChkSwitchAcc Then $Account = $g_iCurAccount	; SwitchAcc Demen_SA_#9001
+		If $bNeedLocateLab[$Account] Then
 			SetLog("Laboratory has not been located", $COLOR_ERROR)
 			LocateLab()
 			If $g_aiLaboratoryPos[0] = 0 Or $g_aiLaboratoryPos[1] = 0 Then
 				SetLog("Problem locating Laboratory", $COLOR_ERROR)
 			EndIf
-			$bNeedLocateLab[$Profile] = False ; give only one chance to locate lab. If ignore, then skip it for good.
+			$bNeedLocateLab[$Account] = False ; give only one chance to locate lab. If ignore, then skip it for good.
 		Else
 			Return
 		EndIf
 	EndIf
+	If _Sleep($DELAYLABORATORY1) Then Return
 
 	BuildingClickP($g_aiLaboratoryPos, "#0197")
 	If _Sleep($DELAYLABORATORY1) Then Return
@@ -96,13 +97,13 @@ Func LabStatusAndTime()
 			$g_aLabTime[2] = $min
 			$g_aLabTime[3] = $day * 24 * 60 + $hour * 60 + $min
 
-			If $ichkSwitchAcc = 1 Then
-				$g_aLabTimeAcc[$nCurProfile - 1] = $g_aLabTime[3]	; For SwitchAcc Mode
-				$g_aLabTimerStart[$nCurProfile - 1] = TimerInit() 	; start counting lab time of current account
+			If $g_bChkSwitchAcc Then
+				$g_aLabTimeAcc[$g_iCurAccount] = $g_aLabTime[3]	; For SwitchAcc Mode
+				$g_aLabTimerStart[$g_iCurAccount] = TimerInit() 	; start counting lab time of current account
 			EndIf
 
 		Else
-			If $g_iDebugSetlog = 1 Then Setlog("Invalid getRemainTLaboratory OCR", $COLOR_DEBUG)
+			If $g_bDebugSetlog Then Setlog("Invalid getRemainTLaboratory OCR", $COLOR_DEBUG)
 			ClickP($aAway, 2, $DELAYLABORATORY4, "#0199")
 			Return False
 		EndIf
@@ -127,11 +128,11 @@ EndFunc   ;==>LabStatusAndTime
 Func UpdateLabStatus()
 
 	Local $sLabTime = ""
-	Local $hLab = 0, $hLabTime = 0
+	Local $hLab = 0, $hLabTime = 0	; SwitchAcc Demen_SA_#9001
 
-	If $ichkSwitchAcc = 1 Then
-		$hLab = $g_ahLblLab[$nCurProfile - 1]
-		$hLabTime = $g_ahLblLabTime[$nCurProfile - 1]
+	If $g_bChkSwitchAcc Then
+		$hLab = $g_ahLblLab[$g_iCurAccount]
+		$hLabTime = $g_ahLblLabTime[$g_iCurAccount]
 	EndIf
 
 	If LabStatusAndTime() Then
@@ -139,7 +140,7 @@ Func UpdateLabStatus()
 			$sLabTime = "Ready"
 			GUICtrlSetColor($g_hLblLab, $COLOR_GREEN)
 			GUICtrlSetColor($g_hLblLabTime, $COLOR_GREEN)
-			GUICtrlSetColor($hLab, $COLOR_GREEN) 		; profile stats tab - SwitchAcc Mode
+			GUICtrlSetColor($hLab, $COLOR_GREEN) 		; profile stats tab - SwitchAcc Demen_SA_#9001
 			GUICtrlSetColor($hLabTime, $COLOR_GREEN) 	; profile stats tab
 		ElseIf $g_aLabTime[3] > 0 Then
 			GUICtrlSetColor($g_hLblLab, $COLOR_BLACK)

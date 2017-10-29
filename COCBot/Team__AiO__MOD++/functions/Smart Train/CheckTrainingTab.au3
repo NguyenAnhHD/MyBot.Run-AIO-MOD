@@ -1,8 +1,8 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: CheckTrainingTab
+; Name ..........: CheckTrainingTab (#-13)
 ; Description ...: Check Troops training tab and Spells brewing tab, return suggested training methods for army camp & queue
 ; Author ........: DEMEN
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -30,7 +30,7 @@ Func CheckTrainingTab($sText = "troop")
 
 	Local $ArmyCamp = GetOCRCurrent(43, 160)
 
-	Setlog(" »» Checking " & $sText & " tab: " & $ArmyCamp[0] & "/" & $ArmyCamp[1] * 2)
+	Setlog("»» Checking " & $sText & " tab: " & $ArmyCamp[0] & "/" & $ArmyCamp[1] * 2)
 
 	Switch $ArmyCamp[0]
 		Case 0 ;	0/240 troop	| 0/11 spell
@@ -80,7 +80,7 @@ Func CheckTrainingTab($sText = "troop")
 			Local $bSkipTraining = $g_bFullArmy
 			If $sText = "spell" Then $bSkipTraining = $g_bFullArmySpells Or $g_bForceBrewSpells
 			If Not $bSkipTraining And _ColorCheck(_GetPixelColor(824, 243, True), Hex(0x949522, 6), 20) Then ; the green check symbol [bottom right] at slot 0 troop
-				If $ichkSwitchAcc = 1 And $aProfileType[$nCurProfile - 1] = $eDonate Then
+				If $g_bChkSwitchAcc And $g_abDonateOnly[$g_iCurAccount] Then ; SwitchAcc - Demen_SA_#9001
 					SetLog("  » A big guy is blocking our camp, but you are in donate account, so just leave it")
 				Else
 					SetLog("  » A big guy is blocking in queue, try delete queued troops")
@@ -153,7 +153,7 @@ Func ForceBrewSpells($iRemainQueue)
 				EndIf
 				If $iBrewedCount >= $g_aiArmyCompSpells[$i] Then ExitLoop
 			WEnd
-			If $iBrewedCount > 0 Then Setlog("  » Brewed " & $g_asSpellNames[$i] & " x" & $iBrewedCount)
+			If $iBrewedCount > 0 Then Setlog("    Brewed " & $g_asSpellNames[$i] & " x" & $iBrewedCount, $COLOR_GREEN)
 		EndIf
 	Next
 EndFunc   ;==>ForceBrewSpells

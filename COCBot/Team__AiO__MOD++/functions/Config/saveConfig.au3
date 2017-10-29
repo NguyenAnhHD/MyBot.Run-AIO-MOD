@@ -15,66 +15,50 @@
 
 Func SaveConfig_MOD()
 	; <><><> Team AiO MOD++ (2017) <><><>
-	ApplyConfig_MOD("Save")
+	ApplyConfig_MOD(GetApplyConfigSaveAction())
 
-	; Unit/Wave Factor (rulesss & kychera) - Added by Eloy
-	_Ini_Add("SetSleep", "EnableUnitFactor", $iChkUnitFactor ? 1 : 0)
-	_Ini_Add("SetSleep", "EnableWaveFactor", $iChkWaveFactor ? 1 : 0)
+	; Unit/Wave Factor - Team AiO MOD++ (#-05)
+	_Ini_Add("SetSleep", "EnableGiantSlot", $g_iChkGiantSlot)
+	_Ini_Add("SetSleep", "CmbGiantSlot", _GUICtrlComboBox_GetCurSel($g_hCmbGiantSlot))
 
-	_Ini_Add("SetSleep", "UnitFactor", GUICtrlRead($TxtUnitFactor))
-	_Ini_Add("SetSleep", "WaveFactor", GUICtrlRead($TxtWaveFactor))
+	_Ini_Add("SetSleep", "EnableUnitFactor", $g_iChkUnitFactor)
+	_Ini_Add("SetSleep", "UnitFactor", GUICtrlRead($g_hTxtUnitFactor))
 
-	_Ini_Add("SetSleep", "EnableGiantSlot", $iChkGiantSlot ? 1 : 0)
-	_Ini_Add("SetSleep", "CmbGiantSlot", _GUICtrlComboBox_GetCurSel($CmbGiantSlot))
+	_Ini_Add("SetSleep", "EnableWaveFactor", $g_iChkWaveFactor)
+	_Ini_Add("SetSleep", "WaveFactor", GUICtrlRead($g_hTxtWaveFactor))
 
-	; Custom Drop Order
+	; Drop Order Troops - Team AiO MOD++ (#-06)
 	_Ini_Add("DropOrder", "chkTroopDropOrder", $g_bCustomTrainDropOrderEnable)
 	For $p = 0 To UBound($icmbDropTroops) - 1
 		_Ini_Add("DropOrder", "cmbDropTroops[" & $p & "]", _GUICtrlComboBox_GetCurSel($cmbDropTroops[$p]))
 	Next
 
-	; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
-	_Ini_Add("general", "AutoHide", $ichkAutoHide ? 1 : 0)
-	_Ini_Add("general", "AutoHideDelay", $ichkAutoHideDelay)
+	; Auto Dock, Hide Emulator & Bot - Team AiO MOD++ (#-07)
+	_Ini_Add("general", "EnableAuto", $g_bEnableAuto ? 1 : 0)
+	_Ini_Add("general", "AutoDock", $g_iChkAutoDock ? 1 : 0)
+	_Ini_Add("general", "AutoHide", $g_iChkAutoHideEmulator ? 1 : 0)
+	_Ini_Add("general", "AutoMinimize", $g_iChkAutoMinimizeBot ? 1 : 0)
 
-	; Check Collector Outside (McSlither) - Added by NguyenAnhHD
-	_Ini_Add("search", "DBMeetCollOutside", $ichkDBMeetCollOutside ? 1 : 0)
-	_Ini_Add("search", "DBMinCollOutsidePercent", $iDBMinCollOutsidePercent)
+	; Check Collector Outside - Team AiO MOD++ (#-08)
+	_Ini_Add("search", "DBMeetCollOutside", $g_bDBMeetCollOutside)
+	_Ini_Add("search", "TxtDBMinCollOutsidePercent", GUICtrlRead($g_hTxtDBMinCollOutsidePercent))
 
-	; CSV Deploy Speed - Added by NguyenAnhHD
+	_Ini_Add("search", "DBCollectorsNearRedline", $g_bDBCollectorsNearRedline ? 1 : 0)
+	_Ini_Add("search", "CmbRedlineTiles", _GUICtrlComboBox_GetCurSel($g_hCmbRedlineTiles))
+
+	_Ini_Add("search", "SkipCollectorCheck", $g_bSkipCollectorCheck ? 1 : 0)
+	_Ini_Add("search", "TxtSkipCollectorGold", GUICtrlRead($g_hTxtSkipCollectorGold))
+	_Ini_Add("search", "TxtSkipCollectorElixir", GUICtrlRead($g_hTxtSkipCollectorElixir))
+	_Ini_Add("search", "TxtSkipCollectorDark", GUICtrlRead($g_hTxtSkipCollectorDark))
+
+	_Ini_Add("search", "SkipCollectorCheckTH", $g_bSkipCollectorCheckTH ? 1 : 0)
+	_Ini_Add("search", "CmbSkipCollectorCheckTH", _GUICtrlComboBox_GetCurSel($g_hCmbSkipCollectorCheckTH))
+
+	; CSV Deploy Speed - Team AiO MOD++ (#-09)
 	_Ini_Add("CSV Speed", "cmbCSVSpeed[LB]", _GUICtrlComboBox_GetCurSel($cmbCSVSpeed[$LB]))
 	_Ini_Add("CSV Speed", "cmbCSVSpeed[DB]", _GUICtrlComboBox_GetCurSel($cmbCSVSpeed[$DB]))
 
-	; Switch Profile (IceCube) - Added by NguyenAnhHD
-	_Ini_Add("profiles", "chkGoldSwitchMax", $ichkGoldSwitchMax ? 1 : 0)
-	_Ini_Add("profiles", "cmbGoldMaxProfile", $icmbGoldMaxProfile)
-	_Ini_Add("profiles", "txtMaxGoldAmount", $itxtMaxGoldAmount)
-	_Ini_Add("profiles", "chkGoldSwitchMin", $ichkGoldSwitchMin ? 1 : 0)
-	_Ini_Add("profiles", "cmbGoldMinProfile", $icmbGoldMinProfile)
-	_Ini_Add("profiles", "txtMinGoldAmount", $itxtMinGoldAmount)
-
-	_Ini_Add("profiles", "chkElixirSwitchMax", $ichkElixirSwitchMax ? 1 : 0)
-	_Ini_Add("profiles", "cmbElixirMaxProfile", $icmbElixirMaxProfile)
-	_Ini_Add("profiles", "txtMaxElixirAmount", $itxtMaxElixirAmount)
-	_Ini_Add("profiles", "chkElixirSwitchMin", $ichkElixirSwitchMin ? 1 : 0)
-	_Ini_Add("profiles", "cmbElixirMinProfile", $icmbElixirMinProfile)
-	_Ini_Add("profiles", "txtMinElixirAmount", $itxtMinElixirAmount)
-
-	_Ini_Add("profiles", "chkDESwitchMax", $ichkDESwitchMax ? 1 : 0)
-	_Ini_Add("profiles", "cmbDEMaxProfile", $icmbDEMaxProfile)
-	_Ini_Add("profiles", "txtMaxDEAmount", $itxtMaxDEAmount)
-	_Ini_Add("profiles", "chkDESwitchMin", $ichkDESwitchMin ? 1 : 0)
-	_Ini_Add("profiles", "cmbDEMinProfile", $icmbDEMinProfile)
-	_Ini_Add("profiles", "txtMinDEAmount", $itxtMinDEAmount)
-
-	_Ini_Add("profiles", "chkTrophySwitchMax", $ichkTrophySwitchMax ? 1 : 0)
-	_Ini_Add("profiles", "cmbTrophyMaxProfile", $icmbTrophyMaxProfile)
-	_Ini_Add("profiles", "txtMaxTrophyAmount", $itxtMaxTrophyAmount)
-	_Ini_Add("profiles", "chkTrophySwitchMin", $ichkTrophySwitchMin ? 1 : 0)
-	_Ini_Add("profiles", "cmbTrophyMinProfile", $icmbTrophyMinProfile)
-	_Ini_Add("profiles", "txtMinTrophyAmount", $itxtMinTrophyAmount)
-
-	; SmartTrain (Demen) - Added By Demen
+	; Smart Train - Team AiO MOD++ (#-13)
 	_Ini_Add("SmartTrain", "Enable", $ichkSmartTrain)
 	_Ini_Add("SmartTrain", "PreciseTroops", $ichkPreciseTroops)
 	_Ini_Add("SmartTrain", "ChkFillArcher", $ichkFillArcher)
@@ -82,7 +66,7 @@ Func SaveConfig_MOD()
 	_Ini_Add("SmartTrain", "FillEQ", $ichkFillEQ)
 	_Ini_Add("other", "ChkMultiClick", $g_bChkMultiClick ? 1 : 0)
 
-	; Bot Humanization
+	; Bot Humanization - Team AiO MOD++ (#-15)
 	_Ini_Add("Bot Humanization", "chkUseBotHumanization", $g_ichkUseBotHumanization)
 	_Ini_Add("Bot Humanization", "chkUseAltRClick", $g_ichkUseAltRClick)
 	_Ini_Add("Bot Humanization", "chkCollectAchievements", $g_ichkCollectAchievements)
@@ -102,70 +86,102 @@ Func SaveConfig_MOD()
 	_Ini_Add("Bot Humanization", "cmbMaxActionsNumber", _GUICtrlComboBox_GetCurSel($g_cmbMaxActionsNumber))
 	_Ini_Add("Bot Humanization", "challengeMessage", GUICtrlRead($g_challengeMessage))
 
-	; Auto Upgrade
-	_Ini_Add("Auto Upgrade", "chkAutoUpgrade", $g_ichkAutoUpgrade)
-	For $i = 0 To 12
-		_Ini_Add("Auto Upgrade", "chkUpgradesToIgnore[" & $i & "]", $g_ichkUpgradesToIgnore[$i])
-	Next
-	For $i = 0 To 2
-		_Ini_Add("Auto Upgrade", "chkResourcesToIgnore[" & $i & "]", $g_ichkResourcesToIgnore[$i])
-	Next
-	_Ini_Add("Auto Upgrade", "SmartMinGold", GUICtrlRead($g_SmartMinGold))
-	_Ini_Add("Auto Upgrade", "SmartMinElixir", GUICtrlRead($g_SmartMinElixir))
-	_Ini_Add("Auto Upgrade", "SmartMinDark", GUICtrlRead($g_SmartMinDark))
-
-	; Request CC Troops at first
+	; Request CC Troops at first - Team AiO MOD++ (#-18)
 	_Ini_Add("planned", "ReqCCFirst", $g_bReqCCFirst ? 1 : 0)
 
-	; Goblin XP
+	; Goblin XP - Team AiO MOD++ (#-19)
 	_Ini_Add("GoblinXP", "EnableSuperXP", $ichkEnableSuperXP)
+	_Ini_Add("GoblinXP", "SkipZoomOutXP", $ichkSkipZoomOutXP)
 	_Ini_Add("GoblinXP", "SXTraining",  $irbSXTraining)
 	_Ini_Add("GoblinXP", "SXBK", $ichkSXBK)
 	_Ini_Add("GoblinXP", "SXAQ", $ichkSXAQ)
 	_Ini_Add("GoblinXP", "SXGW", $ichkSXGW)
 	_Ini_Add("GoblinXP", "MaxXptoGain", GUICtrlRead($txtMaxXPtoGain))
 
-	; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
+	; ClanHop - Team AiO MOD++ (#-20)
 	_Ini_Add("donate", "chkClanHop", $g_bChkClanHop ? 1 : 0)
 
-	; Max logout time (mandryd)
-	_Ini_Add("TrainLogout", "TrainLogoutMaxTime", $TrainLogoutMaxTime ? 1 : 0)
-	_Ini_Add("TrainLogout", "TrainLogoutMaxTimeTXT", $TrainLogoutMaxTimeTXT)
+	; Max logout time - Team AiO MOD++ (#-21)
+	_Ini_Add("TrainLogout", "TrainLogoutMaxTime", $g_bTrainLogoutMaxTime)
+	_Ini_Add("TrainLogout", "TrainLogoutMaxTimeTXT", $g_iTrainLogoutMaxTime)
 
-	; ExtendedAttackBar
+	; ExtendedAttackBar - Team AiO MOD++ (#-22)
 	_Ini_Add("attack", "ExtendedAttackBarDB", $g_abChkExtendedAttackBar[$DB] ? 1 : 0)
 	_Ini_Add("attack", "ExtendedAttackBarLB", $g_abChkExtendedAttackBar[$LB] ? 1 : 0)
 
-	; CheckCCTroops
+	; CheckCC Troops - Team AiO MOD++ (#-24)
 	_Ini_Add("CheckCC", "Enable", $g_bChkCC ? 1 : 0)
-	_Ini_Add("CheckCC", "CmbCastleCap", $g_iCmbCastleCap)
-	For $i = 0 To 2
-		_Ini_Add("CheckCC", "Slot" & $i, $g_aiCmbCCTroopsExpect[$i])
-		_Ini_Add("CheckCC", "Qty" & $i, $g_aiQtyCCTroopsExpect[$i])
+	_Ini_Add("CheckCC", "Troop Capacity", $g_iCmbCastleCapacityT)
+	_Ini_Add("CheckCC", "Spell Capacity", $g_iCmbCastleCapacityS)
+	For $i = 0 To 4
+		_Ini_Add("CheckCC", "ExpectSlot" & $i, $g_aiCmbCCSlot[$i])
+		_Ini_Add("CheckCC", "ExpectQty" & $i, $g_aiTxtCCSlot[$i])
 	Next
+
+	; Switch Profile - Team AiO MOD++ (#-25)
+	For $i = 0 To 3
+		_Ini_Add("SwitchProfile", "SwitchProfileMax" & $i, $g_abChkSwitchMax[$i] ? 1 : 0)
+		_Ini_Add("SwitchProfile", "SwitchProfileMin" & $i, $g_abChkSwitchMin[$i] ? 1 : 0)
+		_Ini_Add("SwitchProfile", "TargetProfileMax" & $i, $g_aiCmbSwitchMax[$i])
+		_Ini_Add("SwitchProfile", "TargetProfileMin" & $i, $g_aiCmbSwitchMin[$i])
+
+		_Ini_Add("SwitchProfile", "ChangeBotTypeMax" & $i, $g_abChkBotTypeMax[$i] ? 1 : 0)
+		_Ini_Add("SwitchProfile", "ChangeBotTypeMin" & $i, $g_abChkBotTypeMin[$i] ? 1 : 0)
+		_Ini_Add("SwitchProfile", "TargetBotTypeMax" & $i, $g_aiCmbBotTypeMax[$i])
+		_Ini_Add("SwitchProfile", "TargetBotTypeMin" & $i, $g_aiCmbBotTypeMin[$i])
+
+		_Ini_Add("SwitchProfile", "ConditionMax" & $i, $g_aiConditionMax[$i])
+		_Ini_Add("SwitchProfile", "ConditionMin" & $i, $g_aiConditionMin[$i])
+	Next
+
+	; Check Grand Warden Mode - Team AiO MOD++ (#-26)
+	_Ini_Add("other", "chkCheckWardenMode", $g_bCheckWardenMode ? 1 : 0)
+	_Ini_Add("other", "cmbCheckWardenMode", $g_iCheckWardenMode)
+
+	; Switch Accounts - Team AiO MOD++ (#-12)
+	SaveConfig_SwitchAcc(False)
+
+	; Farm Schedule - Team AiO MOD++ (#-27)
+	For $i = 0 To 7
+		IniWriteS($g_sProfilePath & "\Profile.ini", "FarmStrategy", "ChkSetFarm" & $i, $g_abChkSetFarm[$i])
+
+		IniWriteS($g_sProfilePath & "\Profile.ini", "FarmStrategy", "CmbAction1" & $i, $g_aiCmbAction1[$i])
+		IniWriteS($g_sProfilePath & "\Profile.ini", "FarmStrategy", "CmbCriteria1" & $i, $g_aiCmbCriteria1[$i])
+		IniWriteS($g_sProfilePath & "\Profile.ini", "FarmStrategy", "TxtResource1" & $i, $g_aiTxtResource1[$i])
+		IniWriteS($g_sProfilePath & "\Profile.ini", "FarmStrategy", "CmbTime1" & $i, $g_aiCmbTime1[$i])
+
+		IniWriteS($g_sProfilePath & "\Profile.ini", "FarmStrategy", "CmbAction2" & $i, $g_aiCmbAction2[$i])
+		IniWriteS($g_sProfilePath & "\Profile.ini", "FarmStrategy", "CmbCriteria2" & $i, $g_aiCmbCriteria2[$i])
+		IniWriteS($g_sProfilePath & "\Profile.ini", "FarmStrategy", "TxtResource2" & $i, $g_aiTxtResource2[$i])
+		IniWriteS($g_sProfilePath & "\Profile.ini", "FarmStrategy", "CmbTime2" & $i, $g_aiCmbTime2[$i])
+	Next
+
+	; Restart Search Legend league - Team AiO MOD++ (#-29)
+	_Ini_Add("other", "ChkSearchTimeout", $g_bIsSearchTimeout ? 1 : 0)
+	_Ini_Add("other", "SearchTimeout", $g_iSearchTimeout)
+
+	; Stop on Low battery - Team AiO MOD++ (#-30)
+	_Ini_Add("other", "ChkStopOnBatt", $g_bStopOnBatt ? 1 : 0)
+	_Ini_Add("other", "StopOnBatt", $g_iStopOnBatt)
 
 EndFunc   ;==>SaveConfig_MOD
 
-; SwitchAcc (Demen) - Added By Demen
-Func SaveConfig_SwitchAcc()
-	ApplyConfig_SwitchAcc("Save")
+; Switch Accounts - Team AiO MOD++ (#-12)
+Func SaveConfig_SwitchAcc($config = True)
+	If $config = True Then ApplyConfig_SwitchAcc(GetApplyConfigSaveAction())
 
-	IniWriteS($profile, "SwitchAcc", "Enable", $ichkSwitchAcc ? 1 : 0)
-	IniWriteS($profile, "SwitchAcc", "Pre-train", $ichkTrain ? 1 : 0)
-	IniWriteS($profile, "SwitchAcc", "Total Coc Account", $icmbTotalCoCAcc) ; 1 = 1 Acc, 2 = 2 Acc, etc.
-	IniWriteS($profile, "SwitchAcc", "Train Time To Skip", $g_iTrainTimeToSkip)
-	IniWriteS($profile, "SwitchAcc", "Smart Switch", $ichkSmartSwitch ? 1 : 0)
-	IniWriteS($profile, "SwitchAcc", "Force Switch", $ichkForceSwitch ? 1 : 0)
-	IniWriteS($profile, "SwitchAcc", "Force Switch Search", $iForceSwitch)
-	IniWriteS($profile, "SwitchAcc", "Force Stay Donate", $ichkForceStayDonate ? 1 : 0)
-	IniWriteS($profile, "SwitchAcc", "Sleep Combo", $ichkCloseTraining) ; 0 = No Sleep, 1 = Close CoC, 2 = Close Android
-	For $i = 1 To 8
-		IniWriteS($profile, "SwitchAcc", "MatchProfileAcc." & $i, _GUICtrlComboBox_GetCurSel($cmbAccountNo[$i - 1]) + 1) ; 1 = Acc 1, 2 = Acc 2, etc.
-		IniWriteS($profile, "SwitchAcc", "ProfileType." & $i, _GUICtrlComboBox_GetCurSel($cmbProfileType[$i - 1]) + 1) ; 1 = Active, 2 = Donate, 3 = Idle
+	IniWriteS($g_sProfilePath & "\Profile.ini", "SwitchAcc", "Enable", $g_bChkSwitchAcc)
+	IniWriteS($g_sProfilePath & "\Profile.ini", "SwitchAcc", "SmartSwitch", $g_bChkSmartSwitch)
+	IniWriteS($g_sProfilePath & "\Profile.ini", "SwitchAcc", "Total Coc Account", $g_iTotalAcc)
+	For $i = 0 To 7
+		IniWriteS($g_sProfilePath & "\Profile.ini", "SwitchAcc", "AccountNo." & $i, $g_abAccountNo[$i])
+		IniWriteS($g_sProfilePath & "\Profile.ini", "SwitchAcc", "ProfileNo." & $i, $g_aiProfileNo[$i])
+		IniWriteS($g_sProfilePath & "\Profile.ini", "SwitchAcc", "DonateOnly." & $i, $g_abDonateOnly[$i])
 	Next
+	IniWriteS($g_sProfilePath & "\Profile.ini", "SwitchAcc", "Train Time To Skip", $g_iTrainTimeToSkip)
 EndFunc   ;==>SaveConfig_SwitchAcc
 
-; Forecast - Added By Eloy (modification rulesss,kychera)
+; Forecast - Team AiO MOD++ (#-17)
 Func SaveConfig_Forecast()
 
 	_Ini_Add("forecast", "txtForecastBoost", GUICtrlRead($txtForecastBoost))
@@ -181,21 +197,3 @@ Func SaveConfig_Forecast()
 	_Ini_Add("Lang", "cmbSwLang", _GUICtrlComboBox_GetCurSel($cmbSwLang))
 
 EndFunc   ;==>SaveConfig_Forecast
-
-; Chatbot - Added By NguyenAnhHD
-Func SaveConfig_Chatbot()
-	ApplyConfig_Chatbot("Save")
-
-	IniWriteS($chatIni, "Global", "Enable", $g_iGlobalChat ? 1 : 0)
-	IniWriteS($chatIni, "Global", "Scramble", $g_iGlobalScramble ? 1 : 0)
-	IniWriteS($chatIni, "Global", "SwitchLang", $g_iSwitchLang ? 1 : 0)
-	IniWriteS($chatIni, "Lang", "cmbLang", $g_iCmbLang)
-
-	IniWriteS($chatIni, "Clan", "Enable", $g_iClanChat ? 1 : 0)
-	IniWriteS($chatIni, "Clan", "RusLang", $g_iRusLang ? 1 : 0)
-	IniWriteS($chatIni, "Clan", "Responses", $g_iUseResponses ? 1 : 0)
-	IniWriteS($chatIni, "Clan", "Generic", $g_iUseGeneric ? 1 : 0)
-	IniWriteS($chatIni, "Clan", "ChatPushbullet", $g_iChatPushbullet ? 1 : 0)
-	IniWriteS($chatIni, "Clan", "PbSendNewChats", $g_iPbSendNewChats ? 1 : 0)
-
-EndFunc   ;==>SaveConfig_Chatbot

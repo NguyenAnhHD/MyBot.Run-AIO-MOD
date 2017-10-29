@@ -1,8 +1,8 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: SmartQuickTrain
+; Name ..........: SmartTrain (#-13)
 ; Description ...: This file contains the Sequence that runs all MBR Bot
 ; Author ........: DEMEN
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -51,7 +51,7 @@ Func SmartTrain()
 		EndIf
 	EndIf
 
-	; Custom Train
+	; Train
 	If Not IsArray($aeTrainMethod) Or Not IsArray($aeBrewMethod) Then
 		Setlog("Some kinds of error. Quit training", $COLOR_ERROR)
 	Else

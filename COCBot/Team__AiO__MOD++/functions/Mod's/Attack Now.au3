@@ -1,11 +1,11 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: MBR GUI Design
+; Name ..........: Attack Now (#-10)
 ; Description ...: This file creates the "Req. & Donate" tab under the "Village" tab
 ; Syntax ........:
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: Mr.Viper
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:

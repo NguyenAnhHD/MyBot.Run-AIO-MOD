@@ -18,14 +18,16 @@ Global $g_hGUI_DEADBASE_ATTACK_STANDARD = 0
 Global $g_hCmbStandardDropOrderDB = 0, $g_hCmbStandardDropSidesDB = 0, $g_hCmbStandardUnitDelayDB = 0, $g_hCmbStandardWaveDelayDB = 0, $g_hChkRandomSpeedAtkDB = 0, _
 	   $g_hChkSmartAttackRedAreaDB = 0, $g_hCmbSmartDeployDB = 0, $g_hChkAttackNearGoldMineDB = 0, $g_hChkAttackNearElixirCollectorDB = 0, $g_hChkAttackNearDarkElixirDrillDB = 0
 
-Global $g_hLblSmartDeployDB = 0, $g_hPicAttackNearDarkElixirDrillDB = 0, $g_BtnCustomDropOrderDB = 0
+Global $g_hLblSmartDeployDB = 0, $g_hPicAttackNearDarkElixirDrillDB = 0
 
-; Unit/Wave Factor
+; Unit/Wave Factor - Team AiO MOD++ (#-05)
 Global $g_hGrpSettings = 0
-Global $ChkGiantSlot = 0, $CmbGiantSlot = 0
+Global $g_hChkGiantSlot = 0, $g_hCmbGiantSlot = 0
+Global $g_hChkUnitFactor = 0, $g_hTxtUnitFactor = 0
+Global $g_hChkWaveFactor = 0, $g_hTxtWaveFactor = 0
 
-Global $ChkUnitFactor = 0, $TxtUnitFactor = 0
-Global $ChkWaveFactor = 0, $TxtWaveFactor = 0
+; Drop Order Troops - Team AiO MOD++ (#-06)
+Global $g_BtnCustomDropOrderDB = 0
 
 Func CreateAttackSearchDeadBaseStandard()
 
@@ -116,49 +118,47 @@ Func CreateAttackSearchDeadBaseStandard()
 			   _GUICtrlSetTip(-1, $sTxtTip)
 	   GUICtrlCreateGroup("", -99, -99, 1, 1)
 
-		   ; Unit/Wave Factor
+		   ; Unit/Wave Factor - Team AiO MOD++ (#-05)
 		   $x = 23
 		   $y = 110
 		   $g_hGrpSettings = GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "Group_02", "Settings"), $x, $y, 180, 105)
 
 		   $y += 5
-		   $ChkGiantSlot = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot", "GiantSlot"), $x+10, $y + 10, 89, 25)
+		   $g_hChkGiantSlot = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot", "GiantSlot"), $x+10, $y + 10, 89, 25)
 			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot_Info_01", "perimeter (> = 12, recommended)") & @CRLF & _
 								  GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot_Info_02", "two points on each side (> = 8, recommended)"))
-			   GUICtrlSetOnEvent(-1, "ChkGiantSlot")
+			   GUICtrlSetOnEvent(-1, "chkGiantSlot")
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
-		   $CmbGiantSlot = GUICtrlCreateCombo("", $x + 99, $y + 12, 73, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-			   GUICtrlSetData(-1,  GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbGiantSlot_Info_01", "Perimeter") & "|" & _
-								   GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbGiantSlot_Info_02", "TwoPoints"), GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbGiantSlot_Info_01", -1))
-			   GUICtrlSetOnEvent(-1, "CmbGiantSlot")
+		   $g_hCmbGiantSlot = GUICtrlCreateCombo("", $x + 99, $y + 12, 73, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			   GUICtrlSetData(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbGiantSlot_Info_01", "Perimeter") & "|" & _
+								  GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbGiantSlot_Info_02", "TwoPoints"), GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbGiantSlot_Info_01", -1))
+			   GUICtrlSetOnEvent(-1, "cmbGiantSlot")
 
 		   $y += 34
-		   $ChkUnitFactor = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor", "Modify Unit Factor"), $x + 10, $y + 4, 130, 25)
+		   $g_hChkUnitFactor = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor", "Modify Unit Factor"), $x + 10, $y + 4, 130, 25)
 			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor_Info_01", "Unit deploy delay = Unit setting x Unit Factor (millisecond)"))
 			   GUICtrlSetOnEvent(-1, "chkUnitFactor")
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
-
-		   $TxtUnitFactor = GUICtrlCreateInput("10", $x + 140, $y + 6, 31, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+		   $g_hTxtUnitFactor = GUICtrlCreateInput("10", $x + 140, $y + 6, 31, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor_Info_02", "Unit deploy delay = Unit setting x Unit Factor (millisecond)"))
 			   GUICtrlSetState(-1, $GUI_DISABLE)
 			   GUICtrlSetData(-1, 10)
-			   GUICtrlSetOnEvent(-1, "chkUnitFactor")
+
 		   $y += 30
-		   $ChkWaveFactor = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor", "Modify Wave Factor"), $x + 10, $y + 2, 130, 25)
+		   $g_hChkWaveFactor = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor", "Modify Wave Factor"), $x + 10, $y + 2, 130, 25)
 			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor_Info_01", "Switch troop delay = Wave setting x Wave Factor (millisecond)"))
 			   GUICtrlSetOnEvent(-1, "chkWaveFactor")
 			   GUICtrlSetState(-1, $GUI_UNCHECKED)
-
-		   $TxtWaveFactor = GUICtrlCreateInput("100", $x + 140, $y + 4, 31, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+		   $g_hTxtWaveFactor = GUICtrlCreateInput("100", $x + 140, $y + 4, 31, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			   _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor_Info_02", "Switch troop delay = Wave setting x Wave Factor (millisecond)"))
 			   GUICtrlSetState(-1, $GUI_DISABLE)
 			   GUICtrlSetData(-1, 100)
-			   GUICtrlSetOnEvent(-1, "chkWaveFactor")
 
-		   For $i = $g_hGrpSettings To $TxtWaveFactor
+		   For $i = $g_hGrpSettings To $g_hTxtWaveFactor
 			   GUICtrlSetState($i, $GUI_HIDE)
 		   Next
 
+		   ; Drop Order Troops - Team AiO MOD++ (#-06)
 		   $y += 40
 		   $x = 98
 		   $g_BtnCustomDropOrderDB = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "BtnCustomDropOrder", "Drop Order"), $x, $y, 85, 25)

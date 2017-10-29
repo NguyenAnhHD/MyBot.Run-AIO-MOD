@@ -19,41 +19,30 @@
 #include "functions\Config\readConfig.au3"
 #include "functions\Config\applyConfig.au3"
 
-; Drop Order Troops
+; Drop Order Troops - Team AiO MOD++ (#-06)
 #include "functions\Troops Dropping Order\DropOrderTroops GUI.au3"
 #include "functions\Troops Dropping Order\DropOrderTroops.au3"
 
-#include "functions\Mod's\QuickMIS.au3"
-
-; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
-#include "functions\Mod's\AutoHide.au3"
-
-; Check Collector Outside (McSlither) - Added by NguyenAnhHD
+; Check Collector Outside - Team AiO MOD++ (#-08)
 #include "functions\Mod's\AreCollectorsOutside.au3"
 
-; Attack Now
+; Attack Now - Team AiO MOD++ (#-10)
 #include "functions\Mod's\Attack Now.au3"
 
-;ExtendedAttackBar
-#include "functions\Mod's\ExtendedAttackBarCheck.au3"
-
-; Switch Profile (IceCube) - Added by NguyenAnhHD
-#include "functions\Mod's\ProfileSwitch.au3"
-
-; SwitchAcc (Demen) - Added By Demen
+; Switch Accounts - Team AiO MOD++ (#-12)
 #include "functions\Switch Account\SwitchAcc.au3"
-#include "functions\Switch Account\UpdateProfileStats.au3"
+#include "functions\Switch Account\UpdateMultiStats.au3"
 
-; HeroLabStatus - Demen
-#include "functions\Switch Account\UpdateLabStatus.au3"
-
-; SmartTrain (Demen) - Added By Demen
+; Smart Train - Team AiO MOD++ (#-13)
 #include "functions\Smart Train\SmartTrain.au3"
 #include "functions\Smart Train\CheckQueue.au3"
 #include "functions\Smart Train\CheckTrainingTab.au3"
 #include "functions\Smart Train\CheckPreciseTroop.au3"
 
-; Bot Humanization
+; Hero and Lab Status - Team AiO MOD++ (#-14)
+#include "functions\Switch Account\UpdateLabStatus.au3"
+
+; Bot Humanization - Team AiO MOD++ (#-15)
 #include "functions\Bot Humanization\BotHumanization.au3"
 #include "functions\Bot Humanization\AttackNDefenseActions.au3"
 #include "functions\Bot Humanization\BestClansNPlayersActions.au3"
@@ -61,20 +50,29 @@
 #include "functions\Bot Humanization\ClanActions.au3"
 #include "functions\Bot Humanization\ClanWarActions.au3"
 
-; Auto Upgrade
-#include "functions\Mod's\Auto Upgrade.au3"
-
-; Goblin XP
+; Goblin XP - Team AiO MOD++ (#-19)
 #include "functions\GoblinXP\GoblinXP.au3"
 #include "functions\GoblinXP\multiSearch.au3"
 #include "functions\GoblinXP\ArrayFunctions.au3"
 
-; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
+; ClanHop - Team AiO MOD++ (#-20)
 #include "functions\Mod's\ClanHop.au3"
 
-; Chatbot - Added by NguyenAnhHD
-#include "functions\Chatbot\Chatbot.au3"
-#include "functions\Chatbot\Multy Lang.au3"
+; ExtendedAttackBar - Team AiO MOD++ (#-22)
+#include "functions\Mod's\ExtendedAttackBarCheck.au3"
 
-; CheckCC Troops
+; Chatbot - Team AiO MOD++ (#-23)
+;~ #include "functions\Chatbot\Chatbot.au3"
+;~ #include "functions\Chatbot\Multy Lang.au3"
+
+; CheckCC Troops - Team AiO MOD++ (#-24)
 #include "functions\Mod's\CheckCC.au3"
+
+; Switch Profile - Team AiO MOD++ (#-25)
+#include "functions\Mod's\ProfileSwitch.au3"
+
+; Check Grand Warden Mode - Team AiO MOD++ (#-26)
+#include "functions\Mod's\CheckWardenMode.au3"
+
+; Farm Schedule - Team AiO MOD++ (#-27)
+#include "functions\Mod's\FarmSchedule.au3"

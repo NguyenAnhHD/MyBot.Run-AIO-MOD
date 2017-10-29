@@ -1,11 +1,11 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Multy Lang
+; Name ..........: Multy Lang (#-23)
 ; Description ...: Extended GUI Control Lang
 ; Syntax ........:
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: Kychera (2016)
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:

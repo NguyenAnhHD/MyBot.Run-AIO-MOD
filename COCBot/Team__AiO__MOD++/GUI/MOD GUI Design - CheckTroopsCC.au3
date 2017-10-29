@@ -1,143 +1,178 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: GUI Design _ CheckTroopsCC
+; Name ..........: GUI Design CheckTroopsCC (#24)
 ; Description ...: This file contains the Sequence that runs all MBR Bot
 ; Author ........: NguyenAnhHD, DEMEN
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
+#include-once
 
-Global $g_hLblCastleCapacity = 0, $g_hCmbCCTroopCapacity = 0, $g_hCmbCCSpellCapacity = 0, $g_hLblCCSpellCap = 0, $g_hChkTroopsCC = 0, $g_hLblWarningTextCheckCC = 0
-Global $g_ahPicCheckTroops[3] = [0, 0, 0], $g_ahCmbCheckTroops[3] = [0, 0, 0], $g_ahTxtCheckTroops[3] = [0, 0, 0]
-Global $g_ahPicCheckSpells[2] = [0, 0], $g_ahCmbCheckSpells[2] = [0, 0], $g_ahTxtCheckSpells[2] = [0, 0]
-Global $g_hGrpSpellsToHide = 0 ; Standby for CheckCC Spells
+Global $g_hLblCastleCapacity = 0, $g_hCmbCastleCapacityT = 0, $g_hCmbCastleCapacityS = 0, $g_hChkTroopsCC = 0, $g_hLblWarningTextCheckCC = 0
+Global $g_ahPicCCSlot[5] = [0, 0, 0, 0, 0], $g_ahCmbCCSlot[5] = [0, 0, 0, 0, 0], $g_ahTxtCCSlot[5] = [0, 0, 0, 0, 0]
 
-Local $sTroopText = _ArrayToString($g_asTroopNames)
-$sTroopText &= "|Any"
+Func GUIControlCheckCC()
 
-Local $asDonSpell = $g_asSpellNames
-_ArrayDelete($asDonSpell, 5) ; removing "Clone" as it does not fit for CC slots.
-Local $sSpellText = _ArrayToString($asDonSpell)
-$sSpellText &= "|Any"
+	Local $aIcons[30] = [$eIcnDonBarbarian, $eIcnDonArcher, $eIcnDonGiant, $eIcnDonGoblin, $eIcnDonWallBreaker, $eIcnDonBalloon, _
+			$eIcnDonWizard, $eIcnDonHealer, $eIcnDonDragon, $eIcnDonPekka, $eIcnDonBabyDragon, $eIcnDonMiner, $eIcnDonMinion, _
+			$eIcnDonHogRider, $eIcnDonValkyrie, $eIcnDonGolem, $eIcnDonWitch, $eIcnDonLavaHound, $eIcnDonBowler, $eIcnDonBlank, _
+			$eIcnLightSpell, $eIcnHealSpell, $eIcnRageSpell, $eIcnJumpSpell, $eIcnFreezeSpell, _
+			$eIcnPoisonSpell, $eIcnEarthQuakeSpell, $eIcnHasteSpell, $eIcnSkeletonSpell, $eIcnDonBlank]
 
-Global $g_aiTroopsIcons[20] = [$eIcnDonBarbarian, $eIcnDonArcher, $eIcnDonGiant, $eIcnDonGoblin, $eIcnDonWallBreaker, $eIcnDonBalloon, $eIcnDonWizard, $eIcnDonHealer, _
-		$eIcnDonDragon, $eIcnDonPekka, $eIcnDonBabyDragon, $eIcnDonMiner, $eIcnDonMinion, $eIcnDonHogRider, $eIcnDonValkyrie, $eIcnDonGolem, _
-		$eIcnDonWitch, $eIcnDonLavaHound, $eIcnDonBowler, $eIcnDonBlank]
+	Local $iCastleCapT, $iCastleCapS
 
-Global $g_aiSpellsIcons[10] = [$eIcnLightSpell, $eIcnHealSpell, $eIcnRageSpell, $eIcnJumpSpell, $eIcnFreezeSpell, _
-		$eIcnDonPoisonSpell, $eIcnDonEarthQuakeSpell, $eIcnDonHasteSpell, $eIcnDonSkeletonSpell, $eIcnDonBlank]
+	Local $sWarningTxt = GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText", "Please set troops/spells to fit your Castle Capacity")
+	Local $color = $COLOR_BLACK
 
-Func cmbCheckTroopsCC()
-	Local $Combo1 = _GUICtrlComboBox_GetCurSel($g_ahCmbCheckTroops[0])
-	Local $Combo2 = _GUICtrlComboBox_GetCurSel($g_ahCmbCheckTroops[1])
-	Local $Combo3 = _GUICtrlComboBox_GetCurSel($g_ahCmbCheckTroops[2])
-	_GUICtrlSetImage($g_ahPicCheckTroops[0], $g_sLibIconPath, $g_aiTroopsIcons[$Combo1])
-	_GUICtrlSetImage($g_ahPicCheckTroops[1], $g_sLibIconPath, $g_aiTroopsIcons[$Combo2])
-	_GUICtrlSetImage($g_ahPicCheckTroops[2], $g_sLibIconPath, $g_aiTroopsIcons[$Combo3])
-	cmbCheckCC()
-EndFunc   ;==>cmbCheckTroopsCC
+	; updating icon
+	For $i = 0 To 4
+		Local $CmbSel = _GUICtrlComboBox_GetCurSel($g_ahCmbCCSlot[$i])
+		If $i >= 3 Then $CmbSel += 20
+		If $CmbSel <> $aIcons[$CmbSel] Then _GUICtrlSetImage($g_ahPicCCSlot[$i], $g_sLibIconPath, $aIcons[$CmbSel])
+	Next
 
-Func cmbCheckSpellsCC()
-	Local $Combo4 = _GUICtrlComboBox_GetCurSel($g_ahCmbCheckSpells[0])
-	Local $Combo5 = _GUICtrlComboBox_GetCurSel($g_ahCmbCheckSpells[1])
-	_GUICtrlSetImage($g_ahPicCheckSpells[0], $g_sLibIconPath, $g_aiSpellsIcons[$Combo4])
-	_GUICtrlSetImage($g_ahPicCheckSpells[1], $g_sLibIconPath, $g_aiSpellsIcons[$Combo5])
-EndFunc   ;==>cmbCheckSpellsCC
-
-Func cmbCheckCC()
-	Local $sWarningTxt, $color
+	; checking expect/total for warning
 	If GUICtrlRead($g_hChkTroopsCC) = $GUI_CHECKED Then
-		Local $iTotalSlotTroop = 0, $iTotalSlotSpell = 0
-		Local $iCastleCap = 10 + _GUICtrlComboBox_GetCurSel($g_hCmbCCTroopCapacity) * 5
-		Local $bAny = True
-		For $i = 0 To 2
-			Local $TroopIdx = _GUICtrlComboBox_GetCurSel($g_ahCmbCheckTroops[$i])
-			Local $TroopQty = GUICtrlRead($g_ahTxtCheckTroops[$i])
-			If $TroopIdx <= $eTroopBowler Then
-				$iTotalSlotTroop += $TroopQty * $g_aiTroopSpace[$TroopIdx]
-				$bAny = False
+		Local $iTotalExpectT = 0, $iTotalExpectS = 0
+
+		$iCastleCapT = 10 + _GUICtrlComboBox_GetCurSel($g_hCmbCastleCapacityT) * 5
+		$iCastleCapS = _GUICtrlComboBox_GetCurSel($g_hCmbCastleCapacityS) + 1
+
+		Local $bAnyT = True, $bAnyS = True
+
+		For $i = 0 To 4
+			Local $Idx = _GUICtrlComboBox_GetCurSel($g_ahCmbCCSlot[$i])
+			Local $Qty = GUICtrlRead($g_ahTxtCCSlot[$i])
+
+			If $i <= 2 Then
+				If $Idx <= $eTroopBowler Then
+					$iTotalExpectT += $Qty * $g_aiTroopSpace[$Idx]
+					$bAnyT = False
+				EndIf
+			Else
+				If $Idx > $eSpellFreeze Then $Idx += 1 ; exclude Clone Spell
+				If $Idx <= $eSpellSkeleton Then
+					$iTotalExpectS += $Qty * $g_aiSpellSpace[$Idx]
+					$bAnyS = False
+				EndIf
 			EndIf
-;~ 			If $i = 2 Then ExitLoop
-;~ 			Local $SpellIdx = _GUICtrlComboBox_GetCurSel($g_ahCmbCheckSpells[$i])
-;~ 			If $SpellIdx > $eSpellFreeze Then $SpellIdx += 1 ; exclude Clone Spell
-;~ 			Local $SpellQty = GUICtrlRead($g_ahTxtCheckSpells[$i])
-;~ 			If $SpellIdx <= $eSpellSkeleton Then $iTotalSlotSpell += $SpellQty * $g_aiSpellSpace[$SpellIdx]
 		Next
 
-		If $bAny = False Then
-			If $iTotalSlotTroop < $iCastleCap Then
-				$sWarningTxt = GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText_Info_01", "Troop expectation is less than Castle capacity (") & $iTotalSlotTroop & "/" & $iCastleCap & ")." & @CRLF & _
-							   GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText_Info_02", "WARNING: Your CC will never be full.")
+		If $bAnyT = False Or $bAnyS = False Then
+			Local $sTxtTroopSpell[3] = ["", "", ""] ; Less, More, Equal
+			Local $sTxtExpectVsCapacity = ""
+
+			; troop text
+			If $bAnyT = False Then
+				$sTxtTroopSpell[0] = $iTotalExpectT < $iCastleCapT ? "Troop " : ""
+				$sTxtTroopSpell[1] = $iTotalExpectT > $iCastleCapT ? "Troop " : ""
+				$sTxtTroopSpell[2] = $iTotalExpectT = $iCastleCapT ? "Troop " : ""
+				$sTxtExpectVsCapacity = $iTotalExpectT & "/" & $iCastleCapT
+			EndIf
+
+			; joining spell
+			If $bAnyS = False Then
+				If $iTotalExpectS < $iCastleCapS Then
+					$sTxtTroopSpell[0] &= "&& Spell "
+				ElseIf $iTotalExpectS > $iCastleCapS Then
+					$sTxtTroopSpell[1] &= "&& Spell "
+				Else
+					$sTxtTroopSpell[2] &= "&& Spell "
+				EndIf
+				$sTxtExpectVsCapacity &= "; " & $iTotalExpectS & "/" & $iCastleCapS
+			EndIf
+
+			; removing character "&" and ";"
+			For $i = 0 To 2
+				If StringLeft($sTxtTroopSpell[$i], 1) = "&" Then $sTxtTroopSpell[$i] = StringTrimLeft($sTxtTroopSpell[$i], 3)
+			Next
+			If StringLeft($sTxtExpectVsCapacity, 1) = ";" Then $sTxtExpectVsCapacity = StringTrimLeft($sTxtExpectVsCapacity, 2)
+
+			If ($bAnyT = False And $iTotalExpectT < $iCastleCapT) Or ($bAnyS = False And $iTotalExpectS < $iCastleCapS) Then
+				$sWarningTxt = $sTxtTroopSpell[0] & GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText_Info_01", "expectation is less than CC capacity (") & $sTxtExpectVsCapacity & ")" & @CRLF & _
+													GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText_Info_02", "WARNING: Your ") & $sTxtTroopSpell[0] & _
+													GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText_Info_03", "CC will never be full.")
 				$color = $COLOR_RED
-			ElseIf $iTotalSlotTroop > $iCastleCap Then
-				$sWarningTxt = GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText_Info_03", "Troop expectation is more than Castle capacity (") & $iTotalSlotTroop & "/" & $iCastleCap & ")."
+			ElseIf $iTotalExpectT > $iCastleCapT Or $iTotalExpectS > $iCastleCapS Then
+				$sWarningTxt = $sTxtTroopSpell[1] & GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText_Info_04", "expectation is more than CC capacity (") & $sTxtExpectVsCapacity & ")"
 				$color = $COLOR_ORANGE
 			Else
-				$sWarningTxt = GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText_Info_04", "Troop expectation fits your Castle capacity nicely (") & $iTotalSlotTroop & "/" & $iCastleCap & ")."
+				$sWarningTxt = $sTxtTroopSpell[2] & GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText_Info_05", "expectation fits your Castle capacity nicely (") & $sTxtExpectVsCapacity & ")"
 				$color = $COLOR_GREEN
 			EndIf
-			GUICtrlSetData($g_hLblWarningTextCheckCC, $sWarningTxt)
-			GUICtrlSetColor($g_hLblWarningTextCheckCC, $color)
 		EndIf
-	Else
-		$sWarningTxt = GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText", -1)
-		$color = $COLOR_BLACK
-		GUICtrlSetData($g_hLblWarningTextCheckCC, $sWarningTxt)
-		GUICtrlSetColor($g_hLblWarningTextCheckCC, $color)
 	EndIf
-
-EndFunc   ;==>cmbCheckCC
+	GUICtrlSetData($g_hLblWarningTextCheckCC, $sWarningTxt)
+	GUICtrlSetColor($g_hLblWarningTextCheckCC, $color)
+EndFunc   ;==>GUIControlCheckCC
 
 Func CreateGUICheckCC()
-	Local $x = 100, $y = 80
-	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "Group", "CC Troops expectation"), $x, $y, 320, 200)
-		$y += 25
-		$x += 5
+	Local $x = 100, $y = 80, $sCmbList = ""
+	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "Group", "CC Troop && Spell expectation"), $x, $y, 325, 200)
+	$y += 25
+	$x += 5
 
-		$g_hLblCastleCapacity = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "CastleCapacity", "Castle Capacity") & ": ", $x + 5, $y, -1, -1)
-		$g_hCmbCCTroopCapacity = GUICtrlCreateCombo("", $x + 85, $y - 2, 35, 25)
-			GUICtrlSetData(-1, "10|15|20|25|30|35", "35")
-			GUICtrlSetOnEvent(-1, "cmbCheckCC")
-			GUICtrlCreateLabel("Troops", $x + 125, $y, -1, -1)
-		$g_hCmbCCSpellCapacity = GUICtrlCreateCombo("", $x + 195, $y - 2, 35, 25)
-			GUICtrlSetData(-1, "1|2", "2")
-			GUICtrlSetState(-1, $GUI_DISABLE)
-			$g_hLblCCSpellCap = GUICtrlCreateLabel("Spells", $x + 235, $y, -1, -1)
-			GUICtrlSetState(-1, $GUI_DISABLE)
-		$g_hGrpSpellsToHide = $g_hCmbCCSpellCapacity & "#" & $g_hLblCCSpellCap
+	$g_hLblCastleCapacity = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "CastleCapacity", "Castle Capacity") & ": ", $x + 5, $y, -1, -1)
+	$g_hCmbCastleCapacityT = GUICtrlCreateCombo("", $x + 85, $y - 2, 35, 25)
+		GUICtrlSetData(-1, "10|15|20|25|30|35", "35")
+		GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
+		GUICtrlCreateLabel("Troops", $x + 125, $y, -1, -1)
+	$g_hCmbCastleCapacityS = GUICtrlCreateCombo("", $x + 195, $y - 2, 35, 25)
+		GUICtrlSetData(-1, "1|2", "2")
+		GUICtrlCreateLabel("Spells", $x + 235, $y, -1, -1)
 
-		$y += 30
-		For $i = 0 To 2
-			$g_ahPicCheckTroops[$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDonBlank, $x + 5, $y + $i * 25, 24, 24)
-			$g_ahCmbCheckTroops[$i] = GUICtrlCreateCombo("", $x + 35, $y + $i * 25, 85, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-			GUICtrlSetData(-1, $sTroopText, "Any")
-			GUICtrlSetOnEvent(-1, "cmbCheckTroopsCC")
-			$g_ahTxtCheckTroops[$i] = GUICtrlCreateInput("0", $x + 125, $y + $i * 25, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+	$y += 30
+	$sCmbList = _ArrayToString($g_asTroopNames) & "|Any"
+		$g_ahPicCCSlot[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDonBlank, $x + 5, $y, 24, 24)
+		$g_ahCmbCCSlot[0] = GUICtrlCreateCombo("", $x + 35, $y, 85, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			GUICtrlSetData(-1, $sCmbList, "Any")
+			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
+		$g_ahTxtCCSlot[0] = GUICtrlCreateInput("0", $x + 125, $y, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			GUICtrlSetLimit(-1, 1)
-			GUICtrlSetOnEvent(-1, "cmbCheckCC")
+			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
-			If $i = 2 Then ExitLoop
-			$g_ahPicCheckSpells[$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDonBlank, $x + 165, $y + $i * 25, 24, 24)
-			$g_ahCmbCheckSpells[$i] = GUICtrlCreateCombo("", $x + 195, $y + $i * 25, 80, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-			GUICtrlSetData(-1, $sSpellText, "Any")
-			GUICtrlSetOnEvent(-1, "cmbCheckSpellsCC")
-			$g_ahTxtCheckSpells[$i] = GUICtrlCreateInput("0", $x + 280, $y + $i * 25, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+		$g_ahPicCCSlot[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDonBlank, $x + 5, $y + 25, 24, 24)
+		$g_ahCmbCCSlot[1] = GUICtrlCreateCombo("", $x + 35, $y + 25, 85, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			GUICtrlSetData(-1, $sCmbList, "Any")
+			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
+		$g_ahTxtCCSlot[1] = GUICtrlCreateInput("0", $x + 125, $y + 25, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			GUICtrlSetLimit(-1, 1)
-			$g_hGrpSpellsToHide &= "#" & $g_ahPicCheckSpells[$i] & "#" & $g_ahCmbCheckSpells[$i] & "#" & $g_ahTxtCheckSpells[$i]
-		Next
-		_GUI_Value_STATE("DISABLE", $g_hGrpSpellsToHide); Temporary disable until CheckCC Spells is made
+			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
-		$y += 80
+		$g_ahPicCCSlot[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDonBlank, $x + 5, $y + 50, 24, 24)
+		$g_ahCmbCCSlot[2] = GUICtrlCreateCombo("", $x + 35, $y + 50, 85, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			GUICtrlSetData(-1, $sCmbList, "Any")
+			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
+		$g_ahTxtCCSlot[2] = GUICtrlCreateInput("0", $x + 125, $y + 50, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+			GUICtrlSetLimit(-1, 1)
+			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
-		$g_hChkTroopsCC = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "TroopsCC", "Remove unwanted troops in CC"), $x + 5, $y, -1, -1)
-			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "TroopsCC_Info_01", "Checking troops/spells in CC. Remove any item other than the above expected."))
-			GUICtrlSetOnEvent(-1, "cmbCheckCC")
+	$sCmbList = StringReplace(_ArrayToString($g_asSpellNames), "Clone|", "") & "|Any" ; removing "Clone" as it does not fit for CC slots.
+		$g_ahPicCCSlot[3] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDonBlank, $x + 165, $y, 24, 24)
+		$g_ahCmbCCSlot[3] = GUICtrlCreateCombo("", $x + 195, $y, 85, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			GUICtrlSetData(-1, $sCmbList, "Any")
+			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
+		$g_ahTxtCCSlot[3] = GUICtrlCreateInput("0", $x + 285, $y, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+			GUICtrlSetLimit(-1, 1)
+			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
-		$g_hLblWarningTextCheckCC = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText", "Please set troops/spells to fit your Castle Capacity"), $x + 21, $y + 25, 290, 30)
+		$g_ahPicCCSlot[4] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDonBlank, $x + 165, $y + 25, 24, 24)
+		$g_ahCmbCCSlot[4] = GUICtrlCreateCombo("", $x + 195, $y + 25, 85, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			GUICtrlSetData(-1, $sCmbList, "Any")
+			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
+		$g_ahTxtCCSlot[4] = GUICtrlCreateInput("0", $x + 285, $y + 25, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+			GUICtrlSetLimit(-1, 1)
+			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
+	$y += 80
+	$g_hChkTroopsCC = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "TroopsCC", "Remove unwanted troops and spells in CC"), $x + 5, $y, -1, -1)
+		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "TroopsCC_Info_01", "Checking troops/spells in CC. Remove any item other than the above expected."))
+		GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
+
+	$g_hLblWarningTextCheckCC = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText", -1), $x + 21, $y + 25, 298, 30)
 
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
-EndFunc   ;==>CheckTroopsCC
+EndFunc   ;==>CreateGUICheckCC

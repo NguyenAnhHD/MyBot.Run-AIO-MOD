@@ -1,11 +1,11 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Chatbot
+; Name ..........: Chatbot (#-23)
 ; Description ...: This file is all related to Gaining XP by Attacking to Goblin Picninc Signle player
 ; Syntax ........:
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: rulesss, kychera
-; Modified ......: NguyenAnhHD (9-2017)
+; Modified ......: Team AiO MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -15,6 +15,166 @@
 #include <Process.au3>
 #include <Array.au3>
 #include <WinAPIEx.au3>
+
+Func ChatbotReadMessages()
+	If IniRead($chatIni, "ChatGlobal", "Enable", "False") = "True" Then $g_iGlobalChat = True
+	If IniRead($chatIni, "ChatGlobal", "Scramble", "False") = "True" Then $g_iGlobalScramble = True
+	If IniRead($chatIni, "ChatGlobal", "SwitchLang", "False") = "True" Then $g_iSwitchLang = True
+    $g_iRusLang = IniRead($chatIni, "Lang", "RusLang", "0")
+    $g_iCmbLang = IniRead($chatIni, "Lang", "cmbLang", "8")
+	If IniRead($chatIni, "ChatClan", "Enable", "False") = "True" Then $g_iClanChat = True
+	If IniRead($chatIni, "ChatClan", "Responses", "False") = "True" Then $g_iUseResponses = True
+	If IniRead($chatIni, "ChatClan", "Generic", "False") = "True" Then $g_iUseGeneric = True
+	If IniRead($chatIni, "ChatClan", "ChatPushbullet", "False") = "True" Then $g_iChatPushbullet = True
+	If IniRead($chatIni, "ChatClan", "PbSendNewChats", "False") = "True" Then $g_iPbSendNewChats = True
+
+	$ClanMessages = StringSplit(IniRead($chatIni, "ChatClan", "GenericMessages", "Testing on Chat|Hey all"), "|", 2)
+	Global $ClanResponses0 = StringSplit(IniRead($chatIni, "ChatClan", "ResponseMessages", "keyword:Response|hello:Hi, Welcome to the clan|hey:Hey, how's it going?"), "|", 2)
+	Global $ClanResponses1[UBound($ClanResponses0)][2]
+	For $a = 0 To UBound($ClanResponses0) - 1
+		Local $TmpResp = StringSplit($ClanResponses0[$a], ":", 2)
+		If UBound($TmpResp) > 0 Then
+			$ClanResponses1[$a][0] = $TmpResp[0]
+		Else
+			$ClanResponses1[$a][0] = "<invalid>"
+		EndIf
+		If UBound($TmpResp) > 1 Then
+			$ClanResponses1[$a][1] = $TmpResp[1]
+		Else
+			$ClanResponses1[$a][1] = "<undefined>"
+		EndIf
+	Next
+
+	$ClanResponses = $ClanResponses1
+
+	$GlobalMessages1 = StringSplit(IniRead($chatIni, "ChatGlobal", "GlobalMessages1", "War Clan Recruiting|Active War Clan accepting applications"), "|", 2)
+	$GlobalMessages2 = StringSplit(IniRead($chatIni, "ChatGlobal", "GlobalMessages2", "Join now|Apply now"), "|", 2)
+	$GlobalMessages3 = StringSplit(IniRead($chatIni, "ChatGlobal", "GlobalMessages3", "250 war stars min|Must have 250 war stars"), "|", 2)
+	$GlobalMessages4 = StringSplit(IniRead($chatIni, "ChatGlobal", "GlobalMessages4", "Adults Only| 18+"), "|", 2)
+EndFunc   ;==>ChatbotReadMessages
+
+Func ChatbotGUICheckbox()
+	$g_iGlobalChat = GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED
+	$g_iGlobalScramble = GUICtrlRead($g_hChkGlobalScramble) = $GUI_CHECKED
+	$g_iSwitchLang = GUICtrlRead($g_hChkSwitchLang) = $GUI_CHECKED
+
+	$g_iClanChat = GUICtrlRead($g_hChkClanChat) = $GUI_CHECKED
+	$g_iUseResponses = GUICtrlRead($g_hChkUseResponses) = $GUI_CHECKED
+	$g_iUseGeneric = GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED
+	$g_iChatPushbullet = GUICtrlRead($g_hChkChatPushbullet) = $GUI_CHECKED
+	$g_iPbSendNewChats = GUICtrlRead($g_hChkPbSendNewChats) = $GUI_CHECKED
+    If GUICtrlRead($g_hChkRusLang) = $GUI_CHECKED Then
+		$g_iRusLang = 1
+	Else
+		$g_iRusLang = 0
+	EndIf
+	$g_iCmbLang = _GUICtrlComboBox_GetCurSel($g_hCmbLang)
+
+	IniWrite($chatIni, "Lang", "cmbLang", $g_iCmbLang)
+	IniWrite($chatIni, "ChatGlobal", "Enable", $g_iGlobalChat)
+	IniWrite($chatIni, "ChatGlobal", "Scramble", $g_iGlobalScramble)
+	IniWrite($chatIni, "ChatGlobal", "SwitchLang", $g_iSwitchLang)
+
+	IniWrite($chatIni, "ChatClan", "Enable", $g_iClanChat)
+	IniWrite($chatIni, "ChatClan", "Responses", $g_iUseResponses)
+	IniWrite($chatIni, "ChatClan", "Generic", $g_iUseGeneric)
+	IniWrite($chatIni, "ChatClan", "ChatPushbullet", $g_iChatPushbullet)
+	IniWrite($chatIni, "ChatClan", "PbSendNewChats", $g_iPbSendNewChats)
+    IniWrite($chatIni, "Lang", "RusLang", $g_iRusLang)
+	ChatbotGUICheckboxControl()
+
+EndFunc   ;==>ChatbotGUICheckbox
+
+Func ChatbotGUICheckboxControl()
+	If GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hChkGlobalScramble, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkSwitchLang, $GUI_ENABLE)
+		GUICtrlSetState($g_hCmbLang, $GUI_SHOW)
+		GUICtrlSetState($g_hEditGlobalMessages1, $GUI_ENABLE)
+		GUICtrlSetState($g_hEditGlobalMessages2, $GUI_ENABLE)
+		GUICtrlSetState($g_hEditGlobalMessages3, $GUI_ENABLE)
+		GUICtrlSetState($g_hEditGlobalMessages4, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hChkGlobalScramble, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkSwitchLang, $GUI_DISABLE)
+	    GUICtrlSetState($g_hCmbLang, $GUI_INDETERMINATE)
+		GUICtrlSetState($g_hEditGlobalMessages1, $GUI_DISABLE)
+		GUICtrlSetState($g_hEditGlobalMessages2, $GUI_DISABLE)
+		GUICtrlSetState($g_hEditGlobalMessages3, $GUI_DISABLE)
+		GUICtrlSetState($g_hEditGlobalMessages4, $GUI_DISABLE)
+	EndIf
+	If GUICtrlRead($g_hChkClanChat) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hChkUseResponses, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkUseGeneric, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkChatPushbullet, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkPbSendNewChats, $GUI_ENABLE)
+		GUICtrlSetState($g_hEditResponses, $GUI_ENABLE)
+		GUICtrlSetState($g_hEditGeneric, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hChkUseResponses, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkUseGeneric, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkChatPushbullet, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkPbSendNewChats, $GUI_DISABLE)
+		GUICtrlSetState($g_hEditResponses, $GUI_DISABLE)
+		GUICtrlSetState($g_hEditGeneric, $GUI_DISABLE)
+	EndIf
+	If  GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED And GUICtrlRead($g_hChkSwitchLang) = $GUI_CHECKED Then
+	    GUICtrlSetState($g_hCmbLang, $GUI_ENABLE)
+	Else
+     	GUICtrlSetState($g_hCmbLang, $GUI_DISABLE)
+	EndIf
+
+	If $g_iRusLang = 1 Then
+		GUICtrlSetState($g_hChkRusLang, $GUI_CHECKED)
+
+	ElseIf $g_iRusLang = 0 Then
+		GUICtrlSetState($g_hChkRusLang, $GUI_UNCHECKED)
+
+	EndIf
+	_GUICtrlComboBox_SetCurSel($g_hCmbLang, $g_iCmbLang)
+	$g_iCmbLang = _GUICtrlComboBox_GetCurSel($g_hCmbLang)
+EndFunc   ;==>ChatbotGUICheckboxControl
+
+Func ChatbotGUICheckboxDisable()
+	For $i = $g_hChkGlobalChat To $g_hEditGeneric ; Save state of all controls on tabs
+		GUICtrlSetState($i, $GUI_DISABLE)
+	Next
+EndFunc   ;==>ChatbotGUICheckboxDisable
+Func ChatbotGUICheckboxEnable()
+	For $i = $g_hChkGlobalChat To $g_hEditGeneric ; Save state of all controls on tabs
+		GUICtrlSetState($i, $GUI_ENABLE)
+	Next
+	ChatbotGUICheckboxControl()
+EndFunc   ;==>ChatbotGUICheckboxEnable
+
+Func ChatbotGUIEditMessages()
+Global $glb1 = GUICtrlRead($g_hEditGlobalMessages1)
+Global $glb2 = GUICtrlRead($g_hEditGlobalMessages2)
+Global $glb3 = GUICtrlRead($g_hEditGlobalMessages3)
+Global $glb4 = GUICtrlRead($g_hEditGlobalMessages4)
+
+Global $cResp = GUICtrlRead($g_hEditResponses)
+Global $cGeneric = GUICtrlRead($g_hEditGeneric)
+
+
+	$glb1 = StringReplace($glb1, @CRLF, "|")
+	$glb2 = StringReplace($glb2, @CRLF, "|")
+	$glb3 = StringReplace($glb3, @CRLF, "|")
+	$glb4 = StringReplace($glb4, @CRLF, "|")
+
+	$cResp = StringReplace($cResp, @CRLF, "|")
+	$cGeneric = StringReplace($cGeneric, @CRLF, "|")
+
+	IniWrite($chatIni, "ChatGlobal", "GlobalMessages1", $glb1)
+	IniWrite($chatIni, "ChatGlobal", "GlobalMessages2", $glb2)
+	IniWrite($chatIni, "ChatGlobal", "GlobalMessages3", $glb3)
+	IniWrite($chatIni, "ChatGlobal", "GlobalMessages4", $glb4)
+
+	IniWrite($chatIni, "ChatClan", "GenericMessages", $cGeneric)
+	IniWrite($chatIni, "ChatClan", "ResponseMessages", $cResp)
+
+	ChatbotReadMessages()
+EndFunc   ;==>ChatbotGUIEditMessages
 
 Func ChatbotChatOpen() ; open the chat area
 	Click(20, 379, 1) ; open chat
@@ -54,22 +214,23 @@ Func ChatbotChatGlobalInput() ; select the textbox for global chat
 	Return True
 EndFunc   ;==>ChatbotChatGlobalInput
 
-Func ChatbotChatInput($Message)
-	Click(33, 707, 1)
+Func ChatbotChatInput($message)
+	   Click(33, 707, 1)
 	If $g_iRusLang = 1 Then
-		SetLog("Chat send in russia", $COLOR_BLUE)
-		AutoItWinSetTitle('MyAutoItTitle')
-			_WinAPI_SetKeyboardLayout(WinGetHandle(AutoItWinGetTitle()), 0x0419)
-			Sleep(500)
-			ControlFocus($g_hAndroidWindow, "", "")
-			SendKeepActive($g_hAndroidWindow)
-			Sleep(500)
-		AutoItSetOption("SendKeyDelay", 50)
-		_SendExEx($Message)
-		SendKeepActive("")
-	Else
+	  SetLog("Chat send in russia", $COLOR_BLUE)
+	 AutoItWinSetTitle('MyAutoItTitle')
+    _WinAPI_SetKeyboardLayout(WinGetHandle(AutoItWinGetTitle()), 0x0419)
 		Sleep(500)
-		SendText($Message)
+		ControlFocus($g_hAndroidWindow, "", "")
+		SendKeepActive($g_hAndroidWindow)
+		Sleep(500)
+	;Opt("SendKeyDelay", 1000)
+	AutoItSetOption("SendKeyDelay", 50)
+	  _SendExEx($message)
+	   SendKeepActive("")
+    Else
+	  Sleep(500)
+ 	 SendText($message)
 	EndIf
 	Return True
 EndFunc   ;==>ChatbotChatInput
@@ -119,8 +280,10 @@ Func ChatbotPushbulletSendChat()
    $g_sProfileLootsPath = ""
    _GDIPlus_ImageSaveToFile($g_hBitmap, $g_sProfileLootsPath & $ChatFile)
    _GDIPlus_ImageDispose($g_hBitmap)
+   ;push the file
    SetLog("Chatbot: Sent chat image", $COLOR_GREEN)
    NotifyPushFileToBoth($ChatFile, "Loots", "image/jpeg", $g_sNotifyOrigin & " | Last Clan Chats" & "\n" & $ChatFile)
+   ;wait a second and then delete the file
    _Sleep(500)
    Local $iDelete = FileDelete($g_sProfileLootsPath & $ChatFile)
    If Not ($iDelete) Then SetLog("Chatbot: Failed to delete temp file", $COLOR_RED)
@@ -298,41 +461,39 @@ Func ChatbotMessage() ; run the chatbot
 		SetLog("Chatbot: Sending some chats", $COLOR_GREEN)
 	EndIf
 	If $g_iGlobalChat Then
-		If $g_iSwitchLang = True Then
-			Switch GUICtrlRead($g_hCmbLang)
-					Case "EN"
-				ChangeLanguageToEN()
-					Case "FR"
-				ChangeLanguageToFRA()
-					Case "DE"
-				ChangeLanguageToDE()
-					Case "ES"
-				ChangeLanguageToES()
-					Case "IT"
-				ChangeLanguageToITA()
-					Case "NL"
-				ChangeLanguageToNL()
-					Case "NO"
-				ChangeLanguageToNO()
-					Case "PR"
-				ChangeLanguageToPR()
-					Case "TR"
-				ChangeLanguageToTR()
-					Case "RU"
-				ChangeLanguageToRU()
-			EndSwitch
-				waitMainScreen()
+		If $g_iSwitchLang = 1 Then
+		Switch GUICtrlRead($g_hCmbLang)
+		        Case "FR"
+			ChangeLanguageToFRA()
+		        Case "DE"
+		    ChangeLanguageToDE()
+		        Case "ES"
+		    ChangeLanguageToES()
+		        Case "IT"
+		    ChangeLanguageToITA()
+		        Case "NL"
+		    ChangeLanguageToNL()
+		        Case "NO"
+		    ChangeLanguageToNO()
+		        Case "PR"
+		    ChangeLanguageToPR()
+		        Case "TR"
+		    ChangeLanguageToTR()
+		        Case "RU"
+		    ChangeLanguageToRU()
+              EndSwitch
+			waitMainScreen()
 		EndIf
 		If Not ChatbotChatOpen() Then Return
 		SetLog("Chatbot: Sending chats to global", $COLOR_GREEN)
 		; assemble a message
-		Local $message[4]
-		$Message[0] = $GlobalMessages1[Random(0, UBound($GlobalMessages1) - 1, 1)]
-		$Message[1] = $GlobalMessages2[Random(0, UBound($GlobalMessages2) - 1, 1)]
-		$Message[2] = $GlobalMessages3[Random(0, UBound($GlobalMessages3) - 1, 1)]
-		$Message[3] = $GlobalMessages4[Random(0, UBound($GlobalMessages4) - 1, 1)]
+		Global $message[4]
+		$message[0] = $GlobalMessages1[Random(0, UBound($GlobalMessages1) - 1, 1)]
+		$message[1] = $GlobalMessages2[Random(0, UBound($GlobalMessages2) - 1, 1)]
+		$message[2] = $GlobalMessages3[Random(0, UBound($GlobalMessages3) - 1, 1)]
+		$message[3] = $GlobalMessages4[Random(0, UBound($GlobalMessages4) - 1, 1)]
 		If $g_iGlobalScramble Then
-			_ArrayShuffle($Message)
+			_ArrayShuffle($message)
 		EndIf
 		; Send the message
 		If Not ChatbotSelectGlobalChat() Then Return
@@ -340,7 +501,7 @@ Func ChatbotMessage() ; run the chatbot
 		If Not ChatbotChatInput(_ArrayToString($message, " ")) Then Return
 		If Not ChatbotChatSendGlobal() Then Return
 		If Not ChatbotChatClose() Then Return
-		If $g_iSwitchLang = True Then
+		If $g_iSwitchLang = 1 Then
 			ChangeLanguageToEN()
 			waitMainScreen()
 		EndIf
@@ -394,16 +555,16 @@ Func ChatbotMessage() ; run the chatbot
 			If $ChatMsg = "" Or $ChatMsg = " " Then
 				If $g_iUseGeneric Then
 					If Not ChatbotChatClanInput() Then Return
-					If Not ChatbotChatInput($ClanMessages2[Random(0, UBound($ClanMessages2) - 1, 1)]) Then Return
+					If Not ChatbotChatInput($ClanMessages[Random(0, UBound($ClanMessages) - 1, 1)]) Then Return
 					If Not ChatbotChatSendClan() Then Return
 					$SentMessage = True
 				EndIf
 			EndIf
 
 			If $g_iUseResponses And Not $SentMessage Then
-				For $a = 0 To UBound($ClanMessages1) - 1
-					If StringInStr($ChatMsg, $ClanMessages1[$a][0]) Then
-						Local $Response = $ClanMessages1[$a][1]
+				For $a = 0 To UBound($ClanResponses) - 1
+					If StringInStr($ChatMsg, $ClanResponses[$a][0]) Then
+						Local $Response = $ClanResponses[$a][1]
 						SetLog("Sending response: " & $Response, $COLOR_GREEN)
 						If Not ChatbotChatClanInput() Then Return
 						If Not ChatbotChatInput($Response) Then Return
@@ -417,7 +578,7 @@ Func ChatbotMessage() ; run the chatbot
 			If Not $SentMessage Then
 				If $g_iUseGeneric Then
 					If Not ChatbotChatClanInput() Then Return
-					If Not ChatbotChatInput($ClanMessages2[Random(0, UBound($ClanMessages2) - 1, 1)]) Then Return
+					If Not ChatbotChatInput($ClanMessages[Random(0, UBound($ClanMessages) - 1, 1)]) Then Return
 					If Not ChatbotChatSendClan() Then Return
 				EndIf
 			EndIf
@@ -429,7 +590,7 @@ Func ChatbotMessage() ; run the chatbot
 			EndIf
 		ElseIf $g_iUseGeneric Then
 			If Not ChatbotChatClanInput() Then Return
-			If Not ChatbotChatInput($ClanMessages2[Random(0, UBound($ClanMessages2) - 1, 1)]) Then Return
+			If Not ChatbotChatInput($ClanMessages[Random(0, UBound($ClanMessages) - 1, 1)]) Then Return
 			If Not ChatbotChatSendClan() Then Return
 		EndIf
 
@@ -442,7 +603,6 @@ Func ChatbotMessage() ; run the chatbot
 	EndIf
 EndFunc   ;==>ChatbotMessage
 
-;===========Addied kychera=================
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: _Encoding_JavaUnicodeDecode
 ; Description ...: Decode string from Java Unicode format.

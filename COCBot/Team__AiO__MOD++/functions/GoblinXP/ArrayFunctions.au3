@@ -1,11 +1,11 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: ArrayRemoveDuplicates , _ArryRemoveBlanks
+; Name ..........: ArrayRemoveDuplicates , _ArryRemoveBlanks (#-19)
 ; Description ...:
 ; Syntax ........:
 ; Parameters ....:
 ; Return values .: None
 ; Author ........: MR.ViPER (23-11-2016)
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:

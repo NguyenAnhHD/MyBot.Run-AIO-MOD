@@ -21,6 +21,9 @@ Global $g_hChkAttackNow = 0, $g_hCmbAttackNowDelay = 0, $g_hChkRestartSearchLimi
 
 Global $g_hLblVSDelay = 0, $g_hLblTextVSDelay = 0, $g_hLblMaxVSDelay = 0, $g_hLblTextMaxVSDelay = 0, $g_hLblAttackNow = 0, $g_hLblAttackNowSec = 0
 
+; Restart Search Legend league - Team AiO MOD++ (#-29)
+Global $g_hChkSearchTimeout = 0, $g_hLblSearchTimeout = 0, $g_hTxtSearchTimeout = 0, $g_hLblSearchTimeoutminutes = 0
+
 Func CreateAttackSearchOptionsSearch()
    Local $sTxtTip = ""
    Local $x = 25, $y = 45
@@ -137,7 +140,7 @@ Func CreateAttackSearchOptionsSearch()
 
 	$x = 253
 	$y = 45
-	GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "Group_03", "Search Options"), $x - 20, $y - 20, 189, 165)
+	GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "Group_03", "Search Options"), $x - 20, $y - 20, 189, 205)
 	$x -= 5
 	   $g_hChkAttackNow = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkAttackNow", "Attack Now! option."), $x-5, $y -4, -1, -1)
 			$sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkAttackNow_Info_01", "Check this if you want the option to have an 'Attack Now!' button next to") & @CRLF & _
@@ -173,6 +176,16 @@ Func CreateAttackSearchOptionsSearch()
 		$g_hChkAlertSearch = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkAlertSearch", "Alert me when Village found"), $x-5, $y , -1, -1)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkAlertSearch_Info_01", "Check this if you want an Audio alarm & a Balloon Tip when a Base to attack is found."))
 			GUICtrlSetState(-1, $GUI_CHECKED)
+
+	; Restart Search Legend league - Team AiO MOD++ (#-29)
+	$y += 40
+		$g_hChkSearchTimeout = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkSearchTimeout", "Restart search IF Cloud Time"), $x-5, $y-8, -1, -1)
+			_GUICtrlSetTip(-1,GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkSearchTimeout_Info_01", "Will Return to home and restart search if clouding time is > xx minutes"))
+			GUICtrlSetOnEvent(-1, "chkSearchTimeout")
+		$g_hLblSearchTimeout = GUICtrlCreateLabel(ChrW(62), $x + 5, $y + 17, -1, -1)
+		$g_hTxtSearchTimeout = GUICtrlCreateInput("10", $x + 15, $y + 15, 25, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+		$g_hLblSearchTimeoutminutes = GUICtrlCreateLabel("minutes", $x + 50, $y + 17, -1, -1)
+
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 EndFunc

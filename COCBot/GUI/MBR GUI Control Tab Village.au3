@@ -33,16 +33,14 @@ Func chkRequestCCHours()
 
 	If GUICtrlRead($g_hChkRequestTroopsEnable) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hTxtRequestCC, $GUI_SHOW + $GUI_ENABLE)
-		For $i = $chkReqCCFirst To $g_hLblRequestCCHoursPM ; Demen
-			If StringInStr($g_hGrpSpellsToHide, $i) Then ContinueLoop; Temporary disable until CheckCC Spells is made ; Demen
+		For $i = $chkReqCCFirst To $g_hLblRequestCCHoursPM ; CheckCC Troops - Team AiO MOD++ (#-24)
 			GUICtrlSetState($i, $GUI_ENABLE)
 		Next
 	Else
 		GUICtrlSetState($g_hTxtRequestCC, $GUI_SHOW + $GUI_DISABLE)
-		GUICtrlSetState($g_hChkTroopsCC, $GUI_UNCHECKED);Demen
-		cmbCheckCC();Demen
+		GUICtrlSetState($g_hChkTroopsCC, $GUI_UNCHECKED) ; CheckCC Troops - Team AiO MOD++ (#-24)
+		GUIControlCheckCC() ; CheckCC Troops - Team AiO MOD++ (#-24)
 		For $i = $chkReqCCFirst To $g_hLblRequestCCHoursPM
-			If StringInStr($g_hGrpSpellsToHide, $i) Then ContinueLoop; Temporary disable until CheckCC Spells is made ; Demen
 			GUICtrlSetState($i, $GUI_DISABLE)
 		Next
 	EndIf

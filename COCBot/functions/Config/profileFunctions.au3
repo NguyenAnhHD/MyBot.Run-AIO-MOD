@@ -9,7 +9,7 @@
 
 Func setupProfileComboBox()
 	; Array to store Profile names to add to ComboBox
-	$profileString = ""
+	Local $profileString = ""
 	Local $aProfiles = _FileListToArray($g_sProfilePath, "*", $FLTA_FOLDERS)
 	If @error Then
 		; No folders for profiles so lets set the combo box to a generic entry
@@ -27,12 +27,29 @@ Func setupProfileComboBox()
 
 	; Clear the combo box current data in case profiles were deleted
 	GUICtrlSetData($g_hCmbProfile, "", "")
+	; Forecast - Team AiO MOD++ (#-17)
 	GUICtrlSetData($cmbForecastHopingSwitchMin, "", "")
 	GUICtrlSetData($cmbForecastHopingSwitchMax, "", "")
 	; Set the new data of available profiles
 	GUICtrlSetData($g_hCmbProfile, $profileString, "<No Profiles>")
+	; Forecast - Team AiO MOD++ (#-17)
 	GUICtrlSetData($cmbForecastHopingSwitchMax, $profileString, "<No Profiles>")
 	GUICtrlSetData($cmbForecastHopingSwitchMin, $profileString, "<No Profiles>")
+
+	; Switch Accounts - Team AiO MOD++ (#-12)
+	For $i = 0 To 7
+		GUICtrlSetData($g_ahCmbProfile[$i], "")
+		GUICtrlSetData($g_ahCmbProfile[$i], $profileString)
+		_GUICtrlComboBox_SetCurSel($g_ahCmbProfile[$i], 0)
+	Next
+	; Switch Profile - Team AiO MOD++ (#-25)
+	For $i = 0 To 3
+		GUICtrlSetData($g_ahCmb_SwitchMax[$i], "")
+		GUICtrlSetData($g_ahCmb_SwitchMax[$i], $profileString, "<No Profiles>")
+		GUICtrlSetData($g_ahCmb_SwitchMin[$i], "")
+		GUICtrlSetData($g_ahCmb_SwitchMin[$i], $profileString, "<No Profiles>")
+	Next
+
 EndFunc   ;==>setupProfileComboBox
 
 Func renameProfile()
@@ -81,12 +98,10 @@ Func createProfile($bCreateNew = False)
 	If $bCreateNew = True Then
 		; create new profile (recursive call from setupProfile() and selectProfile() !!!)
 		setupProfileComboBox()
-		setupProfileComboBoxswitch()
 		setupProfile()
 		saveConfig()
 		; applyConfig()
 		setupProfileComboBox()
-		setupProfileComboBoxswitch()
 		selectProfile()
 		Return
 	EndIf
@@ -115,11 +130,13 @@ Func createProfile($bCreateNew = False)
 EndFunc   ;==>createProfile
 
 Func setupProfile()
-	If GUICtrlRead($g_hCmbProfile) = "<No Profiles>" Then
-		; Set profile name to the text box value if no profiles are found.
-		$g_sProfileCurrentName = StringRegExpReplace(GUICtrlRead($g_hTxtVillageName), '[/:*?"<>|]', '_')
-	Else
-		$g_sProfileCurrentName = GUICtrlRead($g_hCmbProfile)
+	If $g_iGuiMode = 1 Then
+		If GUICtrlRead($g_hCmbProfile) = "<No Profiles>" Then
+			; Set profile name to the text box value if no profiles are found.
+			$g_sProfileCurrentName = StringRegExpReplace(GUICtrlRead($g_hTxtVillageName), '[/:*?"<>|]', '_')
+		Else
+			$g_sProfileCurrentName = GUICtrlRead($g_hCmbProfile)
+		EndIf
 	EndIf
 
 	; Create the profile if needed, this also sets the variables if the profile exists.

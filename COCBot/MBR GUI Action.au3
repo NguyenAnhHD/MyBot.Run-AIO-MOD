@@ -59,12 +59,19 @@ Func BotStart($bAutostartDelay = 0)
 		SetLog("Background Mode not supported for " & $g_sAndroidEmulator & " and has been disabled", $COLOR_ERROR)
 	EndIf
 
+	; update bottom buttons
 	GUICtrlSetState($g_hBtnStart, $GUI_HIDE)
 	GUICtrlSetState($g_hBtnStop, $GUI_SHOW)
 	GUICtrlSetState($g_hBtnPause, $GUI_SHOW)
 	GUICtrlSetState($g_hBtnResume, $GUI_HIDE)
 	GUICtrlSetState($g_hBtnSearchMode, $GUI_HIDE)
 	GUICtrlSetState($g_hChkBackgroundMode, $GUI_DISABLE)
+
+	; update try items
+	TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Stop", "Stop bot"))
+	TrayItemSetState($g_hTiPause, $TRAY_ENABLE)
+	TrayItemSetText($g_hTiPause, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Pause", "Pause bot"))
+
 	EnableControls($g_hFrmBotBottom, Default, $g_aFrmBotBottomCtrlState)
 
 	DisableGuiControls()
@@ -110,7 +117,28 @@ Func BotStart($bAutostartDelay = 0)
 		EndIf
 		If Not $g_bRunState Then Return
 		If $hWndActive = $g_hAndroidWindow And ($g_bAndroidBackgroundLaunched = True Or AndroidControlAvailable())  Then ; Really?
-			AutoHide() ; Auto Hide - NguyenAnhHD
+
+			; Auto Dock, Hide Emulator & Bot - Team AiO MOD++ (#-07)
+			If $g_iChkAutoDock Then
+				If Not $g_bAndroidEmbedded Then
+					SetLog("Bot Auto Dock to Emulator", $COLOR_ERROR)
+					btnEmbed()
+				EndIf
+			ElseIf $g_iChkAutoHideEmulator Then
+				If Not $g_bIsHidden Then
+					SetLog("Bot Auto Hide Emulator", $COLOR_ERROR)
+					btnHide()
+					$g_bIsHidden = True
+				EndIf
+			EndIf
+
+			If $g_iChkAutoMinimizeBot Then
+				SetLog("Bot Auto Minimize Bot", $COLOR_ERROR)
+				If $g_bHideWhenMinimized Then
+					WinSetState($g_hFrmBot, "", @SW_MINIMIZE)
+				EndIf
+			EndIf
+
 			Initiate() ; Initiate and run bot
 		Else
 			SetLog("Cannot use " & $g_sAndroidEmulator & ", please check log", $COLOR_ERROR)
@@ -146,6 +174,7 @@ Func BotStop()
 
 	EnableControls($g_hFrmBotBottom, Default, $g_aFrmBotBottomCtrlState)
 
+	; update bottom buttons
 	GUICtrlSetState($g_hChkBackgroundMode, $GUI_ENABLE)
 	GUICtrlSetState($g_hBtnStart, $GUI_SHOW)
 	GUICtrlSetState($g_hBtnStop, $GUI_HIDE)
@@ -154,8 +183,10 @@ Func BotStop()
 	If $g_iTownHallLevel > 2 Then GUICtrlSetState($g_hBtnSearchMode, $GUI_ENABLE)
 	GUICtrlSetState($g_hBtnSearchMode, $GUI_SHOW)
 	;GUICtrlSetState($g_hBtnMakeScreenshot, $GUI_ENABLE)
-	GUICtrlSetState($g_hBtnEnableGUI, $GUI_HIDE) ; Manually enable/disable GUI while botting (as requested by YScorpion) - Demen
-	GUICtrlSetState($g_hBtnDisableGUI, $GUI_HIDE) ; Manually enable/disable GUI while botting (as requested by YScorpion) - Demen
+
+	; Enable/Disable GUI while botting - Team AiO MOD++ (#-01)
+	GUICtrlSetState($g_hBtnEnableGUI, $GUI_HIDE)
+	GUICtrlSetState($g_hBtnDisableGUI, $GUI_HIDE)
 
 	; hide attack buttons if show
 	GUICtrlSetState($g_hBtnAttackNowDB, $GUI_HIDE)
@@ -163,6 +194,10 @@ Func BotStop()
 	GUICtrlSetState($g_hBtnAttackNowTS, $GUI_HIDE)
 	GUICtrlSetState($g_hPicTwoArrowShield, $GUI_SHOW)
 	GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
+
+	; update try items
+	TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Start", "Start bot"))
+	TrayItemSetState($g_hTiPause, $TRAY_DISABLE)
 
 	SetLogCentered(" Bot Stop ", Default, $COLOR_ACTION)
 	If Not $g_bSearchMode Then

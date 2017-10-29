@@ -14,11 +14,12 @@
 ; ===============================================================================================================================
 
 Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
-	If $g_iDebugSetlog = 1 Then Setlog("algorithm_AllTroops()", $COLOR_DEBUG)
+	If $g_bDebugSetlog Then Setlog("algorithm_AllTroops()", $COLOR_DEBUG)
 	SetSlotSpecialTroops()
 
 	If _Sleep($DELAYALGORITHM_ALLTROOPS1) Then Return
 
+	; Classic Four Finger - Team AiO MOD++ (#-04)
 	If $g_aiAttackStdDropSides[$g_iMatchMode] <> 4 Then ; ! FourFinger
 		SmartAttackStrategy($g_iMatchMode) ; detect redarea first to drop any troops
 	EndIf
@@ -166,7 +167,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 						]
 		EndSwitch
 
-	; Classic Four Fingers
+	; Classic Four Finger - Team AiO MOD++ (#-04)
 	ElseIf $nbSides = 5 Then
 	   	CmbGiantSlot()
 		If $g_bCustomTrainDropOrderEnable = True Then
@@ -192,7 +193,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 						[MatchTroopDropName(19), MatchSidesDrop(19), MatchTroopWaveNb(19), 1, MatchSlotsPerEdge(19)], _
 						[MatchTroopDropName(20), MatchSidesDrop(20), MatchTroopWaveNb(20), 1, MatchSlotsPerEdge(20)]]
 		Else
-			Local $listInfoDeploy[21][5] = [[$eGiant, $nbSides, 1, 1, $iSlotsGiants], _
+			Local $listInfoDeploy[21][5] = [[$eGiant, $nbSides, 1, 1, $g_aiSlotsGiants], _
 						["CC", 1, 1, 1, 1], _
 						[$eGole, $nbSides, 1, 1, 2], _
 						[$eLava, $nbSides, 1, 1, 2], _
@@ -215,7 +216,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 		EndIf
 
 	Else
-		If $g_iDebugSetlog = 1 Then SetLog("listdeploy standard for attack", $COLOR_DEBUG)
+		If $g_bDebugSetlog Then SetLog("listdeploy standard for attack", $COLOR_DEBUG)
 		Switch $g_aiAttackStdDropOrder[$g_iMatchMode]
 			Case 0
 				If $g_bCustomTrainDropOrderEnable = True Then
@@ -321,7 +322,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 	SetLog("Dropping left over troops", $COLOR_INFO)
 	For $x = 0 To 1
 		If PrepareAttack($g_iMatchMode, True) = 0 Then
-			If $g_iDebugSetlog = 1 Then Setlog("No Wast time... exit, no troops usable left", $COLOR_DEBUG)
+			If $g_bDebugSetlog Then Setlog("No Wast time... exit, no troops usable left", $COLOR_DEBUG)
 			ExitLoop ;Check remaining quantities
 		EndIf
 		For $i = $eBarb To $eBowl ; launch all remaining troops
@@ -358,7 +359,7 @@ Func SetSlotSpecialTroops()
 		EndIf
 	Next
 
-	If $g_iDebugSetlog = 1 Then
+	If $g_bDebugSetlog Then
 		SetLog("SetSlotSpecialTroops() King Slot: " & $g_iKingSlot, $COLOR_DEBUG)
 		SetLog("SetSlotSpecialTroops() Queen Slot: " & $g_iQueenSlot, $COLOR_DEBUG)
 		SetLog("SetSlotSpecialTroops() Warden Slot: " & $g_iWardenSlot, $COLOR_DEBUG)

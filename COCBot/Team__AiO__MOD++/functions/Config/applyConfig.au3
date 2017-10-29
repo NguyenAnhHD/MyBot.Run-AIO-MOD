@@ -18,22 +18,24 @@ Func ApplyConfig_MOD($TypeReadSave)
 	Switch $TypeReadSave
 		Case "Read"
 
-			; Classic Four Finger (Demen) - Added by NguyenAnhHD & Eloy
+			; Classic Four Finger - Team AiO MOD++ (#-04)
 			cmbStandardDropSidesAB()
 			Bridge()
 
-			; Unit/Wave Factor (rulesss & kychera) - Added by Eloy
-			GUICtrlSetState($ChkUnitFactor, $iChkUnitFactor ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetData($TxtUnitFactor, $iTxtUnitFactor)
-			chkUnitFactor()
-			GUICtrlSetState($ChkWaveFactor, $iChkWaveFactor ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetData($TxtWaveFactor, $iTxtWaveFactor)
-			chkWaveFactor()
-			GUICtrlSetState($ChkGiantSlot, $iChkGiantSlot ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($CmbGiantSlot, $iCmbGiantSlot)
-			ChkGiantSlot()
+			; Unit/Wave Factor - Team AiO MOD++ (#-05)
+			GUICtrlSetState($g_hChkGiantSlot, $g_iChkGiantSlot = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($g_hCmbGiantSlot, $g_iCmbGiantSlot)
+			chkGiantSlot()
 
-			; Custom Drop Order
+			GUICtrlSetState($g_hChkUnitFactor, $g_iChkUnitFactor = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtUnitFactor, $g_iTxtUnitFactor)
+			chkUnitFactor()
+
+			GUICtrlSetState($g_hChkWaveFactor, $g_iChkWaveFactor = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtWaveFactor, $g_iTxtWaveFactor)
+			chkWaveFactor()
+
+			; Drop Order Troops - Team AiO MOD++ (#-06)
 			GUICtrlSetState($g_hChkCustomTrainDropOrderEnable, $g_bCustomTrainDropOrderEnable = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			For $p = 0 To UBound($icmbDropTroops) - 1
 				_GUICtrlComboBox_SetCurSel($cmbDropTroops[$p], $icmbDropTroops[$p])
@@ -54,50 +56,54 @@ Func ApplyConfig_MOD($TypeReadSave)
 			EndIf
 			chkTroopDropOrder()
 
-			; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
-			GUICtrlSetState($g_hChkAutohide, $ichkAutoHide = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetData($g_hTxtAutohideDelay, $ichkAutoHideDelay)
-			chkAutoHide()
+			; Auto Dock, Hide Emulator & Bot - Team AiO MOD++ (#-07)
+			GUICtrlSetState($g_hChkEnableAuto, $g_bEnableAuto = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkEnableAuto()
+			If $g_iChkAutoDock Then
+				GUICtrlSetState($g_hChkAutoDock, $GUI_CHECKED)
+				GUICtrlSetState($g_hChkAutoHideEmulator, $GUI_UNCHECKED)
+			EndIf
+			If $g_iChkAutoHideEmulator Then
+				GUICtrlSetState($g_hChkAutoHideEmulator, $GUI_CHECKED)
+				GUICtrlSetState($g_hChkAutoDock, $GUI_UNCHECKED)
+			EndIf
+			btnEnableAuto()
+			GUICtrlSetState($g_hChkAutoMinimizeBot, $g_iChkAutoMinimizeBot = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkHideWhenMinimized()
 
-			; Check Collector Outside (McSlither) - Added by NguyenAnhHD
-			GUICtrlSetState($g_hChkDBMeetCollOutside, $ichkDBMeetCollOutside = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetData($g_hTxtDBMinCollOutsidePercent, $iDBMinCollOutsidePercent)
+			; Check Collector Outside - Team AiO MOD++ (#-08)
+			GUICtrlSetState($g_hChkDBMeetCollOutside, $g_bDBMeetCollOutside = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtDBMinCollOutsidePercent, $g_iTxtDBMinCollOutsidePercent)
+
+			GUICtrlSetState($g_hChkDBCollectorsNearRedline, $g_bDBCollectorsNearRedline = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($g_hCmbRedlineTiles, $g_iCmbRedlineTiles)
+
+			GUICtrlSetState($g_hChkSkipCollectorCheck, $g_bSkipCollectorCheck = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtSkipCollectorGold, $g_iTxtSkipCollectorGold)
+			GUICtrlSetData($g_hTxtSkipCollectorElixir, $g_iTxtSkipCollectorElixir)
+			GUICtrlSetData($g_hTxtSkipCollectorDark, $g_iTxtSkipCollectorDark)
+
+			GUICtrlSetState($g_hChkSkipCollectorCheckTH, $g_bSkipCollectorCheckTH = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($g_hCmbSkipCollectorCheckTH, $g_iCmbSkipCollectorCheckTH)
 			chkDBMeetCollOutside()
 
-			; CSV Deploy Speed - Added by NguyenAnhHD
+			; CSV Deploy Speed - Team AiO MOD++ (#-09)
 			_GUICtrlComboBox_SetCurSel($cmbCSVSpeed[$LB], $icmbCSVSpeed[$LB])
 			_GUICtrlComboBox_SetCurSel($cmbCSVSpeed[$DB], $icmbCSVSpeed[$DB])
 
-			; Switch Profile (IceCube) - Added by NguyenAnhHD
-			GUICtrlSetState($g_hChkGoldSwitchMax, $ichkGoldSwitchMax = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($g_hCmbGoldMaxProfile, $icmbGoldMaxProfile)
-			GUICtrlSetData($g_hTxtMaxGoldAmount, $itxtMaxGoldAmount)
-			GUICtrlSetState($g_hChkGoldSwitchMin, $ichkGoldSwitchMin = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($g_hCmbGoldMinProfile, $icmbGoldMinProfile)
-			GUICtrlSetData($g_hTxtMinGoldAmount, $itxtMinGoldAmount)
+			; Switch Accounts - Team AiO MOD++ (#-12)
+			GUICtrlSetState($g_hChkSwitchAcc, $g_bChkSwitchAcc ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkSmartSwitch, $g_bChkSmartSwitch ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($g_hCmbTotalAccount, $g_iTotalAcc - 1)
+			For $i = 0 To 7
+				GUICtrlSetState($g_ahChkAccount[$i], $g_abAccountNo[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
+				_GUICtrlComboBox_SetCurSel($g_ahCmbProfile[$i], $g_aiProfileNo[$i])
+				GUICtrlSetState($g_ahChkDonate[$i], $g_abDonateOnly[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
+			Next
+			_GUICtrlComboBox_SetCurSel($g_hCmbTrainTimeToSkip, $g_iTrainTimeToSkip)
+			chkSwitchAcc()
 
-			GUICtrlSetState($g_hChkElixirSwitchMax, $ichkElixirSwitchMax = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($g_hCmbElixirMaxProfile, $icmbElixirMaxProfile)
-			GUICtrlSetData($g_hTxtMaxElixirAmount, $itxtMaxElixirAmount)
-			GUICtrlSetState($g_hChkElixirSwitchMin, $ichkElixirSwitchMin = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($g_hCmbElixirMinProfile, $icmbElixirMinProfile)
-			GUICtrlSetData($g_hTxtMinElixirAmount, $itxtMinElixirAmount)
-
-			GUICtrlSetState($g_hChkDESwitchMax, $ichkDESwitchMax = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($g_hCmbDEMaxProfile, $icmbDEMaxProfile)
-			GUICtrlSetData($g_hTxtMaxDEAmount, $itxtMaxDEAmount)
-			GUICtrlSetState($g_hChkDESwitchMin, $ichkDESwitchMin = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($g_hCmbDEMinProfile, $icmbDEMinProfile)
-			GUICtrlSetData($g_hTxtMinDEAmount, $itxtMinDEAmount)
-
-			GUICtrlSetState($g_hChkTrophySwitchMax, $ichkTrophySwitchMax = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($g_hCmbTrophyMaxProfile, $icmbTrophyMaxProfile)
-			GUICtrlSetData($g_hTxtMaxTrophyAmount, $itxtMaxTrophyAmount)
-			GUICtrlSetState($g_hChkTrophySwitchMin, $ichkTrophySwitchMin = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($g_hCmbTrophyMinProfile, $icmbTrophyMinProfile)
-			GUICtrlSetData($g_hTxtMinTrophyAmount, $itxtMinTrophyAmount)
-
-			; SmartTrain (Demen) - Added By Demen
+			; Smart Train - Team AiO MOD++ (#-13)
 			GUICtrlSetState($g_hchkSmartTrain, $ichkSmartTrain = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hchkPreciseTroops, $ichkPreciseTroops = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hchkFillArcher, $ichkFillArcher = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -107,7 +113,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 			GUICtrlSetState($g_hChkMultiClick, $g_bChkMultiClick ? $GUI_CHECKED : $GUI_UNCHECKED)
 			chkUseQTrain()
 
-			; Bot Humanization
+			; Bot Humanization - Team AiO MOD++ (#-15)
 			GUICtrlSetState($g_chkUseBotHumanization, $g_ichkUseBotHumanization = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_chkUseAltRClick, $g_ichkUseAltRClick = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_chkCollectAchievements, $g_ichkCollectAchievements = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -130,27 +136,15 @@ Func ApplyConfig_MOD($TypeReadSave)
 			cmbStandardReplay()
 			cmbWarReplay()
 
-			; Auto Upgrade
-			GUICtrlSetState($g_chkAutoUpgrade, $g_ichkAutoUpgrade = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			For $i = 0 To 12
-				GUICtrlSetState($g_chkUpgradesToIgnore[$i], $g_ichkUpgradesToIgnore[$i] = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			Next
-			For $i = 0 To 2
-				GUICtrlSetState($g_chkResourcesToIgnore[$i], $g_ichkResourcesToIgnore[$i] = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			Next
-			GUICtrlSetData($g_SmartMinGold, $g_iSmartMinGold)
-			GUICtrlSetData($g_SmartMinElixir, $g_iSmartMinElixir)
-			GUICtrlSetData($g_SmartMinDark, $g_iSmartMinDark)
-			chkAutoUpgrade()
-
-			; Request CC Troops at first
+			; Request CC Troops at first - Team AiO MOD++ (#-18)
 			GUICtrlSetState($chkReqCCFirst, $g_bReqCCFirst = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 
-			; Goblin XP
+			; Goblin XP - Team AiO MOD++ (#-19)
 			GUICtrlSetState($chkEnableSuperXP, $ichkEnableSuperXP = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 
 			chkEnableSuperXP()
 
+			GUICtrlSetState($chkSkipZoomOutXP, $ichkSkipZoomOutXP = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($rbSXTraining, ($irbSXTraining = 1) ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($rbSXIAttacking, ($irbSXTraining = 2) ? $GUI_CHECKED : $GUI_UNCHECKED)
 
@@ -160,85 +154,123 @@ Func ApplyConfig_MOD($TypeReadSave)
 			GUICtrlSetState($chkSXAQ, $ichkSXAQ = $eHeroQueen ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($chkSXGW, $ichkSXGW = $eHeroWarden ? $GUI_CHECKED : $GUI_UNCHECKED)
 
-			; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
+			; ClanHop - Team AiO MOD++ (#-20)
 			GUICtrlSetState($g_hChkClanHop, $g_bChkClanHop ? $GUI_CHECKED : $GUI_UNCHECKED)
 
-			; Max logout time (mandryd)
-			GUICtrlSetState($chkTrainLogoutMaxTime, $TrainLogoutMaxTime = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+			; Max logout time - Team AiO MOD++ (#-21)
+			GUICtrlSetState($g_hChkTrainLogoutMaxTime, $g_bTrainLogoutMaxTime = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			chkTrainLogoutMaxTime()
-			GUICtrlSetData($txtTrainLogoutMaxTime, $TrainLogoutMaxTimeTXT)
+			GUICtrlSetData($g_hTxtTrainLogoutMaxTime, $g_iTrainLogoutMaxTime)
 
-			; ExtendedAttackBar
+			; ExtendedAttackBar - Team AiO MOD++ (#-22)
 			GUICtrlSetState($g_hChkExtendedAttackBarDB, $g_abChkExtendedAttackBar[$DB] ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkExtendedAttackBarLB, $g_abChkExtendedAttackBar[$LB] ? $GUI_CHECKED : $GUI_UNCHECKED)
 
-			; CheckCCTroops
+			; CheckCC Troops - Team AiO MOD++ (#-24)
 			GUICtrlSetState($g_hChkTroopsCC, $g_bChkCC ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($g_hCmbCCTroopCapacity, $g_iCmbCastleCap)
-			For $i = 0 To 2
-				_GUICtrlComboBox_SetCurSel($g_ahCmbCheckTroops[$i], $g_aiCmbCCTroopsExpect[$i])
-				GUICtrlSetData($g_ahTxtCheckTroops[$i], $g_aiQtyCCTroopsExpect[$i])
+			_GUICtrlComboBox_SetCurSel($g_hCmbCastleCapacityT, $g_iCmbCastleCapacityT)
+			_GUICtrlComboBox_SetCurSel($g_hCmbCastleCapacityS, $g_iCmbCastleCapacityS)
+			For $i = 0 To 4
+				_GUICtrlComboBox_SetCurSel($g_ahCmbCCSlot[$i], $g_aiCmbCCSlot[$i])
+				GUICtrlSetData($g_ahTxtCCSlot[$i], $g_aiTxtCCSlot[$i])
 			Next
-			cmbCheckTroopsCC()
+			GUIControlCheckCC()
+
+			; Switch Profile - Team AiO MOD++ (#-25)
+			For $i = 0 To 3
+				GUICtrlSetState($g_ahChk_SwitchMax[$i], $g_abChkSwitchMax[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
+				GUICtrlSetState($g_ahChk_SwitchMin[$i], $g_abChkSwitchMin[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
+				_GUICtrlComboBox_SetCurSel($g_ahCmb_SwitchMax[$i], $g_aiCmbSwitchMax[$i])
+				_GUICtrlComboBox_SetCurSel($g_ahCmb_SwitchMin[$i], $g_aiCmbSwitchMin[$i])
+
+				GUICtrlSetState($g_ahChk_BotTypeMax[$i], $g_abChkBotTypeMax[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
+				GUICtrlSetState($g_ahChk_BotTypeMin[$i], $g_abChkBotTypeMin[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
+				_GUICtrlComboBox_SetCurSel($g_ahCmb_BotTypeMax[$i], $g_aiCmbBotTypeMax[$i])
+				_GUICtrlComboBox_SetCurSel($g_ahCmb_BotTypeMin[$i], $g_aiCmbBotTypeMin[$i])
+
+				GUICtrlSetData($g_ahTxt_ConditionMax[$i], $g_aiConditionMax[$i])
+				GUICtrlSetData($g_ahTxt_ConditionMin[$i], $g_aiConditionMin[$i])
+			Next
+			chkSwitchProfile()
+			chkSwitchBotType()
+
+			; Check Grand Warden Mode - Team AiO MOD++ (#-26)
+			GUICtrlSetState($g_hChkCheckWardenMode, $g_bCheckWardenMode ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkCheckWardenMode()
+			_GUICtrlComboBox_SetCurSel($g_hCmbCheckWardenMode, $g_iCheckWardenMode)
+
+			; Farm Schedule - Team AiO MOD++ (#-27)
+			For $i = 0 To 7
+				GUICtrlSetState($g_ahChkSetFarm[$i], $g_abChkSetFarm[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
+
+				_GUICtrlComboBox_SetCurSel($g_ahCmbAction1[$i], $g_aiCmbAction1[$i])
+				_GUICtrlComboBox_SetCurSel($g_ahCmbCriteria1[$i], $g_aiCmbCriteria1[$i])
+				GUICtrlSetData($g_ahTxtResource1[$i], $g_aiTxtResource1[$i])
+				_GUICtrlComboBox_SetCurSel($g_ahCmbTime1[$i], $g_aiCmbTime1[$i])
+
+				_GUICtrlComboBox_SetCurSel($g_ahCmbAction2[$i], $g_aiCmbAction2[$i])
+				_GUICtrlComboBox_SetCurSel($g_ahCmbCriteria2[$i], $g_aiCmbCriteria2[$i])
+				GUICtrlSetData($g_ahTxtResource2[$i], $g_aiTxtResource2[$i])
+				_GUICtrlComboBox_SetCurSel($g_ahCmbTime2[$i], $g_aiCmbTime2[$i])
+			Next
+
+			; Switch Accounts - Team AiO MOD++ (#-12)
+			ApplyConfig_SwitchAcc("Read")
+
+			; Restart Search Legend league - Team AiO MOD++ (#-29)
+			GUICtrlSetState($g_hChkSearchTimeout, $g_bIsSearchTimeout ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtSearchTimeout, $g_iSearchTimeout)
+			chkSearchTimeout()
+
+			; Stop on Low battery - Team AiO MOD++ (#-30)
+			GUICtrlSetState($g_hChkStopOnBatt, $g_bStopOnBatt ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtStopOnBatt, $g_iStopOnBatt)
+			chkStopOnBatt()
 
 		Case "Save"
 
-			; Unit/Wave Factor (rulesss & kychera) - Added by Eloy
-			$iChkUnitFactor = (GUICtrlRead($ChkUnitFactor) = $GUI_CHECKED)
-			$iChkWaveFactor = (GUICtrlRead($ChkWaveFactor) = $GUI_CHECKED)
-			$iTxtUnitFactor = GUICtrlRead($TxtUnitFactor)
-			$iTxtWaveFactor = GUICtrlRead($TxtWaveFactor)
-			$iChkGiantSlot = (GUICtrlRead($ChkGiantSlot) = $GUI_CHECKED)
-			$iCmbGiantSlot = _GUICtrlComboBox_GetCurSel($CmbGiantSlot)
+			; Unit/Wave Factor - Team AiO MOD++ (#-05)
+			$g_iChkGiantSlot = GUICtrlRead($g_hChkGiantSlot) = $GUI_CHECKED ? 1 : 0
+			$g_iCmbGiantSlot = _GUICtrlComboBox_GetCurSel($g_hCmbGiantSlot)
 
-			; Custom Drop Order
+			$g_iChkUnitFactor = GUICtrlRead($g_hChkUnitFactor) = $GUI_CHECKED ? 1 : 0
+			$g_iTxtUnitFactor = GUICtrlRead($g_hTxtUnitFactor)
+
+			$g_iChkWaveFactor = GUICtrlRead($g_hChkWaveFactor) = $GUI_CHECKED ? 1 : 0
+			$g_iTxtWaveFactor = GUICtrlRead($g_hTxtWaveFactor)
+
+			; Drop Order Troops - Team AiO MOD++ (#-06)
 			$g_bCustomTrainDropOrderEnable = GUICtrlRead($g_hChkCustomTrainDropOrderEnable) = $GUI_CHECKED ? True : False
 			For $p = 0 To UBound($icmbDropTroops) - 1
 				$icmbDropTroops[$p] = _GUICtrlComboBox_GetCurSel($cmbDropTroops[$p])
 			Next
 
-			; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
-			$ichkAutoHide = GUICtrlRead($g_hChkAutohide) = $GUI_CHECKED ? 1 : 0
-			$ichkAutoHideDelay = GUICtrlRead($g_hTxtAutohideDelay)
+			; Auto Dock, Hide Emulator & Bot - Team AiO MOD++ (#-07)
+			$g_bEnableAuto = (GUICtrlRead($g_hChkEnableAuto) = $GUI_CHECKED)
+			$g_iChkAutoDock = (GUICtrlRead($g_hChkAutoDock) = $GUI_CHECKED)
+			$g_iChkAutoHideEmulator = (GUICtrlRead($g_hChkAutoHideEmulator) = $GUI_CHECKED)
+			$g_iChkAutoMinimizeBot = (GUICtrlRead($g_hChkAutoMinimizeBot) = $GUI_CHECKED)
 
-			; Check Collector Outside (McSlither) - Added by NguyenAnhHD
-			$ichkDBMeetCollOutside = GUICtrlRead($g_hChkDBMeetCollOutside) = $GUI_CHECKED ? 1 : 0
-			$iDBMinCollOutsidePercent = GUICtrlRead($g_hTxtDBMinCollOutsidePercent)
+			; Check Collector Outside - Team AiO MOD++ (#-08)
+			$g_bDBMeetCollOutside = GUICtrlRead($g_hChkDBMeetCollOutside) = $GUI_CHECKED
+			$g_iTxtDBMinCollOutsidePercent = GUICtrlRead($g_hTxtDBMinCollOutsidePercent)
 
-			; CSV Deploy Speed (Roro-Titi) - Added by NguyenAnhHD
+			$g_bDBCollectorsNearRedline = GUICtrlRead($g_hChkDBCollectorsNearRedline) = $GUI_CHECKED ? 1 : 0
+			$g_iCmbRedlineTiles = _GUICtrlComboBox_GetCurSel($g_hCmbRedlineTiles)
+
+			$g_bSkipCollectorCheck = GUICtrlRead($g_hChkSkipCollectorCheck) = $GUI_CHECKED ? 1 : 0
+			$g_iTxtSkipCollectorGold = GUICtrlRead($g_hTxtSkipCollectorGold)
+			$g_iTxtSkipCollectorElixir = GUICtrlRead($g_hTxtSkipCollectorElixir)
+			$g_iTxtSkipCollectorDark = GUICtrlRead($g_hTxtSkipCollectorDark)
+
+			$g_bSkipCollectorCheckTH = GUICtrlRead($g_hChkSkipCollectorCheckTH) = $GUI_CHECKED ? 1 : 0
+			$g_iCmbSkipCollectorCheckTH = _GUICtrlComboBox_GetCurSel($g_hCmbSkipCollectorCheckTH)
+
+			; CSV Deploy Speed - Team AiO MOD++ (#-09)
 			$icmbCSVSpeed[$LB] = _GUICtrlComboBox_GetCurSel($cmbCSVSpeed[$LB])
 			$icmbCSVSpeed[$DB] = _GUICtrlComboBox_GetCurSel($cmbCSVSpeed[$DB])
 
-			; Switch Profile (IceCube) - Added by NguyenAnhHD
-			$ichkGoldSwitchMax = GUICtrlRead($g_hChkGoldSwitchMax) = $GUI_CHECKED ? 1 : 0
-			$icmbGoldMaxProfile = _GUICtrlComboBox_GetCurSel($g_hCmbGoldMaxProfile)
-			$itxtMaxGoldAmount = GUICtrlRead($g_hTxtMaxGoldAmount)
-			$ichkGoldSwitchMin = GUICtrlRead($g_hChkGoldSwitchMin) = $GUI_CHECKED ? 1 : 0
-			$icmbGoldMinProfile = _GUICtrlComboBox_GetCurSel($g_hCmbGoldMinProfile)
-			$itxtMinGoldAmount = GUICtrlRead($g_hTxtMinGoldAmount)
-
-			$ichkElixirSwitchMax = GUICtrlRead($g_hChkElixirSwitchMax) = $GUI_CHECKED ? 1 : 0
-			$icmbElixirMaxProfile = _GUICtrlComboBox_GetCurSel($g_hCmbElixirMaxProfile)
-			$itxtMaxElixirAmount = GUICtrlRead($g_hTxtMaxElixirAmount)
-			$ichkElixirSwitchMin = GUICtrlRead($g_hChkElixirSwitchMin) = $GUI_CHECKED ? 1 : 0
-			$icmbElixirMinProfile = _GUICtrlComboBox_GetCurSel($g_hCmbElixirMinProfile)
-			$itxtMinElixirAmount = GUICtrlRead($g_hTxtMinElixirAmount)
-
-			$ichkDESwitchMax = GUICtrlRead($g_hChkDESwitchMax) = $GUI_CHECKED ? 1 : 0
-			$icmbDEMaxProfile = _GUICtrlComboBox_GetCurSel($g_hCmbDEMaxProfile)
-			$itxtMaxDEAmount = GUICtrlRead($g_hTxtMaxDEAmount)
-			$ichkDESwitchMin = GUICtrlRead($g_hChkDESwitchMin) = $GUI_CHECKED ? 1 : 0
-			$icmbDEMinProfile = _GUICtrlComboBox_GetCurSel($g_hCmbDEMinProfile)
-			$itxtMinDEAmount = GUICtrlRead($g_hTxtMinDEAmount)
-
-			$ichkTrophySwitchMax = GUICtrlRead($g_hChkTrophySwitchMax) = $GUI_CHECKED ? 1 : 0
-			$icmbTrophyMaxProfile = _GUICtrlComboBox_GetCurSel($g_hCmbTrophyMaxProfile)
-			$itxtMaxTrophyAmount = GUICtrlRead($g_hTxtMaxTrophyAmount)
-			$ichkTrophySwitchMin = GUICtrlRead($g_hChkTrophySwitchMin) = $GUI_CHECKED ? 1 : 0
-			$icmbTrophyMinProfile = _GUICtrlComboBox_GetCurSel($g_hCmbTrophyMinProfile)
-			$itxtMinTrophyAmount = GUICtrlRead($g_hTxtMinTrophyAmount)
-
-			;SmartTrain (Demen) - Added by Demen
+			; Smart Train - Team AiO MOD++ (#-13)
 			$ichkSmartTrain = GUICtrlRead($g_hchkSmartTrain) = $GUI_CHECKED ? 1 : 0
 			$ichkPreciseTroops = GUICtrlRead($g_hchkPreciseTroops) = $GUI_CHECKED ? 1 : 0
 			$ichkFillArcher = GUICtrlRead($g_hchkFillArcher) = $GUI_CHECKED ? 1 : 0
@@ -246,7 +278,7 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$ichkFillEQ = GUICtrlRead($g_hchkFillEQ) = $GUI_CHECKED ? 1 : 0
 			$g_bChkMultiClick = (GUICtrlRead($g_hChkMultiClick) = $GUI_CHECKED)
 
-			; Bot Humanization
+			; Bot Humanization - Team AiO MOD++ (#-15)
 			$g_ichkUseBotHumanization = GUICtrlRead($g_chkUseBotHumanization) = $GUI_CHECKED ? 1 : 0
 			$g_ichkUseAltRClick = GUICtrlRead($g_chkUseAltRClick) = $GUI_CHECKED ? 1 : 0
 			$g_ichkCollectAchievements = GUICtrlRead($g_chkCollectAchievements) = $GUI_CHECKED ? 1 : 0
@@ -266,103 +298,115 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$g_icmbMaxActionsNumber = _GUICtrlComboBox_GetCurSel($g_icmbMaxActionsNumber)
 			$g_ichallengeMessage = GUICtrlRead($g_challengeMessage)
 
-			; Auto Upgrade
-			$g_ichkAutoUpgrade = GUICtrlRead($g_chkAutoUpgrade) = $GUI_CHECKED ? 1 : 0
-			For $i = 0 To 12
-				$g_ichkUpgradesToIgnore[$i] = GUICtrlRead($g_chkUpgradesToIgnore[$i]) = $GUI_CHECKED ? 1 : 0
-			Next
-			For $i = 0 To 2
-				$g_ichkResourcesToIgnore[$i] = GUICtrlRead($g_chkResourcesToIgnore[$i]) = $GUI_CHECKED ? 1 : 0
-			Next
-			$g_iSmartMinGold = GUICtrlRead($g_SmartMinGold)
-			$g_iSmartMinElixir = GUICtrlRead($g_SmartMinElixir)
-			$g_iSmartMinDark = GUICtrlRead($g_SmartMinDark)
-
-			; Request CC Troops at first
+			; Request CC Troops at first - Team AiO MOD++ (#-18)
 			$g_bReqCCFirst = GUICtrlRead($chkReqCCFirst) = $GUI_CHECKED ? 1 : 0
 
-			; Goblin XP
+			; Goblin XP - Team AiO MOD++ (#-19)
 			$ichkEnableSuperXP = GUICtrlRead($chkEnableSuperXP) = $GUI_CHECKED ? 1 : 0
+			$ichkSkipZoomOutXP = GUICtrlRead($chkSkipZoomOutXP) = $GUI_CHECKED ? 1 : 0
 			$irbSXTraining = GUICtrlRead($rbSXTraining) = $GUI_CHECKED ? 1 : 2
 			$ichkSXBK = (GUICtrlRead($chkSXBK) = $GUI_CHECKED) ? $eHeroKing : $eHeroNone
 			$ichkSXAQ = (GUICtrlRead($chkSXAQ) = $GUI_CHECKED) ? $eHeroQueen : $eHeroNone
 			$ichkSXGW = (GUICtrlRead($chkSXGW) = $GUI_CHECKED) ? $eHeroWarden : $eHeroNone
 			$itxtMaxXPtoGain = Int(GUICtrlRead($txtMaxXPtoGain))
 
-			; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
+			; ClanHop - Team AiO MOD++ (#-20)
 			$g_bChkClanHop = (GUICtrlRead($g_hChkClanHop) = $GUI_CHECKED)
 
-			; Max logout time (mandryd)
-			$TrainLogoutMaxTime = GUICtrlRead($chkTrainLogoutMaxTime) = $GUI_CHECKED ? 1 : 0
-			$TrainLogoutMaxTimeTXT = GUICtrlRead($txtTrainLogoutMaxTime)
+			; Max logout time - Team AiO MOD++ (#-21)
+			$g_bTrainLogoutMaxTime = GUICtrlRead($g_hChkTrainLogoutMaxTime) = $GUI_CHECKED ? True : False
+			$g_iTrainLogoutMaxTime = GUICtrlRead($g_hTxtTrainLogoutMaxTime)
 
-			; ExtendedAttackBar
+			; ExtendedAttackBar - Team AiO MOD++ (#-22)
 			$g_abChkExtendedAttackBar[$DB] = GUICtrlRead($g_hChkExtendedAttackBarDB) = $GUI_CHECKED ? True : False
 			$g_abChkExtendedAttackBar[$LB] = GUICtrlRead($g_hChkExtendedAttackBarLB) = $GUI_CHECKED ? True : False
 
-			; CheckCCTroops
+			; CheckCC Troops - Team AiO MOD++ (#-24)
 			$g_bChkCC = GUICtrlRead($g_hChkTroopsCC) = $GUI_CHECKED ? True : False
-			$g_iCmbCastleCap = _GUICtrlComboBox_GetCurSel($g_hCmbCCTroopCapacity)
-			For $i = 0 To 2
-				$g_aiCmbCCTroopsExpect[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbCheckTroops[$i])
-				$g_aiQtyCCTroopsExpect[$i] = GUICtrlRead($g_ahTxtCheckTroops[$i])
+			$g_iCmbCastleCapacityT = _GUICtrlComboBox_GetCurSel($g_hCmbCastleCapacityT)
+			$g_iCmbCastleCapacityS = _GUICtrlComboBox_GetCurSel($g_hCmbCastleCapacityS)
+			For $i = 0 To 4
+				$g_aiCmbCCSlot[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbCCSlot[$i])
+				$g_aiTxtCCSlot[$i] = GUICtrlRead($g_ahTxtCCSlot[$i])
 			Next
+
+			; Switch Profile - Team AiO MOD++ (#-25)
+			For $i = 0 To 3
+				$g_abChkSwitchMax[$i] = GUICtrlRead($g_ahChk_SwitchMax[$i]) = $GUI_CHECKED
+				$g_abChkSwitchMin[$i] = GUICtrlRead($g_ahChk_SwitchMin[$i]) = $GUI_CHECKED
+				$g_aiCmbSwitchMax[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmb_SwitchMax[$i])
+				$g_aiCmbSwitchMin[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmb_SwitchMin[$i])
+
+				$g_abChkBotTypeMax[$i] = GUICtrlRead($g_ahChk_BotTypeMax[$i]) = $GUI_CHECKED
+				$g_abChkBotTypeMin[$i] = GUICtrlRead($g_ahChk_BotTypeMin[$i]) = $GUI_CHECKED
+				$g_aiCmbBotTypeMax[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmb_BotTypeMax[$i])
+				$g_aiCmbBotTypeMin[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmb_BotTypeMin[$i])
+
+				$g_aiConditionMax[$i] = GUICtrlRead($g_ahTxt_ConditionMax[$i])
+				$g_aiConditionMin[$i] = GUICtrlRead($g_ahTxt_ConditionMin[$i])
+			Next
+
+			; Check Grand Warden Mode - Team AiO MOD++ (#-26)
+			$g_bCheckWardenMode = (GUICtrlRead($g_hChkCheckWardenMode) = $GUI_CHECKED)
+			$g_iCheckWardenMode = _GUICtrlComboBox_GetCurSel($g_hCmbCheckWardenMode)
+
+			; Farm Schedule - Team AiO MOD++ (#-27)
+			For $i = 0 To 7
+				$g_abChkSetFarm[$i] = GUICtrlRead($g_ahChkSetFarm[$i]) = $GUI_CHECKED
+
+				$g_aiCmbAction1[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbAction1[$i])
+				$g_aiCmbCriteria1[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbCriteria1[$i])
+				$g_aiTxtResource1[$i] = GUICtrlRead($g_ahTxtResource1[$i])
+				$g_aiCmbTime1[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbTime1[$i])
+
+				$g_aiCmbAction2[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbAction2[$i])
+				$g_aiCmbCriteria2[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbCriteria2[$i])
+				$g_aiTxtResource2[$i] = GUICtrlRead($g_ahTxtResource2[$i])
+				$g_aiCmbTime2[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbTime2[$i])
+			Next
+
+			; Switch Accounts - Team AiO MOD++ (#-12)
+			ApplyConfig_SwitchAcc("Save")
+
+			; Restart Search Legend league - Team AiO MOD++ (#-29)
+			$g_bIsSearchTimeout = (GUICtrlRead($g_hChkSearchTimeout) = $GUI_CHECKED)
+			$g_iSearchTimeout = GUICtrlRead($g_hTxtSearchTimeout)
+
+			; Stop on Low battery - Team AiO MOD++ (#-30)
+			$g_bStopOnBatt = (GUICtrlRead($g_hChkStopOnBatt) = $GUI_CHECKED)
+			$g_iStopOnBatt = GUICtrlRead($g_hTxtStopOnBatt)
 
 	EndSwitch
 EndFunc   ;==>ApplyConfig_MOD
 
-; SwitchAcc (Demen) - Added By Demen
+; Switch Accounts - Team AiO MOD++ (#-12)
 Func ApplyConfig_SwitchAcc($TypeReadSave)
-	; <><><> SwitchAcc_Demen_Style <><><>
 	Switch $TypeReadSave
 		Case "Read"
-			GUICtrlSetState($chkSwitchAcc, $ichkSwitchAcc = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			chkSwitchAcc()
-			GUICtrlSetState($chkTrain, $ichkTrain = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			If $ichkSmartSwitch = 1 Then
-				GUICtrlSetState($radSmartSwitch, $GUI_CHECKED)
-			Else
-				GUICtrlSetState($radNormalSwitch, $GUI_CHECKED)
-			EndIf
-			If GUICtrlRead($chkSwitchAcc) = $GUI_CHECKED Then radNormalSwitch()
-			_GUICtrlComboBox_SetCurSel($cmbTotalAccount, $icmbTotalCoCAcc - 1)
-			_GUICtrlComboBox_SetCurSel($g_hCmbTrainTimeToSkip, $g_iTrainTimeToSkip - 1)
-			GUICtrlSetState($g_hChkForceSwitch, $ichkForceSwitch = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetData($g_txtForceSwitch, $iForceSwitch)
-			If GUICtrlRead($chkSwitchAcc) = $GUI_CHECKED Then chkForceSwitch()
-			GUICtrlSetState($g_hChkForceStayDonate, $ichkForceStayDonate = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			If $ichkCloseTraining >= 1 Then
-				GUICtrlSetState($chkUseTrainingClose, $GUI_CHECKED)
-				If $ichkCloseTraining = 1 Then
-					GUICtrlSetState($radCloseCoC, $GUI_CHECKED)
-				Else
-					GUICtrlSetState($radCloseAndroid, $GUI_CHECKED)
-				EndIf
-			Else
-				GUICtrlSetState($chkUseTrainingClose, $GUI_UNCHECKED)
-			EndIf
+			GUICtrlSetState($g_hChkSwitchAcc, $g_bChkSwitchAcc ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkSmartSwitch, $g_bChkSmartSwitch ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($g_hCmbTotalAccount, $g_iTotalAcc - 1)
 			For $i = 0 To 7
-				_GUICtrlComboBox_SetCurSel($cmbAccountNo[$i], $aMatchProfileAcc[$i] - 1)
-				_GUICtrlComboBox_SetCurSel($cmbProfileType[$i], $aProfileType[$i] - 1)
+				GUICtrlSetState($g_ahChkAccount[$i], $g_abAccountNo[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
+				_GUICtrlComboBox_SetCurSel($g_ahCmbProfile[$i], $g_aiProfileNo[$i])
+				GUICtrlSetState($g_ahChkDonate[$i], $g_abDonateOnly[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
 			Next
-
+			_GUICtrlComboBox_SetCurSel($g_hCmbTrainTimeToSkip, $g_iTrainTimeToSkip)
+			chkSwitchAcc()
 		Case "Save"
-			$ichkSwitchAcc = GUICtrlRead($chkSwitchAcc) = $GUI_CHECKED ? 1 : 0
-			$ichkTrain = GUICtrlRead($chkTrain) = $GUI_CHECKED ? 1 : 0
-			$icmbTotalCoCAcc = _GUICtrlComboBox_GetCurSel($cmbTotalAccount) + 1
-			$g_iTrainTimeToSkip = _GUICtrlComboBox_GetCurSel($g_hCmbTrainTimeToSkip) + 1
-			$ichkSmartSwitch = GUICtrlRead($radSmartSwitch) = $GUI_CHECKED ? 1 : 0
-			$ichkForceSwitch = GUICtrlRead($g_hChkForceSwitch) = $GUI_CHECKED ? 1 : 0
-			$ichkForceStayDonate = GUICtrlRead($g_hChkForceStayDonate) = $GUI_CHECKED ? 1 : 0
-			$iForceSwitch = GUICtrlRead($g_txtForceSwitch)
-			$ichkCloseTraining = GUICtrlRead($chkUseTrainingClose) = $GUI_CHECKED ? 1 : 0
-			If $ichkCloseTraining = 1 Then
-				$ichkCloseTraining = GUICtrlRead($radCloseCoC) = $GUI_CHECKED ? 1 : 2
-			EndIf
+			$g_bChkSwitchAcc = GUICtrlRead($g_hChkSwitchAcc) = $GUI_CHECKED
+			$g_bChkSmartSwitch = GUICtrlRead($g_hChkSmartSwitch) = $GUI_CHECKED
+			$g_iTotalAcc = _GUICtrlComboBox_GetCurSel($g_hCmbTotalAccount) + 1 ; at least 2 accounts needed
+			For $i = 0 To 7
+				$g_abAccountNo[$i] = GUICtrlRead($g_ahChkAccount[$i]) = $GUI_CHECKED
+				$g_aiProfileNo[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbProfile[$i])
+				$g_abDonateOnly[$i] = GUICtrlRead($g_ahChkDonate[$i]) = $GUI_CHECKED
+			Next
+			$g_iTrainTimeToSkip = _GUICtrlComboBox_GetCurSel($g_hCmbTrainTimeToSkip)
 	EndSwitch
 EndFunc   ;==>ApplyConfig_SwitchAcc
 
-; Forecast - Added by Eloy (modification rulesss,kychera)
+; Forecast - Team AiO MOD++ (#-17)
 Func ApplyConfig_Forecast($TypeReadSave)
 	Switch $TypeReadSave
 		Case "Read"
@@ -396,37 +440,3 @@ Func ApplyConfig_Forecast($TypeReadSave)
 			$icmbSwLang = _GUICtrlComboBox_GetCurSel($cmbSwLang)
 	EndSwitch
 EndFunc   ;==>ApplyConfig_Forecast
-
-; Chatbot - Added By NguyenAnhHD
-Func ApplyConfig_Chatbot($TypeReadSave)
-	Switch $TypeReadSave
-		Case "Read"
-			GUICtrlSetState($g_hChkGlobalChat, $g_iGlobalChat ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_hChkGlobalScramble, $g_iGlobalScramble ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_hChkSwitchLang, $g_iSwitchLang ? $GUI_CHECKED : $GUI_UNCHECKED)
-			cmbSwitchLang()
-			_GUICtrlComboBox_SetCurSel($g_hCmbLang, $g_iCmbLang)
-
-			GUICtrlSetState($g_hChkClanChat, $g_iClanChat ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_hChkRusLang, $g_iRusLang ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_hChkUseResponses, $g_iUseResponses ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_hChkUseGeneric, $g_iUseGeneric ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_hChkChatPushbullet, $g_iChatPushbullet ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_hChkPbSendNewChats, $g_iPbSendNewChats ? $GUI_CHECKED : $GUI_UNCHECKED)
-			cmbChatBot()
-
-		Case "Save"
-			$g_iGlobalChat = GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED ? True : False
-			$g_iGlobalScramble = GUICtrlRead($g_hChkGlobalScramble) = $GUI_CHECKED ? True : False
-			$g_iSwitchLang = GUICtrlRead($g_hChkSwitchLang) = $GUI_CHECKED ? True : False
-			$g_iCmbLang = _GUICtrlComboBox_GetCurSel($g_hCmbLang)
-
-			$g_iClanChat = GUICtrlRead($g_hChkClanChat) = $GUI_CHECKED ? True : False
-			$g_iRusLang = GUICtrlRead($g_hChkRusLang) = $GUI_CHECKED ? 1 : 0
-			$g_iUseResponses = GUICtrlRead($g_hChkUseResponses) = $GUI_CHECKED ? True : False
-			$g_iUseGeneric = GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED ? True : False
-			$g_iChatPushbullet = GUICtrlRead($g_hChkChatPushbullet) = $GUI_CHECKED ? True : False
-			$g_iPbSendNewChats = GUICtrlRead($g_hChkPbSendNewChats) = $GUI_CHECKED ? True : False
-
-	EndSwitch
-EndFunc   ;==>ApplyConfig_Chatbot

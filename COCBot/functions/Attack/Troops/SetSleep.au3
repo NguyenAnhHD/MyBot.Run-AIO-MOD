@@ -22,9 +22,9 @@ Func SetSleep($type)
 		$factor1 = 100
 	EndIf
 
-	; Unit/Wave Factor
-	If (_GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 4 Or _GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 5) And $iChkUnitFactor = 1 Then $factor0 = $iTxtUnitFactor
-	If (_GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 4 Or _GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 5) And $iChkWaveFactor = 1 Then $factor1 = $iTxtWaveFactor
+	; Unit/Wave Factor - Team AiO MOD++ (#-05)
+	If (_GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 4 Or _GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 5) And $g_iChkUnitFactor = 1 Then $factor0 = $g_iTxtUnitFactor
+	If (_GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 4 Or _GUICtrlComboBox_GetCurSel($g_hCmbStandardDropSidesDB) = 5) And $g_iChkWaveFactor = 1 Then $factor1 = $g_iTxtWaveFactor
 
 	Switch $type
 		Case 0

@@ -1,6 +1,6 @@
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: Bot Humanization
-; Description ...: This file contains all functions of Pico Bot Humanization feature - Chat Part
+; Description ...: This file contains all functions of Bot Humanization feature - Chat Part
 ; Syntax ........: ---
 ; Parameters ....: ---
 ; Return values .: ---
@@ -96,15 +96,16 @@ Func LaunchChallenges()
 		Click(230, 20) ; go to clan chat
 		randomSleep(1500)
 		If IsClanChat() Then
-			Click(260, 60) ; click challenge button
+			Click(200, 705) ; click challenge button
 			randomSleep(1500)
 			If IsChallengeWindow() Then
-				Click(530, 110) ; click text box
+				Click(530, 175) ; click text box
+				randomSleep(1500)
 				SendText(SecureMessage(GUICtrlRead($g_challengeMessage)))
 				randomSleep(1500)
 				Local $Layout = Random(1, 2, 1) ; choose a layout between normal or war base
 				If $Layout <> $g_iLastLayout Then
-					Click(240, 250) ; click choose layout button
+					Click(240, 300) ; click choose layout button
 					randomSleep(1000)
 					If IsChangeLayoutMenu() Then
 						Switch $Layout
@@ -124,7 +125,7 @@ Func LaunchChallenges()
 						randomSleep(2000)
 						Click(240, 180) ; click first layout
 						randomSleep(1500)
-						Click(180, 60) ; click top left return button
+						Click(180, 110) ; click top left return button
 					Else
 						SetLog("Error when trying to open Change Layout menu... skipping...", $COLOR_WARNING)
 					EndIf
@@ -132,7 +133,7 @@ Func LaunchChallenges()
 
 				If IsChallengeWindow() Then
 					randomSleep(1500)
-					Click(530, 250) ; click start button
+					Click(530, 300) ; click start button
 					randomSleep(1500)
 					Click(330, 380) ; close chat
 				Else

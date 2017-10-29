@@ -29,7 +29,8 @@ Func GetXPosOfArmySlot($slotNumber, $xOffsetFor11Slot, $bNeedNewCapture = Defaul
 
 	If $slotNumber = $g_iKingSlot Or $slotNumber = $g_iQueenSlot Or $slotNumber = $g_iWardenSlot Then $xOffsetFor11Slot += 8
 
-	If $g_bDraggedAttackBar Then Return $xOffsetFor11Slot + $SlotComp + ($slotNumber * 72) + 14	; ExtendedAttackBar - Demen
+	; ExtendedAttackBar - Team AiO MOD++ (#-22)
+	If $g_bDraggedAttackBar Then Return $xOffsetFor11Slot + $SlotComp + ($slotNumber * 72) + 14
 
 	Local $oldBitmap = _GDIPlus_BitmapCreateFromHBITMAP($g_hHBitmap2)
 	; check Dark color on slot 0 to verify if exists > 11 slots
@@ -42,7 +43,7 @@ Func GetXPosOfArmySlot($slotNumber, $xOffsetFor11Slot, $bNeedNewCapture = Defaul
 					_ColorCheck(Hex(_GDIPlus_BitmapGetPixel($oldBitmap, 17, 643), 6), Hex(0x434343, 6), 10)   		; Slot deployed / Gray / More than 11 Slots
 	EndIf
 
-	If $g_iDebugSetlog = 1 Then
+	If $g_bDebugSetlog Then
 		Setlog(" Slot 0  _ColorCheck 0x478AC6 at (17," & 643 & "): " & $CheckSlot12, $COLOR_DEBUG) ;Debug
 		If $bNeedNewCapture = True Then
 			$SlotPixelColorTemp = _GetPixelColor(17, 643, $g_bCapturePixel)
@@ -54,7 +55,7 @@ Func GetXPosOfArmySlot($slotNumber, $xOffsetFor11Slot, $bNeedNewCapture = Defaul
 
 	_GDIPlus_BitmapDispose($oldBitmap)
 
-	If $CheckSlot12 = False Then
+	If Not $CheckSlot12 Then
 		Return $xOffsetFor11Slot + $SlotComp + ($slotNumber * 72)
 	Else
 		Return $xOffsetFor11Slot + $SlotComp + ($slotNumber * 72) - 13
