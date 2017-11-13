@@ -136,6 +136,24 @@ Func ApplyConfig_MOD($TypeReadSave)
 			cmbStandardReplay()
 			cmbWarReplay()
 
+			; Forecast - Team AiO MOD++ (#-17)
+			GUICtrlSetState($g_hChkForecastBoost, $g_bChkForecastBoost ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtForecastBoost, $g_iTxtForecastBoost)
+			chkForecastBoost()
+			GUICtrlSetState($g_hChkForecastPause, $g_bChkForecastPause ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtForecastPause, $g_iTxtForecastPause)
+			chkForecastPause()
+
+			GUICtrlSetState($g_hChkForecastHopingSwitchMax, $g_bChkForecastHopingSwitchMax ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkForecastHopingSwitchMin, $g_bChkForecastHopingSwitchMin ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($g_hCmbForecastHopingSwitchMax, $g_iCmbForecastHopingSwitchMax)
+			_GUICtrlComboBox_SetCurSel($g_hCmbForecastHopingSwitchMin, $g_iCmbForecastHopingSwitchMin)
+			GUICtrlSetData($g_hTxtForecastHopingSwitchMax, $g_iTxtForecastHopingSwitchMax)
+			GUICtrlSetData($g_hTxtForecastHopingSwitchMin, $g_iTxtForecastHopingSwitchMin)
+			chkForecastHopingSwitch()
+
+			_GUICtrlComboBox_SetCurSel($g_hCmbSwLang, $g_iCmbSwLang)
+
 			; Request CC Troops at first - Team AiO MOD++ (#-18)
 			GUICtrlSetState($chkReqCCFirst, $g_bReqCCFirst = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
 
@@ -298,6 +316,21 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$g_icmbMaxActionsNumber = _GUICtrlComboBox_GetCurSel($g_icmbMaxActionsNumber)
 			$g_ichallengeMessage = GUICtrlRead($g_challengeMessage)
 
+			; Forecast - Team AiO MOD++ (#-17)
+			$g_bChkForecastBoost = (GUICtrlRead($g_hChkForecastBoost) = $GUI_CHECKED)
+			$g_iTxtForecastBoost = GUICtrlRead($g_hTxtForecastBoost)
+			$g_bChkForecastPause = (GUICtrlRead($g_hChkForecastPause) = $GUI_CHECKED)
+			$g_iTxtForecastPause = GUICtrlRead($g_hTxtForecastPause)
+
+			$g_bChkForecastHopingSwitchMax = (GUICtrlRead($g_hChkForecastHopingSwitchMax) = $GUI_CHECKED)
+			$g_bChkForecastHopingSwitchMin = (GUICtrlRead($g_hChkForecastHopingSwitchMin) = $GUI_CHECKED)
+			$g_iCmbForecastHopingSwitchMax = _GUICtrlComboBox_GetCurSel($g_hCmbForecastHopingSwitchMax)
+			$g_iCmbForecastHopingSwitchMin = _GUICtrlComboBox_GetCurSel($g_hCmbForecastHopingSwitchMin)
+			$g_iTxtForecastHopingSwitchMax = GUICtrlRead($g_hTxtForecastHopingSwitchMax)
+			$g_iTxtForecastHopingSwitchMin = GUICtrlRead($g_hTxtForecastHopingSwitchMin)
+
+			$g_iCmbSwLang = _GUICtrlComboBox_GetCurSel($g_hCmbSwLang)
+
 			; Request CC Troops at first - Team AiO MOD++ (#-18)
 			$g_bReqCCFirst = GUICtrlRead($chkReqCCFirst) = $GUI_CHECKED ? 1 : 0
 
@@ -405,38 +438,3 @@ Func ApplyConfig_SwitchAcc($TypeReadSave)
 			$g_iTrainTimeToSkip = _GUICtrlComboBox_GetCurSel($g_hCmbTrainTimeToSkip)
 	EndSwitch
 EndFunc   ;==>ApplyConfig_SwitchAcc
-
-; Forecast - Team AiO MOD++ (#-17)
-Func ApplyConfig_Forecast($TypeReadSave)
-	Switch $TypeReadSave
-		Case "Read"
-			GUICtrlSetState($chkForecastBoost, $iChkForecastBoost = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetData($txtForecastBoost, $iTxtForecastBoost)
-			chkForecastBoost()
-			GUICtrlSetState($chkForecastPause, $iChkForecastPause = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetData($txtForecastPause, $iTxtForecastPause)
-			chkForecastPause()
-			GUICtrlSetState($chkForecastHopingSwitchMax, $ichkForecastHopingSwitchMax = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($cmbForecastHopingSwitchMax, $icmbForecastHopingSwitchMax)
-			GUICtrlSetData($txtForecastHopingSwitchMax, $itxtForecastHopingSwitchMax)
-			chkForecastHopingSwitchMax()
-			GUICtrlSetState($chkForecastHopingSwitchMin, $ichkForecastHopingSwitchMin = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
-			_GUICtrlComboBox_SetCurSel($cmbForecastHopingSwitchMin, $icmbForecastHopingSwitchMin)
-			GUICtrlSetData($txtForecastHopingSwitchMin, $itxtForecastHopingSwitchMin)
-			chkForecastHopingSwitchMin()
-			_GUICtrlComboBox_SetCurSel($cmbSwLang, $icmbSwLang)
-
-		Case "Save"
-			$iChkForecastBoost = (GUICtrlRead($chkForecastBoost) = $GUI_UNCHECKED)
-			$iTxtForecastBoost = GUICtrlRead($txtForecastBoost)
-			$iChkForecastPause = (GUICtrlRead($chkForecastPause) = $GUI_UNCHECKED)
-			$iTxtForecastPause = GUICtrlRead($txtForecastPause)
-			$ichkForecastHopingSwitchMax = (GUICtrlRead($chkForecastHopingSwitchMax) = $GUI_UNCHECKED)
-			$icmbForecastHopingSwitchMax = _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMax)
-			$itxtForecastHopingSwitchMax = GUICtrlRead($txtForecastHopingSwitchMax)
-			$ichkForecastHopingSwitchMin = (GUICtrlRead($chkForecastHopingSwitchMin) = $GUI_UNCHECKED)
-			$icmbForecastHopingSwitchMin = _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMin)
-			$itxtForecastHopingSwitchMin = GUICtrlRead($txtForecastHopingSwitchMin)
-			$icmbSwLang = _GUICtrlComboBox_GetCurSel($cmbSwLang)
-	EndSwitch
-EndFunc   ;==>ApplyConfig_Forecast

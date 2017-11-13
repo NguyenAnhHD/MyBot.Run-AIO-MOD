@@ -49,7 +49,6 @@ Global $g_hFrmBot_WNDPROC_ptr = 0
 #include "MBR GUI Action.au3"
 ; Team AiO MOD++ (2017)
 #include "Team__AiO__MOD++\GUI\MOD GUI Control.au3"
-#include "Team__AiO__MOD++\GUI\MOD GUI Control - Forecast.au3"
 
 Func InitializeMainGUI($bGuiModeUpdate = False)
 	InitializeControlVariables()
@@ -198,7 +197,9 @@ Func GUIControl_WM_SHELLHOOK($hWin, $iMsg, $wParam, $lParam)
 		Select
 			Case $lParam = $g_hAndroidWindow
 				; show bot without activating
-				BotToFront()
+				;BotToFront($lParam)
+				BotMinimizeRestore(False, "GUIControl_WM_SHELLHOOK", False, 0, $lParam)
+				If Not $g_bIsHidden Then HideAndroidWindow(False, False, Default, "GUIControl_WM_SHELLHOOK") ; Android can be hidden
 			#cs moved to GUIControl_WM_ACTIVATEAPP as it enters here without activating the bot
 			Case Not $g_bIsHidden And $lParam = $g_hFrmBot ;And WinActive($g_hFrmBot)
 				; show Android without activating
@@ -216,7 +217,7 @@ Func GUIControl_WM_ACTIVATEAPP($hWin, $iMsg, $wParam, $lParam)
 		; bot activated
 		;If BitAND($g_iBotDesignFlags, 2) And $g_bAndroidEmbedded And $g_bBotDockedShrinked Then BotShrinkExpandToggle() ; auto expand bot again
 		; show Android without activating
-		If Not $g_bIsHidden And Not AndroidEmbedded() Then HideAndroidWindow(False, False, Default, "GUIControl_WM_ACTIVATEAPP")
+		If Not $g_bIsHidden And Not AndroidEmbedded() Then ShowAndroidWindow($g_hFrmBot, False, Default, "GUIControl_WM_ACTIVATEAPP")
 	Else
 		; bot deactivated
 		If BitAND($g_iBotDesignFlags, 2) And $g_bAndroidEmbedded And Not $g_bBotDockedShrinked Then BotShrinkExpandToggle() ; auto shrink bot again ;
@@ -692,7 +693,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 			; Handle RichText controls
 			tabMain()
 			; Forecast - Team AiO MOD++ (#-17)
-			If GUICtrlRead($g_hTabMain, 1) = $g_hGUI_MOD And GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM5 Then
+			If GUICtrlRead($g_hTabMain, 1) = $g_hGUI_MOD And GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM6 Then
 				Local $tTag  = DllStructCreate("hwnd;int;int;int;int;int;int;ptr;int;int;int;int;int;int;int;int;int;int;int;int", $lParam)
 				Local $hFrom = DllStructGetData($tTag, 1)
 				Local $iID   = DllStructGetData($tTag, 2)
@@ -700,7 +701,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 				Local $iPos  = DllStructGetData($tTag, 4)
 
 				If $iCode = -551 Then
-					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM5, $GUI_SHOW)
+					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM6, $GUI_SHOW)
 					Sleep(100)
 					If TimerDiff($TimerForecast) > (1 * 10000) Then ; 1 Refresh Graphique toutes les 5 mn maxi, faut pas abuser
 						cmbSwLang()
@@ -726,7 +727,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 			tabBot()
 		Case $g_hGUI_MOD_TAB
 			; Forecast - Team AiO MOD++ (#-17)
-			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM5 Then
+			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM6 Then
 				Local $tTag  = DllStructCreate("hwnd;int;int;int;int;int;int;ptr;int;int;int;int;int;int;int;int;int;int;int;int", $lParam)
 				Local $hFrom = DllStructGetData($tTag, 1)
 				Local $iID   = DllStructGetData($tTag, 2)
@@ -734,7 +735,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 				Local $iPos  = DllStructGetData($tTag, 4)
 
 				If $iCode = -551 Then ;tab selected
-					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM5, $GUI_SHOW)
+					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM6, $GUI_SHOW)
 					Sleep(100)
 					If TimerDiff($TimerForecast) > (1 * 10000) Then ; 1 Refresh Graphique toutes les 5 mn maxi, faut pas abuser
 						setForecast()
@@ -745,7 +746,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 			tabMod()
 			tabMain()
 
-			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM5 Then
+			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM6 Then
 				Local $tTag  = DllStructCreate("hwnd;int;int;int;int;int;int;ptr;int;int;int;int;int;int;int;int;int;int;int;int", $lParam)
 				Local $hFrom = DllStructGetData($tTag, 1)
 				Local $iID   = DllStructGetData($tTag, 2)
@@ -753,7 +754,7 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 				Local $iPos  = DllStructGetData($tTag, 4)
 
 				If $iCode = -551 Then ;tab selected
-					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM5, $GUI_SHOW)
+					GUICtrlSetState($g_hGUI_MOD_TAB_ITEM6, $GUI_SHOW)
 					Sleep(100)
 					If TimerDiff($TimerForecast) > (1 * 10000) Then ; 1 Refresh Graphique toutes les 5 mn maxi, faut pas abuser
 						cmbSwLang()
@@ -841,9 +842,9 @@ Func BotMinimizeRequest()
 	BotMinimize("MinimizeButton", False, 500)
 EndFunc   ;==>BotMinimizeRequest
 
-Func BotToFront()
-	WinMove2($g_hFrmBot, "", -1, -1, -1, -1, $HWND_TOPMOST, 0, False)
-	WinMove2($g_hFrmBot, "", -1, -1, -1, -1, $HWND_NOTOPMOST, 0, False)
+Func BotToFront($hHWndAfter = $HWND_TOPMOST)
+	WinMove2($g_hFrmBot, "", -1, -1, -1, -1, $hHWndAfter, 0, False)
+	If $hHWndAfter = $HWND_TOPMOST Then WinMove2($g_hFrmBot, "", -1, -1, -1, -1, $HWND_NOTOPMOST, 0, False)
 EndFunc   ;==>BotToFront
 
 Func CheckBotZOrder($bCheckOnly = False, $bForceZOrder = False)
@@ -1208,9 +1209,17 @@ Func BotGuiModeToggle()
 			; apply config
 			applyConfig(False)
 
-			If $g_bRunState Then DisableGuiControls()
+			If Not $g_bGuiControlsEnabled Then DisableGuiControls()
 
 			SetRedrawBotWindow(False, Default, Default, Default, "BotGuiModeToggle")
+
+			; now refresh the logs
+			_GUICtrlRichEdit_SetSel($g_hTxtLog, 0, 0) ; select top
+			_GUICtrlRichEdit_SetSel($g_hTxtLog, -1, -1) ; select end
+			_GUICtrlRichEdit_SetSel($g_hTxtAtkLog, 0, 0) ; select top
+			_GUICtrlRichEdit_SetSel($g_hTxtAtkLog, -1, -1) ; select end
+			; avoid the cursor in attack log by selecting tab
+			GUICtrlSetState($g_hTabMain, $GUI_FOCUS)
 
 	EndSwitch
 
@@ -1321,7 +1330,7 @@ Func BotClose($SaveConfig = Default, $bExit = True)
 	If $bExit = True Then Exit
 EndFunc   ;==>BotClose
 
-Func BotMinimizeRestore($bMinimize, $sCaller, $iForceUpdatingWhenMinimized = False, $iStayMinimizedMillis = 0)
+Func BotMinimizeRestore($bMinimize, $sCaller, $iForceUpdatingWhenMinimized = False, $iStayMinimizedMillis = 0, $hHWndAfter = $HWND_TOP)
 
 	Static $siStayMinimizedMillis = 0
 	Static $shStayMinimizedTimer = 0
@@ -1348,7 +1357,7 @@ Func BotMinimizeRestore($bMinimize, $sCaller, $iForceUpdatingWhenMinimized = Fal
 			EndIf
 			If _WinAPI_IsIconic($g_hFrmBot) Then WinSetState($g_hFrmBot, "", @SW_RESTORE)
 			If _WinAPI_IsIconic($g_hAndroidWindow) Then WinSetState($g_hAndroidWindow, "", @SW_RESTORE)
-			WinMove2($g_hFrmBot, "", -32000, -32000, -1, -1, 0, $SWP_SHOWWINDOW, False)
+			WinMove2($g_hFrmBot, "", -32000, -32000, -1, -1, 0, BitOR($SWP_SHOWWINDOW, $SWP_NOACTIVATE), False)
 		Else
 			If $g_bHideWhenMinimized Then
 				WinMove2($g_hFrmBot, "", -1, -1, -1, -1, 0, $SWP_HIDEWINDOW, False)
@@ -1358,7 +1367,7 @@ Func BotMinimizeRestore($bMinimize, $sCaller, $iForceUpdatingWhenMinimized = Fal
 			;WinSetState($g_hAndroidWindow, "", @SW_MINIMIZE)
 		EndIf
 		; Hide also Android
-		If Not $g_bIsHidden Then HideAndroidWindow(True, Default, Default, "BotMinimizeRestore")
+		If Not $g_bIsHidden Then HideAndroidWindow(True, False, Default, "BotMinimizeRestore")
 		;ReleaseMutex($hMutex)
 		Return True
 	EndIf
@@ -1386,14 +1395,17 @@ Func BotMinimizeRestore($bMinimize, $sCaller, $iForceUpdatingWhenMinimized = Fal
 	EndIf
 	If _WinAPI_IsIconic($g_hFrmBot) Then WinSetState($g_hFrmBot, "", @SW_RESTORE)
 	If $g_bAndroidAdbScreencap = False And $g_bRunState = True And $g_bBotPaused = False And _WinAPI_IsIconic($g_hAndroidWindow) Then WinSetState($g_hAndroidWindow, "", @SW_RESTORE)
-	WinMove2($g_hFrmBot, "", $botPosX, $botPosY, -1, -1, $HWND_TOP, $SWP_SHOWWINDOW)
-	_WinAPI_SetActiveWindow($g_hFrmBot)
-	_WinAPI_SetFocus($g_hFrmBot)
+	WinMove2($g_hFrmBot, "", $botPosX, $botPosY, -1, -1, $hHWndAfter, BitOR($SWP_SHOWWINDOW, $SWP_NOACTIVATE))
+	;_WinAPI_SetActiveWindow($g_hFrmBot)
+	;_WinAPI_SetFocus($g_hFrmBot)
 	If _CheckWindowVisibility($g_hFrmBot, $aPos) Then
 		SetDebugLog("Bot Window '" & $g_sAndroidTitle & "' not visible, moving to position: " & $aPos[0] & ", " & $aPos[1])
 		WinMove2($g_hFrmBot, "", $aPos[0], $aPos[1])
 	EndIf
 	WinSetTrans($g_hFrmBot, "", 255) ; is set to 1 when "Hide when minimized" is enabled after some time, so restore it
+	BotToFront($hHWndAfter)
+	; Show also Android
+	If Not $g_bIsHidden And $hHWndAfter <> $g_hAndroidWindow Then HideAndroidWindow(False, False, Default, "BotMinimizeRestore", $g_hFrmBot)
 	;ReleaseMutex($hMutex)
 	Return True
 
@@ -1618,7 +1630,7 @@ Func SetTime($bForceUpdate = False)
 	If $DisplayLoop >= 3 Then ; Conserve Clock Cycles on Updating times
 		$DisplayLoop = 0
 		If $g_bChkSwitchAcc Then
-			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM4 Then
+			If GUICtrlRead($g_hGUI_MOD_TAB, 1) = $g_hGUI_MOD_TAB_ITEM5 Then
 				For $i = 0 To $g_iTotalAcc;  Update time for all Accounts
 					; Troop Time (include spell and hero if needed)
 					If $g_abAccountNo[$i] And Not $g_abDonateOnly[$i] And $g_aiTimerStart[$i] <> 0 Then
@@ -1961,12 +1973,12 @@ Func tabMod()
 			GUISetState(@SW_HIDE, $g_hGUI_MOD_PROFILES)
 		Case $tabidx = 2 ; GoblinXP tab
 			GUISetState(@SW_HIDE, $g_hGUI_MOD_PROFILES)
-;~		Case $tabidx = 3 ; Chatbot tab
-;~			GUISetState(@SW_HIDE, $g_hGUI_MOD_PROFILES)
-		Case $tabidx = 3 ; Stats tab
+		Case $tabidx = 3 ; Chatbot tab
+			GUISetState(@SW_HIDE, $g_hGUI_MOD_PROFILES)
+		Case $tabidx = 4 ; Stats tab
 			GUISetState(@SW_HIDE, $g_hGUI_MOD_PROFILES)
 			If $g_bRunState = False Then UpdateMultiStats()
-		Case $tabidx = 4 ; Forecast tab
+		Case $tabidx = 5 ; Forecast tab
 			GUISetState(@SW_HIDE, $g_hGUI_MOD_PROFILES)
 		Case Else
 			GUISetState(@SW_HIDE, $g_hGUI_MOD_PROFILES)
@@ -2185,7 +2197,7 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 		; Team AiO MOD++ (2017)
 		Case $g_hGUI_MOD_TAB
 			; the icons for Mods tab
-			Local $aIconIndex = [$eIcnSwitchOptions, $eIcnHumanization, $eIcnGoblinXP, $eIcnStats, $eIcnForecast]
+			Local $aIconIndex = [$eIcnSwitchOptions, $eIcnHumanization, $eIcnGoblinXP, $eIcnChatbot, $eIcnStats, $eIcnForecast]
 
 		Case $g_hGUI_MOD_PROFILES_TAB
 			; the icons for Profiles tab

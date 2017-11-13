@@ -688,8 +688,8 @@ Func NotifyRemoteControlProc()
 							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "SCREENSHOT", "SCREENSHOT") & " " & GetTranslatedFileIni("MBR Func_Notify", "SCREENSHOT_Info_01", "- send a screenshot of") & " <" & $g_sNotifyOrigin & ">"
 
 							; Chatbot - Team AiO MOD++ (#-23)
-;~							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT", "SENDCHAT <TEXT>") & " " & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT_Info_01", "- send TEXT in clan chat of <Village Name>") & " <" & $g_sNotifyOrigin & ">"
-;~							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS", "GETCHATS <STOP|NOW|INTERVAL>") & " " & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS_Info_01", "- select any of this three option to do") & " <" & $g_sNotifyOrigin & ">"
+							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT", "SENDCHAT <TEXT>") & " " & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT_Info_01", "- send TEXT in clan chat of <Village Name>") & " <" & $g_sNotifyOrigin & ">"
+							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS", "GETCHATS <STOP|NOW|INTERVAL>") & " " & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS_Info_01", "- select any of this three option to do") & " <" & $g_sNotifyOrigin & ">"
 
 							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "SCREENSHOTHD", "SCREENSHOTHD") & " " & GetTranslatedFileIni("MBR Func_Notify", "SCREENSHOTHD_Info_01", "- send a screenshot in high resolution of") & " <" & $g_sNotifyOrigin & ">"
 							$txtHelp &= '\n' & GetTranslatedFileIni("MBR Func_Notify", "Bot", -1) & " <" & $g_sNotifyOrigin & "> " & GetTranslatedFileIni("MBR Func_Notify", "BUILDER", "BUILDER") & " " & GetTranslatedFileIni("MBR Func_Notify", "BUILDER_Info_01", "- send a screenshot of builder status of") & " <" & $g_sNotifyOrigin & ">"
@@ -849,7 +849,7 @@ Func NotifyRemoteControlProc()
 								NotifyPushToPushBullet($g_sNotifyOrigin & " | " & GetTranslatedFileIni("MBR Func_Notify", "Command-Not-Recognized", "Command not recognized") & "\n" & GetTranslatedFileIni("MBR Func_Notify", "Request-For-Help_Info_01", "Please push BOT HELP to obtain a complete command list."))
 								NotifyDeleteMessageFromPushBullet($iden[$x])
 							EndIf
-#cs
+
 							; Chatbot - Team AiO MOD++ (#-23)
 							If StringInStr($body[$x], StringUpper($g_sNotifyOrigin) & " SENDCHAT ") Then
 							Local $chatMessage = StringRight($body[$x], StringLen($body[$x]) - StringLen("BOT " & StringUpper($g_sNotifyOrigin) & " SENDCHAT "))
@@ -884,7 +884,7 @@ Func NotifyRemoteControlProc()
 									NotifyDeleteMessageFromPushBullet($iden[$x])
 								EndIf
 							EndIf
-#ce
+
 					EndSwitch
 					$body[$x] = ""
 					$iden[$x] = ""
@@ -936,8 +936,8 @@ Func NotifyRemoteControlProc()
 						$txtHelp &= "\n" & GetTranslatedFileIni("MBR Func_Notify", "STANDBY", "STANDBY") & " " & GetTranslatedFileIni("MBR Func_Notify", "STANDBY_Info_01", "- Standby host PC")
 
 						; Chatbot - Team AiO MOD++ (#-23)
-;~						$txtHelp &= "\n" & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS", "GETCHATS <INTERVAL|NOW|STOP>") & " " & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS_Info_01", "- to get the latest clan chat as an image")
-;~						$txtHelp &= "\n" & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT", "SENDCHAT <chat message>") & " " & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT_Info_01", "- to send a chat to your clan")
+						$txtHelp &= "\n" & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS", "GETCHATS <INTERVAL|NOW|STOP>") & " " & GetTranslatedFileIni("MBR Func_Notify", "GETCHATS_Info_01", "- to get the latest clan chat as an image")
+						$txtHelp &= "\n" & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT", "SENDCHAT <chat message>") & " " & GetTranslatedFileIni("MBR Func_Notify", "SENDCHAT_Info_01", "- to send a chat to your clan")
 
 						NotifyPushToTelegram($g_sNotifyOrigin & " | " & GetTranslatedFileIni("MBR Func_Notify", "Request-For-Help_Info_02", "Request for Help") & "\n" & $txtHelp)
 						SetLog("Notify Telegram: Your request has been received from " & $g_sNotifyOrigin & ". Help has been sent", $COLOR_SUCCESS)
@@ -1095,7 +1095,7 @@ Func NotifyRemoteControlProc()
 						SetLog("Notify Telegram: Your request has been received from " & $g_sNotifyOrigin & ". Standby PC", $COLOR_SUCCESS)
 						NotifyPushToTelegram(GetTranslatedFileIni("MBR Func_Notify", "STANDBY_Info_02", "PC Standby sequence initiated"))
 						Shutdown(32)
-#cs
+
 					; Chatbot - Team AiO MOD++ (#-23)
 					Case Else
 						If StringInStr($TGActionMSG, "SENDCHAT") Then
@@ -1121,7 +1121,7 @@ Func NotifyRemoteControlProc()
 								EndIf
 							EndIf
 						EndIf
-#ce
+
 				EndSwitch
 			EndIf
 		EndIf

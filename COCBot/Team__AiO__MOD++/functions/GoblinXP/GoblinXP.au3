@@ -209,9 +209,7 @@ Func MainSuperXPHandler()
 
 		If $ichkSkipZoomOutXP = 0 Then
 			checkMainScreen(False)
-			If IsMainPage() Then
-				Zoomout()
-			EndIf
+			If IsMainPage() Then Zoomout()
 		EndIf
 
 		If $irbSXTraining = 1 Then CheckForFullArmy()

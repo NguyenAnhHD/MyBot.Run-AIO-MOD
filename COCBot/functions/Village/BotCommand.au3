@@ -102,9 +102,9 @@ Func BotCommand()
 			Switch $iCmbBotCommand
 				Case 0
 					; Chatbot - Team AiO MOD++ (#-23)
-;~					If $g_iGlobalChat Or $g_iClanChat Then
-;~						ChatbotMessage()
-;~					EndIf
+					If $g_iGlobalChat Or $g_iClanChat Then
+						ChatbotMessage()
+					EndIf
 					If $g_bDonationEnabled = False Then
 						SetLog("Halt Attack, Stay Online/Collect...", $COLOR_INFO)
 					ElseIf $g_bTrainEnabled = False Then

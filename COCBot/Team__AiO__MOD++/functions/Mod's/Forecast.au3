@@ -12,66 +12,8 @@
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
-#include-once
 #include <IE.au3>
 
-Func chkForecastBoost()
-	If GUICtrlRead($chkForecastBoost) = $GUI_CHECKED Then
-	$iChkForecastBoost = 1
-		_GUICtrlEdit_SetReadOnly($txtForecastBoost, False)
-		GUICtrlSetState($txtForecastBoost, $GUI_ENABLE)
-		GUICtrlSetState($txtForecastBoost, $GUI_SHOW)
-	Else
-	$iChkForecastBoost = 0
-		_GUICtrlEdit_SetReadOnly($txtForecastBoost, True)
-		GUICtrlSetState($txtForecastBoost, $GUI_DISABLE)
-		GUICtrlSetState($txtForecastBoost, $GUI_HIDE)
-	EndIf
-EndFunc
-
-Func chkForecastPause()
-    $iChkForecastPause = 1
-	If GUICtrlRead($chkForecastPause) = $GUI_CHECKED Then
-		_GUICtrlEdit_SetReadOnly($txtForecastPause, False)
-		GUICtrlSetState($txtForecastPause, $GUI_ENABLE)
-		GUICtrlSetState($txtForecastPause, $GUI_SHOW)
-	Else
-	$iChkForecastPause = 0
-		_GUICtrlEdit_SetReadOnly($txtForecastPause, True)
-		GUICtrlSetState($txtForecastPause, $GUI_DISABLE)
-		GUICtrlSetState($txtForecastPause, $GUI_HIDE)
-	EndIf
-EndFunc
-
-Func chkForecastHopingSwitchMax()
-	If GUICtrlRead($chkForecastHopingSwitchMax) = $GUI_CHECKED Then
-	$ichkForecastHopingSwitchMax = 1
-		_GUICtrlEdit_SetReadOnly($txtForecastHopingSwitchMax, False)
-		GUICtrlSetState($txtForecastHopingSwitchMax, $GUI_ENABLE)
-		GUICtrlSetState($cmbForecastHopingSwitchMax, $GUI_ENABLE)
-	Else
-	$ichkForecastHopingSwitchMax = 0
-		_GUICtrlEdit_SetReadOnly($txtForecastHopingSwitchMax, True)
-		GUICtrlSetState($txtForecastHopingSwitchMax, $GUI_DISABLE)
-		GUICtrlSetState($cmbForecastHopingSwitchMax, $GUI_DISABLE)
-	EndIf
-EndFunc
-
-Func chkForecastHopingSwitchMin()
-	If GUICtrlRead($chkForecastHopingSwitchMin) = $GUI_CHECKED Then
-	$ichkForecastHopingSwitchMin = 1
-		_GUICtrlEdit_SetReadOnly($txtForecastHopingSwitchMin, False)
-		GUICtrlSetState($txtForecastHopingSwitchMin, $GUI_ENABLE)
-		GUICtrlSetState($cmbForecastHopingSwitchMin, $GUI_ENABLE)
-	Else
-	$ichkForecastHopingSwitchMin = 0
-		_GUICtrlEdit_SetReadOnly($txtForecastHopingSwitchMin, True)
-		GUICtrlSetState($txtForecastHopingSwitchMin, $GUI_DISABLE)
-		GUICtrlSetState($cmbForecastHopingSwitchMin, $GUI_DISABLE)
-	EndIf
-EndFunc
-
-; Added Multi Switch Language
 Func setForecast()
 	_IENavigate($oIE, "about:blank")
 	_IEBodyWriteHTML($oIE, "<div style='width:440px;height:345px;padding:0;overflow:hidden;position: absolute;top:5x;left:-25px;z-index:0;'><center><img src='" & @ScriptDir & "\COCBot\Forecast\loading.gif'></center></div>")
@@ -313,38 +255,38 @@ EndFunc
 
 Func checkForecastPause($forecast)
 	Local $return = False
-	If $iChkForecastPause = 1 Then
-		If $currentForecast <= Number($iTxtForecastPause, 3) Then
-			SetLog("Halting attacks: forecast:" & StringFormat("%.1f", $forecast) & " <= setting:" & $iTxtForecastPause, $COLOR_RED)
+	If $g_bChkForecastPause Then
+		If $currentForecast <= Number($g_iTxtForecastPause, 3) Then
+			SetLog("Halting attacks: forecast:" & StringFormat("%.1f", $forecast) & " <= setting:" & $g_iTxtForecastPause, $COLOR_RED)
 			$return = True
 		Else
-			SetLog("Not Halting attacks: forecast:" & StringFormat("%.1f", $forecast) & " > setting:" & $iTxtForecastPause, $COLOR_BLUE)
+			SetLog("Not Halting attacks: forecast:" & StringFormat("%.1f", $forecast) & " > setting:" & $g_iTxtForecastPause, $COLOR_BLUE)
 		EndIf
 	EndIf
 	Return $return
 EndFunc
 
 Func ForecastSwitch()
-If $ichkForecastHopingSwitchMax	= 1 Or $ichkForecastHopingSwitchMin = 1 And $g_bRunState Then
+If ($g_bChkForecastHopingSwitchMax Or $g_bChkForecastHopingSwitchMin) And $g_bRunState Then
 	$currentForecast = readCurrentForecast()
 	Local $SwitchtoProfile = ""
 	Local $aArray = _FileListToArray($g_sProfilePath, "*", $FLTA_FOLDERS)
 	_ArrayDelete($aArray,0)
 	While True
-		If $ichkForecastHopingSwitchMax = 1 Then
-		If $currentForecast < Number($itxtForecastHopingSwitchMax, 3) And $g_sProfileCurrentName <> $icmbForecastHopingSwitchMax Then
-		$SwitchtoProfile = $icmbForecastHopingSwitchMax
-		Local $aNewProfile = $aArray[Number($icmbForecastHopingSwitchMax)]
-			SetLog("Weather index < " & $itxtForecastHopingSwitchMax & " !!", $COLOR_ORANGE)
+		If $g_bChkForecastHopingSwitchMax Then
+		If $currentForecast < Number($g_iTxtForecastHopingSwitchMax, 3) And $g_sProfileCurrentName <> $g_iCmbForecastHopingSwitchMax Then
+		$SwitchtoProfile = $g_iCmbForecastHopingSwitchMax
+		Local $aNewProfile = $aArray[Number($g_iCmbForecastHopingSwitchMax)]
+			SetLog("Weather index < " & $g_iTxtForecastHopingSwitchMax & " !!", $COLOR_ORANGE)
 			SetLog("Switching profile to : " & $aNewProfile, $COLOR_BLUE)
 		ExitLoop
 		EndIf
 		EndIf
-		If $ichkForecastHopingSwitchMin = 1 Then
-		If $currentForecast > Number($itxtForecastHopingSwitchMin, 3) And $g_sProfileCurrentName <> $icmbForecastHopingSwitchMin Then
-		$SwitchtoProfile = $icmbForecastHopingSwitchMin
-		Local $aNewProfile = $aArray[Number($icmbForecastHopingSwitchMin)]
-			SetLog("Weather index > " & $itxtForecastHopingSwitchMin & " !!", $COLOR_ORANGE)
+		If $g_bChkForecastHopingSwitchMin Then
+		If $currentForecast > Number($g_iTxtForecastHopingSwitchMin, 3) And $g_sProfileCurrentName <> $g_iCmbForecastHopingSwitchMin Then
+		$SwitchtoProfile = $g_iCmbForecastHopingSwitchMin
+		Local $aNewProfile = $aArray[Number($g_iCmbForecastHopingSwitchMin)]
+			SetLog("Weather index > " & $g_iTxtForecastHopingSwitchMin & " !!", $COLOR_ORANGE)
 			SetLog("Switching profile to : " & $aNewProfile, $COLOR_BLUE)
 		ExitLoop
 		EndIf
@@ -358,27 +300,4 @@ If $ichkForecastHopingSwitchMax	= 1 Or $ichkForecastHopingSwitchMin = 1 And $g_b
 		EndIf
 	EndIf
 EndIf
-EndFunc
-
-; Forecast Switch Language Control
-Func cmbSwLang()
-	Switch GUICtrlRead($cmbSwLang)
-
-		Case "EN"
-			setForecast2()
-		Case "RU"
-			setForecast3()
-		Case "FR"
-			setForecast4()
-		Case "DE"
-			setForecast5()
-		Case "ES"
-			setForecast6()
-		Case "FA"
-			setForecast7()
-		Case "PT"
-			setForecast8()
-		Case "IN"
-			setForecast9()
-	EndSwitch
 EndFunc

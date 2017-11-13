@@ -216,7 +216,7 @@ Func chkDebugClick()
 EndFunc   ;==>chkDebugClick
 
 Func chkDebugSetlog()
-	$g_bDebugSetlog = (GUICtrlRead($g_hChkDebugSetlog))
+	$g_bDebugSetlog = (GUICtrlRead($g_hChkDebugSetlog) = $GUI_CHECKED)
 	SetDebugLog("DebugSetlog " & ($g_bDebugSetlog ? "enabled" : "disabled"))
 EndFunc   ;==>chkDebugSetlog
 
@@ -286,6 +286,14 @@ Func btnTestTrain()
 	$result = getArmyHeroTime("all")
 	If @error Then $result = "Error " & @error & ", " & @extended & ", " & ((IsArray($result)) ? (_ArrayToString($result, ",")) : ($result))
 	SetLog("Result getArmyHeroTime() = " & $result, $COLOR_INFO)
+
+	$result = "";
+	SetLog("Testing ArmyHeroStatus()", $COLOR_INFO)
+	For $i = 0 To 2
+		$result &= " " & ArmyHeroStatus($i)
+	Next
+	If @error Then $result = "Error " & @error & ", " & @extended & ", " & ((IsArray($result)) ? (_ArrayToString($result, ",")) : ($result))
+	SetLog("Result ArmyHeroStatus(0, 1, 2) = " & $result, $COLOR_INFO)
 	SetLog("Testing Train DONE", $COLOR_INFO)
 
 	EndImageTest()
@@ -351,6 +359,7 @@ Func btnTestSendText()
 EndFunc   ;==>btnTestSendText
 
 Func btnTestAttackBar()
+	BeginImageTest() ; get image for testing
 	Local $currentOCR = $g_bDebugOcr
 	Local $currentRunState = $g_bRunState
 	_GUICtrlTab_ClickTab($g_hTabMain, 0)
@@ -388,6 +397,8 @@ Func btnTestAttackBar()
 	$debugfile = "Test_Attack_Bar_" & $g_sBotVersion & "_" & $Date & "_" & $Time & ".png"
 	_GDIPlus_ImageSaveToFile($g_hBitmap, $savefolder & $debugfile)
 	;make snapshot end
+
+	EndImageTest() ; clear test image handle
 
 	SetLog(_PadStringCenter(" Test Attack Bar end ", 54, "="), $COLOR_INFO)
 	ShellExecute($savefolder)

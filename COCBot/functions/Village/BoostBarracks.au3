@@ -26,8 +26,8 @@ Func BoostBarracks()
 		EndIf
 	EndIf
 
-	If GUICtrlRead($chkForecastBoost) = $GUI_CHECKED Then
-		If $currentForecast > Number($iTxtForecastBoost, 3) Then
+	If $g_bChkForecastBoost Then
+		If $currentForecast > Number($g_iTxtForecastBoost, 3) Then
 			Local $hour = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
 			If $g_abBoostBarracksHours[$hour[0]] = False Then
 				SetLog("No planned boosting for this hour.", $COLOR_RED)
@@ -70,7 +70,7 @@ Func BoostSpellFactory()
 	If $g_iCmbBoostSpellFactory >= 1 Then
 		SetLog("Boosting Spell Factory...", $COLOR_BLUE)
 
-		If $iChkForecastBoost = 1 And $currentForecast <= Number($iTxtForecastBoost, 3) Then Return
+		If $g_bChkForecastBoost And $currentForecast <= Number($g_iTxtForecastBoost, 3) Then Return
 
 		If OpenArmyWindow() = True Then
 			Local $CheckArmyWindow = ISArmyWindow()

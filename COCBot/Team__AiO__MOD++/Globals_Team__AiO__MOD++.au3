@@ -127,15 +127,17 @@ Global $g_iLastLayout = 0
 Global Const $COLOR_DEEPPINK = 0xFF1493
 Global Const $COLOR_DARKGREEN = 0x006400
 Global $oIE = ObjCreate("Shell.Explorer.2")
-Global $ieForecast
 Global $dtStamps[0], $lootMinutes[0]
 Global $timeOffset = 0, $TimerForecast = 0
 Global $lootIndexScaleMarkers, $currentForecast
-Global $iChkForecastBoost = 0, $iTxtForecastBoost = 6
-Global $iChkForecastPause = 0, $iTxtForecastPause = 2
-Global $ichkForecastHopingSwitchMax = 0, $icmbForecastHopingSwitchMax = 0, $itxtForecastHopingSwitchMax = 2
-Global $ichkForecastHopingSwitchMin = 0, $icmbForecastHopingSwitchMin = 0, $itxtForecastHopingSwitchMin = 2
-Global $icmbSwLang = 0
+
+Global $g_bChkForecastBoost = False, $g_iTxtForecastBoost = 6
+Global $g_bChkForecastPause = False, $g_iTxtForecastPause = 2
+
+Global $g_bChkForecastHopingSwitchMax = False, $g_iCmbForecastHopingSwitchMax = 0, $g_iTxtForecastHopingSwitchMax = 2
+Global $g_bChkForecastHopingSwitchMin = False, $g_iCmbForecastHopingSwitchMin = 0, $g_iTxtForecastHopingSwitchMin = 2
+
+Global $g_iCmbSwLang = 0
 
 ; Request CC Troops at first - Team AiO MOD++ (#-18)
 Global $g_bReqCCFirst = False
@@ -162,13 +164,13 @@ Global $g_hChkExtendedAttackBarLB, $g_hChkExtendedAttackBarDB, $g_abChkExtendedA
 Global $g_iTotalAttackSlot = 10, $g_bDraggedAttackBar = False ; flag if AttackBar is dragged or not
 
 ; Chatbot - Team AiO MOD++ (#-23)
-;~ Global $chatIni = ""
-;~ Global $GlobalMessages1 = "", $GlobalMessages2 = "", $GlobalMessages3 = "", $GlobalMessages4 = ""
-;~ Global $ClanMessages = "", $ClanResponses = ""
-;~ Global $g_iGlobalChat = False, $g_iGlobalScramble = False, $g_iSwitchLang = False, $g_iCmbLang = 1
-;~ Global $g_iClanChat = False, $g_iRusLang = 0, $g_iUseResponses = False, $g_iUseGeneric = False, $g_iChatPushbullet = False, $g_iPbSendNewChats = False
-;~ Global $ChatbotStartTime
-;~ Global $ChatbotQueuedChats[0], $ChatbotReadQueued = False, $ChatbotReadInterval = 0, $ChatbotIsOnInterval = False
+Global $chatIni = ""
+Global $GlobalMessages1 = "", $GlobalMessages2 = "", $GlobalMessages3 = "", $GlobalMessages4 = ""
+Global $ClanMessages = "", $ClanResponses = ""
+Global $g_iGlobalChat = False, $g_iGlobalScramble = False, $g_iSwitchLang = False, $g_iCmbLang = 1
+Global $g_iClanChat = False, $g_iRusLang = 0, $g_iUseResponses = False, $g_iUseGeneric = False, $g_iChatPushbullet = False, $g_iPbSendNewChats = False
+Global $ChatbotStartTime
+Global $ChatbotQueuedChats[0], $ChatbotReadQueued = False, $ChatbotReadInterval = 0, $ChatbotIsOnInterval = False
 
 ; CheckCC Troops - Team AiO MOD++ (#-24)
 Global $g_aiCCTroops[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]

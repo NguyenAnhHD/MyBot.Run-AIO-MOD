@@ -86,6 +86,21 @@ Func SaveConfig_MOD()
 	_Ini_Add("Bot Humanization", "cmbMaxActionsNumber", _GUICtrlComboBox_GetCurSel($g_cmbMaxActionsNumber))
 	_Ini_Add("Bot Humanization", "challengeMessage", GUICtrlRead($g_challengeMessage))
 
+	; Forecast - Team AiO MOD++ (#-17)
+	_Ini_Add("forecast", "ChkForecastBoost", $g_bChkForecastBoost ? 1 : 0)
+	_Ini_Add("forecast", "TxtForecastBoost", $g_iTxtForecastBoost)
+	_Ini_Add("forecast", "ChkForecastPause", $g_bChkForecastPause ? 1 : 0)
+	_Ini_Add("forecast", "TxtForecastPause", $g_iTxtForecastPause)
+
+	_Ini_Add("forecast", "ChkForecastHopingSwitchMax", $g_bChkForecastHopingSwitchMax ? 1 : 0)
+	_Ini_Add("forecast", "ChkForecastHopingSwitchMin", $g_bChkForecastHopingSwitchMin ? 1 : 0)
+	_Ini_Add("forecast", "CmbForecastHopingSwitchMax", _GUICtrlComboBox_GetCurSel($g_hCmbForecastHopingSwitchMax))
+	_Ini_Add("forecast", "CmbForecastHopingSwitchMin", _GUICtrlComboBox_GetCurSel($g_hCmbForecastHopingSwitchMin))
+	_Ini_Add("forecast", "TxtForecastHopingSwitchMax", $g_iTxtForecastHopingSwitchMax)
+	_Ini_Add("forecast", "TxtForecastHopingSwitchMin", $g_iTxtForecastHopingSwitchMin)
+
+	_Ini_Add("forecast", "CmbSwLang", _GUICtrlComboBox_GetCurSel($g_hCmbSwLang))
+
 	; Request CC Troops at first - Team AiO MOD++ (#-18)
 	_Ini_Add("planned", "ReqCCFirst", $g_bReqCCFirst ? 1 : 0)
 
@@ -180,20 +195,3 @@ Func SaveConfig_SwitchAcc($config = True)
 	Next
 	IniWriteS($g_sProfilePath & "\Profile.ini", "SwitchAcc", "Train Time To Skip", $g_iTrainTimeToSkip)
 EndFunc   ;==>SaveConfig_SwitchAcc
-
-; Forecast - Team AiO MOD++ (#-17)
-Func SaveConfig_Forecast()
-
-	_Ini_Add("forecast", "txtForecastBoost", GUICtrlRead($txtForecastBoost))
-	_Ini_Add("forecast", "txtForecastPause", GUICtrlRead($txtForecastPause))
-	_Ini_Add("profiles", "cmbForecastHopingSwitchMax", _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMax))
-	_Ini_Add("profiles", "txtForecastHopingSwitchMax", GUICtrlRead($txtForecastHopingSwitchMax))
-	_Ini_Add("profiles", "cmbForecastHopingSwitchMin", _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMin))
-	_Ini_Add("profiles", "txtForecastHopingSwitchMin", GUICtrlRead($txtForecastHopingSwitchMin))
-	_Ini_Add("forecast", "chkForecastBoost", $iChkForecastBoost ? 1 : 0)
-	_Ini_Add("forecast", "chkForecastPause", $iChkForecastPause ? 1 : 0)
-	_Ini_Add("profiles", "chkForecastHopingSwitchMax", $ichkForecastHopingSwitchMax ? 1 : 0)
-	_Ini_Add("profiles", "chkForecastHopingSwitchMin", $ichkForecastHopingSwitchMin ? 1 : 0)
-	_Ini_Add("Lang", "cmbSwLang", _GUICtrlComboBox_GetCurSel($cmbSwLang))
-
-EndFunc   ;==>SaveConfig_Forecast

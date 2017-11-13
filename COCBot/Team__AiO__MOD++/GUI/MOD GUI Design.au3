@@ -15,7 +15,7 @@
 #include-once
 
 Global $g_hGUI_MOD = 0, $g_hGUI_MOD_PROFILES = 0, $g_hGUI_LOG_SA = 0
-Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0, $g_hGUI_MOD_TAB_ITEM2 = 0, $g_hGUI_MOD_TAB_ITEM3 = 0, $g_hGUI_MOD_TAB_ITEM4 = 0, $g_hGUI_MOD_TAB_ITEM5 = 0
+Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0, $g_hGUI_MOD_TAB_ITEM2 = 0, $g_hGUI_MOD_TAB_ITEM3 = 0, $g_hGUI_MOD_TAB_ITEM4 = 0, $g_hGUI_MOD_TAB_ITEM5 = 0, $g_hGUI_MOD_TAB_ITEM6 = 0
 Global $g_hGUI_MOD_PROFILES_TAB = 0, $g_hGUI_MOD_PROFILES_TAB_ITEM1 = 0, $g_hGUI_MOD_PROFILES_TAB_ITEM2 = 0, $g_hGUI_MOD_PROFILES_TAB_ITEM3 = 0
 
 ; Switch Account & Profiles
@@ -30,7 +30,7 @@ Global $g_hGUI_MOD_PROFILES_TAB = 0, $g_hGUI_MOD_PROFILES_TAB_ITEM1 = 0, $g_hGUI
 #include "MOD GUI Design - GoblinXP.au3"
 
 ; Chatbot
-;~ #include "MOD GUI Design - Chatbot.au3"
+#include "MOD GUI Design - Chatbot.au3"
 
 ; Forecast
 #include "MOD GUI Design - Forecast.au3"
@@ -56,13 +56,13 @@ Func CreateMODTab()
 			HumanizationGUI()
 		$g_hGUI_MOD_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_03", "Goblin XP"))
 			GoblinXPGUI()
-;~		$g_hGUI_MOD_TAB_ITEM6 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_04", "Chat"))
-;~			ChatbotGUI()
-		$g_hGUI_MOD_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_05", "Stat's"))
+		$g_hGUI_MOD_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_04", "Chat"))
+			ChatbotGUI()
+		$g_hGUI_MOD_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_05", "Stat's"))
 			$g_hLastControlToHide = GUICtrlCreateDummy()
 			ReDim $g_aiControlPrevState[$g_hLastControlToHide + 1]
 			CreateMultiStats()
-		$g_hGUI_MOD_TAB_ITEM5 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_06", "Forecast"))
+		$g_hGUI_MOD_TAB_ITEM6 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_06", "Forecast"))
 			ForecastGUI()
 
 	; needed to init the window now, like if it's a tab

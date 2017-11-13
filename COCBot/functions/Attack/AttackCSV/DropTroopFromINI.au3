@@ -80,10 +80,11 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 
 	;search slot where is the troop...
 	Local $troopPosition = -1
+	Local $troopCount = -1
 	For $i = 0 To UBound($g_avAttackTroops) - 1
-		If $g_avAttackTroops[$i][0] = $iTroopIndex Then
+		If $g_avAttackTroops[$i][0] = $iTroopIndex And $g_avAttackTroops[$i][1] >= $troopCount Then
 			$troopPosition = $i
-			ExitLoop
+			$troopCount = $g_avAttackTroops[$i][1]
 		EndIf
 	Next
 
@@ -245,6 +246,8 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 							Else
 								AttackClick($pixel[0], $pixel[1], $qty2, $delayPoint, $delayDropLast, "#0667")
 							EndIf
+							; assume spells get always dropped: adjust count so CC spells can be used without recalc
+							If $g_avAttackTroops[$troopPosition][1] > 0 Then $g_avAttackTroops[$troopPosition][1] -= 1
 						Case Else
 							Setlog("Error parsing line")
 					EndSwitch

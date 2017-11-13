@@ -177,45 +177,75 @@ Global $cGeneric = GUICtrlRead($g_hEditGeneric)
 EndFunc   ;==>ChatbotGUIEditMessages
 
 Func ChatbotChatOpen() ; open the chat area
-	Click(20, 379, 1) ; open chat
-	If _Sleep(1000) Then Return
+	Local $aButtonChatOpen[4] = [20, 351 + $g_iMidOffsetY, 0xFFFFFF, 20]
+	If _ColorCheck(_GetPixelColor($aButtonChatOpen[0], $aButtonChatOpen[1], True), Hex($aButtonChatOpen[2], 6), $aButtonChatOpen[3]) Then
+		Click($aButtonChatOpen[0], $aButtonChatOpen[1], 1)
+		If _Sleep(1000) Then Return
+	EndIf
 	Return True
 EndFunc   ;==>ChatbotChatOpen
 
 Func ChatbotSelectClanChat() ; select clan tab
-	Click(222, 27, 1) ; switch to clan
-	If _Sleep(1000) Then Return
-	Click(295, 700, 1) ; scroll to top
-	If _Sleep(1000) Then Return
+	Local $aSelectClanChat[4] = [200, 22, 0x383828, 20]
+	Local $aSelectClanChat2[4] = [280, 680 + $g_iMidOffsetY, 0xFDFFFF, 20]
+	If _ColorCheck(_GetPixelColor($aSelectClanChat[0], $aSelectClanChat[1], True), Hex($aSelectClanChat[2], 6), $aSelectClanChat[3]) Then
+		Click($aSelectClanChat[0], $aSelectClanChat[1], 1)
+		If _Sleep(1000) Then Return
+	EndIf
+	If _ColorCheck(_GetPixelColor($aSelectClanChat2[0], $aSelectClanChat2[1], True), Hex($aSelectClanChat2[2], 6), $aSelectClanChat2[3]) Then
+		Click($aSelectClanChat2[0], $aSelectClanChat2[1], 1)
+		If _Sleep(1000) Then Return
+	EndIf
 	Return True
 EndFunc   ;==>ChatbotSelectClanChat
 
 Func ChatbotSelectGlobalChat() ; select global tab
-	Click(74, 23, 1) ; switch to global
-	If _Sleep(1000) Then Return
+	Local $aSelectGlobalChat[4] = [48, 22, 0x383828, 20]
+	Local $aSelectGlobalChat2[4] = [280, 680 + $g_iMidOffsetY, 0xFDFFFF, 20]
+	If _ColorCheck(_GetPixelColor($aSelectGlobalChat[0], $aSelectGlobalChat[1], True), Hex($aSelectGlobalChat[2], 6), $aSelectGlobalChat[3]) Then
+		Click($aSelectGlobalChat[0], $aSelectGlobalChat[1], 1)
+		If _Sleep(1000) Then Return
+	EndIf
+	If _ColorCheck(_GetPixelColor($aSelectGlobalChat2[0], $aSelectGlobalChat2[1], True), Hex($aSelectGlobalChat2[2], 6), $aSelectGlobalChat2[3]) Then
+		Click($aSelectGlobalChat2[0], $aSelectGlobalChat2[1], 1)
+		If _Sleep(1000) Then Return
+	EndIf
 	Return True
 EndFunc   ;==>ChatbotSelectGlobalChat
 
 Func ChatbotChatClose() ; close chat area
-	Click(330, 384, 1) ; close chat
-	waitMainScreen()
+	Local $aButtonChatClose[4] = [330, 352 + $g_iMidOffsetY, 0xFFFFFF, 20]
+	If _ColorCheck(_GetPixelColor($aButtonChatClose[0], $aButtonChatClose[1], True), Hex($aButtonChatClose[2], 6), $aButtonChatClose[3]) Then
+		Click($aButtonChatClose[0], $aButtonChatClose[1], 1)
+		waitMainScreen()
+	EndIf
 	Return True
 EndFunc   ;==>ChatbotChatClose
 
 Func ChatbotChatClanInput() ; select the textbox for clan chat
-	Click(276, 707, 1) ; select the textbox
-	If _Sleep(1000) Then Return
+	Local $aChatClanInput[4] = [276, 677 + $g_iMidOffsetY, 0xFFFFFF, 20]
+	If _ColorCheck(_GetPixelColor($aChatClanInput[0], $aChatClanInput[1], True), Hex($aChatClanInput[2], 6), $aChatClanInput[3]) Then
+		Click($aChatClanInput[0], $aChatClanInput[1], 1)
+		If _Sleep(1000) Then Return
+	EndIf
 	Return True
 EndFunc   ;==>ChatbotChatClanInput
 
 Func ChatbotChatGlobalInput() ; select the textbox for global chat
-	Click(277, 706, 1) ; select the textbox
-	If _Sleep(1000) Then Return
+	Local $aChatGlobalInput[4] = [276, 677 + $g_iMidOffsetY, 0xFFFFFF, 20]
+	If _ColorCheck(_GetPixelColor($aChatGlobalInput[0], $aChatGlobalInput[1], True), Hex($aChatGlobalInput[2], 6), $aChatGlobalInput[3]) Then
+		Click($aChatGlobalInput[0], $aChatGlobalInput[1], 1)
+		If _Sleep(1000) Then Return
+	EndIf
 	Return True
 EndFunc   ;==>ChatbotChatGlobalInput
 
 Func ChatbotChatInput($message)
-	   Click(33, 707, 1)
+	Local $aChatInput[4] = [276, 677 + $g_iMidOffsetY, 0xFFFFFF, 20]
+	If _ColorCheck(_GetPixelColor($aChatInput[0], $aChatInput[1], True), Hex($aChatInput[2], 6), $aChatInput[3]) Then
+		Click($aChatInput[0], $aChatInput[1], 1)
+		If _Sleep(1000) Then Return
+	EndIf
 	If $g_iRusLang = 1 Then
 	  SetLog("Chat send in russia", $COLOR_BLUE)
 	 AutoItWinSetTitle('MyAutoItTitle')
@@ -236,16 +266,20 @@ Func ChatbotChatInput($message)
 EndFunc   ;==>ChatbotChatInput
 
 Func ChatbotChatSendClan() ; click send
-	If _Sleep(1000) Then Return
-	Click(827, 709, 1) ; send
-	If _Sleep(2000) Then Return
+	Local $aChatSendClan[4] = [842, 690 + $g_iMidOffsetY, 0xFFFFFF, 20]
+	If _ColorCheck(_GetPixelColor($aChatSendClan[0], $aChatSendClan[1], True), Hex($aChatSendClan[2], 6), $aChatSendClan[3]) Then
+		Click($aChatSendClan[0], $aChatSendClan[1], 1)
+		If _Sleep(2000) Then Return
+	EndIf
 	Return True
 EndFunc   ;==>ChatbotChatSendClan
 
 Func ChatbotChatSendGlobal() ; click send
-	If _Sleep(1000) Then Return
-	Click(827, 709, 1) ; send
-	If _Sleep(2000) Then Return
+	Local $aChatSendGlobal[4] = [842, 690 + $g_iMidOffsetY, 0xFFFFFF, 20]
+	If _ColorCheck(_GetPixelColor($aChatSendGlobal[0], $aChatSendGlobal[1], True), Hex($aChatSendGlobal[2], 6), $aChatSendGlobal[3]) Then
+		Click($aChatSendGlobal[0], $aChatSendGlobal[1], 1)
+		If _Sleep(2000) Then Return
+	EndIf
 	Return True
 EndFunc   ;==>ChatbotChatSendGlobal
 

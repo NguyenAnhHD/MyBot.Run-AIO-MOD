@@ -54,7 +54,7 @@ Func SwitchWardenMode($bReopenArmyWindow = True)
 	If Not $g_bCheckWardenMode Then Return
 
 	ClickP($aAway, 1, 0, "#0000")
-	If _Sleep(1000) Then Return
+	If _Sleep(500) Then Return
 
 	checkMainScreen(False)
 

@@ -28,13 +28,13 @@ Func setupProfileComboBox()
 	; Clear the combo box current data in case profiles were deleted
 	GUICtrlSetData($g_hCmbProfile, "", "")
 	; Forecast - Team AiO MOD++ (#-17)
-	GUICtrlSetData($cmbForecastHopingSwitchMin, "", "")
-	GUICtrlSetData($cmbForecastHopingSwitchMax, "", "")
+	GUICtrlSetData($g_hCmbForecastHopingSwitchMin, "", "")
+	GUICtrlSetData($g_hCmbForecastHopingSwitchMax, "", "")
 	; Set the new data of available profiles
 	GUICtrlSetData($g_hCmbProfile, $profileString, "<No Profiles>")
 	; Forecast - Team AiO MOD++ (#-17)
-	GUICtrlSetData($cmbForecastHopingSwitchMax, $profileString, "<No Profiles>")
-	GUICtrlSetData($cmbForecastHopingSwitchMin, $profileString, "<No Profiles>")
+	GUICtrlSetData($g_hCmbForecastHopingSwitchMax, $profileString, "<No Profiles>")
+	GUICtrlSetData($g_hCmbForecastHopingSwitchMin, $profileString, "<No Profiles>")
 
 	; Switch Accounts - Team AiO MOD++ (#-12)
 	For $i = 0 To 7
