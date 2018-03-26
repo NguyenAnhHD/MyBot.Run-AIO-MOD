@@ -4,7 +4,7 @@
 ; Syntax ........: saveConfig()
 ; Parameters ....: NA
 ; Return values .: NA
-; Author ........: Team AiO MOD++ (2017)
+; Author ........: Team AiO MOD++ (2018)
 ; Modified ......:
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
 ;                  MyBot is distributed under the terms of the GNU GPL
@@ -14,75 +14,34 @@
 ; ===============================================================================================================================
 
 Func SaveConfig_MOD()
-	; <><><> Team AiO MOD++ (2017) <><><>
-	ApplyConfig_MOD("Save")
-
-	; Unit/Wave Factor (rulesss & kychera) - Added by Eloy
-	_Ini_Add("SetSleep", "EnableUnitFactor", $iChkUnitFactor ? 1 : 0)
-	_Ini_Add("SetSleep", "EnableWaveFactor", $iChkWaveFactor ? 1 : 0)
-
-	_Ini_Add("SetSleep", "UnitFactor", GUICtrlRead($TxtUnitFactor))
-	_Ini_Add("SetSleep", "WaveFactor", GUICtrlRead($TxtWaveFactor))
-
-	_Ini_Add("SetSleep", "EnableGiantSlot", $iChkGiantSlot ? 1 : 0)
-	_Ini_Add("SetSleep", "CmbGiantSlot", _GUICtrlComboBox_GetCurSel($CmbGiantSlot))
-
-	; Custom Drop Order
-	_Ini_Add("DropOrder", "chkTroopDropOrder", $g_bCustomTrainDropOrderEnable)
-	For $p = 0 To UBound($icmbDropTroops) - 1
-		_Ini_Add("DropOrder", "cmbDropTroops[" & $p & "]", _GUICtrlComboBox_GetCurSel($cmbDropTroops[$p]))
-	Next
-
-	; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
-	_Ini_Add("general", "AutoHide", $ichkAutoHide ? 1 : 0)
-	_Ini_Add("general", "AutoHideDelay", $ichkAutoHideDelay)
-
-	; Check Collector Outside (McSlither) - Added by NguyenAnhHD
-	_Ini_Add("search", "DBMeetCollOutside", $ichkDBMeetCollOutside ? 1 : 0)
-	_Ini_Add("search", "DBMinCollOutsidePercent", $iDBMinCollOutsidePercent)
-
-	; CSV Deploy Speed - Added by NguyenAnhHD
+	; <><><> Team AiO MOD++ (2018) <><><>
+	ApplyConfig_MOD(GetApplyConfigSaveAction())
+	; CSV Deploy Speed - Team AiO MOD++
 	_Ini_Add("CSV Speed", "cmbCSVSpeed[LB]", _GUICtrlComboBox_GetCurSel($cmbCSVSpeed[$LB]))
 	_Ini_Add("CSV Speed", "cmbCSVSpeed[DB]", _GUICtrlComboBox_GetCurSel($cmbCSVSpeed[$DB]))
 
-	; Switch Profile (IceCube) - Added by NguyenAnhHD
-	_Ini_Add("profiles", "chkGoldSwitchMax", $ichkGoldSwitchMax ? 1 : 0)
-	_Ini_Add("profiles", "cmbGoldMaxProfile", $icmbGoldMaxProfile)
-	_Ini_Add("profiles", "txtMaxGoldAmount", $itxtMaxGoldAmount)
-	_Ini_Add("profiles", "chkGoldSwitchMin", $ichkGoldSwitchMin ? 1 : 0)
-	_Ini_Add("profiles", "cmbGoldMinProfile", $icmbGoldMinProfile)
-	_Ini_Add("profiles", "txtMinGoldAmount", $itxtMinGoldAmount)
+	; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
+	_Ini_Add("general", "EnableAuto", $g_bEnableAuto ? 1 : 0)
+	_Ini_Add("general", "AutoDock", $g_iChkAutoDock ? 1 : 0)
+	_Ini_Add("general", "AutoHide", $g_iChkAutoHideEmulator ? 1 : 0)
+	_Ini_Add("general", "AutoMinimize", $g_iChkAutoMinimizeBot ? 1 : 0)
 
-	_Ini_Add("profiles", "chkElixirSwitchMax", $ichkElixirSwitchMax ? 1 : 0)
-	_Ini_Add("profiles", "cmbElixirMaxProfile", $icmbElixirMaxProfile)
-	_Ini_Add("profiles", "txtMaxElixirAmount", $itxtMaxElixirAmount)
-	_Ini_Add("profiles", "chkElixirSwitchMin", $ichkElixirSwitchMin ? 1 : 0)
-	_Ini_Add("profiles", "cmbElixirMinProfile", $icmbElixirMinProfile)
-	_Ini_Add("profiles", "txtMinElixirAmount", $itxtMinElixirAmount)
+	; Check Collector Outside - Team AiO MOD++
+	_Ini_Add("search", "DBMeetCollOutside", $g_bDBMeetCollOutside)
+	_Ini_Add("search", "TxtDBMinCollOutsidePercent", GUICtrlRead($g_hTxtDBMinCollOutsidePercent))
+	_Ini_Add("search", "DBCollectorsNearRedline", $g_bDBCollectorsNearRedline ? 1 : 0)
+	_Ini_Add("search", "CmbRedlineTiles", _GUICtrlComboBox_GetCurSel($g_hCmbRedlineTiles))
+	_Ini_Add("search", "SkipCollectorCheck", $g_bSkipCollectorCheck ? 1 : 0)
+	_Ini_Add("search", "TxtSkipCollectorGold", GUICtrlRead($g_hTxtSkipCollectorGold))
+	_Ini_Add("search", "TxtSkipCollectorElixir", GUICtrlRead($g_hTxtSkipCollectorElixir))
+	_Ini_Add("search", "TxtSkipCollectorDark", GUICtrlRead($g_hTxtSkipCollectorDark))
+	_Ini_Add("search", "SkipCollectorCheckTH", $g_bSkipCollectorCheckTH ? 1 : 0)
+	_Ini_Add("search", "CmbSkipCollectorCheckTH", _GUICtrlComboBox_GetCurSel($g_hCmbSkipCollectorCheckTH))
 
-	_Ini_Add("profiles", "chkDESwitchMax", $ichkDESwitchMax ? 1 : 0)
-	_Ini_Add("profiles", "cmbDEMaxProfile", $icmbDEMaxProfile)
-	_Ini_Add("profiles", "txtMaxDEAmount", $itxtMaxDEAmount)
-	_Ini_Add("profiles", "chkDESwitchMin", $ichkDESwitchMin ? 1 : 0)
-	_Ini_Add("profiles", "cmbDEMinProfile", $icmbDEMinProfile)
-	_Ini_Add("profiles", "txtMinDEAmount", $itxtMinDEAmount)
+	; ClanHop - Team AiO MOD++
+	_Ini_Add("donate", "chkClanHop", $g_bChkClanHop)
 
-	_Ini_Add("profiles", "chkTrophySwitchMax", $ichkTrophySwitchMax ? 1 : 0)
-	_Ini_Add("profiles", "cmbTrophyMaxProfile", $icmbTrophyMaxProfile)
-	_Ini_Add("profiles", "txtMaxTrophyAmount", $itxtMaxTrophyAmount)
-	_Ini_Add("profiles", "chkTrophySwitchMin", $ichkTrophySwitchMin ? 1 : 0)
-	_Ini_Add("profiles", "cmbTrophyMinProfile", $icmbTrophyMinProfile)
-	_Ini_Add("profiles", "txtMinTrophyAmount", $itxtMinTrophyAmount)
-
-	; SmartTrain (Demen) - Added By Demen
-	_Ini_Add("SmartTrain", "Enable", $ichkSmartTrain)
-	_Ini_Add("SmartTrain", "PreciseTroops", $ichkPreciseTroops)
-	_Ini_Add("SmartTrain", "ChkFillArcher", $ichkFillArcher)
-	_Ini_Add("SmartTrain", "FillArcher", $iFillArcher)
-	_Ini_Add("SmartTrain", "FillEQ", $ichkFillEQ)
-	_Ini_Add("other", "ChkMultiClick", $g_bChkMultiClick ? 1 : 0)
-
-	; Bot Humanization
+	; Bot Humanization - Team AiO MOD++
 	_Ini_Add("Bot Humanization", "chkUseBotHumanization", $g_ichkUseBotHumanization)
 	_Ini_Add("Bot Humanization", "chkUseAltRClick", $g_ichkUseAltRClick)
 	_Ini_Add("Bot Humanization", "chkCollectAchievements", $g_ichkCollectAchievements)
@@ -102,69 +61,63 @@ Func SaveConfig_MOD()
 	_Ini_Add("Bot Humanization", "cmbMaxActionsNumber", _GUICtrlComboBox_GetCurSel($g_cmbMaxActionsNumber))
 	_Ini_Add("Bot Humanization", "challengeMessage", GUICtrlRead($g_challengeMessage))
 
-	; Auto Upgrade
-	_Ini_Add("Auto Upgrade", "chkAutoUpgrade", $g_ichkAutoUpgrade)
-	For $i = 0 To 12
-		_Ini_Add("Auto Upgrade", "chkUpgradesToIgnore[" & $i & "]", $g_ichkUpgradesToIgnore[$i])
-	Next
-	For $i = 0 To 2
-		_Ini_Add("Auto Upgrade", "chkResourcesToIgnore[" & $i & "]", $g_ichkResourcesToIgnore[$i])
-	Next
-	_Ini_Add("Auto Upgrade", "SmartMinGold", GUICtrlRead($g_SmartMinGold))
-	_Ini_Add("Auto Upgrade", "SmartMinElixir", GUICtrlRead($g_SmartMinElixir))
-	_Ini_Add("Auto Upgrade", "SmartMinDark", GUICtrlRead($g_SmartMinDark))
-
-	; Request CC Troops at first
-	_Ini_Add("planned", "ReqCCFirst", $g_bReqCCFirst ? 1 : 0)
-
-	; Goblin XP
+	; Goblin XP - Team AiO MOD++
 	_Ini_Add("GoblinXP", "EnableSuperXP", $ichkEnableSuperXP)
+	_Ini_Add("GoblinXP", "SkipZoomOutXP", $ichkSkipZoomOutXP)
+	_Ini_Add("GoblinXP", "FastGoblinXP", $ichkFastGoblinXP)
 	_Ini_Add("GoblinXP", "SXTraining",  $irbSXTraining)
 	_Ini_Add("GoblinXP", "SXBK", $ichkSXBK)
 	_Ini_Add("GoblinXP", "SXAQ", $ichkSXAQ)
 	_Ini_Add("GoblinXP", "SXGW", $ichkSXGW)
 	_Ini_Add("GoblinXP", "MaxXptoGain", GUICtrlRead($txtMaxXPtoGain))
 
-	; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
-	_Ini_Add("donate", "chkClanHop", $g_bChkClanHop ? 1 : 0)
+	; GTFO - Team AiO MOD++
+	_Ini_Add("GTFO", "chkUseGTFO", $g_bChkUseGTFO)
+	_Ini_Add("GTFO", "txtMinSaveGTFO_Elixir",$g_iTxtMinSaveGTFO_Elixir)
+	_Ini_Add("GTFO", "txtMinSaveGTFO_DE", $g_iTxtMinSaveGTFO_DE)
+	_Ini_Add("GTFO", "chkUseKickOut", $g_bChkUseKickOut)
+	_Ini_Add("GTFO", "txtDonatedCap", $g_iTxtDonatedCap)
+	_Ini_Add("GTFO", "txtReceivedCap", $g_iTxtReceivedCap)
+	_Ini_Add("GTFO", "chkKickOutSpammers", $g_bChkKickOutSpammers)
+	_Ini_Add("GTFO", "txtKickLimit", $g_iTxtKickLimit)
 
-	; Max logout time (mandryd)
-	_Ini_Add("TrainLogout", "TrainLogoutMaxTime", $TrainLogoutMaxTime ? 1 : 0)
-	_Ini_Add("TrainLogout", "TrainLogoutMaxTimeTXT", $TrainLogoutMaxTimeTXT)
+	; Max logout time - Team AiO MOD++
+	_Ini_Add("TrainLogout", "TrainLogoutMaxTime", $g_bTrainLogoutMaxTime)
+	_Ini_Add("TrainLogout", "TrainLogoutMaxTimeTXT", $g_iTrainLogoutMaxTime)
 
-EndFunc
+	; Request CC Troops at first - Team AiO MOD++
+	_Ini_Add("planned", "ReqCCFirst", $g_bReqCCFirst)
 
-; SwitchAcc (Demen) - Added By Demen
-Func SaveConfig_SwitchAcc()
-	ApplyConfig_SwitchAcc("Save")
-
-	IniWriteS($profile, "SwitchAcc", "Enable", $ichkSwitchAcc ? 1 : 0)
-	IniWriteS($profile, "SwitchAcc", "Pre-train", $ichkTrain ? 1 : 0)
-	IniWriteS($profile, "SwitchAcc", "Total Coc Account", $icmbTotalCoCAcc) ; 1 = 1 Acc, 2 = 2 Acc, etc.
-	IniWriteS($profile, "SwitchAcc", "Smart Switch", $ichkSmartSwitch ? 1 : 0)
-	IniWriteS($profile, "SwitchAcc", "Force Switch", $ichkForceSwitch ? 1 : 0)
-	IniWriteS($profile, "SwitchAcc", "Force Switch Search", $iForceSwitch)
-	IniWriteS($profile, "SwitchAcc", "Force Stay Donate", $ichkForceStayDonate ? 1 : 0)
-	IniWriteS($profile, "SwitchAcc", "Sleep Combo", $ichkCloseTraining) ; 0 = No Sleep, 1 = Close CoC, 2 = Close Android
-	For $i = 1 To 8
-		IniWriteS($profile, "SwitchAcc", "MatchProfileAcc." & $i, _GUICtrlComboBox_GetCurSel($cmbAccountNo[$i - 1]) + 1) ; 1 = Acc 1, 2 = Acc 2, etc.
-		IniWriteS($profile, "SwitchAcc", "ProfileType." & $i, _GUICtrlComboBox_GetCurSel($cmbProfileType[$i - 1]) + 1) ; 1 = Active, 2 = Donate, 3 = Idle
+	; CheckCC Troops - Team AiO MOD++
+	_Ini_Add("CheckCC", "Enable", $g_bChkCC)
+	_Ini_Add("CheckCC", "Troop Capacity", $g_iCmbCastleCapacityT)
+	_Ini_Add("CheckCC", "Spell Capacity", $g_iCmbCastleCapacityS)
+	For $i = 0 To 4
+		_Ini_Add("CheckCC", "ExpectSlot" & $i, $g_aiCmbCCSlot[$i])
+		_Ini_Add("CheckCC", "ExpectQty" & $i, $g_aiTxtCCSlot[$i])
 	Next
-EndFunc   ;==>SaveConfig_SwitchAcc
 
-; Forecast - Added By Eloy (modification rulesss,kychera)
-Func SaveConfig_Forecast()
+	; Check Grand Warden Mode - Team AiO MOD++
+	_Ini_Add("other", "chkCheckWardenMode", $g_bCheckWardenMode ? 1 : 0)
+	_Ini_Add("other", "cmbCheckWardenMode", $g_iCheckWardenMode)
 
-	_Ini_Add("forecast", "txtForecastBoost", GUICtrlRead($txtForecastBoost))
-	_Ini_Add("forecast", "txtForecastPause", GUICtrlRead($txtForecastPause))
-	_Ini_Add("profiles", "cmbForecastHopingSwitchMax", _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMax))
-	_Ini_Add("profiles", "txtForecastHopingSwitchMax", GUICtrlRead($txtForecastHopingSwitchMax))
-	_Ini_Add("profiles", "cmbForecastHopingSwitchMin", _GUICtrlComboBox_GetCurSel($cmbForecastHopingSwitchMin))
-	_Ini_Add("profiles", "txtForecastHopingSwitchMin", GUICtrlRead($txtForecastHopingSwitchMin))
-	_Ini_Add("forecast", "chkForecastBoost", $iChkForecastBoost ? 1 : 0)
-	_Ini_Add("forecast", "chkForecastPause", $iChkForecastPause ? 1 : 0)
-	_Ini_Add("profiles", "chkForecastHopingSwitchMax", $ichkForecastHopingSwitchMax ? 1 : 0)
-	_Ini_Add("profiles", "chkForecastHopingSwitchMin", $ichkForecastHopingSwitchMin ? 1 : 0)
-	_Ini_Add("Lang", "cmbSwLang", _GUICtrlComboBox_GetCurSel($cmbSwLang))
+	; Unit/Wave Factor - Team AiO MOD++
+	_Ini_Add("SetSleep", "EnableGiantSlot", $g_iChkGiantSlot)
+	_Ini_Add("SetSleep", "CmbGiantSlot", _GUICtrlComboBox_GetCurSel($g_hCmbGiantSlot))
+	_Ini_Add("SetSleep", "EnableUnitFactor", $g_iChkUnitFactor)
+	_Ini_Add("SetSleep", "UnitFactor", GUICtrlRead($g_hTxtUnitFactor))
+	_Ini_Add("SetSleep", "EnableWaveFactor", $g_iChkWaveFactor)
+	_Ini_Add("SetSleep", "WaveFactor", GUICtrlRead($g_hTxtWaveFactor))
 
-EndFunc   ;==>SaveConfig_Forecast
+	; Restart Search Legend league - Team AiO MOD++
+	_Ini_Add("other", "ChkSearchTimeout", $g_bIsSearchTimeout)
+	_Ini_Add("other", "SearchTimeout", $g_iSearchTimeout)
+
+	; Stop on Low battery - Team AiO MOD++
+	_Ini_Add("other", "ChkStopOnBatt", $g_bStopOnBatt)
+	_Ini_Add("other", "StopOnBatt", $g_iStopOnBatt)
+
+	; Attack Log - Team AiO MOD++
+	_Ini_Add("attack", "ColorfulAttackLog", $g_bColorfulAttackLog ? 1 : 0)
+
+EndFunc   ;==>SaveConfig_MOD

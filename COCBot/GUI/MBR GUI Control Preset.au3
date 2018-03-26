@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MyBot.run team
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -35,6 +35,7 @@ EndFunc   ;==>PopulatePresetComboBox
 
 Func PresetLoadConfigInfo()
 	Local $inputfilename = $g_sProfilePresetPath & "\" & GUICtrlRead($g_hCmbPresetList) & ".ini"
+	SetDebugLog("PresetLoadConfigInfo: " & $inputfilename)
 	Local $message = IniRead($inputfilename, "Preset", "info", "")
 	If StringInStr($message, "\n") > 0 Then
 		GUICtrlSetData($g_hTxtPresetMessage, StringReplace($message, "\n", @CRLF))
@@ -54,13 +55,14 @@ EndFunc   ;==>PresetLoadConfigInfo
 Func PresetLoadConf()
 	Local $filename = GUICtrlRead($g_hCmbPresetList)
 	$g_sProfileSecondaryInputFileName = $g_sProfilePresetPath & "\" & $filename & ".ini"
+	SetDebugLog("PresetLoadConf: " & $g_sProfileSecondaryInputFileName)
 ;~ 	CloseGUIPreset()
 	SaveConfig()
 	readConfig()
 	applyConfig(False) ; bot window redraw stays disabled!
 	_GUICtrlTab_ClickTab($g_hTabMain, 0)
 	SetRedrawBotWindow(True, Default, Default, Default, "PresetLoadConf") ; enable redraw again, applyConfig(False) keeps it disabled
-	Setlog("Config " & $filename & " LOADED!", $COLOR_SUCCESS)
+	SetLog("Config " & $filename & " LOADED!", $COLOR_SUCCESS)
 	$g_sProfileSecondaryInputFileName = ""
 EndFunc   ;==>PresetLoadConf
 
@@ -94,13 +96,14 @@ Func PresetSaveConf()
 	;4 save config
 	Local $msg = StringReplace(GUICtrlRead($g_hTxtSavePresetMessage), @CRLF, "\n")
 	$g_sProfileSecondaryOutputFileName = $g_sProfilePresetPath & "\" & $filename & ".ini"
+	SetDebugLog("PresetSaveConf: " & $g_sProfileSecondaryInputFileName)
 	IniWrite($g_sProfileSecondaryOutputFileName, "preset", "info", $msg)
 ;~ 	CloseGUIPreset()
 	saveConfig()
 	readconfig()
 	applyConfig()
 	_GUICtrlTab_ClickTab($g_hTabMain, 0)
-	Setlog("Config " & $filename & " SAVED!", $COLOR_SUCCESS)
+	SetLog("Config " & $filename & " SAVED!", $COLOR_SUCCESS)
 	$g_sProfileSecondaryOutputFileName = ""
 
 EndFunc   ;==>PresetSaveConf
@@ -109,6 +112,7 @@ Func PresetDeleteConf()
 	Local $button = MsgBox($MB_ICONWARNING + $MB_OKCANCEL, GetTranslatedFileIni("MBR Popups", "Func_PresetDeleteConf_Info_01", "Delete Configuration"), GetTranslatedFileIni("MBR Popups", "Func_PresetDeleteConf_Info_02", 'Are you sure you want to delete the configuration ?') & GUICtrlRead($g_hCmbPresetList) & '"?' & @CRLF & _
 			"This cannot be undone.")
 	If $button = $IDOK Then
+		SetDebugLog("PresetDeleteConf: " & $g_sProfilePresetPath & "\" & GUICtrlRead($g_hCmbPresetList) & ".ini")
 		FileDelete($g_sProfilePresetPath & "\" & GUICtrlRead($g_hCmbPresetList) & ".ini")
 ;~ 		applyPreset()
 		saveconfig()
@@ -217,7 +221,7 @@ Func MakeSavePresetMessage()
 			If $i = $TS Then $message &= $g_sAtkTSType & @CRLF
 
 			If ($i = $DB Or $i = $LB) And $g_aiAttackAlgorithm[$i] = 0 Then
-				Local $tmp = StringSplit("one side|two sides|three sides|four sides|DE side|TH side", "|", 2)
+				Local $tmp = StringSplit("one side|two sides|three sides|four sides|Four Finger Classic|DE side|TH side", "|", 2)
 				$message &= $tmp[$g_aiAttackStdDropSides[$i]] & @CRLF
 			EndIf
 		EndIf
@@ -250,5 +254,5 @@ Func MakeSavePresetMessage()
 EndFunc   ;==>MakeSavePresetMessage
 
 Func btnStrategyFolder()
-	ShellExecute("explorer",$g_sProfilePresetPath)
-EndFunc
+	ShellExecute("explorer", $g_sProfilePresetPath)
+EndFunc   ;==>btnStrategyFolder

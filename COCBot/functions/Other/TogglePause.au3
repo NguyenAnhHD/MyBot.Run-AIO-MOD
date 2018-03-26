@@ -7,7 +7,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -19,7 +19,7 @@ Func TogglePause()
 	TogglePauseImpl("Button")
 EndFunc   ;==>TogglePause
 
-Func TogglePauseImpl($Source)
+Func TogglePauseImpl($Source, $bDelayed = False)
 	If Not $g_bRunState Then Return
 	ResumeAndroid()
 	$g_bBotPaused = Not $g_bBotPaused
@@ -28,19 +28,18 @@ Func TogglePauseImpl($Source)
 		Return
 	EndIf
 	TogglePauseUpdateState($Source)
-	TogglePauseSleep()
+	If $bDelayed = False Then TogglePauseSleep()
 EndFunc   ;==>TogglePauseImpl
 
 Func TogglePauseUpdateState($Source)
 	$g_iActualTrainSkip = 0
 
 	$g_bTogglePauseUpdateState = False
-
     If $g_bBotPaused Then
 		AndroidShield("TogglePauseImpl paused", False)
 		TrayTip($g_sBotTitle, "", 1)
-		TrayTip($g_sBotTitle, "was Paused!", 1, $TIP_ICONEXCLAMATION)
-		Setlog("Bot was Paused!", $COLOR_ERROR)
+		If Not $g_bDisableNotifications Then TrayTip($g_sBotTitle, "was Paused!", 1, $TIP_ICONEXCLAMATION)
+		SetLog("Bot was Paused!", $COLOR_ERROR)
 		If Not $g_bSearchMode Then
 			$g_iTimePassed += Int(__TimerDiff($g_hTimerSinceStarted))
 			;AdlibUnRegister("SetTime")
@@ -48,12 +47,13 @@ Func TogglePauseUpdateState($Source)
 		PushMsg("Pause", $Source)
 		GUICtrlSetState($g_hBtnPause, $GUI_HIDE)
 		GUICtrlSetState($g_hBtnResume, $GUI_SHOW)
+		TrayItemSetText($g_hTiPause, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Resume", "Resume bot"))
 		;GUICtrlSetState($btnMakeScreenshot, $GUI_ENABLE)
 	Else
 		AndroidShield("TogglePauseImpl resumed")
 		TrayTip($g_sBotTitle, "", 1)
-		TrayTip($g_sBotTitle, "was Resumed.", 1, $TIP_ICONASTERISK)
-		Setlog("Bot was Resumed.", $COLOR_SUCCESS)
+		If Not $g_bDisableNotifications Then TrayTip($g_sBotTitle, "was Resumed.", 1, $TIP_ICONASTERISK)
+		SetLog("Bot was Resumed.", $COLOR_SUCCESS)
 		If Not $g_bSearchMode Then
 			$g_hTimerSinceStarted = __TimerInit()
 			;AdlibRegister("SetTime", 1000)
@@ -61,6 +61,7 @@ Func TogglePauseUpdateState($Source)
 		PushMsg("Resume", $Source)
 		GUICtrlSetState($g_hBtnPause, $GUI_SHOW)
 		GUICtrlSetState($g_hBtnResume, $GUI_HIDE)
+		TrayItemSetText($g_hTiPause, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Pause", "Pause bot"))
 		;GUICtrlSetState($btnMakeScreenshot, $GUI_DISABLE)
 		;ZoomOut()
 	EndIf

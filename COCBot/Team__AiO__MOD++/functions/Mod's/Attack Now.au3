@@ -1,11 +1,11 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: MBR GUI Design
+; Name ..........: Attack Now
 ; Description ...: This file creates the "Req. & Donate" tab under the "Village" tab
 ; Syntax ........:
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: Mr.Viper
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2018)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -15,7 +15,7 @@
 
 Func AttackNowAB()
 	; Assign the Live Bases attack
-	Setlog("[TEST]Starting Live Base Scripted Attack.", $COLOR_INFO)
+	SetLog("[TEST]Starting Live Base Scripted Attack.", $COLOR_INFO)
 
 	$g_iMatchMode = $LB ; Select Live Base As Attack Type
 
@@ -37,13 +37,13 @@ Func AttackNowAB()
 	Local $RuntimeA = $g_bRunState
 	$g_bRunState = True
 
-	Setlog("[NameScript]: " & $scriptname, $COLOR_INFO)
+	SetLog("[NameScript]: " & $scriptname, $COLOR_INFO)
 
 	ForceCaptureRegion()
 	_CaptureRegion2()
 
 	; Let's check the ZoomOut
-	Setlog("[ZommOut]", $COLOR_INFO)
+	SetLog("[ZommOut]", $COLOR_INFO)
 	If CheckZoomOut("VillageSearch", True, False) = False Then
 		; check two more times, only required for snow theme (snow fall can make it easily fail), but don't hurt to keep it
 		$i = 0
@@ -73,7 +73,7 @@ EndFunc   ;==>AttackNowAB
 
 Func AttackNowDB()
 	; Assign the Dead Bases attack
-	Setlog("[TEST]Starting Dead Base Scripted Attack.", $COLOR_INFO)
+	SetLog("[TEST]Starting Dead Base Scripted Attack.", $COLOR_INFO)
 
 	$g_iMatchMode = $DB ; Select Dead Base As Attack Type
 
@@ -95,13 +95,13 @@ Func AttackNowDB()
 	Local $RuntimeA = $g_bRunState
 	$g_bRunState = True
 
-	Setlog("[NameScript]: " & $scriptname, $COLOR_INFO)
+	SetLog("[NameScript]: " & $scriptname, $COLOR_INFO)
 
 	ForceCaptureRegion()
 	_CaptureRegion2()
 
 	; Let's check the ZoomOut
-	Setlog("[ZommOut]", $COLOR_INFO)
+	SetLog("[ZommOut]", $COLOR_INFO)
 	If CheckZoomOut("VillageSearch", True, False) = False Then
 		; check two more times, only required for snow theme (snow fall can make it easily fail), but don't hurt to keep it
 		$i = 0

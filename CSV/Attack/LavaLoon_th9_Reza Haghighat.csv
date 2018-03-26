@@ -1,0 +1,58 @@
+NOTE  |Author: Reza Haghighat - v.1.0
+NOTE  |
+NOTE  |                 Troops And Spell 
+NOTE  |
+NOTE  |        1 Lava, 30 Ballons, 15 Minions,
+NOTE  |        5 WallBreakers, 4 Rage, 1 Haste
+NOTE  |
+NOTE  |              In CC: 1 Lava 1 Haste
+NOTE  |    
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|       
+SIDE  |0          |0          |0          |0          |0          |0          |10         |-----------|
+      |EAGLE      |INFERNO    |XBOW       |WIZTOWER   |MORTAR     |AIRDEFENSE |GEMBOX     |GEMBOX     |
+SIDEB |10         |5          |0          |0          |0          |3          |           |           |
+
+      |VECTOR_____|SIDE___________|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |A          |FRONT-RIGHT    |7          |1          |INT-EXT    |0          |5          |           |
+MAKE  |B          |FRONT-LEFT     |7          |1          |INT-EXT    |0          |5          |           |
+MAKE  |C          |FRONT-LEFT     |8          |2          |INT-EXT    |0          |5          |           |
+MAKE  |D          |FRONT-RIGHT    |8          |1          |EXT-INT    |0          |5          |           |
+MAKE  |E          |FRONT-LEFT     |8          |-10        |INT-EXT    |0          |5          |           |
+MAKE  |F          |FRONT-RIGHT    |50         |-10        |INT-EXT    |0          |5          |           |
+MAKE  |G          |FRONT-LEFT     |50         |-17        |INT-EXT    |0          |5          |           |   
+MAKE  |H          |FRONT-RIGHT    |50         |-24        |INT-EXT    |0          |5          |           |
+MAKE  |I          |FRONT-LEFT     |8          |2          |EXT-INT    |0          |5          |           |
+MAKE  |J          |FRONT-RIGHT    |8          |2          |INT-EXT    |0          |5          |           |
+MAKE  |K          |FRONT-RIGHT    |50         |-18        |INT-EXT    |0          |5          |           |
+MAKE  |L          |FRONT-LEFT     |50         |-10        |INT-EXT    |0          |5          |           |
+
+      |VECTOR_____|INDEX__________|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
+DROP  |C          |1,2,3,4,5,6,7,8|8          |Ball       |25-30      |15-20      |50         |           |
+DROP  |D          |1,2,3,4,5,6,7,8|8          |Ball       |25-30      |15-20      |50         |           |
+DROP  |J          |1,2,3,4,5,6,7,8|8          |Ball       |25-30      |15-20      |50         |           |
+DROP  |I          |1,2,3,4,5,6,7,8|8          |Ball       |25-30      |15-20      |1000-1100  |           |
+DROP  |A          |3              |1          |castle     |0          |0          |100-200    |           |
+DROP  |B-A        |3              |1          |Lava       |35-50      |35-70      |90-120     |           |
+DROP  |A          |1              |1          |Warden     |0          |0          |0          |           |
+WAIT  |4000-4100  |               |           |           |           |           |           |           |
+DROP  |E          |1              |1          |RSpell     |0          |0          |300        |           |
+DROP  |L          |30             |1          |RSpell     |0          |0          |300        |           |
+DROP  |F          |30             |1          |RSpell     |0          |0          |300        |           |
+DROP  |A          |1,2,3,4,5,6,7  |8          |Mini       |50-60      |0          |200        |           |
+DROP  |B          |1,2,3,4,5,6,7  |7          |Mini       |50-60      |0          |2500-2600  |           |
+WAIT  |900-1000   |               |           |           |           |           |           |           |
+DROP  |G          |20             |1          |RSpell     |0          |0          |50         |           |
+DROP  |K          |20             |1          |HaSpell    |0          |0          |4000-4100  |           |
+RECALC|           |               |           |           |           |           |           |           |
+WAIT  |1200-1400  |               |           |           |           |           |           |           |
+DROP  |H          |1              |1          |HaSpell    |0          |0          |100        |           | 
+
+      |VECTOR_____|INDEX__________|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
+WAIT  |1000       |               |           |           |           |           |           |           |
+DROP  |A          |1              |3          |Wall       |0          |0          |200        |           |
+DROP  |A          |1              |3          |Wall       |0          |0          |0          |           |
+WAIT  |5000-5100  |               |           |           |           |           |           |           |
+DROP  |A          |1              |1          |king       |0          |0          |50-100     |           |
+DROP  |A          |1              |1          |queen      |0          |0          |50-100     |           | 
+DROP  |A-B        |1-10           |1          |REMAIN     |30-50      |100        |50-100     |           | 

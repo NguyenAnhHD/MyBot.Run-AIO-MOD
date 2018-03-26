@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: KnowJack (Aug2015)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -18,5 +18,5 @@ Func _StatusUpdateTime($hTimer, $sWhyWait = "")
 	Local $iMinCalc = Int($iCurTime / (60 * 1000))
 	Local $iSecCalc = Int(($iCurTime - ($iMinCalc * 60 * 1000)) / 1000)
 	Local $sString = $sWhyWait & " Wait Time = " & StringFormat("%02u" & ":" & "%02u", $iMinCalc, $iSecCalc)
-	_GUICtrlStatusBar_SetText($g_hStatusBar, " Status: " & $sString)
+	_GUICtrlStatusBar_SetTextEx($g_hStatusBar, " Status: " & $sString)
 EndFunc   ;==>_StatusUpdateTime

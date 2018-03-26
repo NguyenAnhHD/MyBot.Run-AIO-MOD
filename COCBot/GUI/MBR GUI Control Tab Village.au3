@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Sardo (2016)
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -33,14 +33,15 @@ Func chkRequestCCHours()
 
 	If GUICtrlRead($g_hChkRequestTroopsEnable) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hTxtRequestCC, $GUI_SHOW + $GUI_ENABLE)
-		GUICtrlSetState($chkReqCCFirst, $GUI_SHOW + $GUI_ENABLE)
-		For $i = $g_hLblRequestCChour To $g_hLblRequestCCHoursPM
+		For $i = $g_hChkReqCCFirst To $g_hLblRequestCCHoursPM ; Request CC Troops at first - Team AiO MOD++
 			GUICtrlSetState($i, $GUI_ENABLE)
 		Next
 	Else
 		GUICtrlSetState($g_hTxtRequestCC, $GUI_SHOW + $GUI_DISABLE)
-		GUICtrlSetState($chkReqCCFirst, $GUI_SHOW + $GUI_DISABLE)
-		For $i = $g_hLblRequestCChour To $g_hLblRequestCCHoursPM
+		 ; CheckCC Troops - Team AiO MOD++
+		GUICtrlSetState($g_hChkTroopsCC, $GUI_UNCHECKED)
+		GUIControlCheckCC()
+		For $i = $g_hChkReqCCFirst To $g_hLblRequestCCHoursPM ; Request CC Troops at first - Team AiO MOD++
 			GUICtrlSetState($i, $GUI_DISABLE)
 		Next
 	EndIf
@@ -48,6 +49,10 @@ Func chkRequestCCHours()
 	SetRedrawBotWindowControls($bWasRedraw, $g_hGrpRequestCC, "chkRequestCCHours")
 EndFunc   ;==>chkRequestCCHours
 
+; Request CC Troops at first - Team AiO MOD++
+Func chkReqCCFirst()
+	$g_bReqCCFirst = (GUICtrlRead($g_hChkReqCCFirst) = $GUI_CHECKED)
+EndFunc   ;==>chkReqCCFirst
 
 Func chkRequestCCHoursE1()
 	If GUICtrlRead($g_hChkRequestCCHoursE1) = $GUI_CHECKED And GUICtrlRead($g_ahChkRequestCCHours[0]) = $GUI_CHECKED Then
@@ -120,11 +125,3 @@ Func chkDonateHoursE2()
 	Sleep(300)
 	GUICtrlSetState($g_ahChkDonateHoursE2, $GUI_UNCHECKED)
 EndFunc   ;==>chkDonateHoursE2
-
-Func chkReqCCFirst()
-	If GUICtrlRead($chkReqCCFirst) = $GUI_CHECKED Then
-		$g_bReqCCFirst = True
-	Else
-		$g_bReqCCFirst = False
-	EndIf
-EndFunc   ;==>chkReqCCFirst

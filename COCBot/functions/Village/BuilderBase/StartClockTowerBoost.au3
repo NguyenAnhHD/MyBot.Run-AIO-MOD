@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Fliegerfaust (06-2017), MMHK (07-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -37,7 +37,7 @@ Func StartClockTowerBoost($bSwitchToBB = False, $bSwitchToNV = False)
 		If _Sleep($DELAYCOLLECT2) Then Return
 
 		Local $sCTCoords, $aCTCoords, $aCTBoost
-		$sCTCoords = findImage("ClockTowerAvailable", @ScriptDir & "\imgxml\Resources\BuildersBase\ClockTower\ClockTowerAvailable*.xml", "FV", 1, True) ; Search for Clock Tower
+		$sCTCoords = findImage("ClockTowerAvailable", $g_sImgStartCTBoost, "FV", 1, True) ; Search for Clock Tower
 		If $sCTCoords <> "" Then
 			$aCTCoords = StringSplit($sCTCoords, ",", $STR_NOCOUNT)
 			ClickP($aCTCoords)

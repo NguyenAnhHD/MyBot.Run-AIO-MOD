@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: wraithdu (AutoIt Forums)
 ; Modified ......: Cosote (12-2015), Knowjack (08-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://www.autoitscript.com/forum/topic/103871-_systray-udf, https://github.com/MyBotRun/MyBot/wiki
@@ -36,7 +36,7 @@ Func RemoveGhostTrayIcons($IconTextPart_notUsedAnymore = "")
 			EndIf
 		Next
 	EndIf
-	If $iGhostCount > 0 And $g_iDebugSetlog = 1 Then SetLog("Removed " & $iGhostCount & " Ghost icon successfully", $COLOR_SUCCESS)
+	If $iGhostCount > 0 And $g_bDebugSetlog Then SetLog("Removed " & $iGhostCount & " Ghost icon successfully", $COLOR_SUCCESS)
 EndFunc   ;==>RemoveGhostTrayIcons
 
 ; https://www.autoitscript.com/forum/topic/103871-_systray-udf/?page=1
@@ -592,19 +592,19 @@ EndFunc   ;==>_FindTrayToolbarWindow
 
 	Local $hTrayVisible = ControlGetHandle('[Class:Shell_TrayWnd]', '', '[Class:ToolbarWindow32;Instance:1]')
 	If @error Then
-	Setlog("System Tray Not Found!", $COLOR_ERROR)
+	SetLog("System Tray Not Found!", $COLOR_ERROR)
 	Return SetError(1, @extended, -1)
 	Else
-	If $g_iDebugSetlog = 1 Then Setlog("Checking system tray for ghost icons", $COLOR_SUCCESS)
+	If $g_bDebugSetlog Then SetDebugLog("Checking system tray for ghost icons", $COLOR_SUCCESS)
 	EndIf
 
 	Local $hTrayHidden = ControlGetHandle('[Class:NotifyIconOverflowWindow]', '', '[Class:ToolbarWindow32;Instance:1]')
 	If @error Then
-	Setlog("Minor Nuisance, Hidden System Tray not found", $COLOR_WARNING)
+	SetLog("Minor Nuisance, Hidden System Tray not found", $COLOR_WARNING)
 	EndIf
 
 	Local $iTrayVisibleCount = _GUICtrlToolbar_ButtonCount($hTrayVisible)
-	If $g_iDebugSetlog = 1 Then Setlog("Visible tray Count: " & $iTrayVisibleCount, $COLOR_DEBUG) ; Debug
+	If $g_bDebugSetlog Then SetDebugLog("Visible tray Count: " & $iTrayVisibleCount, $COLOR_DEBUG) ; Debug
 
 	If $iTrayVisibleCount > 1 Then
 	For $i = $iTrayVisibleCount - 1 To 0 Step -1 ; Loop through the icons and look for ghost with PID = -1
@@ -612,7 +612,7 @@ EndFunc   ;==>_FindTrayToolbarWindow
 	If ($IconTextPart <> "" And StringInStr($IconText, $IconTextPart)) Or $IconTextPart = $IconText Then
 	$bResult = _GUICtrlToolbar_DeleteButton($hTrayVisible, $i)
 	If @error Then
-	If $g_iDebugSetlog = 1 Then Setlog("$bResult = " & $bResult, $COLOR_DEBUG)
+	If $g_bDebugSetlog Then SetDebugLog("$bResult = " & $bResult, $COLOR_DEBUG)
 	ContinueLoop
 	Else
 	$iGhostCount += 1 ; Add to ghost count if removed
@@ -622,16 +622,16 @@ EndFunc   ;==>_FindTrayToolbarWindow
 	EndIf
 
 	Local $iTrayHiddenCount = _GUICtrlToolbar_ButtonCount($hTrayHidden)
-	If $g_iDebugSetlog = 1 Then Setlog("Hidden tray Count: " & $iTrayHiddenCount, $COLOR_DEBUG) ; Debug
+	If $g_bDebugSetlog Then SetDebugLog("Hidden tray Count: " & $iTrayHiddenCount, $COLOR_DEBUG) ; Debug
 
 	If $iTrayHiddenCount > 1 Then
 	For $i = $iTrayHiddenCount - 1 To 0 Step -1 ; Loop through the icons and look for ghost with PID = -1
 	$IconText = _GUICtrlToolbar_GetButtonText($hTrayHidden, $i)
-	If $g_iDebugSetlog = 1 Then Setlog("$IconText = " & $IconText, $COLOR_DEBUG)
+	If $g_bDebugSetlog Then SetDebugLog("$IconText = " & $IconText, $COLOR_DEBUG)
 	If ($IconTextPart <> "" And StringInStr($IconText, $IconTextPart)) Or $IconTextPart = $IconText Then
 	$bResult = _GUICtrlToolbar_DeleteButton($hTrayHidden, $i)
 	If @error Then
-	If $g_iDebugSetlog = 1 Then Setlog("$bResult = " & $bResult, $COLOR_DEBUG)
+	If $g_bDebugSetlog Then SetDebugLog("$bResult = " & $bResult, $COLOR_DEBUG)
 	ContinueLoop
 	Else
 	$iGhostCount += 1 ; Add to ghost count if removed
@@ -640,7 +640,7 @@ EndFunc   ;==>_FindTrayToolbarWindow
 	Next
 	EndIf
 
-	If $iGhostCount > 0 And $g_iDebugSetlog = 1 Then SetLog("Removed " & $iGhostCount & " Ghost icon successfully", $COLOR_SUCCESS)
+	If $iGhostCount > 0 And $g_bDebugSetlog Then SetLog("Removed " & $iGhostCount & " Ghost icon successfully", $COLOR_SUCCESS)
 
 	EndFunc   ;==>RemoveGhostTrayIcons
 #ce

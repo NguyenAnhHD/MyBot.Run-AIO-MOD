@@ -10,7 +10,7 @@
 ; Return values .: NA
 ; Author ........: CodeSlinger69 (2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -75,9 +75,18 @@ Func _Ini_Save($filename)
 			FileWriteLine($hFile, "[" & $sCurrentSection & "]")
 			; Strategies File
 			If $g_sProfileSecondaryOutputFileName <> "" Then
-				If $sCurrentSection = "search" Or $sCurrentSection = "attack" Or $sCurrentSection = "troop" Or $sCurrentSection = "spells" Or $sCurrentSection = "milkingattack" Or $sCurrentSection = "endbattle" Or $sCurrentSection = "collectors" then
+				If $sCurrentSection = "search" Or _
+						$sCurrentSection = "attack" Or _
+						$sCurrentSection = "troop" Or _
+						$sCurrentSection = "spells" Or _
+						$sCurrentSection = "milkingattack" Or _
+						$sCurrentSection = "endbattle" Or _
+						$sCurrentSection = "collectors" Or _
+						$sCurrentSection = "DropOrder" Or _
+						$sCurrentSection = "SmartZap" Or _
+						$sCurrentSection = "planned" Then
 					FileWriteLine($g_sProfileSecondaryOutputFileName, "[" & $sCurrentSection & "]")
-				EndIF
+				EndIf
 			EndIf
 		EndIf
 
@@ -85,7 +94,16 @@ Func _Ini_Save($filename)
 
 		; Strategies File
 		If $g_sProfileSecondaryOutputFileName <> "" Then
-			If $sCurrentSection = "search" Or $sCurrentSection = "attack" Or $sCurrentSection = "troop" Or $sCurrentSection = "spells" Or $sCurrentSection = "milkingattack" Or $sCurrentSection = "endbattle" Or $sCurrentSection = "collectors" Then
+			If $sCurrentSection = "search" Or _
+					$sCurrentSection = "attack" Or _
+					$sCurrentSection = "troop" Or _
+					$sCurrentSection = "spells" Or _
+					$sCurrentSection = "milkingattack" Or _
+					$sCurrentSection = "endbattle" Or _
+					$sCurrentSection = "collectors" Or _
+					$sCurrentSection = "DropOrder" Or _
+					$sCurrentSection = "SmartZap" Or _
+					$sCurrentSection = "planned" Then
 				FileWriteLine($g_sProfileSecondaryOutputFileName, $asParts[2] & "=" & $g_asIniTable[$i][1])
 			EndIf
 		EndIf
@@ -127,6 +145,10 @@ Func _Ini_Delete($section, $key)
 EndFunc   ;==>_Ini_Delete
 
 Func _Ini_AddNewKeyValue($section, $key, $value)
+	If UBound($g_asIniTable) < $g_iIniLineCount + 1 Or UBound($g_asIniTable, 2) < 2 Then
+		SetDebugLog("_Ini_AddNewKeyValue: Incorrect Array size on section '" & $section & "' for key '" & $key & "' value '" & $value & "'")
+		Return
+	EndIf
 	$g_asIniTable[$g_iIniLineCount][0] = $section & "|" & $key
 	$g_asIniTable[$g_iIniLineCount][1] = $value
 	;SetDebugLog("New key value pair: " & $g_iIniLineCount & " " & $g_asIniTable[$g_iIniLineCount][0] & "=" & $g_asIniTable[$g_iIniLineCount][1])

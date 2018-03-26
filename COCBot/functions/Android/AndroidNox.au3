@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Cosote (02-2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -59,14 +59,21 @@ Func OpenNox($bRestart = False)
 EndFunc   ;==>OpenNox
 
 Func IsNoxCommandLine($CommandLine)
-	SetDebugLog($CommandLine)
-	$CommandLine = StringReplace($CommandLine, GetNoxRtPath(), "")
-	$CommandLine = StringReplace($CommandLine, "Nox.exe", "")
-	Local $param1 = StringReplace(GetNoxProgramParameter(), """", "")
-	Local $param2 = StringReplace(GetNoxProgramParameter(True), """", "")
-	If StringInStr($CommandLine, $param1 & " ") > 0 Or StringRight($CommandLine, StringLen($param1)) = $param1 Then Return True
-	If StringInStr($CommandLine, $param2 & " ") > 0 Or StringRight($CommandLine, StringLen($param2)) = $param2 Then Return True
-	If StringInStr($CommandLine, "-clone:") = 0 And $param2 = "" Then Return True
+	; find instance in command line
+	Local $aRegexResult = StringRegExp($CommandLine, "-clone:(\b.+\b)", $STR_REGEXPARRAYMATCH)
+	If Not @error Then
+		Local $sInstance = $aRegexResult[0]
+		If $sInstance = $g_sAndroidInstance Or ($g_sAndroidInstance = $g_avAndroidAppConfig[$g_iAndroidConfig][1] And $sInstance = 'Nox_0') Then ; 'Nox_0' is MultiPlayerManager.exe launch support
+			SetDebugLog("IsNoxCommandLine, instance " & $g_sAndroidInstance & ", returns True for: " & $CommandLine)
+			Return True
+		EndIf
+	Else
+		If $g_sAndroidInstance = $g_avAndroidAppConfig[$g_iAndroidConfig][1] Then
+			SetDebugLog("IsNoxCommandLine, instance " & $g_sAndroidInstance & ", returns True for: " & $CommandLine)
+			Return True
+		EndIf
+	EndIf
+	SetDebugLog("IsNoxCommandLine, instance " & $g_sAndroidInstance & ", returns False for: " & $CommandLine)
 	Return False
 EndFunc   ;==>IsNoxCommandLine
 
@@ -119,8 +126,33 @@ Func GetNoxAdbPath()
 	Return ""
 EndFunc   ;==>GetNoxAdbPath
 
+Func GetNoxBackgroundMode()
+	Local $iDirectX = $g_iAndroidBackgroundModeDirectX
+	Local $iOpenGL = $g_iAndroidBackgroundModeOpenGL
+	; hack for super strange Windows Fall Creator Update with OpenGL and DirectX problems
+	If @OSBuild >= 16299 Then
+		SetDebugLog("DirectX/OpenGL Fix applied for Windows Build 16299")
+		$iDirectX = $g_iAndroidBackgroundModeOpenGL
+		$iOpenGL = $g_iAndroidBackgroundModeDirectX
+	EndIf
+	; get OpenGL/DirectX config
+	Local $sConfig = GetNoxConfigFile()
+	If $sConfig Then
+		Local $graphic_engine_type = IniRead($sConfig, "setting", "graphic_engine_type", "") ; 0 = OpenGL, 1 = DirectX
+		Switch $graphic_engine_type
+			Case "0"
+				Return $iOpenGL
+			Case "1"
+				Return $iDirectX
+			Case Else
+				SetLog($g_sAndroidEmulator & " unsupported Graphics Engine Type " & $graphic_engine_type, $COLOR_WARNING)
+		EndSwitch
+	EndIf
+	Return 0
+EndFunc   ;==>GetNoxBackgroundMode
+
 Func InitNox($bCheckOnly = False)
-	Local $process_killed, $aRegExResult, $g_sAndroidAdbDeviceHost, $g_sAndroidAdbDevicePort, $oops = 0
+	Local $process_killed, $aRegexResult, $g_sAndroidAdbDeviceHost, $g_sAndroidAdbDevicePort, $oops = 0
 	Local $Version = RegRead($g_sHKLM & "\SOFTWARE" & $g_sWow6432Node & "\Microsoft\Windows\CurrentVersion\Uninstall\Nox\", "DisplayVersion")
 	SetError(0, 0, 0)
 
@@ -131,8 +163,9 @@ Func InitNox($bCheckOnly = False)
 	Local $AdbFile = $path & "nox_adb.exe"
 	Local $VBoxFile = $RtPath & "BigNoxVMMgr.exe"
 
-	Local $Files[3] = [$NoxFile, $AdbFile, $VBoxFile]
-	Local $File
+	Local $Files = [$NoxFile, $AdbFile, $VBoxFile]
+	Local $sPreferredADB = FindPreferredAdbPath()
+	If $sPreferredADB Then _ArrayDelete($Files, 1)
 
 	For $File In $Files
 		If FileExists($File) = False Then
@@ -149,34 +182,28 @@ Func InitNox($bCheckOnly = False)
 	If Not $bCheckOnly Then
 		InitAndroidConfig(True) ; Restore default config
 
-		$__VBoxVMinfo = LaunchConsole($VBoxFile, "showvminfo " & $g_sAndroidInstance, $process_killed)
-		; check if instance is known
-		If StringInStr($__VBoxVMinfo, "Could not find a registered machine named") > 0 Then
-			; Unknown vm
-			SetLog("Cannot find " & $g_sAndroidEmulator & " instance " & $g_sAndroidInstance, $COLOR_ERROR)
-			Return False
-		EndIf
+		If Not GetAndroidVMinfo($__VBoxVMinfo, $VBoxFile) Then Return False
 		; update global variables
 		$g_sAndroidProgramPath = $NoxFile
-		$g_sAndroidAdbPath = FindPreferredAdbPath()
+		$g_sAndroidAdbPath = $sPreferredADB
 		If $g_sAndroidAdbPath = "" Then $g_sAndroidAdbPath = GetNoxAdbPath()
 		$g_sAndroidVersion = $Version
 		$__Nox_Path = $path
 		$g_sAndroidPath = $__Nox_Path
 		$__VBoxManage_Path = $VBoxFile
-		$aRegExResult = StringRegExp($__VBoxVMinfo, ".*host ip = ([^,]+), .* guest port = 5555", $STR_REGEXPARRAYMATCH)
+		$aRegexResult = StringRegExp($__VBoxVMinfo, ".*host ip = ([^,]+), .* guest port = 5555", $STR_REGEXPARRAYMATCH)
 		If Not @error Then
-			$g_sAndroidAdbDeviceHost = $aRegExResult[0]
-			If $g_iDebugSetlog = 1 Then Setlog("Func LaunchConsole: Read $g_sAndroidAdbDeviceHost = " & $g_sAndroidAdbDeviceHost, $COLOR_DEBUG)
+			$g_sAndroidAdbDeviceHost = $aRegexResult[0]
+			If $g_bDebugAndroid Then SetDebugLog("Func LaunchConsole: Read $g_sAndroidAdbDeviceHost = " & $g_sAndroidAdbDeviceHost, $COLOR_DEBUG)
 		Else
 			$oops = 1
 			SetLog("Cannot read " & $g_sAndroidEmulator & "(" & $g_sAndroidInstance & ") ADB Device Host", $COLOR_ERROR)
 		EndIf
 
-		$aRegExResult = StringRegExp($__VBoxVMinfo, "name = .*host port = (\d{3,5}), .* guest port = 5555", $STR_REGEXPARRAYMATCH)
+		$aRegexResult = StringRegExp($__VBoxVMinfo, "name = .*host port = (\d{3,5}), .* guest port = 5555", $STR_REGEXPARRAYMATCH)
 		If Not @error Then
-			$g_sAndroidAdbDevicePort = $aRegExResult[0]
-			If $g_iDebugSetlog = 1 Then Setlog("Func LaunchConsole: Read $g_sAndroidAdbDevicePort = " & $g_sAndroidAdbDevicePort, $COLOR_DEBUG)
+			$g_sAndroidAdbDevicePort = $aRegexResult[0]
+			If $g_bDebugAndroid Then SetDebugLog("Func LaunchConsole: Read $g_sAndroidAdbDevicePort = " & $g_sAndroidAdbDevicePort, $COLOR_DEBUG)
 		Else
 			$oops = 1
 			SetLog("Cannot read " & $g_sAndroidEmulator & "(" & $g_sAndroidInstance & ") ADB Device Port", $COLOR_ERROR)
@@ -191,16 +218,24 @@ Func InitNox($bCheckOnly = False)
 		;$g_sAndroidPicturesPath = "/mnt/shell/emulated/0/Download/other/"
 		;$g_sAndroidPicturesPath = "/mnt/shared/Other/"
 		$g_sAndroidPicturesPath = "(/mnt/shared/Other|/mnt/shell/emulated/0/Download/other)"
-		$aRegExResult = StringRegExp($__VBoxVMinfo, "Name: 'Other', Host path: '(.*)'.*", $STR_REGEXPARRAYGLOBALMATCH)
+		$aRegexResult = StringRegExp($__VBoxVMinfo, "Name: 'Other', Host path: '(.*)'.*", $STR_REGEXPARRAYGLOBALMATCH)
 		If Not @error Then
 			$g_bAndroidSharedFolderAvailable = True
-			$g_sAndroidPicturesHostPath = $aRegExResult[UBound($aRegExResult) - 1] & "\"
+			$g_sAndroidPicturesHostPath = $aRegexResult[UBound($aRegexResult) - 1] & "\"
 		Else
 			; Check the shared folder 'Nox_share' , this is the default path on last version
-			If FileExists(@MyDocumentsDir & "\Nox_share\") then
+			If FileExists(@MyDocumentsDir & "\Nox_share\") Then
 				$g_bAndroidSharedFolderAvailable = True
 				$g_sAndroidPicturesHostPath = @MyDocumentsDir & "\Nox_share\Other\"
-				If not FileExists($g_sAndroidPicturesHostPath) then
+				If Not FileExists($g_sAndroidPicturesHostPath) Then
+					; Just in case of 'Other' Folder doesn't exist
+					DirCreate($g_sAndroidPicturesHostPath)
+				EndIf
+			; > Nox v5.2.0.0
+			ElseIf FileExists(@HomeDrive & @HomePath & "\Nox_share\") Then
+				$g_bAndroidSharedFolderAvailable = True
+				$g_sAndroidPicturesHostPath = @HomeDrive & @HomePath & "\Nox_share\"
+				If Not FileExists($g_sAndroidPicturesHostPath) Then
 					; Just in case of 'Other' Folder doesn't exist
 					DirCreate($g_sAndroidPicturesHostPath)
 				EndIf
@@ -212,17 +247,25 @@ Func InitNox($bCheckOnly = False)
 			EndIf
 		EndIf
 
-		$__VBoxGuestProperties = LaunchConsole($__VBoxManage_Path, "guestproperty enumerate " & $g_sAndroidInstance, $process_killed)
-
 		Local $v = GetVersionNormalized($g_sAndroidVersion)
 		For $i = 0 To UBound($__Nox_Config) - 1
 			Local $v2 = GetVersionNormalized($__Nox_Config[$i][0])
 			If $v >= $v2 Then
 				SetDebugLog("Using Android Config of " & $g_sAndroidEmulator & " " & $__Nox_Config[$i][0])
 				$g_sAppClassInstance = $__Nox_Config[$i][1]
+				$g_avAndroidAppConfig[$g_iAndroidConfig][3] = $g_sAppClassInstance
 				ExitLoop
 			EndIf
 		Next
+		#cs
+			If $v >= GetVersionNormalized("5.0.0.0") Then
+			$g_aiMouseOffset[0] = 6
+			$g_aiMouseOffset[1] = 7
+			SetDebugLog("Update Android Mouse Offset to " & $g_aiMouseOffset[0] & ", " & $g_aiMouseOffset[1])
+			EndIf
+		#ce
+
+		UpdateHWnD($g_hAndroidWindow, False) ; Ensure $g_sAppClassInstance is properly set
 
 		; Update Android Screen and Window
 		;UpdateNoxConfig()
@@ -231,6 +274,15 @@ Func InitNox($bCheckOnly = False)
 	Return True
 
 EndFunc   ;==>InitNox
+
+Func GetNoxConfigFile()
+	Local $sLocalAppData = EnvGet("LOCALAPPDATA")
+	Local $sPre = ""
+	If $g_sAndroidInstance <> "nox" Then $sPre = "clone_" & $g_sAndroidInstance & "_"
+	Local $sConfig = $sLocalAppData & "\Nox\" & $sPre & "conf.ini"
+	If FileExists($sConfig) Then Return $sConfig
+	Return ""
+EndFunc   ;==>GetNoxConfigFile
 
 Func SetScreenNox()
 
@@ -254,11 +306,8 @@ Func SetScreenNox()
 	EndIf
 
 	; find Nox conf.ini in C:\Users\User\AppData\Local\Nox and set "Fix window size" to Enable, "Remember size and position" to Disable and screen res also
-	Local $sLocalAppData = EnvGet("LOCALAPPDATA")
-	Local $sPre = ""
-	If $g_sAndroidInstance <> "nox" Then $sPre = "clone_" & $g_sAndroidInstance & "_"
-	Local $sConfig = $sLocalAppData & "\Nox\" & $sPre & "conf.ini"
-	If FileExists($sConfig) Then
+	Local $sConfig = GetNoxConfigFile()
+	If $sConfig Then
 		SetDebugLog("Configure Nox screen config: " & $sConfig)
 		IniWrite($sConfig, "setting", "h_resolution", $g_iAndroidClientWidth & "x" & $g_iAndroidClientHeight)
 		IniWrite($sConfig, "setting", "h_dpi", "160")
@@ -294,11 +343,11 @@ Func CheckScreenNox($bSetLog = True)
 			["vbox_dpi", "160"], _
 			["vbox_graph_mode", $g_iAndroidClientWidth & "x" & $g_iAndroidClientHeight & "-16"] _
 			]
-	Local $i, $Value, $iErrCnt = 0, $process_killed, $aRegExResult
+	Local $i, $Value, $iErrCnt = 0, $process_killed, $aRegexResult
 
 	For $i = 0 To UBound($aValues) - 1
-		$aRegExResult = StringRegExp($__VBoxGuestProperties, "Name: " & $aValues[$i][0] & ", value: (.+), timestamp:", $STR_REGEXPARRAYMATCH)
-		If @error = 0 Then $Value = $aRegExResult[0]
+		$aRegexResult = StringRegExp($__VBoxGuestProperties, "Name: " & $aValues[$i][0] & ", value: (.+), timestamp:", $STR_REGEXPARRAYMATCH)
+		If @error = 0 Then $Value = $aRegexResult[0]
 		If $Value <> $aValues[$i][1] Then
 			If $iErrCnt = 0 Then
 				If $bSetLog Then
@@ -332,10 +381,10 @@ Func GetNoxRunningInstance($bStrictCheck = True)
 		; assume last parameter is instance
 		Local $CommandLine = ProcessGetCommandLine($PID)
 		SetDebugLog("GetNoxRunningInstance: Found """ & $CommandLine & """ by PID=" & $PID)
-		Local $aRegExResult = StringRegExp($CommandLine, ".*""-clone:([^""]+)"".*|.*-clone:([\S]+).*", $STR_REGEXPARRAYMATCH)
+		Local $aRegexResult = StringRegExp($CommandLine, ".*""-clone:([^""]+)"".*|.*-clone:([\S]+).*", $STR_REGEXPARRAYMATCH)
 		If @error = 0 Then
-			$g_sAndroidInstance = $aRegExResult[0]
-			If $g_sAndroidInstance = "" Then $g_sAndroidInstance = $aRegExResult[1]
+			$g_sAndroidInstance = $aRegexResult[0]
+			If $g_sAndroidInstance = "" Then $g_sAndroidInstance = $aRegexResult[1]
 			SetDebugLog("Running " & $g_sAndroidEmulator & " instance is """ & $g_sAndroidInstance & """")
 		EndIf
 		; validate
@@ -371,13 +420,14 @@ Func RedrawNoxWindow()
 	;If _Sleep(500) Then Return False
 EndFunc   ;==>RedrawNoxWindow
 
-Func HideNoxWindow($bHide = True)
-	Return EmbedNox($bHide)
+Func HideNoxWindow($bHide = True, $hHWndAfter = Default)
+	Return EmbedNox($bHide, $hHWndAfter)
 EndFunc   ;==>HideNoxWindow
 
-Func EmbedNox($bEmbed = Default)
+Func EmbedNox($bEmbed = Default, $hHWndAfter = Default)
 
 	If $bEmbed = Default Then $bEmbed = $g_bAndroidEmbedded
+	If $hHWndAfter = Default Then $hHWndAfter = $HWND_TOPMOST
 
 	; Find QTool Parent Window
 	Local $aWin = _WinAPI_EnumProcessWindows(GetAndroidPid(), False)
@@ -389,9 +439,14 @@ Func EmbedNox($bEmbed = Default)
 		Local $c = $aWin[$i][1]
 		If $c = "Qt5QWindowToolSaveBits" Then
 			Local $aPos = WinGetPos($h)
-			If UBound($aPos) > 2 Then
-				; found toolbar
-				$hToolbar = $h
+			If UBound($aPos) > 3 Then
+				If $hToolbar = 0 And (($aPos[2] >= $g_iAndroidClientWidth And $aPos[3] > 7) Or ($aPos[2] > 7 And $aPos[3] >= $g_iAndroidClientHeight)) Then
+					; found toolbar
+					$hToolbar = $h
+				ElseIf $aPos[2] = 7 Or $aPos[3] = 7 Then
+					; found border, always hide stupid border
+					WinMove2($h, "", -1, -1, -1, -1, $HWND_NOTOPMOST, $SWP_HIDEWINDOW, False)
+				EndIf
 			EndIf
 		EndIf
 	Next
@@ -405,8 +460,12 @@ Func EmbedNox($bEmbed = Default)
 		Next
 	Else
 		SetDebugLog("EmbedNox(" & $bEmbed & "): $hToolbar=" & $hToolbar, Default, True)
-		WinMove2($hToolbar, "", -1, -1, -1, -1, $HWND_NOTOPMOST, 0, False)
-		_WinAPI_ShowWindow($hToolbar, ($bEmbed ? @SW_HIDE : @SW_SHOWNOACTIVATE))
+		If $bEmbed Then
+			WinMove2($hToolbar, "", -1, -1, -1, -1, $HWND_NOTOPMOST, $SWP_HIDEWINDOW, False, False)
+		Else
+			WinMove2($hToolbar, "", -1, -1, -1, -1, $hHWndAfter, $SWP_SHOWWINDOW, False, False)
+			If $hHWndAfter = $HWND_TOPMOST Then WinMove2($hToolbar, "", -1, -1, -1, -1, $HWND_NOTOPMOST, $SWP_SHOWWINDOW, False, False)
+		EndIf
 	EndIf
 
 EndFunc   ;==>EmbedNox

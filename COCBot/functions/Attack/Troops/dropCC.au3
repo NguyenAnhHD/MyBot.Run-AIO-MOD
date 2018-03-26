@@ -8,7 +8,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Sardo (12-2015) KnowJack (06-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -40,7 +40,7 @@ Func dropCC($x, $y, $slot) ;Drop clan castle
 					SetLog("Dropping Clan Castle, donated (" & $g_iTroopsDonated & ") / received (" & $g_iTroopsReceived & ") >= " & $g_iCCDonated & "/" & $g_iCCReceived, $COLOR_INFO)
 					Click(GetXPosOfArmySlot($slot, 68), 595 + $g_iBottomOffsetY, 1, $DELAYDROPCC2, "#0086")
 					If _Sleep($DELAYDROPCC1) Then Return
-					Click($x, $y, 1, 0, "#0087")
+					AttackClick($x, $y, 1, 0, 0, "#0087")
 				Else
 					SetLog("No Dropping Clan Castle, donated  (" & $g_iTroopsDonated & ") / received (" & $g_iTroopsReceived & ") < " & $g_iCCDonated & "/" & $g_iCCReceived, $COLOR_INFO)
 				EndIf
@@ -49,7 +49,7 @@ Func dropCC($x, $y, $slot) ;Drop clan castle
 					SetLog("Dropping Clan Castle, donated (" & $g_iTroopsDonated & ") / received (" & $g_iTroopsReceived & ") >= " & $g_iCCDonated & "/" & $g_iCCReceived, $COLOR_INFO)
 					Click(GetXPosOfArmySlot($slot, 68), 595 + $g_iBottomOffsetY, 1, $DELAYDROPCC2, "#0088")
 					If _Sleep($DELAYDROPCC1) Then Return
-					Click($x, $y, 1, 0, "#0089")
+					AttackClick($x, $y, 1, 0, 0, "#0089")
 				Else
 					SetLog("No Dropping Clan Castle, donated  (" & $g_iTroopsDonated & ") / received (" & $g_iTroopsReceived & ") < " & $g_iCCDonated & "/" & $g_iCCReceived, $COLOR_INFO)
 				EndIf
@@ -58,7 +58,7 @@ Func dropCC($x, $y, $slot) ;Drop clan castle
 			SetLog("Dropping Clan Castle", $COLOR_INFO)
 			Click(GetXPosOfArmySlot($slot, 68), 595 + $g_iBottomOffsetY, 1, $DELAYDROPCC2, "#0090")
 			If _Sleep($DELAYDROPCC1) Then Return
-			Click($x, $y, 1, 0, "#0091")
+			AttackClick($x, $y, 1, 0, 0, "#0091")
 		EndIf
 	EndIf
 

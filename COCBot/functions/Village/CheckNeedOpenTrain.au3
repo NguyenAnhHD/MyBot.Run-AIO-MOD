@@ -6,7 +6,7 @@
 ; Return values .: True/False
 ; Author ........: Boju (01-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -37,7 +37,7 @@ Func CheckNeedOpenTrain($TimeBeforeTrain)
 	If $TimeBeforeTrain = "" Then $TimeBeforeTrain = $sNowTime
 	$iTimeBeforeTrain1 = _DateAdd("s", Int(($g_aiTimeTrain[0] * 60) * ($QuickArmyCamps / 100)), $TimeBeforeTrain)
 	$iTimeBeforeTrain2 = _DateDiff("s", $sNowTime, $iTimeBeforeTrain1)
-	If $g_iDebugSetlogTrain = 1 Then
+	If $g_bDebugSetlogTrain Then
 		SetLog("Start Train: " & $TimeBeforeTrain)
 		SetLog("Now: " & $sNowTime)
 		SetLog("Train end time: " & $iTimeBeforeTrain1)
@@ -46,7 +46,7 @@ Func CheckNeedOpenTrain($TimeBeforeTrain)
 
 	If $iTimeBeforeTrain2 <= 0 Then $bToReturn = True
 	If ($g_iActiveDonate Or $g_bDonationEnabled) And $g_bChkDonate Then $bToReturn = True
-	If Not $bToReturn Then Setlog("Train end time: " & $iTimeBeforeTrain1, $COLOR_DEBUG)
+	If Not $bToReturn Then SetLog("Train end time: " & $iTimeBeforeTrain1, $COLOR_DEBUG)
 	If Not $bToReturn Then ClickP($aAway, 1, 0, "#0332") ;Click Away
 
 	Return $bToReturn

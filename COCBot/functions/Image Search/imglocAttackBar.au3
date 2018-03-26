@@ -6,7 +6,7 @@
 ; Return values .: $TroopBarSlots
 ; Author ........: Trlopes (06-2016)
 ; Modified ......: ProMac (12-2016)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -14,15 +14,15 @@
 ; ===============================================================================================================================
 Func TestImglocTroopBar()
 	$g_bRunState = True
-	$g_iDebugSetlog = 1
-	$g_iDebugOcr = 1
-	$g_iDebugImageSave = 1
+	$g_bDebugSetlog = True
+	$g_bDebugOcr = True
+	$g_bDebugImageSave = True
 
-	Setlog("=========== Imgloc ============")
+	SetLog("=========== Imgloc ============")
 	PrepareAttack($DB)
-	$g_iDebugSetlog = 0
-	$g_iDebugOcr = 0
-	$g_iDebugImageSave = 0
+	$g_bDebugSetlog = False
+	$g_bDebugOcr = False
+	$g_bDebugImageSave = False
 	$g_bRunState = False
 EndFunc   ;==>TestImglocTroopBar
 
@@ -44,15 +44,13 @@ Func AttackBarCheck($Remaining = False)
 
 	; Setup arrays, including default return values for $return
 	Local $aResult[1][6], $aCoordArray[1][2], $aCoords, $aCoordsSplit, $aValue
-	Local $redLines = "FV"
-	Local $directory = @ScriptDir & "\imgxml\AttackBar"
-	If $g_bRunState = False Then Return
+	If Not $g_bRunState Then Return
 	; Capture the screen for comparison
 	_CaptureRegion2($x, $y, $x1, $y1)
 
 	Local $strinToReturn = ""
 	; Perform the search
-	Local $res = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $g_hHBitmap2, "str", $directory, "str", "FV", "Int", 0, "str", $redLines, "Int", 0, "Int", 1000)
+	Local $res = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $g_hHBitmap2, "str", $g_sImgAttackBarDir, "str", "FV", "Int", 0, "str", "FV", "Int", 0, "Int", 1000)
 
 	If IsArray($res) Then
 		If $res[0] = "0" Or $res[0] = "" Then
@@ -65,16 +63,17 @@ Func AttackBarCheck($Remaining = False)
 
 			; Redimension the result array to allow for the new entries
 			ReDim $aResult[UBound($aKeys)][6]
+			Local $iResultAddDup = 0
 
 			; Loop through the array
 			For $i = 0 To UBound($aKeys) - 1
 				If $g_bRunState = False Then Return
 				; Get the property values
-				$aResult[$i][0] = RetrieveImglocProperty($aKeys[$i], "objectname")
+				$aResult[$i + $iResultAddDup][0] = RetrieveImglocProperty($aKeys[$i], "objectname")
 				; Get the coords property
 				$aValue = RetrieveImglocProperty($aKeys[$i], "objectpoints")
-				$aCoords = StringSplit($aValue, "|", $STR_NOCOUNT)
-				$aCoordsSplit = StringSplit($aCoords[0], ",", $STR_NOCOUNT)
+				$aCoords = decodeMultipleCoords($aValue, 50) ; dedup coords by x on 50 pixel
+				$aCoordsSplit = $aCoords[0]
 				If UBound($aCoordsSplit) = 2 Then
 					; Store the coords into a two dimensional array
 					$aCoordArray[0][0] = $aCoordsSplit[0] ; X coord.
@@ -83,26 +82,30 @@ Func AttackBarCheck($Remaining = False)
 					$aCoordArray[0][0] = -1
 					$aCoordArray[0][1] = -1
 				EndIf
-				If $g_iDebugSetlog = 1 Then Setlog($aResult[$i][0] & " | $aCoordArray: " & $aCoordArray[0][0] & "-" & $aCoordArray[0][1])
+				If $g_bDebugSetlog Then SetDebugLog($aResult[$i + $iResultAddDup][0] & " | $aCoordArray: " & $aCoordArray[0][0] & "-" & $aCoordArray[0][1])
+				; Store the coords array as a sub-array
+				$aResult[$i + $iResultAddDup][1] = Number($aCoordArray[0][0])
+				$aResult[$i + $iResultAddDup][2] = Number($aCoordArray[0][1])
 				;;;;;;;; If exist Castle Spell ;;;;;;;
-				If UBound($aCoords) > 1 And StringInStr($aResult[$i][0], "Spell") <> 0 Then
-					If $g_iDebugSetlog = 1 Then Setlog($aResult[$i][0] & " detected twice!")
-					Local $aCoordsSplit2 = StringSplit($aCoords[1], ",", $STR_NOCOUNT)
+				Local $iMultipleCoords = UBound($aCoords)
+				If $iMultipleCoords > 1 And StringInStr($aResult[$i + $iResultAddDup][0], "Spell") <> 0 Then
+					If $g_bDebugSetlog Then SetDebugLog($aResult[$i + $iResultAddDup][0] & " detected " & $iMultipleCoords & " times!")
+
+					Local $aCoordsSplit2 = $aCoords[1]
 					If UBound($aCoordsSplit2) = 2 Then
-						; Store the coords into a two dimensional array
-						If $aCoordsSplit2[0] < $aCoordsSplit[0] Then
-							$aCoordArray[0][0] = $aCoordsSplit2[0] ; X coord.
-							$aCoordArray[0][1] = $aCoordsSplit2[1] ; Y coord.
-							If $g_iDebugSetlog = 1 Then Setlog($aResult[$i][0] & " | $aCoordArray: " & $aCoordArray[0][0] & "-" & $aCoordArray[0][1])
-						EndIf
+						; add slot
+						$iResultAddDup += 1
+						ReDim $aResult[UBound($aKeys) + $iResultAddDup][6]
+						$aResult[$i + $iResultAddDup][0] = $aResult[$i + $iResultAddDup - 1][0] ; same objectname
+						$aResult[$i + $iResultAddDup][1] = $aCoordsSplit2[0]
+						$aResult[$i + $iResultAddDup][2] = $aCoordsSplit2[1]
+						If $g_bDebugSetlog Then SetDebugLog($aResult[$i + $iResultAddDup][0] & " | $aCoordArray: " & $aResult[$i + $iResultAddDup][1] & "-" & $aResult[$i + $iResultAddDup][2])
 					Else
-						$aCoordArray[0][0] = -1
-						$aCoordArray[0][1] = -1
+						; don't invalidate anything
+						;$aCoordArray[0][0] = -1
+						;$aCoordArray[0][1] = -1
 					EndIf
 				EndIf
-				; Store the coords array as a sub-array
-				$aResult[$i][1] = Number($aCoordArray[0][0])
-				$aResult[$i][2] = Number($aCoordArray[0][1])
 			Next
 
 			_ArraySort($aResult, 0, 0, 0, 1) ; Sort By X position , will be the Slot 0 to $i
@@ -111,10 +114,10 @@ Func AttackBarCheck($Remaining = False)
 				$CheckSlot12 = _ColorCheck(_GetPixelColor(17, 643, True), Hex(0x478AC6, 6), 15) Or _  	 ; Slot Filled / Background Blue / More than 11 Slots
 						_ColorCheck(_GetPixelColor(17, 643, True), Hex(0x434343, 6), 10) ; Slot deployed / Gray / More than 11 Slots
 
-				If $g_iDebugSetlog = 1 Then
-					Setlog(" Slot > 12 _ColorCheck 0x478AC6 at (17," & 643 & "): " & $CheckSlot12, $COLOR_DEBUG) ;Debug
+				If $g_bDebugSetlog Then
+					SetDebugLog(" Slot > 12 _ColorCheck 0x478AC6 at (17," & 643 & "): " & $CheckSlot12, $COLOR_DEBUG) ;Debug
 					Local $CheckSlot12Color = _GetPixelColor(17, 643, $g_bCapturePixel)
-					Setlog(" Slot > 12 _GetPixelColor(17," & 643 & "): " & $CheckSlot12Color, $COLOR_DEBUG) ;Debug
+					SetDebugLog(" Slot > 12 _GetPixelColor(17," & 643 & "): " & $CheckSlot12Color, $COLOR_DEBUG) ;Debug
 				EndIf
 
 				For $i = 0 To UBound($aResult) - 1
@@ -128,19 +131,19 @@ Func AttackBarCheck($Remaining = False)
 			For $i = 0 To UBound($aResult) - 1
 				Local $Slottemp
 				If $aResult[$i][1] > 0 Then
-					If $g_iDebugSetlog = 1 Then SetLog("SLOT : " & $i, $COLOR_DEBUG) ;Debug
-					If $g_iDebugSetlog = 1 Then SetLog("Detection : " & $aResult[$i][0] & "|x" & $aResult[$i][1] & "|y" & $aResult[$i][2], $COLOR_DEBUG) ;Debug
+					If $g_bDebugSetlog Then SetDebugLog("SLOT : " & $i, $COLOR_DEBUG) ;Debug
+					If $g_bDebugSetlog Then SetDebugLog("Detection : " & $aResult[$i][0] & "|x" & $aResult[$i][1] & "|y" & $aResult[$i][2], $COLOR_DEBUG) ;Debug
 					$Slottemp = SlotAttack(Number($aResult[$i][1]), $CheckSlot12, $CheckSlotwHero)
 					If $g_bRunState = False Then Return ; Stop function
 					If _Sleep(20) Then Return ; Pause function
 					If UBound($Slottemp) = 2 Then
-						If $g_iDebugSetlog = 1 Then SetLog("OCR : " & $Slottemp[0] & "|SLOT: " & $Slottemp[1], $COLOR_DEBUG) ;Debug
+						If $g_bDebugSetlog Then SetDebugLog("OCR : " & $Slottemp[0] & "|SLOT: " & $Slottemp[1], $COLOR_DEBUG) ;Debug
 						If $CheckSlotwHero Then $iSlotCompensation = 10
 						If $aResult[$i][0] = "Castle" Or $aResult[$i][0] = "King" Or $aResult[$i][0] = "Queen" Or $aResult[$i][0] = "Warden" Then
 							$aResult[$i][3] = 1
 							$aResult[$i][4] = $Slottemp[1]
 						Else
-							$aResult[$i][3] = Number(getTroopCountBig(Number($Slottemp[0]), 636)) ; For Bigg Numbers , when the troops is selected
+							$aResult[$i][3] = Number(getTroopCountBig(Number($Slottemp[0]), 636)) ; For Big Numbers, when the troops is selected
 							$aResult[$i][4] = $Slottemp[1]
 							If $aResult[$i][3] = "" Or $aResult[$i][3] = 0 Then
 								$aResult[$i][3] = Number(getTroopCountSmall(Number($Slottemp[0]), 641)) ; For small Numbers
@@ -148,17 +151,17 @@ Func AttackBarCheck($Remaining = False)
 							EndIf
 							If StringInStr($aResult[$i][0], "ESpell") <> 0 And $g_bSmartZapEnable = True Then
 								$aResult[$i][5] = getTroopsSpellsLevel(Number($Slottemp[0]) + $iSlotCompensation, 704)
-								If $aResult[$i][5] <> "" Then $g_iESpellLevel = $aResult[$i][5] ; If they aren't empty will store the correct level , or will be level 1 , just in case
-								If $g_bDebugSmartZap = True Then Setlog("EarthQuake Detected with level " & $aResult[$i][5], $COLOR_DEBUG)
+								If $aResult[$i][5] <> "" Then $g_iESpellLevel = $aResult[$i][5] ; If they aren't empty will store the correct level, or will be level 1 , just in case
+								If $g_bDebugSmartZap = True Then SetLog("EarthQuake Detected with level " & $aResult[$i][5], $COLOR_DEBUG)
 							EndIf
 							If StringInStr($aResult[$i][0], "LSpell") <> 0 And $g_bSmartZapEnable = True Then
 								$aResult[$i][5] = getTroopsSpellsLevel(Number($Slottemp[0]) + $iSlotCompensation, 704)
-								If $aResult[$i][5] <> "" Then $g_iLSpellLevel = $aResult[$i][5] ; If they aren't empty will store the correct level , or will be level 1 , just in case
-								If $g_bDebugSmartZap = True Then Setlog("Lightning Detected with level " & $aResult[$i][5], $COLOR_DEBUG)
+								If $aResult[$i][5] <> "" Then $g_iLSpellLevel = $aResult[$i][5] ; If they aren't empty will store the correct level, or will be level 1 , just in case
+								If $g_bDebugSmartZap = True Then SetLog("Lightning Detected with level " & $aResult[$i][5], $COLOR_DEBUG)
 							EndIf
 						EndIf
 					Else
-						Setlog("Problem with Attack bar detection!", $COLOR_RED)
+						SetLog("Problem with Attack bar detection!", $COLOR_RED)
 						SetLog("Detection : " & $aResult[$i][0] & "|x" & $aResult[$i][1] & "|y" & $aResult[$i][2], $COLOR_DEBUG)
 						$aResult[$i][3] = -1
 						$aResult[$i][4] = -1
@@ -169,7 +172,7 @@ Func AttackBarCheck($Remaining = False)
 		EndIf
 	EndIf
 
-	If $g_iDebugImageSave = 1 Then
+	If $g_bDebugImageSave Then
 		Local $x = 0, $y = 659, $x1 = 853, $y1 = 698
 		_CaptureRegion2($x, $y, $x1, $y1)
 		Local $subDirectory = $g_sProfileTempDebugPath & "AttackBarDetection"
@@ -194,7 +197,7 @@ Func AttackBarCheck($Remaining = False)
 
 	$strinToReturn = StringTrimLeft($strinToReturn, 1)
 
-	; Setlog("String: " & $strinToReturn)
+	; SetLog("String: " & $strinToReturn)
 	; Will return [0] = Name , [1] = X , [2] = Y , [3] = Quantities , [4] = Slot Number
 	; Old style is: "|" & Troopa Number & "#" & Slot Number & "#" & Quantities
 	Return $strinToReturn
@@ -214,8 +217,8 @@ Func SlotAttack($PosX, $CheckSlot12, $CheckSlotwHero)
 			ElseIf $CheckSlotwHero = False Then
 				$Slottemp[0] += 8
 			EndIf
-			If $g_iDebugSetlog = 1 Then Setlog("Slot: " & $i & " | $x > " & 25 + ($i * 73) & " and $x < " & 98 + ($i * 73))
-			If $g_iDebugSetlog = 1 Then Setlog("Slot: " & $i & " | $PosX: " & $PosX & " |  OCR x position: " & $Slottemp[0] & " | OCR Slot: " & $Slottemp[1])
+			If $g_bDebugSetlog Then SetDebugLog("Slot: " & $i & " | $x > " & 25 + ($i * 73) & " and $x < " & 98 + ($i * 73))
+			If $g_bDebugSetlog Then SetDebugLog("Slot: " & $i & " | $PosX: " & $PosX & " |  OCR x position: " & $Slottemp[0] & " | OCR Slot: " & $Slottemp[1])
 			Return $Slottemp
 		EndIf
 		If $g_bRunState = False Then Return

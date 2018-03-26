@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Cosote (11-2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -137,7 +137,8 @@ Func InitiTools($bCheckOnly = False)
 		Return False
 	EndIf
 
-	If FileExists($iTools_Path & "tools\adb.exe") = 0 Then
+	Local $sPreferredADB = FindPreferredAdbPath()
+	If $sPreferredADB = "" And FileExists($iTools_Path & "tools\adb.exe") = 0 Then
 		If Not $bCheckOnly Then
 			SetLog("Serious error has occurred: Cannot find " & $g_sAndroidEmulator & ":", $COLOR_ERROR)
 			SetLog($iTools_Path & "tools\adb.exe", $COLOR_ERROR)
@@ -164,18 +165,10 @@ Func InitiTools($bCheckOnly = False)
 	If Not $bCheckOnly Then
 		InitAndroidConfig(True) ; Restore default config
 
-		$__VBoxVMinfo = LaunchConsole($iTools_Manage_Path, "showvminfo " & $g_sAndroidInstance, $process_killed)
-		; check if instance is known
-		If StringInStr($__VBoxVMinfo, "Could not find a registered machine named") > 0 Then
-			; Unknown vm
-			SetLog("Cannot find " & $g_sAndroidEmulator & " instance " & $g_sAndroidInstance, $COLOR_ERROR)
-			Return False
-		EndIf
-		$__VBoxGuestProperties = LaunchConsole($iTools_Manage_Path, "guestproperty enumerate " & $g_sAndroidInstance, $process_killed)
-
+		If Not GetAndroidVMinfo($__VBoxVMinfo, $iTools_Manage_Path) Then Return False
 		; update global variables
 		$g_sAndroidProgramPath = $iTools_Path & "iToolsAVM.exe"
-		$g_sAndroidAdbPath = FindPreferredAdbPath()
+		$g_sAndroidAdbPath = $sPreferredADB
 		If $g_sAndroidAdbPath = "" Then $g_sAndroidAdbPath = $iTools_Path & "tools\adb.exe"
 		$g_sAndroidVersion = ""
 		$__iTools_Path = $iTools_Path
@@ -185,7 +178,7 @@ Func InitiTools($bCheckOnly = False)
 		$aRegExResult = StringRegExp($__VBoxVMinfo, "ADB_PORT.*host ip = ([^,]+),", $STR_REGEXPARRAYMATCH)
 		If Not @error Then
 			$g_sAndroidAdbDeviceHost = $aRegExResult[0]
-			If $g_iDebugSetlog = 1 Then Setlog("Func LaunchConsole: Read $g_sAndroidAdbDeviceHost = " & $g_sAndroidAdbDeviceHost, $COLOR_DEBUG)
+			If $g_bDebugAndroid Then SetDebugLog("Func LaunchConsole: Read $g_sAndroidAdbDeviceHost = " & $g_sAndroidAdbDeviceHost, $COLOR_DEBUG)
 		Else
 			$oops = 1
 			SetLog("Cannot read " & $g_sAndroidEmulator & "(" & $g_sAndroidInstance & ") ADB Device Host", $COLOR_ERROR)
@@ -194,7 +187,7 @@ Func InitiTools($bCheckOnly = False)
 		$aRegExResult = StringRegExp($__VBoxVMinfo, "ADB_PORT.*host port = (\d{3,5}),", $STR_REGEXPARRAYMATCH)
 		If Not @error Then
 			$g_sAndroidAdbDevicePort = $aRegExResult[0]
-			If $g_iDebugSetlog = 1 Then Setlog("Func LaunchConsole: Read $g_sAndroidAdbDevicePort = " & $g_sAndroidAdbDevicePort, $COLOR_DEBUG)
+			If $g_bDebugAndroid Then SetDebugLog("Func LaunchConsole: Read $g_sAndroidAdbDevicePort = " & $g_sAndroidAdbDevicePort, $COLOR_DEBUG)
 		Else
 			$oops = 1
 			SetLog("Cannot read " & $g_sAndroidEmulator & "(" & $g_sAndroidInstance & ") ADB Device Port", $COLOR_ERROR)
@@ -299,13 +292,14 @@ Func CheckScreeniTools($bSetLog = True)
 
 EndFunc   ;==>CheckScreeniTools
 
-Func HideiToolsWindow($bHide = True)
-	Return EmbediTools($bHide)
+Func HideiToolsWindow($bHide = True, $hHWndAfter = Default)
+	Return EmbediTools($bHide, $hHWndAfter)
 EndFunc   ;==>HideiToolsWindow
 
-Func EmbediTools($bEmbed = Default)
+Func EmbediTools($bEmbed = Default, $hHWndAfter = Default)
 
 	If $bEmbed = Default Then $bEmbed = $g_bAndroidEmbedded
+	If $hHWndAfter = Default Then $hHWndAfter = $HWND_TOPMOST
 
 	; Find QTool Parent Window
 	Local $aWin = _WinAPI_EnumProcessWindows(GetAndroidPid(), False)
@@ -341,22 +335,20 @@ Func EmbediTools($bEmbed = Default)
 		Next
 	Else
 		SetDebugLog("EmbediTools(" & $bEmbed & "): $hToolbar=" & $hToolbar, Default, True)
-		WinMove2($hToolbar, "", -1, -1, -1, -1, $HWND_NOTOPMOST, 0, False)
+		If $bEmbed Then WinMove2($hToolbar, "", -1, -1, -1, -1, $HWND_NOTOPMOST, 0, False)
 		_WinAPI_ShowWindow($hToolbar, ($bEmbed ? @SW_HIDE : @SW_SHOWNOACTIVATE))
+		If Not $bEmbed Then
+			WinMove2($hToolbar, "", -1, -1, -1, -1, $hHWndAfter, 0, False)
+			If $hHWndAfter = $HWND_TOPMOST Then WinMove2($hToolbar, "", -1, -1, -1, -1, $HWND_NOTOPMOST, 0, False)
+		EndIf
 		For $i = 0 To UBound($hAddition) - 1
-			WinMove2($hAddition[$i], "", -1, -1, -1, -1, $HWND_NOTOPMOST, 0, False)
+			If $bEmbed Then WinMove2($hAddition[$i], "", -1, -1, -1, -1, $HWND_NOTOPMOST, 0, False)
 			_WinAPI_ShowWindow($hAddition[$i], ($bEmbed ? @SW_HIDE : @SW_SHOWNOACTIVATE))
+			If Not $bEmbed Then
+				WinMove2($hAddition[$i], "", -1, -1, -1, -1, $hHWndAfter, 0, False)
+				If $hHWndAfter = $HWND_TOPMOST Then WinMove2($hAddition[$i], "", -1, -1, -1, -1, $HWND_NOTOPMOST, 0, False)
+			EndIf
 		Next
 	EndIf
 
 EndFunc   ;==>EmbediTools
-
-#cs
-	Func iToolsBotStartEvent()
-	Return AndroidCloseSystemBar()
-	EndFunc   ;==>iToolsBotStartEvent
-
-	Func iToolsBotStopEvent()
-	Return AndroidOpenSystemBar()
-	EndFunc   ;==>iToolsBotStopEvent
-#ce

@@ -12,7 +12,7 @@
 ;				   True:				check for run state and bot's stopped
 ; Author ........: KnowJack (June-2015)
 ; Modified ......: MMHK (Dec-2016)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -58,7 +58,7 @@ Func _SleepStatus($iDelay, $iSleep = True, $bDirection = True, $CheckRunState = 
 			EndSelect
 
 			$hLastUpdate = __TimerInit()
-			_GUICtrlStatusBar_SetText($g_hStatusBar, " Status: " & $sTimeWait & $sTimeLeftLapse)
+			_GUICtrlStatusBar_SetTextEx($g_hStatusBar, " Status: " & $sTimeWait & $sTimeLeftLapse)
 		EndIf
 		_Sleep($DELAYSLEEP)
 		$bUpdate = __TimerDiff($hLastUpdate) > 750

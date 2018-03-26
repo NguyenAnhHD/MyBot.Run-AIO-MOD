@@ -3,7 +3,7 @@
 ; Description ...: This file contains the initialization and main loop sequences f0r the MBR Bot
 ; Author ........:  (2014)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -11,30 +11,25 @@
 ; ===============================================================================================================================
 
 ; AutoIt pragmas
+#NoTrayIcon
 #RequireAdmin
+#AutoIt3Wrapper_UseUpx=y
 #AutoIt3Wrapper_UseX64=7n
 ;#AutoIt3Wrapper_Res_HiDpi=Y ; HiDpi will be set during run-time!
+;#AutoIt3Wrapper_Run_AU3Check=n ; enable when running in folder with umlauts!
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rsln /MI=3
 ;/SV=0
 
 ;#AutoIt3Wrapper_Change2CUI=y
 ;#pragma compile(Console, true)
-#pragma compile(Icon, "Images\MyBot.ico")
-#pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
+#include "MyBot.run.version.au3"
 #pragma compile(ProductName, My Bot)
-#pragma compile(ProductVersion, 7.2.3)
-#pragma compile(FileVersion, 7.2.3)
-#pragma compile(LegalCopyright, © https://mybot.run)
 #pragma compile(Out, MyBot.run.exe) ; Required
 
 ; Enforce variable declarations
 Opt("MustDeclareVars", 1)
 
-Global $g_sBotVersion = "v7.2.3" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
-Global $g_sModversion = "v1.7.2" ;<== Just Change This to Version Number
-Global $g_sModSupportUrl = "https://mybot.run/forums/index.php?/topic/31096-mods-mbr-v722-official-aio-mod-v171-update-1207/" ;<== Our Website Link Support Or Link Download
-Global $g_sModDownloadUrl = "https://github.com/NguyenAnhHD/MyBot.Run-AIO-MOD/releases" ;<== Our Website Link Download
 Global $g_sBotTitle = "" ;~ Don't assign any title here, use Func UpdateBotTitle()
 Global $g_hFrmBot = 0 ; The main GUI window
 
@@ -43,6 +38,7 @@ Global $g_hFrmBot = 0 ; The main GUI window
 #include "COCBot\functions\Config\DelayTimes.au3"
 #include "COCBot\GUI\MBR GUI Design Splash.au3"
 #include "COCBot\functions\Config\ScreenCoordinates.au3"
+#include "COCBot\functions\Config\ImageDirectories.au3"
 #include "COCBot\functions\Other\ExtMsgBox.au3"
 #include "COCBot\functions\Other\MBRFunc.au3"
 #include "COCBot\functions\Android\Android.au3"
@@ -69,14 +65,17 @@ Opt("TrayOnEventMode", 1)
 InitializeBot()
 
 ; Hand over control to main loop
-MainLoop()
+MainLoop(CheckPrerequisites())
 
 Func UpdateBotTitle()
-	Local $sTitle = "My Bot " & $g_sBotVersion & " - " & " AiO++ MOD" & " " & $g_sModversion & " - "
+	Local $sTitle = "My Bot " & $g_sBotVersion & " - " & " AiO++ MOD " & $g_sModversion & " -"
+	Local $sConsoleTitle ; Console title has also Android Emulator Name
 	If $g_sBotTitle = "" Then
 		$g_sBotTitle = $sTitle
+		$sConsoleTitle = $sTitle
 	Else
-		$g_sBotTitle = $sTitle & "(" & ($g_sAndroidInstance <> "" ? $g_sAndroidInstance : $g_sAndroidEmulator) & ")" ;Do not change this. If you do, multiple instances will not work.
+		$g_sBotTitle = $sTitle & " (" & ($g_sAndroidInstance <> "" ? $g_sAndroidInstance : $g_sAndroidEmulator) & ")" ;Do not change this. If you do, multiple instances will not work.
+		$sConsoleTitle = $sTitle & " " & $g_sAndroidEmulator & " (" & ($g_sAndroidInstance <> "" ? $g_sAndroidInstance : $g_sAndroidEmulator) & ")"
 	EndIf
 	If $g_hFrmBot <> 0 Then
 		; Update Bot Window Title also
@@ -84,7 +83,7 @@ Func UpdateBotTitle()
 		GUICtrlSetData($g_hLblBotTitle, $g_sBotTitle)
 	EndIf
 	; Update Console Window (if it exists)
-	DllCall("kernel32.dll", "bool", "SetConsoleTitle", "str", "Console " & $g_sBotTitle)
+	DllCall("kernel32.dll", "bool", "SetConsoleTitle", "str", "Console " & $sConsoleTitle)
 	; Update try icon title
 	TraySetToolTip($g_sBotTitle)
 
@@ -93,42 +92,12 @@ EndFunc   ;==>UpdateBotTitle
 
 Func InitializeBot()
 
-	TraySetIcon($g_sLibIconPath, $eIcnGUI)
-
 	ProcessCommandLine()
 
-	SetupProfileFolder() ; Setup profile folders
-
-	SetLogCentered(" BOT LOG ") ; Initial text for log
-
-	; Debug Output of launch parameter
-	SetDebugLog("@AutoItExe: " & @AutoItExe)
-	SetDebugLog("@ScriptFullPath: " & @ScriptFullPath)
-	SetDebugLog("@WorkingDir: " & @WorkingDir)
-	SetDebugLog("@AutoItPID: " & @AutoItPID)
-	SetDebugLog("@OSArch: " & @OSArch)
-	SetDebugLog("@OSVersion: " & @OSVersion)
-	SetDebugLog("@OSBuild: " & @OSBuild)
-	SetDebugLog("@OSServicePack: " & @OSServicePack)
-	SetDebugLog("Primary Display: " & @DesktopWidth & " x " & @DesktopHeight & " - " & @DesktopDepth & "bit")
-
-	Local $sAndroidInfo = ""
-	; Disabled process priority tampering as not best practice
-	;Local $iBotProcessPriority = _ProcessGetPriority(@AutoItPID)
-	;ProcessSetPriority(@AutoItPID, $PROCESS_BELOWNORMAL) ;~ Boost launch time by increasing process priority (will be restored again when finished launching)
-
-	_Crypt_Startup()
-	__GDIPlus_Startup() ; Start GDI+ Engine (incl. a new thread)
-
-	; initialize bot title
-	UpdateBotTitle()
-
-	InitAndroidConfig()
-
-	If FileExists(@ScriptDir & "\EnableMBRDebug.txt") Then  ; Set developer mode
+	If FileExists(@ScriptDir & "\EnableMBRDebug.txt") Then ; Set developer mode
 		$g_bDevMode = True
 		Local $aText = FileReadToArray(@ScriptDir & "\EnableMBRDebug.txt") ; check if special debug flags set inside EnableMBRDebug.txt file
-		If Not @error  Then
+		If Not @error Then
 			For $l = 0 To UBound($aText) - 1
 				If StringInStr($aText[$l], "DISABLEWATCHDOG", $STR_NOCASESENSEBASIC) <> 0 Then
 					$g_bBotLaunchOption_NoWatchdog = True
@@ -138,18 +107,42 @@ Func InitializeBot()
 		EndIf
 	EndIf
 
+	SetupProfileFolder() ; Setup profile folders
+
+	SetLogCentered(" BOT LOG ") ; Initial text for log
+
+	SetSwitchAccLog(_PadStringCenter(" SwitchAcc LOG ", 25, "="), $COLOR_BLACK, "Lucida Console", 8, False)
+
+	DetectLanguage()
+	If $g_iBotLaunchOption_Help Then
+		ShowCommandLineHelp()
+		Exit
+	EndIf
+
+	InitAndroidConfig()
+
 	; early load of config
-	If FileExists($g_sProfileConfigPath) Or FileExists($g_sProfileBuildingPath) Then
+	Local $bConfigRead = FileExists($g_sProfileConfigPath)
+	If $bConfigRead Or FileExists($g_sProfileBuildingPath) Then
 		readConfig()
 	EndIf
 
+	Local $sAndroidInfo = ""
+	; Disabled process priority tampering as not best practice
+	;Local $iBotProcessPriority = _ProcessGetPriority(@AutoItPID)
+	;ProcessSetPriority(@AutoItPID, $PROCESS_BELOWNORMAL) ;~ Boost launch time by increasing process priority (will be restored again when finished launching)
+
+	_Crypt_Startup()
+	__GDIPlus_Startup() ; Start GDI+ Engine (incl. a new thread)
+
+	;InitAndroidConfig()
 	CreateMainGUI() ; Just create the main window
 	CreateSplashScreen() ; Create splash window
 
 	; Ensure watchdog is launched (requires Bot Window for messaging)
-	If $g_bBotLaunchOption_NoWatchdog = False Then LaunchWatchdog()
+	If Not $g_bBotLaunchOption_NoWatchdog Then LaunchWatchdog()
 
-	InitializeMBR($sAndroidInfo)
+	InitializeMBR($sAndroidInfo, $bConfigRead)
 
 	; Create GUI
 	CreateMainGUIControls() ; Create all GUI Controls
@@ -192,7 +185,6 @@ Func ProcessCommandLine()
 
 	; Handle Command Line Launch Options and fill $g_asCmdLine
 	If $CmdLine[0] > 0 Then
-		SetDebugLog("Full Command Line: " & _ArrayToString($CmdLine, " "))
 		For $i = 1 To $CmdLine[0]
 			Local $bOptionDetected = True
 			Switch $CmdLine[$i]
@@ -211,11 +203,41 @@ Func ProcessCommandLine()
 					$g_iBotLaunchOption_Dock = 2
 				Case "/nobotslot", "/nbs", "-nobotslot", "-nbs"
 					$g_bBotLaunchOption_NoBotSlot = True
+				Case "/debug", "/debugmode", "/dev", "/dm", "-debug", "-debugmode", "-dev", "-dm"
+					$g_bDevMode = True
+				Case "/minigui", "/mg", "-minigui", "-mg"
+					$g_iGuiMode = 2
+				Case "/nogui", "/ng", "-nogui", "-ng"
+					$g_iGuiMode = 0
+				Case "/hideandroid", "/ha", "-hideandroid", "-ha"
+					$g_bBotLaunchOption_HideAndroid = True
+				Case "/console", "/c", "-console", "-c"
+					$g_iBotLaunchOption_Console = True
+					ConsoleWindow()
+				Case "/?", "/h", "/help", "-?", "-h", "-help"
+					; show command line help and exit
+					$g_iBotLaunchOption_Help = True
 				Case Else
-					$bOptionDetected = False
-					$g_asCmdLine[0] += 1
-					ReDim $g_asCmdLine[$g_asCmdLine[0] + 1]
-					$g_asCmdLine[$g_asCmdLine[0]] = $CmdLine[$i]
+					If StringInStr($CmdLine[$i], "/guipid=") Then
+						Local $guidpid = Int(StringMid($CmdLine[$i], 9))
+						If ProcessExists($guidpid) Then
+							$g_iGuiPID = $guidpid
+						Else
+							SetDebugLog("GUI Process doesn't exist: " & $guidpid)
+						EndIf
+					ElseIf StringInStr($CmdLine[$i], "/profiles=") = 1 Then
+						Local $sProfilePath = StringMid($CmdLine[$i], 11)
+						If StringInStr(FileGetAttrib($sProfilePath), "D") Then
+							$g_sProfilePath = $sProfilePath
+						Else
+							SetLog("Profiles Path doesn't exist: " & $sProfilePath, $COLOR_ERROR);
+						EndIf
+					Else
+						$bOptionDetected = False
+						$g_asCmdLine[0] += 1
+						ReDim $g_asCmdLine[$g_asCmdLine[0] + 1]
+						$g_asCmdLine[$g_asCmdLine[0]] = $CmdLine[$i]
+					EndIf
 			EndSwitch
 			If $bOptionDetected Then SetDebugLog("Command Line Option detected: " & $CmdLine[$i])
 		Next
@@ -239,7 +261,7 @@ EndFunc   ;==>ProcessCommandLine
 ; Name ..........: InitializeAndroid
 ; Description ...: Initialize Android
 ; Syntax ........:
-; Parameters ....: None
+; Parameters ....: $bConfigRead - if config was already read and Android Emulator info loaded
 ; Return values .: None
 ; Author ........:
 ; Modified ......: cosote (Feb-2017)
@@ -249,16 +271,17 @@ EndFunc   ;==>ProcessCommandLine
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
-Func InitializeAndroid()
+Func InitializeAndroid($bConfigRead)
+
 	Local $s = GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_06", "Initializing Android...")
 	SplashStep($s)
 
 	If $g_bBotLaunchOption_Restart = False Then
-		; initialize Android config
-		InitAndroidConfig(True)
-
 		; Change Android type and update variable
 		If $g_asCmdLine[0] > 1 Then
+			; initialize Android config
+			InitAndroidConfig(True)
+
 			Local $i
 			For $i = 0 To UBound($g_avAndroidAppConfig) - 1
 				If StringCompare($g_avAndroidAppConfig[$i][0], $g_asCmdLine[2]) = 0 Then
@@ -277,7 +300,7 @@ Func InitializeAndroid()
 		EndIf
 
 		SplashStep(GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_07", "Detecting Android..."))
-		If $g_asCmdLine[0] < 2 Then
+		If $g_asCmdLine[0] < 2 And Not $bConfigRead Then
 			DetectRunningAndroid()
 			If Not $g_bFoundRunningAndroid Then DetectInstalledAndroid()
 		EndIf
@@ -291,7 +314,7 @@ Func InitializeAndroid()
 
 	CleanSecureFiles()
 
-	GetCOCDistributors() ; realy load of distributors to prevent rare bot freeze during boot
+	GetCOCDistributors() ; load of distributors to prevent rare bot freeze during boot
 
 EndFunc   ;==>InitializeAndroid
 
@@ -310,6 +333,7 @@ EndFunc   ;==>InitializeAndroid
 ; Example .......: No
 ; ===============================================================================================================================
 Func SetupProfileFolder()
+	SetDebugLog("SetupProfileFolder: " & $g_sProfilePath & "\" & $g_sProfileCurrentName)
 	$g_sProfileConfigPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\config.ini"
 	$g_sProfileBuildingStatsPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\stats_buildings.ini"
 	$g_sProfileBuildingPath = $g_sProfilePath & "\" & $g_sProfileCurrentName & "\building.ini"
@@ -327,6 +351,7 @@ EndFunc   ;==>SetupProfileFolder
 ; Description ...: MBR setup routine
 ; Syntax ........:
 ; Parameters ....: $sAI - populated with AndroidInfo string in this function
+;                  $bConfigRead - if config was already read and Android Emulator info loaded
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
@@ -336,7 +361,7 @@ EndFunc   ;==>SetupProfileFolder
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
-Func InitializeMBR(ByRef $sAI)
+Func InitializeMBR(ByRef $sAI, $bConfigRead)
 
 	; license
 	If Not FileExists(@ScriptDir & "\License.txt") Then
@@ -354,7 +379,7 @@ Func InitializeMBR(ByRef $sAI)
 
 	; multilanguage
 	If Not FileExists(@ScriptDir & "\Languages") Then DirCreate(@ScriptDir & "\Languages")
-	DetectLanguage()
+	;DetectLanguage()
 	_ReadFullIni()
 	; must be called after language is detected
 	TranslateTroopNames()
@@ -371,7 +396,7 @@ Func InitializeMBR(ByRef $sAI)
 	EndIf
 
 	; Initialize Android emulator
-	InitializeAndroid()
+	InitializeAndroid($bConfigRead)
 
 	; Update Bot title
 	UpdateBotTitle()
@@ -409,17 +434,18 @@ Func InitializeMBR(ByRef $sAI)
 	; Check if we are already running for this instance
 	$sMsg = GetTranslatedFileIni("MBR GUI Design - Loading", "Msg_Android_instance_01", "My Bot for %s is already running.\r\n\r\n", $sAI)
 	If $g_hMutex_BotTitle = 0 Then
+		SetDebugLog($g_sBotTitle & " is already running, exit now")
 		DestroySplashScreen()
 		MsgBox(BitOR($MB_OK, $MB_ICONINFORMATION, $MB_TOPMOST), $g_sBotTitle, $sMsg & $cmdLineHelp)
 		__GDIPlus_Shutdown()
 		Exit
 	EndIf
 
+	$sMsg = GetTranslatedFileIni("MBR GUI Design - Loading", "Msg_Android_instance_02", "My Bot with Profile %s is already in use.\r\n\r\n", $g_sProfileCurrentName)
 	; Check if we are already running for this profile
-	$g_hMutex_Profile = CreateMutex(StringReplace($g_sProfilePath & "\" & $g_sProfileCurrentName, "\", "-"))
-	$sMsg = GetTranslatedFileIni("MBR GUI Design - Loading", "Msg_Android_instance_02", "My Bot with Profile %s is already running in %s.\r\n\r\n", $g_sProfileCurrentName, $g_sProfilePath & "\" & $g_sProfileCurrentName)
-	If $g_hMutex_Profile = 0 Then
+	If aquireProfileMutex() = 0 Then
 		ReleaseMutex($g_hMutex_BotTitle)
+		releaseProfilesMutex(True)
 		DestroySplashScreen()
 		MsgBox(BitOR($MB_OK, $MB_ICONINFORMATION, $MB_TOPMOST), $g_sBotTitle, $sMsg & $cmdLineHelp)
 		__GDIPlus_Shutdown()
@@ -449,9 +475,9 @@ EndFunc   ;==>InitializeMBR
 ; ===============================================================================================================================
 Func SetupFilesAndFolders()
 
-	CheckPrerequisites(False)
 	;DirCreate($sTemplates)
 	DirCreate($g_sProfilePresetPath)
+	DirCreate($g_sPrivateProfilePath & "\" & $g_sProfileCurrentName)
 	DirCreate($g_sProfilePath & "\" & $g_sProfileCurrentName)
 	DirCreate($g_sProfileLogsPath)
 	DirCreate($g_sProfileLootsPath)
@@ -511,6 +537,7 @@ Func FinalInitialization(Const $sAI)
 	If CheckPrerequisites(True) Then
 		MBRFunc(True) ; start MyBot.run.dll, after this point .net is initialized and threads popup all the time
 		setAndroidPID() ; set Android PID
+		SetBotGuiPID(); set GUI PID
 	EndIf
 
 	If $g_bFoundRunningAndroid Then
@@ -521,23 +548,45 @@ Func FinalInitialization(Const $sAI)
 	EndIf
 	SetLog(GetTranslatedFileIni("MBR GUI Design - Loading", "Msg_Android_instance_04", "Android Emulator Configuration: %s", $sAI), $COLOR_SUCCESS)
 
-	; destroy splash screen here (so we witness the 100% ;)
-	DestroySplashScreen()
-
 	;AdlibRegister("PushBulletRemoteControl", $g_iPBRemoteControlInterval)
 	;AdlibRegister("PushBulletDeleteOldPushes", $g_iPBDeleteOldPushesInterval)
 
 	LoadAmountOfResourcesImages()
 
-	; InitializeVariables();initialize variables used in extrawindows
-	CheckVersion() ; check latest version on mybot.run site
-
-	If $ichkSwitchAcc = 1 Then btnUpdateProfile()	; update profiles & StatsProfile - SwitchAcc Demen
+	; reset GUI to wait for remote GUI in no GUI mode
+	$g_iGuiPID = @AutoItPID
 
 	; Remember time in Milliseconds bot launched
 	$g_iBotLaunchTime = __TimerDiff($g_hBotLaunchTime)
+
+	; wait for remote GUI to show when no GUI in this process
+	If $g_iGuiMode = 0 Then
+		SplashStep(GetTranslatedFileIni("MBR GUI Design - Loading", "Waiting_for_Remote_GUI", "Waiting for remote GUI..."))
+		SetDebugLog("Wait for GUI Process...")
+
+		Local $timer = __TimerInit()
+		While $g_iGuiPID = @AutoItPID And __TimerDiff($timer) < 60000
+			; wait for GUI Process updating $g_iGuiPID
+			Sleep(50) ; must be Sleep as no run state!
+		WEnd
+		If $g_iGuiPID = @AutoItPID Then
+			SetDebugLog("GUI Process not received, close bot")
+			BotClose()
+		Else
+			SetDebugLog("Linked to GUI Process " & $g_iGuiPID)
+		EndIf
+	EndIf
+
+	; destroy splash screen here (so we witness the 100% ;)
+	DestroySplashScreen()
+
+	; InitializeVariables();initialize variables used in extrawindows
+	CheckVersion() ; check latest version on mybot.run site
+	UpdateMultiStats()
 	SetDebugLog("Maximum of " & $g_iGlobalActiveBotsAllowed & " bots running at same time configured")
 	SetDebugLog("MyBot.run launch time " & Round($g_iBotLaunchTime) & " ms.")
+
+	If $g_bStopOnBatt Then _BatteryStatus() ; Stop on Low battery - Team AiO MOD++
 
 	If $g_bAndroidShieldEnabled = False Then
 		SetLog(GetTranslatedFileIni("MBR GUI Design - Loading", "Msg_Android_instance_05", "Android Shield not available for %s", @OSVersion), $COLOR_ACTION)
@@ -563,19 +612,21 @@ EndFunc   ;==>FinalInitialization
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
-Func MainLoop()
+Func MainLoop($bCheckPrerequisitesOK = True)
 	Local $iStartDelay = 0
-	If $g_bAutoStart Or $g_bRestarted = True Then
+	If $bCheckPrerequisitesOK And ($g_bAutoStart Or $g_bRestarted = True) Then
 		Local $iDelay = $g_iAutoStartDelay
 		If $g_bRestarted = True Then $iDelay = 0
 		$iStartDelay = $iDelay * 1000
 		$g_iBotAction = $eBotStart
+		; check if android should be hidden
+		If $g_bBotLaunchOption_HideAndroid Then $g_bIsHidden = True
 	EndIf
 
 	While 1
 		_Sleep($DELAYSLEEP, True, False)
 
-		If $g_bRunState = False And ($g_bNotifyPBEnable = True Or $g_bNotifyTGEnable = True) And $g_bNotifyRemoteEnable = True Then
+		If Not $g_bRunState And ($g_bNotifyPBEnable Or $g_bNotifyTGEnable) And $g_bNotifyRemoteEnable Then
 			NotifyRemoteControlProcBtnStart()
 		EndIf
 
@@ -605,16 +656,14 @@ Func MainLoop()
 EndFunc   ;==>MainLoop
 
 Func runBot() ;Bot that runs everything in order
-
-	If $ichkSwitchAcc = 1 And $bReMatchAcc = True Then ; SwitchAcc Demen
-		$nCurProfile = _GUICtrlComboBox_GetCurSel($g_hCmbProfile) + 1
-		Setlog("Rematching Profile [" & $nCurProfile & "] - " & $ProfileList[$nCurProfile] & " (CoC Acc. " & $aMatchProfileAcc[$nCurProfile - 1] & ")")
-		SwitchCoCAcc()
-		$bReMatchAcc = False
-	EndIf
-
 	Local $iWaitTime
 
+	InitiateSwitchAcc()
+	If ProfileSwitchAccountEnabled() And $g_bReMatchAcc Then
+		Setlog("Rematching Account [" & $g_iNextAccount + 1 & "] with Profile [" & GUICtrlRead($g_ahCmbProfile[$g_iNextAccount]) & "]")
+		SwitchCoCAcc($g_iNextAccount)
+	EndIf
+	BotHumanization() ; Bot Humanization - Team AiO MOD++
 	While 1
 		;Check for debug wait command
 		If FileExists(@ScriptDir & "\EnableMBRDebug.txt") Then
@@ -638,13 +687,19 @@ Func runBot() ;Bot that runs everything in order
 		chkShieldStatus()
 		If $g_bRestart = True Then ContinueLoop
 
+		MainGTFO()
+		MainKickout()
+
+		checkObstacles() ; trap common error messages also check for reconnecting animation
+		If $g_bRestart = True Then ContinueLoop
+
 		If $g_bQuicklyFirstStart = True Then
 			$g_bQuicklyFirstStart = False
 		Else
 			$g_bQuickAttack = QuickAttack()
 		EndIf
 
-		If checkAndroidReboot() = True Then ContinueLoop
+		If CheckAndroidReboot() = True Then ContinueLoop
 		If $g_bIsClientSyncError = False And $g_bIsSearchLimit = False And ($g_bQuickAttack = False) Then
 			If BotCommand() Then btnStop()
 			If _Sleep($DELAYRUNBOT2) Then Return
@@ -652,25 +707,24 @@ Func runBot() ;Bot that runs everything in order
 			If $g_bRestart = True Then ContinueLoop
 			If _Sleep($DELAYRUNBOT3) Then Return
 			VillageReport()
-			UpdateLabStatus() ; Demen
-			UpdateHeroStatus() ; Demen
-			ProfileSwitch()
 			If $g_bOutOfGold = True And (Number($g_aiCurrentLoot[$eLootGold]) >= Number($g_iTxtRestartGold)) Then ; check if enough gold to begin searching again
 				$g_bOutOfGold = False ; reset out of gold flag
-				Setlog("Switching back to normal after no gold to search ...", $COLOR_SUCCESS)
+				SetLog("Switching back to normal after no gold to search ...", $COLOR_SUCCESS)
 				ContinueLoop ; Restart bot loop to reset $g_iCommandStop & $g_bTrainEnabled + $g_bDonationEnabled via BotCommand()
 			EndIf
 			If $g_bOutOfElixir = True And (Number($g_aiCurrentLoot[$eLootElixir]) >= Number($g_iTxtRestartElixir)) And (Number($g_aiCurrentLoot[$eLootDarkElixir]) >= Number($g_iTxtRestartDark)) Then ; check if enough elixir to begin searching again
 				$g_bOutOfElixir = False ; reset out of gold flag
-				Setlog("Switching back to normal setting after no elixir to train ...", $COLOR_SUCCESS)
+				SetLog("Switching back to normal setting after no elixir to train ...", $COLOR_SUCCESS)
 				ContinueLoop ; Restart bot loop to reset $g_iCommandStop & $g_bTrainEnabled + $g_bDonationEnabled via BotCommand()
 			EndIf
 			If _Sleep($DELAYRUNBOT5) Then Return
 			checkMainScreen(False)
 			If $g_bRestart = True Then ContinueLoop
 
+			; Request CC Troops at first - Team AiO MOD++
 			$g_bcanRequestCC = True
-			If ($g_bReqCCFirst) Then
+			If $g_bReqCCFirst Then
+				CheckCC() ; CheckCC Troops - Team AiO MOD++
 				RequestCC()
 				If _Sleep($DELAYRUNBOT1) = False Then checkMainScreen(False)
 			EndIf
@@ -693,23 +747,8 @@ Func runBot() ;Bot that runs everything in order
 			AddIdleTime()
 			If $g_bRunState = False Then Return
 			If $g_bRestart = True Then ContinueLoop
-			If $iChkForecastBoost = 1 Then
-				$currentForecast = readCurrentForecast()
-					If $currentForecast >= Number($iTxtForecastBoost, 3) Then
-						If _GUICtrlComboBox_GetCurSel($g_hCmbBoostBarracks) > 0 Then
-							SetLog("Boost Time !", $COLOR_GREEN)
-						Else
-							SetLog("Boost barracks disabled!", $COLOR_GREEN)
-						EndIf
-					Else
-					SetLog("Forecast index is below the required value, no boost !", $COLOR_RED)
-					EndIf
- 			EndIf
-			If $iChkForecastPause = 1 Then
-				$currentForecast = readCurrentForecast()
-			EndIf
 			If IsSearchAttackEnabled() Then ; if attack is disabled skip reporting, requesting, donating, training, and boosting
-				Local $aRndFuncList = ['ReplayShare', 'NotifyReport', 'DonateCC,Train', 'BoostBarracks', 'BoostSpellFactory', 'BoostKing', 'BoostQueen', 'BoostWarden', 'RequestCC']
+				Local $aRndFuncList = ['ReplayShare', 'NotifyReport', 'DonateCC,Train', 'Boost', 'RequestCC', 'CollectFreeMagicItems']
 				While 1
 					If $g_bRunState = False Then Return
 					If $g_bRestart = True Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
@@ -722,7 +761,7 @@ Func runBot() ;Bot that runs everything in order
 						_RunFunction($aRndFuncList[0])
 						ExitLoop
 					EndIf
-					If checkAndroidReboot() = True Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
+					If CheckAndroidReboot() = True Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
 				WEnd
 				If $g_bRunState = False Then Return
 				If $g_bRestart = True Then ContinueLoop
@@ -730,8 +769,10 @@ Func runBot() ;Bot that runs everything in order
 					If Unbreakable() = True Then ContinueLoop
 				EndIf
 			EndIf
-			AutoUpgrade()
-			MainSuperXPHandler()
+			If ($g_iCommandStop = 3 Or $g_iCommandStop = 0) Then ; Train Donate only - force a donate cc everytime, Ignore any SkipDonate Near Full Values
+				If BalanceDonRec(True) Then DonateCC()
+			EndIf
+			MainSuperXPHandler() ; Goblin XP - Team AiO MOD++
 			Local $aRndFuncList = ['Laboratory', 'UpgradeHeroes', 'UpgradeBuilding', 'BuilderBase']
 			While 1
 				If $g_bRunState = False Then Return
@@ -745,27 +786,17 @@ Func runBot() ;Bot that runs everything in order
 					_RunFunction($aRndFuncList[0])
 					ExitLoop
 				EndIf
-				If checkAndroidReboot() = True Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
+				If CheckAndroidReboot() = True Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
 			WEnd
-			ClanHop()
+			ClanHop() ; ClanHop - Team AiO MOD++
 			If $g_bRunState = False Then Return
 			If $g_bRestart = True Then ContinueLoop
 			If IsSearchAttackEnabled() Then ; If attack scheduled has attack disabled now, stop wall upgrades, and attack.
 				$g_iNbrOfWallsUpped = 0
-				If Not $g_bChkClanHop Then UpgradeWall()
+				If Not $g_bChkClanHop Then UpgradeWall() ; ClanHop - Team AiO MOD++
 				If _Sleep($DELAYRUNBOT3) Then Return
 				If $g_bRestart = True Then ContinueLoop
-				If $ichkSwitchAcc = 1 And $aProfileType[$nCurProfile - 1] = $eDonate Then	; SwitchAcc Demen
-					If $eForceSwitch = $eDonate Then
-						Local $sSource = ""
-						If $iProfileBeforeForceSwitch > 0 Then $sSource = "SearchLimit"
-						ForceSwitchAcc($eForceSwitch, $sSource)
-					ElseIf $ichkForceStayDonate = 1 And MinRemainTrainAcc(False) > 1 Then
-						ForceSwitchAcc($eDonate, "StayDonate")	; stay on donate accounts until troops are ready in 1 minute
-					Else
-						checkSwitchAcc() ;  Switching to active account after donation
-					EndIf
-				EndIf																		; SwitchAcc Demen
+				If ProfileSwitchAccountEnabled() And $g_abDonateOnly[$g_iCurAccount] Then checkSwitchAcc()
 				Idle()
 				;$g_bFullArmy1 = $g_bFullArmy
 				If _Sleep($DELAYRUNBOT3) Then Return
@@ -775,7 +806,7 @@ Func runBot() ;Bot that runs everything in order
 					AttackMain()
 					$g_bSkipFirstZoomout = False
 					If $g_bOutOfGold = True Then
-						Setlog("Switching to Halt Attack, Stay Online/Collect mode ...", $COLOR_ERROR)
+						SetLog("Switching to Halt Attack, Stay Online/Collect mode ...", $COLOR_ERROR)
 						$g_bFirstStart = True ; reset First time flag to ensure army balancing when returns to training
 						ContinueLoop
 					EndIf
@@ -789,10 +820,12 @@ Func runBot() ;Bot that runs everything in order
 			EndIf
 		Else ;When error occours directly goes to attack
 			If $g_bQuickAttack Then
-				Setlog("Quick Restart... ", $COLOR_INFO)
+				SetLog("Quick Restart... ", $COLOR_INFO)
 			Else
 				If $g_bIsSearchLimit = True Then
 					SetLog("Restarted due search limit", $COLOR_INFO)
+				ElseIf $g_bIsSearchTimeout = True Then
+					SetLog("[Legend League] Restarted due search timeout", $COLOR_INFO)
 				Else
 					SetLog("Restarted after Out of Sync Error: Attack Now", $COLOR_INFO)
 				EndIf
@@ -800,11 +833,11 @@ Func runBot() ;Bot that runs everything in order
 			If _Sleep($DELAYRUNBOT3) Then Return
 			;  OCR read current Village Trophies when OOS restart maybe due PB or else DropTrophy skips one attack cycle after OOS
 			$g_aiCurrentLoot[$eLootTrophy] = Number(getTrophyMainScreen($aTrophies[0], $aTrophies[1]))
-			If $g_iDebugSetlog = 1 Then SetLog("Runbot Trophy Count: " & $g_aiCurrentLoot[$eLootTrophy], $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("Runbot Trophy Count: " & $g_aiCurrentLoot[$eLootTrophy], $COLOR_DEBUG)
 			AttackMain()
 			$g_bSkipFirstZoomout = False
 			If $g_bOutOfGold = True Then
-				Setlog("Switching to Halt Attack, Stay Online/Collect mode ...", $COLOR_ERROR)
+				SetLog("Switching to Halt Attack, Stay Online/Collect mode ...", $COLOR_ERROR)
 				$g_bFirstStart = True ; reset First time flag to ensure army balancing when returns to training
 				$g_bIsClientSyncError = False ; reset fast restart flag to stop OOS mode and start collecting resources
 				ContinueLoop
@@ -816,16 +849,26 @@ Func runBot() ;Bot that runs everything in order
 EndFunc   ;==>runBot
 
 Func Idle() ;Sequence that runs until Full Army
+
+	$g_bIdleState = True
+	Local $Result = _Idle()
+	$g_bIdleState = False
+	Return $Result
+
+EndFunc   ;==>Idle
+
+Func _Idle() ;Sequence that runs until Full Army
 	Static $iCollectCounter = 0 ; Collect counter, when reaches $g_iCollectAtCount, it will collect
 
 	Local $TimeIdle = 0 ;In Seconds
-	If $g_iDebugSetlog = 1 Then SetLog("Func Idle ", $COLOR_DEBUG)
+	If $g_bDebugSetlog Then SetDebugLog("Func Idle ", $COLOR_DEBUG)
 
-	If $g_bChkClanHop Then Return
+	If $g_bStopOnBatt Then _BatteryStatus() ; Stop on Low battery - Team AiO MOD++
+	If $g_bChkClanHop Then Return ; ClanHop - Team AiO MOD++
 
 	While $g_bIsFullArmywithHeroesAndSpells = False
 
-		checkAndroidReboot()
+		CheckAndroidReboot()
 
 		;Execute Notify Pending Actions
 		NotifyPendingActions()
@@ -833,11 +876,9 @@ Func Idle() ;Sequence that runs until Full Army
 		If $g_iCommandStop = -1 Then SetLog("====== Waiting for full army ======", $COLOR_SUCCESS)
 		Local $hTimer = __TimerInit()
 		Local $iReHere = 0
-		;PrepareDonateCC()
 
-		BotHumanization()
+		BotHumanization() ; Bot Humanization - Team AiO MOD++
 
-		;If $g_bDonateSkipNearFullEnable = True Then getArmyCapacity(true,true)
 		If $g_iActiveDonate And $g_bChkDonate Then
 			Local $aHeroResult = CheckArmyCamp(True, True, True, False)
 			While $iReHere < 7
@@ -849,7 +890,7 @@ Func Idle() ;Sequence that runs until Full Army
 				EndIf
 				If _Sleep($DELAYIDLE2) Then ExitLoop
 				If $g_bRestart = True Then ExitLoop
-				If checkAndroidReboot() Then ContinueLoop 2
+				If CheckAndroidReboot() Then ContinueLoop 2
 			WEnd
 		EndIf
 		If _Sleep($DELAYIDLE1) Then ExitLoop
@@ -871,7 +912,7 @@ Func Idle() ;Sequence that runs until Full Army
 			While 1
 				If $g_bRunState = False Then Return
 				If $g_bRestart = True Then ExitLoop
-				If checkAndroidReboot() Then ContinueLoop 2
+				If CheckAndroidReboot() Then ContinueLoop 2
 				If UBound($aRndFuncList) > 1 Then
 					Local $Index = Random(0, UBound($aRndFuncList), 1)
 					If $Index > UBound($aRndFuncList) - 1 Then $Index = UBound($aRndFuncList) - 1
@@ -892,6 +933,7 @@ Func Idle() ;Sequence that runs until Full Army
 		checkMainScreen(False) ; required here due to many possible exits
 		If $g_iCommandStop = -1 Then
 			If $g_iActualTrainSkip < $g_iMaxTrainSkip Then
+				MainSuperXPHandler() ; Goblin XP - Team AiO MOD++
 				If CheckNeedOpenTrain($g_sTimeBeforeTrain) Then TrainRevamp()
 				If $g_bRestart = True Then ExitLoop
 				If _Sleep($DELAYIDLE1) Then ExitLoop
@@ -904,12 +946,12 @@ Func Idle() ;Sequence that runs until Full Army
 				EndIf
 				CheckArmyCamp(True, True)
 			EndIf
+			MainSuperXPHandler() ; Goblin XP - Team AiO MOD++
 		EndIf
 		If _Sleep($DELAYIDLE1) Then Return
 		If $g_iCommandStop = 0 And $g_bTrainEnabled = True Then
 			If Not ($g_bFullArmy) Then
 				If $g_iActualTrainSkip < $g_iMaxTrainSkip Then
-					MainSuperXPHandler()
 					If CheckNeedOpenTrain($g_sTimeBeforeTrain) Then TrainRevamp()
 					If $g_bRestart = True Then ExitLoop
 					If _Sleep($DELAYIDLE1) Then ExitLoop
@@ -921,7 +963,6 @@ Func Idle() ;Sequence that runs until Full Army
 					EndIf
 					CheckArmyCamp(True, True)
 				EndIf
-				MainSuperXPHandler()
 			EndIf
 			If $g_bFullArmy And $g_bTrainEnabled = True Then
 				SetLog("Army Camp and Barracks are full, stop Training...", $COLOR_ACTION)
@@ -945,48 +986,32 @@ Func Idle() ;Sequence that runs until Full Army
 		SetLog("Time Idle: " & StringFormat("%02i", Floor(Floor($TimeIdle / 60) / 60)) & ":" & StringFormat("%02i", Floor(Mod(Floor($TimeIdle / 60), 60))) & ":" & StringFormat("%02i", Floor(Mod($TimeIdle, 60))))
 
 		If $g_bOutOfGold = True Or $g_bOutOfElixir = True Then Return ; Halt mode due low resources, only 1 idle loop
+
+		If ProfileSwitchAccountEnabled() Then checkSwitchAcc() ; Forced to switch when in halt attack mode
+
 		If ($g_iCommandStop = 3 Or $g_iCommandStop = 0) And $g_bTrainEnabled = False Then ExitLoop ; If training is not enabled, run only 1 idle loop
 
 		If $g_iCommandStop = -1 Then ; Check if closing bot/emulator while training and not in halt mode
-			If $ichkSwitchAcc = 1 Then ; SwitchAcc Demen
-				If $g_bWaitForCCTroopSpell And $ichkSmartSwitch = 1 Then
-					Setlog("Still waiting for CC troops/ spells, switching to another Account")
-					ForceSwitchAcc($eDonate)
-				Else
-					checkSwitchAcc()
-				EndIf
-			Else
-				SmartWait4Train()
-			EndIf
+			SmartWait4Train()
 			If $g_bRestart = True Then ExitLoop ; if smart wait activated, exit to runbot in case user adjusted GUI or left emulator/bot in bad state
 		EndIf
 
 	WEnd
-EndFunc   ;==>Idle
+EndFunc   ;==>_Idle
 
 Func AttackMain() ;Main control for attack functions
 	;LoadAmountOfResourcesImages() ; for debug
+
+	; Goblin XP - Team AiO MOD++
 	If $ichkEnableSuperXP = 1 And $irbSXTraining = 2 Then
 		MainSuperXPHandler()
 		Return
 	EndIf
-	If checkForecastPause($currentForecast) = True Then Return
-	getArmyCapacity(True, True)
+
+	getArmyTroopCapacity(True, True)
 	If IsSearchAttackEnabled() Then
 		If (IsSearchModeActive($DB) And checkCollectors(True, False)) Or IsSearchModeActive($LB) Or IsSearchModeActive($TS) Then
-
-			If $ichkSwitchAcc = 1 And $aAttackedCountSwitch[$nCurProfile-1] <= ($aAttackedCountAcc[$nCurProfile-1] - 2) Then
-				If UBound($aDonateProfile) > 0 Then
-					Setlog("This account has attacked twice in a row, switching to Donate Account")
-					ForceSwitchAcc($eDonate)
-				ElseIf MinRemainTrainAcc(False, $nCurProfile) <= 0 Then
-					Setlog("This account has attacked twice in a row, switching to Active Account")
-					ForceSwitchAcc($eActive)
-				Else
-					Setlog("This account has attacked twice in a row, but no other account is ready")
-				EndIf
-			EndIf ; SwitchAcc Demen
-
+			If ProfileSwitchAccountEnabled() And ($g_aiAttackedCountSwitch[$g_iCurAccount] <= $g_aiAttackedCountAcc[$g_iCurAccount] - 2) Then checkSwitchAcc()
 			If $g_bUseCCBalanced = True Then ;launch profilereport() only if option balance D/R it's activated
 				ProfileReport()
 				If _Sleep($DELAYATTACKMAIN1) Then Return
@@ -999,11 +1024,13 @@ Func AttackMain() ;Main control for attack functions
 				If _Sleep($DELAYATTACKMAIN1) Then Return
 				Return ; return to runbot, refill armycamps
 			EndIf
-			If $g_iDebugSetlog = 1 Then
-				SetLog(_PadStringCenter(" Hero status check" & BitAND($g_aiAttackUseHeroes[$DB], $g_aiSearchHeroWaitEnable[$DB], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$DB] & "|" & $g_iHeroAvailable, 54, "="), $COLOR_DEBUG)
-				SetLog(_PadStringCenter(" Hero status check" & BitAND($g_aiAttackUseHeroes[$LB], $g_aiSearchHeroWaitEnable[$LB], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$LB] & "|" & $g_iHeroAvailable, 54, "="), $COLOR_DEBUG)
-				;Setlog("BullyMode: " & $g_abAttackTypeEnable[$TB] & ", Bully Hero: " & BitAND($g_aiAttackUseHeroes[$g_iAtkTBMode], $g_aiSearchHeroWaitEnable[$g_iAtkTBMode], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$g_iAtkTBMode] & "|" & $g_iHeroAvailable, $COLOR_DEBUG)
+			If $g_bDebugSetlog Then
+				SetDebugLog(_PadStringCenter(" Hero status check" & BitAND($g_aiAttackUseHeroes[$DB], $g_aiSearchHeroWaitEnable[$DB], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$DB] & "|" & $g_iHeroAvailable, 54, "="), $COLOR_DEBUG)
+				SetDebugLog(_PadStringCenter(" Hero status check" & BitAND($g_aiAttackUseHeroes[$LB], $g_aiSearchHeroWaitEnable[$LB], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$LB] & "|" & $g_iHeroAvailable, 54, "="), $COLOR_DEBUG)
+				;SetLog("BullyMode: " & $g_abAttackTypeEnable[$TB] & ", Bully Hero: " & BitAND($g_aiAttackUseHeroes[$g_iAtkTBMode], $g_aiSearchHeroWaitEnable[$g_iAtkTBMode], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$g_iAtkTBMode] & "|" & $g_iHeroAvailable, $COLOR_DEBUG)
 			EndIf
+			_ClanGames()
+			ClickP($aAway, 1, 0, "#0000") ;Click Away to prevent any pages on top
 			PrepareSearch()
 			If $g_bOutOfGold = True Then Return ; Check flag for enough gold to search
 			If $g_bRestart = True Then Return
@@ -1018,17 +1045,14 @@ Func AttackMain() ;Main control for attack functions
 			If _Sleep($DELAYATTACKMAIN2) Then Return
 			Return True
 		Else
-			If Not $g_bChkClanHop Then
-			Setlog("No one of search condition match:", $COLOR_WARNING)
-			Setlog("Waiting on troops, heroes and/or spells according to search settings", $COLOR_WARNING)
+			If Not $g_bChkClanHop Then ; ClanHop - Team AiO MOD++
+			SetLog("No one of search condition match:", $COLOR_WARNING)
+			SetLog("Waiting on troops, heroes and/or spells according to search settings", $COLOR_WARNING)
 			$g_bIsSearchLimit = False
 			$g_bIsClientSyncError = False
 			$g_bQuickAttack = False
-			If $ichkSwitchAcc = 1 Then ; SwitchAcc Demen
-				checkSwitchAcc()
-			Else
-				SmartWait4Train()
-			EndIf
+			If ProfileSwitchAccountEnabled() Then checkSwitchAcc()
+			SmartWait4Train()
 			Else
 				SetLog("Skipping Attack because Clan Hop is enabled!", $COLOR_INFO)
 			EndIf
@@ -1042,14 +1066,13 @@ Func Attack() ;Selects which algorithm
 	$g_bAttackActive = True
 	SetLog(" ====== Start Attack ====== ", $COLOR_SUCCESS)
 	If ($g_iMatchMode = $DB And $g_aiAttackAlgorithm[$DB] = 1) Or ($g_iMatchMode = $LB And $g_aiAttackAlgorithm[$LB] = 1) Then
-		If $g_iDebugSetlog = 1 Then Setlog("start scripted attack", $COLOR_ERROR)
-		If $g_CSVSpeedDivider[$g_iMatchMode] <> 1 Then Setlog("Executing Scripted attack at " & $g_CSVSpeedDivider[$g_iMatchMode] & "x Speed", $COLOR_INFO)
+		If $g_bDebugSetlog Then SetDebugLog("start scripted attack", $COLOR_ERROR)
 		Algorithm_AttackCSV()
 	ElseIf $g_iMatchMode = $DB And $g_aiAttackAlgorithm[$DB] = 2 Then
-		If $g_iDebugSetlog = 1 Then Setlog("start milking attack", $COLOR_ERROR)
+		If $g_bDebugSetlog Then SetDebugLog("start milking attack", $COLOR_ERROR)
 		Alogrithm_MilkingAttack()
 	Else
-		If $g_iDebugSetlog = 1 Then Setlog("start standard attack", $COLOR_ERROR)
+		If $g_bDebugSetlog Then SetDebugLog("start standard attack", $COLOR_ERROR)
 		algorithm_AllTroops()
 	EndIf
 	$g_bAttackActive = False
@@ -1061,11 +1084,7 @@ Func QuickAttack()
 	Local $quicklymilking = 0
 	Local $quicklythsnipe = 0
 
-	getArmyCapacity(True, True)
-
-	If $ichkSwitchAcc = 1 Then	; No quick attack after ForceSwitch - SwitchAcc Demen
-		If $aProfileType[$nCurProfile - 1] <> $eActive Or $eForceSwitch <> $eNull Then Return False
-	EndIf
+	getArmyTroopCapacity(True, True)
 
 	If ($g_aiAttackAlgorithm[$DB] = 2 And IsSearchModeActive($DB)) Or (IsSearchModeActive($TS)) Then
 		VillageReport()
@@ -1073,26 +1092,26 @@ Func QuickAttack()
 
 	$g_aiCurrentLoot[$eLootTrophy] = getTrophyMainScreen($aTrophies[0], $aTrophies[1])
 	If ($g_bDropTrophyEnable And Number($g_aiCurrentLoot[$eLootTrophy]) > Number($g_iDropTrophyMax)) Then
-		If $g_iDebugSetlog = 1 Then Setlog("No quickly re-attack, need to drop tropies", $COLOR_DEBUG)
+		If $g_bDebugSetlog Then SetDebugLog("No quickly re-attack, need to drop tropies", $COLOR_DEBUG)
 		Return False ;need to drop tropies
 	EndIf
 
 	If $g_aiAttackAlgorithm[$DB] = 2 And IsSearchModeActive($DB) Then
 		If Int($g_CurrentCampUtilization) >= $g_iTotalCampSpace * $g_aiSearchCampsPct[$DB] / 100 And $g_abSearchCampsEnable[$DB] Then
-			If $g_iDebugSetlog = 1 Then Setlog("Milking: Quickly re-attack " & Int($g_CurrentCampUtilization) & " >= " & $g_iTotalCampSpace & " * " & $g_aiSearchCampsPct[$DB] & "/100 " & "= " & $g_iTotalCampSpace * $g_aiSearchCampsPct[$DB] / 100, $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("Milking: Quickly re-attack " & Int($g_CurrentCampUtilization) & " >= " & $g_iTotalCampSpace & " * " & $g_aiSearchCampsPct[$DB] & "/100 " & "= " & $g_iTotalCampSpace * $g_aiSearchCampsPct[$DB] / 100, $COLOR_DEBUG)
 			Return True ;milking attack OK!
 		Else
-			If $g_iDebugSetlog = 1 Then Setlog("Milking: No Quickly re-attack:  cur. " & Int($g_CurrentCampUtilization) & "  need " & $g_iTotalCampSpace * $g_aiSearchCampsPct[$DB] / 100 & " firststart = " & ($g_bQuicklyFirstStart), $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("Milking: No Quickly re-attack:  cur. " & Int($g_CurrentCampUtilization) & "  need " & $g_iTotalCampSpace * $g_aiSearchCampsPct[$DB] / 100 & " firststart = " & ($g_bQuicklyFirstStart), $COLOR_DEBUG)
 			Return False ;milking attack no restart.. no enough army
 		EndIf
 	EndIf
 
 	If IsSearchModeActive($TS) Then
 		If Int($g_CurrentCampUtilization) >= $g_iTotalCampSpace * $g_aiSearchCampsPct[$TS] / 100 And $g_abSearchCampsEnable[$TS] Then
-			If $g_iDebugSetlog = 1 Then Setlog("THSnipe: Quickly re-attack " & Int($g_CurrentCampUtilization) & " >= " & $g_iTotalCampSpace & " * " & $g_aiSearchCampsPct[$TS] & "/100 " & "= " & $g_iTotalCampSpace * $g_aiSearchCampsPct[$TS] / 100, $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("THSnipe: Quickly re-attack " & Int($g_CurrentCampUtilization) & " >= " & $g_iTotalCampSpace & " * " & $g_aiSearchCampsPct[$TS] & "/100 " & "= " & $g_iTotalCampSpace * $g_aiSearchCampsPct[$TS] / 100, $COLOR_DEBUG)
 			Return True ;ts snipe attack OK!
 		Else
-			If $g_iDebugSetlog = 1 Then Setlog("THSnipe: No Quickly re-attack:  cur. " & Int($g_CurrentCampUtilization) & "  need " & $g_iTotalCampSpace * $g_aiSearchCampsPct[$TS] / 100 & " firststart = " & ($g_bQuicklyFirstStart), $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("THSnipe: No Quickly re-attack:  cur. " & Int($g_CurrentCampUtilization) & "  need " & $g_iTotalCampSpace * $g_aiSearchCampsPct[$TS] / 100 & " firststart = " & ($g_bQuicklyFirstStart), $COLOR_DEBUG)
 			Return False ;ts snipe no restart... no enough army
 		EndIf
 	EndIf
@@ -1114,25 +1133,24 @@ Func _RunFunction($action)
 			ReArm()
 			_Sleep($DELAYRUNBOT3)
 		Case "ReplayShare"
-			If $g_bChkClanHop Then Return
+			If $g_bChkClanHop Then Return ; ClanHop - Team AiO MOD++
 			ReplayShare($g_bShareAttackEnableNow)
 			_Sleep($DELAYRUNBOT3)
 		Case "NotifyReport"
-			If $g_bChkClanHop Then Return
+			If $g_bChkClanHop Then Return ; ClanHop - Team AiO MOD++
 			NotifyReport()
 			_Sleep($DELAYRUNBOT3)
 		Case "DonateCC"
-			If $g_bChkClanHop Then Return
+			If $g_bChkClanHop Then Return ; ClanHop - Team AiO MOD++
 			If $g_iActiveDonate And $g_bChkDonate Then
-				;If $g_bDonateSkipNearFullEnable = True and $g_bFirstStart = False Then getArmyCapacity(True, True)
 				If SkipDonateNearFullTroops(True) = False And BalanceDonRec(True) Then DonateCC()
 				If _Sleep($DELAYRUNBOT1) = False Then checkMainScreen(False)
 			EndIf
 		Case "DonateCC,Train"
-			If $g_bChkClanHop Then Return
+			If $g_bChkClanHop Then Return ; ClanHop - Team AiO MOD++
 			If $g_iActiveDonate And $g_bChkDonate Then
 				If $g_bFirstStart Then
-					getArmyCapacity(True, False)
+					getArmyTroopCapacity(True, False)
 					getArmySpellCapacity(False, True)
 				EndIf
 				If SkipDonateNearFullTroops(True) = False And BalanceDonRec(True) Then DonateCC()
@@ -1144,58 +1162,64 @@ Func _RunFunction($action)
 					TrainRevamp()
 					_Sleep($DELAYRUNBOT1)
 				Else
-					Setlog("Humanize bot, prevent to delete and recreate troops " & $g_iActualTrainSkip + 1 & "/" & $g_iMaxTrainSkip, $color_blue)
+					SetLog("Humanize bot, prevent to delete and recreate troops " & $g_iActualTrainSkip + 1 & "/" & $g_iMaxTrainSkip, $color_blue)
 					$g_iActualTrainSkip = $g_iActualTrainSkip + 1
 					If $g_iActualTrainSkip >= $g_iMaxTrainSkip Then
 						$g_iActualTrainSkip = 0
 					EndIf
 					CheckOverviewFullArmy(True, False) ; use true parameter to open train overview window
-					If ISArmyWindow(False, $ArmyTAB) Then CheckExistentArmy("Spells") ; Imgloc Method
+					getArmySpells()
 					getArmyHeroCount(False, True)
 				EndIf
 			Else
-				If $g_iDebugSetlogTrain = 1 Then Setlog("Halt mode - training disabled", $COLOR_DEBUG)
+				If $g_bDebugSetlogTrain Then SetLog("Halt mode - training disabled", $COLOR_DEBUG)
 			EndIf
-		Case "BoostBarracks"
+		Case "Boost"
+			If $g_bChkClanHop Then Return ; ClanHop - Team AiO MOD++
 			BoostBarracks()
-		Case "BoostSpellFactory"
 			BoostSpellFactory()
-		Case "BoostKing"
-			If $g_bChkClanHop Then Return
 			BoostKing()
-		Case "BoostQueen"
-			If $g_bChkClanHop Then Return
 			BoostQueen()
-		Case "BoostWarden"
-			If $g_bChkClanHop Then Return
 			BoostWarden()
 		Case "RequestCC"
-			If $g_bChkClanHop Then Return
-			If Not ($g_bReqCCFirst) Then RequestCC()
+			If $g_bChkClanHop Then Return ; ClanHop - Team AiO MOD++
+			If Not $g_bReqCCFirst Then ; Request CC Troops at first - Team AiO MOD++
+				CheckCC() ; CheckCC Troops - Team AiO MOD++
+				RequestCC()
+			EndIf
 			If _Sleep($DELAYRUNBOT1) = False Then checkMainScreen(False)
 		Case "Laboratory"
-			If $g_bChkClanHop Then Return
+			If $g_bChkClanHop Then Return ; ClanHop - Team AiO MOD++
 			Laboratory()
 			If _Sleep($DELAYRUNBOT3) = False Then checkMainScreen(False)
 		Case "UpgradeHeroes"
-			If $g_bChkClanHop Then Return
+			If $g_bChkClanHop Then Return ; ClanHop - Team AiO MOD++
 			UpgradeHeroes()
 			_Sleep($DELAYRUNBOT3)
 		Case "UpgradeBuilding"
-			If $g_bChkClanHop Then Return
+			If $g_bChkClanHop Then Return ; ClanHop - Team AiO MOD++
 			UpgradeBuilding()
 			_Sleep($DELAYRUNBOT3)
+ 			AutoUpgrade()
+			_Sleep($DELAYRUNBOT3)
 		Case "BuilderBase"
-			If isOnBuilderIsland() Or (($g_bChkCollectBuilderBase Or $g_bChkStartClockTowerBoost) And SwitchBetweenBases()) Then
+			If isOnBuilderIsland() Or (($g_bChkCollectBuilderBase Or $g_bChkStartClockTowerBoost Or $g_iChkBBSuggestedUpgrades) And SwitchBetweenBases()) Then
 				CollectBuilderBase()
+				BuilderBaseReport()
 				StartClockTowerBoost()
+				MainSuggestedUpgradeCode()
 				; switch back to normal village
 				SwitchBetweenBases()
 			EndIf
 			_Sleep($DELAYRUNBOT3)
-		Case "SuperXP"
+		Case "SuperXP" ; Goblin XP - Team AiO MOD++
 			MainSuperXPHandler()
 			_Sleep($DELAYRUNBOT3)
+		Case "Humanization" ; Bot Humanization - Team AiO MOD++
+			BotHumanization()
+			_Sleep($DELAYRUNBOT3)
+		Case "CollectFreeMagicItems"
+			CollectFreeMagicItems()
 		Case ""
 			SetDebugLog("Function call doesn't support empty string, please review array size", $COLOR_ERROR)
 		Case Else

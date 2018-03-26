@@ -5,7 +5,7 @@
 ; Parameters ....:
 ; Return values .: None
 ; Author ........: MR.ViPER (23-11-2016)
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2018)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -90,7 +90,7 @@ EndFunc   ;==>_StringEqualSplit
 Func _ArrayMerge(ByRef $a_base, ByRef $a_add, $i_start = 0)
 	Local $X
 	For $X = $i_start To UBound($a_add) - 1
-		_ArrayAdd($a_base, $a_add[$X])
+		_ArrayAdd($a_base, $a_add[$X], 0, "|", @CRLF, $ARRAYFILL_FORCE_STRING)
 	Next
 EndFunc   ;==>_ArrayMerge
 

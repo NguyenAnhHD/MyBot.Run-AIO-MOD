@@ -6,7 +6,7 @@
 ; Return values .: An array of values of detected defense levels and information
 ; Author ........: LunaEclipse(April 2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -47,6 +47,7 @@ Func addInfoToDebugImage(ByRef $hGraphic, ByRef $hPen, $fileName, $x, $y)
 EndFunc   ;==>addInfoToDebugImage
 
 Func captureDebugImage($aResult, $subDirectory)
+	If TestCapture() Then Return ; no debug images required when testing with button special things...
 	Local $coords
 
 	If IsArray($aResult) Then
@@ -76,7 +77,9 @@ Func captureDebugImage($aResult, $subDirectory)
 					; Loop through all found points for the item and add them to the image
 					For $j = 0 To UBound($coords) - 1
 						Local $coord = $coords[$j]
-						addInfoToDebugImage($hGraphic, $hPen, $aResult[$i][0], $coord[0], $coord[1])
+						If UBound($coord) > 1 Then
+							addInfoToDebugImage($hGraphic, $hPen, $aResult[$i][0], $coord[0], $coord[1])
+						EndIf
 					Next
 				EndIf
 			EndIf
@@ -122,11 +125,11 @@ Func multiMatches($directory, $maxReturnPoints = 0, $fullCocAreas = "DCD", $redL
 
 	; Perform the search
 	Local $res = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $g_hHBitmap2, "str", $directory, "str", $fullCocAreas, "Int", $maxReturnPoints, "str", $redLines, "Int", $minLevel, "Int", $maxLevel)
-	If @error Then _logErrorDLLCall($g_sLibImgLocPath, @error)
+	If @error Then _logErrorDLLCall($g_sLibMyBotPath, @error)
 
 	; Get the redline data
-	$aValue = DllCall($g_hLibImgLoc, "str", "GetProperty", "str", "redline", "str", "")
-	If @error Then _logErrorDLLCall($g_sLibImgLocPath, @error)
+	$aValue = DllCall($g_hLibMyBot, "str", "GetProperty", "str", "redline", "str", "")
+	If @error Then _logErrorDLLCall($g_sLibMyBotPath, @error)
 	$redLines = $aValue[0]
 
 	If $res[0] <> "" Then

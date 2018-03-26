@@ -9,7 +9,7 @@
 ;                  $Tolerance           - allowable variation in finding image.
 ; Return values .:
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -36,7 +36,7 @@ EndFunc   ;==>_ImageSearch
 ; Return values .: None
 ; Author ........:
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -57,12 +57,12 @@ Func _ImageSearchArea($findImage, $resultPosition, $x1, $y1, $right, $bottom, By
 	If IsString($findImage) Then
 		If $Tolerance > 0 Then $findImage = "*" & $Tolerance & " " & $findImage
 		If $HBMP = 0 Then
-			$result = DllCall($g_sLibImageSearchPath, "str", "ImageSearch", "int", $x1, "int", $y1, "int", $right, "int", $bottom, "str", $findImage)
+			$result = DllCallMyBot("ImageSearch", "int", $x1, "int", $y1, "int", $right, "int", $bottom, "str", $findImage)
 		Else
-			$result = DllCall($g_sLibImageSearchPath, "str", "ImageSearchEx", "int", $x1, "int", $y1, "int", $right, "int", $bottom, "str", $findImage, "ptr", $HBMP)
+			$result = DllCallMyBot("ImageSearchEx", "int", $x1, "int", $y1, "int", $right, "int", $bottom, "str", $findImage, "ptr", $HBMP)
 		EndIf
 	Else
-		$result = DllCall($g_sLibImageSearchPath, "str", "ImageSearchExt", "int", $x1, "int", $y1, "int", $right, "int", $bottom, "int", $Tolerance, "ptr", $findImage, "ptr", $HBMP)
+		$result = DllCallMyBot("ImageSearchExt", "int", $x1, "int", $y1, "int", $right, "int", $bottom, "int", $Tolerance, "ptr", $findImage, "ptr", $HBMP)
 	EndIf
 	If @error Then _logErrorDLLCall($g_sLibImageSearchPath, @error)
 
@@ -99,9 +99,8 @@ Func _ImageSearchAreaImgLoc($findImage, $resultPosition, $x1, $y1, $right, $bott
 	Local $MaxReturnPoints = 1
 
 	Local $res = DllCallMyBot("FindTile", "handle", $hHBMP, "str", $findImage, "str", $sArea, "Int", $MaxReturnPoints)
-	If @error Then _logErrorDLLCall($g_sLibImgLocPath, @error)
+	If @error Then _logErrorDLLCall($g_sLibMyBotPath, @error)
 	If IsArray($res) Then
-		;If $g_iDebugSetlog = 1 Then SetLog("_ImageSearchAreaImgLoc " & $findImage & " succeeded " & $res[0] & ",$sArea=" & $sArea & ",$g_fToleranceImgLoc=" & $g_fToleranceImgLoc , $COLOR_ERROR)
 		If $res[0] = "0" Or $res[0] = "" Then
 			;SetLog($findImage & " not found", $COLOR_GREEN)
 		ElseIf StringLeft($res[0], 2) = "-1" Then
@@ -109,7 +108,7 @@ Func _ImageSearchAreaImgLoc($findImage, $resultPosition, $x1, $y1, $right, $bott
 		Else
 			Local $expRet = StringSplit($res[0], "|", $STR_NOCOUNT)
 			;$expret contains 2 positions; 0 is the total objects; 1 is the point in X,Y format
-			If UBound($expRet) >= 2 Then 
+			If UBound($expRet) >= 2 Then
 				Local $posPoint = StringSplit($expRet[1], ",", $STR_NOCOUNT)
 				If UBound($posPoint) >= 2 Then
 					$x = Int($posPoint[0])

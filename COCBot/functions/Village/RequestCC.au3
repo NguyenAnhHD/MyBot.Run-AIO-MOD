@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Sardo(06-2015), KnowJack(10-2015), Sardo (08-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -47,27 +47,30 @@ Func RequestCC($ClickPAtEnd = True, $specifyText = "")
 		If _Sleep($DELAYREQUESTCC1) Then ExitLoop
 		$iCount += 1
 		If $iCount > 5 Then
-			If $g_iDebugSetlog = 1 Then Setlog("RequestCC Army Window issue!", $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("RequestCC Army Window issue!", $COLOR_DEBUG)
 			ExitLoop ; wait 6*500ms = 3 seconds max
 		EndIf
 	WEnd
 
-	Local $color = _GetPixelColor($aRequestTroopsAO[0], $aRequestTroopsAO[1], True)
+	Local $color1 = _GetPixelColor($aRequestTroopsAO[0], $aRequestTroopsAO[1] + 20, True)	; Gray/Green color at 20px below Letter "R"
+	Local $color2 = _GetPixelColor($aRequestTroopsAO[0], $aRequestTroopsAO[1], True)		; White/Green color at Letter "R"
 
-	If _ColorCheck($color, Hex($aRequestTroopsAO[2], 6), $aRequestTroopsAO[5]) Then
-		;can make a request
-		Local $x = _makerequest()
-	ElseIf _ColorCheck($color, Hex($aRequestTroopsAO[3], 6), $aRequestTroopsAO[5]) Then
-		;request has already been made
-		SetLog("Request has already been made")
-	ElseIf _ColorCheck($color, Hex($aRequestTroopsAO[4], 6), $aRequestTroopsAO[5]) Then
+	If _ColorCheck($color1, Hex($aRequestTroopsAO[2], 6), $aRequestTroopsAO[5]) Then
 		;clan full or not in clan
 		SetLog("Your Clan Castle is already full or you are not in a clan.")
 		$g_bCanRequestCC = False
+	ElseIf _ColorCheck($color1, Hex($aRequestTroopsAO[3], 6), $aRequestTroopsAO[5]) Then
+		If _ColorCheck($color2, Hex($aRequestTroopsAO[4], 6), $aRequestTroopsAO[5]) Then
+			;can make a request
+			Local $x = _makerequest()
+		Else
+			;request has already been made
+			SetLog("Request has already been made")
+		EndIf
 	Else
 		;no button request found
 		SetLog("Cannot detect button request troops.")
-		setlog("The Pixel on " & $aRequestTroopsAO[0] & "-" & $aRequestTroopsAO[1] & " was: " & $color, $COLOR_ERROR)
+		SetLog("The Pixel on " & $aRequestTroopsAO[0] & "-" & $aRequestTroopsAO[1] & " was: " & $color1, $COLOR_ERROR)
 	EndIf
 
 	;exit from army overview
@@ -75,7 +78,6 @@ Func RequestCC($ClickPAtEnd = True, $specifyText = "")
 	If $ClickPAtEnd Then ClickP($aAway, 2, 0, "#0335")
 
 EndFunc   ;==>RequestCC
-
 
 Func _makerequest()
 	;click button request troops
@@ -86,7 +88,7 @@ Func _makerequest()
 	While Not ( _ColorCheck(_GetPixelColor($aCancRequestCCBtn[0], $aCancRequestCCBtn[1], True), Hex($aCancRequestCCBtn[2], 6), $aCancRequestCCBtn[3]))
 		If _Sleep($DELAYMAKEREQUEST1) Then ExitLoop
 		$icount += 1
-		If $g_iDebugSetlog = 1 Then Setlog("$icount2 = " & $icount & ", " & _GetPixelColor($aCancRequestCCBtn[0], $aCancRequestCCBtn[1], True), $COLOR_DEBUG)
+		If $g_bDebugSetlog Then SetDebugLog("$icount2 = " & $icount & ", " & _GetPixelColor($aCancRequestCCBtn[0], $aCancRequestCCBtn[1], True), $COLOR_DEBUG)
 		If $icount > 20 Then ExitLoop ; wait 21*500ms = 10.5 seconds max
 	WEnd
 	If $icount > 20 Then
@@ -101,7 +103,7 @@ Func _makerequest()
 			Click($atxtRequestCCBtn[0], $atxtRequestCCBtn[1], 1, 0, "#0254") ;Select text for request $atxtRequestCCBtn[2] = [430, 140]
 			_Sleep($DELAYMAKEREQUEST2)
 			If SendText($g_sRequestTroopsText) = 0 Then
-				Setlog(" Request text entry failed, try again", $COLOR_ERROR)
+				SetLog(" Request text entry failed, try again", $COLOR_ERROR)
 				Return
 			EndIf
 		EndIf
@@ -110,11 +112,11 @@ Func _makerequest()
 		While Not _ColorCheck(_GetPixelColor($aSendRequestCCBtn[0], $aSendRequestCCBtn[1], True), Hex(0x5fac10, 6), 20)
 			If _Sleep($DELAYMAKEREQUEST1) Then ExitLoop
 			$icount += 1
-			If $g_iDebugSetlog = 1 Then Setlog("$icount3 = " & $icount & ", " & _GetPixelColor($aSendRequestCCBtn[0], $aSendRequestCCBtn[1], True), $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("$icount3 = " & $icount & ", " & _GetPixelColor($aSendRequestCCBtn[0], $aSendRequestCCBtn[1], True), $COLOR_DEBUG)
 			If $icount > 25 Then ExitLoop ; wait 26*500ms = 13 seconds max
 		WEnd
 		If $icount > 25 Then
-			If $g_iDebugSetlog = 1 Then SetLog("Send request button not found", $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("Send request button not found", $COLOR_DEBUG)
 			CheckMainScreen(False) ;emergency exit
 		EndIf
 		If $g_bChkBackgroundMode = False And $g_bNoFocusTampering = False Then ControlFocus($g_hAndroidWindow, "", "") ; make sure Android has window focus

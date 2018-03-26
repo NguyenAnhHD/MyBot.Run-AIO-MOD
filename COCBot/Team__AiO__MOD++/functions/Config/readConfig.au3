@@ -4,7 +4,7 @@
 ; Syntax ........: readConfig()
 ; Parameters ....: NA
 ; Return values .: NA
-; Author ........: Team AiO MOD++ (2017)
+; Author ........: Team AiO MOD++ (2018)
 ; Modified ......:
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
 ;                  MyBot is distributed under the terms of the GNU GPL
@@ -14,35 +14,10 @@
 ; ===============================================================================================================================
 
 Func ReadConfig_MOD()
-	; <><><> Team AiO MOD++ (2017) <><><>
-
-	; Unit/Wave Factor (rulesss & kychera) - Added by Eloy
-	IniReadS($iChkUnitFactor, $g_sProfileConfigPath, "SetSleep", "EnableUnitFactor", 0, "Int")
-	IniReadS($iTxtUnitFactor, $g_sProfileConfigPath, "SetSleep", "UnitFactor", 10 ,"Int")
-
-	IniReadS($iChkWaveFactor, $g_sProfileConfigPath, "SetSleep", "EnableWaveFactor", 0, "Int")
-	IniReadS($iTxtWaveFactor, $g_sProfileConfigPath, "SetSleep", "WaveFactor", 100 ,"Int")
-
-	IniReadS($iChkGiantSlot, $g_sProfileConfigPath, "SetSleep", "EnableGiantSlot", 0, "Int")
-	IniReadS($iCmbGiantSlot , $g_sProfileConfigPath, "SetSleep", "CmbGiantSlot", 0 ,"Int")
-
-	; Custom Drop Order
-	IniReadS($g_bCustomTrainDropOrderEnable, $g_sProfileConfigPath, "DropOrder", "chkTroopDropOrder", $g_bCustomTrainDropOrderEnable, "Bool")
-	For $p = 0 To UBound($icmbDropTroops) - 1
-		IniReadS($icmbDropTroops[$p], $g_sProfileConfigPath, "DropOrder", "cmbDropTroops[" & $p & "]", $icmbDropTroops[$p] , "Int")
-	Next
-
-	; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
-	IniReadS($ichkAutoHide, $g_sProfileConfigPath, "general", "AutoHide", 0, "int")
-	IniReadS($ichkAutoHideDelay, $g_sProfileConfigPath, "general", "AutoHideDelay", 10, "int")
-
-	; Check Collector Outside (McSlither) - Added by NguyenAnhHD
-	IniReadS($ichkDBMeetCollOutside, $g_sProfileConfigPath, "search", "DBMeetCollOutside", 0, "int")
-	IniReadS($iDBMinCollOutsidePercent, $g_sProfileConfigPath, "search", "DBMinCollOutsidePercent", 50, "int")
-
-	; CSV Deploy Speed - Added by NguyenAnhHD
-	IniReadS($icmbCSVSpeed[$LB], $g_sProfileConfigPath, "CSV Speed", "cmbCSVSpeed[LB]", $icmbCSVSpeed[$LB], "Int")
-	IniReadS($icmbCSVSpeed[$DB], $g_sProfileConfigPath, "CSV Speed", "cmbCSVSpeed[DB]", $icmbCSVSpeed[$DB], "Int")
+	; <><><> Team AiO MOD++ (2018) <><><>
+	; CSV Deploy Speed - Team AiO MOD++
+	IniReadS($icmbCSVSpeed[$LB], $g_sProfileConfigPath, "CSV Speed", "cmbCSVSpeed[LB]", $icmbCSVSpeed[$LB], "int")
+	IniReadS($icmbCSVSpeed[$DB], $g_sProfileConfigPath, "CSV Speed", "cmbCSVSpeed[DB]", $icmbCSVSpeed[$DB], "int")
 	For $i = $DB To $LB
 		If $icmbCSVSpeed[$i] < 5 Then
 			$g_CSVSpeedDivider[$i] = 0.5 + $icmbCSVSpeed[$i] * 0.25        ; $g_CSVSpeedDivider = 0.5, 0.75, 1, 1.25, 1.5
@@ -50,126 +25,124 @@ Func ReadConfig_MOD()
 			$g_CSVSpeedDivider[$i] = 2 + $icmbCSVSpeed[$i] - 5            ; $g_CSVSpeedDivider = 2, 3, 4, 5
 		EndIf
 	Next
+	; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
+	IniReadS($g_bEnableAuto, $g_sProfileConfigPath, "general", "EnableAuto", $g_bEnableAuto, "Bool")
+	IniReadS($g_iChkAutoDock, $g_sProfileConfigPath, "general", "AutoDock", $g_iChkAutoDock, "Bool")
+	IniReadS($g_iChkAutoHideEmulator, $g_sProfileConfigPath, "general", "AutoHide", $g_iChkAutoHideEmulator, "Bool")
+	IniReadS($g_iChkAutoMinimizeBot, $g_sProfileConfigPath, "general", "AutoMinimize", $g_iChkAutoMinimizeBot, "Bool")
 
-	; Switch Profile (IceCube) - Added by NguyenAnhHD
-	IniReadS($ichkGoldSwitchMax, $g_sProfileConfigPath, "profiles", "chkGoldSwitchMax", 0, "int")
-	IniReadS($icmbGoldMaxProfile, $g_sProfileConfigPath, "profiles", "cmbGoldMaxProfile", 0, "int")
-	IniReadS($itxtMaxGoldAmount, $g_sProfileConfigPath, "profiles", "txtMaxGoldAmount", 6000000, "int")
-	IniReadS($ichkGoldSwitchMin, $g_sProfileConfigPath, "profiles", "chkGoldSwitchMin", 0, "int")
-	IniReadS($icmbGoldMinProfile, $g_sProfileConfigPath, "profiles", "cmbGoldMinProfile", 0, "int")
-	IniReadS($itxtMinGoldAmount, $g_sProfileConfigPath, "profiles", "txtMinGoldAmount", 500000, "int")
+	; Check Collector Outside - Team AiO MOD++
+	IniReadS($g_bDBMeetCollOutside, $g_sProfileConfigPath, "search", "DBMeetCollOutside", $g_bDBMeetCollOutside, "Bool")
+	IniReadS($g_iTxtDBMinCollOutsidePercent, $g_sProfileConfigPath, "search", "TxtDBMinCollOutsidePercent", $g_iTxtDBMinCollOutsidePercent, "int")
+	IniReadS($g_bDBCollectorsNearRedline, $g_sProfileConfigPath, "search", "DBCollectorsNearRedline", $g_bDBCollectorsNearRedline, "int")
+	IniReadS($g_iCmbRedlineTiles, $g_sProfileConfigPath, "search", "CmbRedlineTiles", $g_iCmbRedlineTiles, "int")
+	IniReadS($g_bSkipCollectorCheck, $g_sProfileConfigPath, "search", "SkipCollectorCheck", $g_bSkipCollectorCheck, "int")
+	IniReadS($g_iTxtSkipCollectorGold, $g_sProfileConfigPath, "search", "TxtSkipCollectorGold", $g_iTxtSkipCollectorGold, "int")
+	IniReadS($g_iTxtSkipCollectorElixir, $g_sProfileConfigPath, "search", "TxtSkipCollectorElixir", $g_iTxtSkipCollectorElixir, "int")
+	IniReadS($g_iTxtSkipCollectorDark, $g_sProfileConfigPath, "search", "TxtSkipCollectorDark", $g_iTxtSkipCollectorDark, "int")
+	IniReadS($g_bSkipCollectorCheckTH, $g_sProfileConfigPath, "search", "SkipCollectorCheckTH", $g_bSkipCollectorCheckTH, "int")
+	IniReadS($g_iCmbSkipCollectorCheckTH, $g_sProfileConfigPath, "search", "CmbSkipCollectorCheckTH", $g_iCmbSkipCollectorCheckTH, "int")
 
-	IniReadS($ichkElixirSwitchMax, $g_sProfileConfigPath, "profiles", "chkElixirSwitchMax", 0, "int")
-	IniReadS($icmbElixirMaxProfile, $g_sProfileConfigPath, "profiles", "cmbElixirMaxProfile", 0, "int")
-	IniReadS($itxtMaxElixirAmount, $g_sProfileConfigPath, "profiles", "txtMaxElixirAmount", 6000000, "int")
-	IniReadS($ichkElixirSwitchMin, $g_sProfileConfigPath, "profiles", "chkElixirSwitchMin", 0, "int")
-	IniReadS($icmbElixirMinProfile, $g_sProfileConfigPath, "profiles", "cmbElixirMinProfile", 0, "int")
-	IniReadS($itxtMinElixirAmount, $g_sProfileConfigPath, "profiles", "txtMinElixirAmount", 500000, "int")
+	; ClanHop - Team AiO MOD++
+	IniReadS($g_bChkClanHop, $g_sProfileConfigPath, "donate", "chkClanHop", $g_bChkClanHop, "Bool")
 
-	IniReadS($ichkDESwitchMax, $g_sProfileConfigPath, "profiles", "chkDESwitchMax", 0, "int")
-	IniReadS($icmbDEMaxProfile, $g_sProfileConfigPath, "profiles", "cmbDEMaxProfile", 0, "int")
-	IniReadS($itxtMaxDEAmount, $g_sProfileConfigPath, "profiles", "txtMaxDEAmount", 200000, "int")
-	IniReadS($ichkDESwitchMin, $g_sProfileConfigPath, "profiles", "chkDESwitchMin", 0, "int")
-	IniReadS($icmbDEMinProfile, $g_sProfileConfigPath, "profiles", "cmbDEMinProfile", 0, "int")
-	IniReadS($itxtMinDEAmount, $g_sProfileConfigPath, "profiles", "txtMinDEAmount", 10000, "int")
-
-	IniReadS($ichkTrophySwitchMax, $g_sProfileConfigPath, "profiles", "chkTrophySwitchMax", 0, "int")
-	IniReadS($icmbTrophyMaxProfile, $g_sProfileConfigPath, "profiles", "cmbTrophyMaxProfile", 0, "int")
-	IniReadS($itxtMaxTrophyAmount, $g_sProfileConfigPath, "profiles", "txtMaxTrophyAmount", 3000, "int")
-	IniReadS($ichkTrophySwitchMin, $g_sProfileConfigPath, "profiles", "chkTrophySwitchMin", 0, "int")
-	IniReadS($icmbTrophyMinProfile, $g_sProfileConfigPath, "profiles", "cmbTrophyMinProfile", 0, "int")
-	IniReadS($itxtMinTrophyAmount, $g_sProfileConfigPath, "profiles", "txtMinTrophyAmount", 1000, "int")
-
-	; SmartTrain
-	IniReadS($ichkSmartTrain, $g_sProfileConfigPath, "SmartTrain", "Enable", 0, "int")
-	IniReadS($ichkPreciseTroops, $g_sProfileConfigPath, "SmartTrain", "PreciseTroops", 0, "int")
-	IniReadS($ichkFillArcher, $g_sProfileConfigPath, "SmartTrain", "ChkFillArcher", 0, "int")
-	IniReadS($iFillArcher, $g_sProfileConfigPath, "SmartTrain", "FillArcher", 5, "int")
-	IniReadS($ichkFillEQ, $g_sProfileConfigPath, "SmartTrain", "FillEQ", 0, "int")
-	$g_bChkMultiClick = (IniRead($g_sProfileConfigPath, "other", "ChkMultiClick", "0") = "1")
-
-	; Bot Humanization
-	IniReadS($g_ichkUseBotHumanization, $g_sProfileConfigPath, "Bot Humanization", "chkUseBotHumanization", $g_ichkUseBotHumanization, "Int")
-	IniReadS($g_ichkUseAltRClick, $g_sProfileConfigPath, "Bot Humanization", "chkUseAltRClick", $g_ichkUseAltRClick, "Int")
-	IniReadS($g_ichkCollectAchievements, $g_sProfileConfigPath, "Bot Humanization", "chkCollectAchievements", $g_ichkCollectAchievements, "Int")
-	IniReadS($g_ichkLookAtRedNotifications, $g_sProfileConfigPath, "Bot Humanization", "chkLookAtRedNotifications", $g_ichkLookAtRedNotifications, "Int")
+	; Bot Humanization - Team AiO MOD++
+	IniReadS($g_ichkUseBotHumanization, $g_sProfileConfigPath, "Bot Humanization", "chkUseBotHumanization", $g_ichkUseBotHumanization, "int")
+	IniReadS($g_ichkUseAltRClick, $g_sProfileConfigPath, "Bot Humanization", "chkUseAltRClick", $g_ichkUseAltRClick, "int")
+	IniReadS($g_ichkCollectAchievements, $g_sProfileConfigPath, "Bot Humanization", "chkCollectAchievements", $g_ichkCollectAchievements, "int")
+	IniReadS($g_ichkLookAtRedNotifications, $g_sProfileConfigPath, "Bot Humanization", "chkLookAtRedNotifications", $g_ichkLookAtRedNotifications, "int")
 	For $i = 0 To 12
-		IniReadS($g_iacmbPriority[$i], $g_sProfileConfigPath, "Bot Humanization", "cmbPriority[" & $i & "]", $g_iacmbPriority[$i], "Int")
+		IniReadS($g_iacmbPriority[$i], $g_sProfileConfigPath, "Bot Humanization", "cmbPriority[" & $i & "]", $g_iacmbPriority[$i], "int")
 	Next
 	For $i = 0 To 1
-		IniReadS($g_iacmbMaxSpeed[$i], $g_sProfileConfigPath, "Bot Humanization", "cmbMaxSpeed[" & $i & "]", $g_iacmbMaxSpeed[$i], "Int")
+		IniReadS($g_iacmbMaxSpeed[$i], $g_sProfileConfigPath, "Bot Humanization", "cmbMaxSpeed[" & $i & "]", $g_iacmbMaxSpeed[$i], "int")
 	Next
 	For $i = 0 To 1
-		IniReadS($g_iacmbPause[$i], $g_sProfileConfigPath, "Bot Humanization", "cmbPause[" & $i & "]", $g_iacmbPause[$i], "Int")
+		IniReadS($g_iacmbPause[$i], $g_sProfileConfigPath, "Bot Humanization", "cmbPause[" & $i & "]", $g_iacmbPause[$i], "int")
 	Next
 	For $i = 0 To 1
 		IniReadS($g_iahumanMessage[$i], $g_sProfileConfigPath, "Bot Humanization", "humanMessage[" & $i & "]", $g_iahumanMessage[$i])
 	Next
-	IniReadS($g_icmbMaxActionsNumber, $g_sProfileConfigPath, "Bot Humanization", "cmbMaxActionsNumber", $g_icmbMaxActionsNumber, "Int")
+	IniReadS($g_icmbMaxActionsNumber, $g_sProfileConfigPath, "Bot Humanization", "cmbMaxActionsNumber", $g_icmbMaxActionsNumber, "int")
 	IniReadS($g_ichallengeMessage, $g_sProfileConfigPath, "Bot Humanization", "challengeMessage", $g_ichallengeMessage)
 
-	; Auto Upgrade
-	IniReadS($g_ichkAutoUpgrade, $g_sProfileConfigPath, "Auto Upgrade", "chkAutoUpgrade", $g_ichkAutoUpgrade, "Int")
-	For $i = 0 To 12
-		IniReadS($g_ichkUpgradesToIgnore[$i], $g_sProfileConfigPath, "Auto Upgrade", "chkUpgradesToIgnore[" & $i & "]", $g_ichkUpgradesToIgnore[$i], "Int")
-	Next
-	For $i = 0 To 2
-		IniReadS($g_ichkResourcesToIgnore[$i], $g_sProfileConfigPath, "Auto Upgrade", "chkResourcesToIgnore[" & $i & "]", $g_ichkResourcesToIgnore[$i], "Int")
-	Next
-	IniReadS($g_iSmartMinGold, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinGold", $g_iSmartMinGold, "Int")
-	IniReadS($g_iSmartMinElixir, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinElixir", $g_iSmartMinElixir, "Int")
-	IniReadS($g_iSmartMinDark, $g_sProfileConfigPath, "Auto Upgrade", "SmartMinDark", $g_iSmartMinDark, "Int")
-
-	; Request CC Troops at first
-	$g_bReqCCFirst = (IniRead($g_sProfileConfigPath, "planned", "ReqCCFirst", 0) = 1)
-
-	; Goblin XP
+	; Goblin XP - Team AiO MOD++
 	IniReadS($ichkEnableSuperXP, $g_sProfileConfigPath, "GoblinXP", "EnableSuperXP", 0, "int")
+	IniReadS($ichkSkipZoomOutXP, $g_sProfileConfigPath, "GoblinXP", "SkipZoomOutXP", 0, "int")
+	IniReadS($ichkFastGoblinXP, $g_sProfileConfigPath, "GoblinXP", "FastGoblinXP", 0, "int")
 	IniReadS($irbSXTraining, $g_sProfileConfigPath, "GoblinXP", "SXTraining", 1, "int")
 	IniReadS($itxtMaxXPtoGain, $g_sProfileConfigPath, "GoblinXP", "MaxXptoGain", 500, "int")
 	IniReadS($ichkSXBK, $g_sProfileConfigPath, "GoblinXP", "SXBK", $eHeroNone)
 	IniReadS($ichkSXAQ, $g_sProfileConfigPath, "GoblinXP", "SXAQ", $eHeroNone)
 	IniReadS($ichkSXGW, $g_sProfileConfigPath, "GoblinXP", "SXGW", $eHeroNone)
 
-	; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
-	$g_bChkClanHop = (IniRead($g_sProfileConfigPath, "donate", "chkClanHop", "0") = "1")
+	; GTFO - Team AiO MOD++
+	IniReadS($g_bChkUseGTFO, $g_sProfileConfigPath, "GTFO", "chkUseGTFO", $g_bChkUseGTFO, "Bool")
+	IniReadS($g_iTxtMinSaveGTFO_Elixir, $g_sProfileConfigPath, "GTFO", "txtMinSaveGTFO_Elixir", $g_iTxtMinSaveGTFO_Elixir, "Int")
+	IniReadS($g_iTxtMinSaveGTFO_DE, $g_sProfileConfigPath, "GTFO", "txtMinSaveGTFO_DE", $g_iTxtMinSaveGTFO_DE, "Int")
+	IniReadS($g_bChkUseKickOut, $g_sProfileConfigPath, "GTFO", "chkUseKickOut", $g_bChkUseKickOut, "Bool")
+	IniReadS($g_iTxtDonatedCap, $g_sProfileConfigPath, "GTFO", "txtDonatedCap", $g_iTxtDonatedCap, "Int")
+	IniReadS($g_iTxtReceivedCap, $g_sProfileConfigPath, "GTFO", "txtReceivedCap", $g_iTxtReceivedCap, "Int")
+	IniReadS($g_bChkKickOutSpammers, $g_sProfileConfigPath, "GTFO", "chkKickOutSpammers", $g_bChkKickOutSpammers, "Bool")
+	IniReadS($g_iTxtKickLimit, $g_sProfileConfigPath, "GTFO", "txtKickLimit", $g_iTxtKickLimit, "Int")
 
-	; Max logout time (mandryd)
-	IniReadS($TrainLogoutMaxTime, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTime", 0, "int")
-	IniReadS($TrainLogoutMaxTimeTXT, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTimeTXT", 4, "int")
+	; Max logout time - Team AiO MOD++
+	IniReadS($g_bTrainLogoutMaxTime, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTime", $g_bTrainLogoutMaxTime, "Bool")
+	IniReadS($g_iTrainLogoutMaxTime, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTimeTXT", $g_iTrainLogoutMaxTime, "int")
 
-EndFunc
+	; Request CC Troops at first - Team AiO MOD++
+	IniReadS($g_bReqCCFirst, $g_sProfileConfigPath, "planned", "ReqCCFirst", $g_bReqCCFirst, "Bool")
 
-; SwitchAcc (Demen) - Added By Demen
-Func ReadConfig_SwitchAcc()
-	IniReadS($ichkSwitchAcc, $profile, "SwitchAcc", "Enable", 0, "int")
-	IniReadS($ichkTrain, $profile, "SwitchAcc", "Pre-train", 0, "int")
-	IniReadS($icmbTotalCoCAcc, $profile, "SwitchAcc", "Total Coc Account", -1, "int")
-	IniReadS($ichkSmartSwitch, $profile, "SwitchAcc", "Smart Switch", 0, "int")
-	IniReadS($ichkForceSwitch, $profile, "SwitchAcc", "Force Switch", 0, "int")
-	IniReadS($iForceSwitch, $profile, "SwitchAcc", "Force Switch Search", 100, "int")
-	IniReadS($ichkForceStayDonate, $profile, "SwitchAcc", "Force Stay Donate", 0, "int")
-	IniReads($ichkCloseTraining, $profile, "SwitchAcc", "Sleep Combo", 0, "int") ; Sleep Combo, 1 = Close CoC, 2 = Close Android, 0 = No sleep
-	For $i = 0 To 7
-		IniReadS($aMatchProfileAcc[$i], $profile, "SwitchAcc", "MatchProfileAcc." & $i + 1, "-1")
-		IniReadS($aProfileType[$i], $profile, "SwitchAcc", "ProfileType." & $i + 1, "-1")
-		IniReadS($aAccPosY[$i], $profile, "SwitchAcc", "AccLocation." & $i + 1, "-1")
+	; CheckCC Troops - Team AiO MOD++
+	IniReadS($g_bChkCC, $g_sProfileConfigPath, "CheckCC", "Enable", $g_bChkCC, "Bool")
+	IniReadS($g_iCmbCastleCapacityT, $g_sProfileConfigPath, "CheckCC", "Troop Capacity", $g_iCmbCastleCapacityT, "int")
+	IniReadS($g_iCmbCastleCapacityS, $g_sProfileConfigPath, "CheckCC", "Spell Capacity", $g_iCmbCastleCapacityS, "int")
+
+	For $i = 0 To $eTroopCount - 1
+		$g_aiCCTroopsExpected[$i] = 0
+		If $i >= $eSpellCount Then ContinueLoop
+		$g_aiCCSpellsExpected[$i] = 0
 	Next
-EndFunc ;==>ReadConfig_SwitchAcc
+	$g_bChkCCTroops = False
 
-; Forecast - Added By Eloy (modification rulesss,kychera)
-Func ReadConfig_Forecast()
+	For $i = 0 To 4
+		Local $default = 19
+		If $i > 2 Then $default = 9
+		IniReadS($g_aiCmbCCSlot[$i], $g_sProfileConfigPath, "CheckCC", "ExpectSlot" & $i, $default, "int")
+		IniReadS($g_aiTxtCCSlot[$i], $g_sProfileConfigPath, "CheckCC", "ExpectQty" & $i, 0, "int")
+		If $g_aiCmbCCSlot[$i] > -1 And $g_aiCmbCCSlot[$i] < $default Then
+			Local $j = $g_aiCmbCCSlot[$i]
+			If $i <= 2 Then
+				$g_aiCCTroopsExpected[$j] += $g_aiTxtCCSlot[$i]
+			Else
+				If $j > $eSpellFreeze Then $j += 1 ; exclude Clone Spell
+				$g_aiCCSpellsExpected[$j] += $g_aiTxtCCSlot[$i]
+			EndIf
+			If $g_bChkCC Then $g_bChkCCTroops = True
+		EndIf
+	Next
 
-	IniReadS($iChkForecastBoost, $g_sProfileConfigPath, "forecast", "chkForecastBoost", 0, "Int")
-	IniReadS($iChkForecastPause, $g_sProfileConfigPath, "forecast", "chkForecastPause", 0, "Int")
-	IniReadS($iTxtForecastBoost, $g_sProfileConfigPath, "forecast", "txtForecastBoost", 6, "Int")
-	IniReadS($iTxtForecastPause, $g_sProfileConfigPath, "forecast", "txtForecastPause", 2, "Int")
-	IniReadS($ichkForecastHopingSwitchMax, $g_sProfileConfigPath, "profiles", "chkForecastHopingSwitchMax", 0, "Int")
-	IniReadS($icmbForecastHopingSwitchMax, $g_sProfileConfigPath, "profiles", "cmbForecastHopingSwitchMax", 0, "Int")
-	IniReadS($itxtForecastHopingSwitchMax, $g_sProfileConfigPath, "profiles", "txtForecastHopingSwitchMax", 2, "Int")
-	IniReadS($ichkForecastHopingSwitchMin, $g_sProfileConfigPath, "profiles", "chkForecastHopingSwitchMin", 0, "Int")
-	IniReadS($icmbForecastHopingSwitchMin, $g_sProfileConfigPath, "profiles", "cmbForecastHopingSwitchMin", 0, "Int")
-	IniReadS($itxtForecastHopingSwitchMin, $g_sProfileConfigPath, "profiles", "txtForecastHopingSwitchMin", 2, "Int")
-	IniReadS($icmbSwLang, $g_sProfileConfigPath, "Lang", "cmbSwLang", 1, "int")
+	; Check Grand Warden Mode - Team AiO MOD++
+	IniReadS($g_bCheckWardenMode, $g_sProfileConfigPath, "other", "chkCheckWardenMode", False, "Bool")
+	IniReadS($g_iCheckWardenMode, $g_sProfileConfigPath, "other", "cmbCheckWardenMode", 0, "int")
 
-EndFunc ;==>ReadConfig_Forecast
+	; Unit/Wave Factor - Team AiO MOD++
+	IniReadS($g_iChkGiantSlot, $g_sProfileConfigPath, "SetSleep", "EnableGiantSlot", $g_iChkGiantSlot, "int")
+	IniReadS($g_iCmbGiantSlot, $g_sProfileConfigPath, "SetSleep", "CmbGiantSlot", $g_iCmbGiantSlot ,"int")
+	IniReadS($g_iChkUnitFactor, $g_sProfileConfigPath, "SetSleep", "EnableUnitFactor", $g_iChkUnitFactor, "int")
+	IniReadS($g_iTxtUnitFactor, $g_sProfileConfigPath, "SetSleep", "UnitFactor", $g_iTxtUnitFactor, "int")
+	IniReadS($g_iChkWaveFactor, $g_sProfileConfigPath, "SetSleep", "EnableWaveFactor", $g_iChkWaveFactor, "int")
+	IniReadS($g_iTxtWaveFactor, $g_sProfileConfigPath, "SetSleep", "WaveFactor", $g_iTxtWaveFactor, "int")
+
+	; Restart Search Legend league - Team AiO MOD++
+	IniReadS($g_bIsSearchTimeout, $g_sProfileConfigPath, "other", "ChkSearchTimeout", $g_bIsSearchTimeout, "Bool")
+	IniReadS($g_iSearchTimeout, $g_sProfileConfigPath, "other", "SearchTimeout", $g_iSearchTimeout, "int")
+
+	; Stop on Low battery - Team AiO MOD++
+	IniReadS($g_bStopOnBatt, $g_sProfileConfigPath, "other", "ChkStopOnBatt", $g_bStopOnBatt, "Bool")
+	IniReadS($g_iSearchTimeout, $g_sProfileConfigPath, "other", "StopOnBatt", $g_iStopOnBatt, "int")
+
+	; Attack Log - Team AiO MOD++
+	IniReadS($g_bColorfulAttackLog, $g_sProfileConfigPath, "attack", "ColorfulAttackLog", False, "Bool")
+
+EndFunc   ;==>ReadConfig_MOD

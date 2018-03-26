@@ -1,0 +1,34 @@
+﻿           _____ ___   _   __  __       _   _  ___
+          |_   _| __| /_\ |  \/  |     /_\ | |/ _ \
+            | | | _| / _ \| |\/| |    / _ \| | (_) |
+            |_| |___/_/ \_\_|  |_|   /_/ \_\_|\___/
+
+                    Based on MyBot.run v7.4
+      ___         ____                              ___    ___
+     /   \    __ / __ \      _        _            |__ |  / _ \ 
+    /  _  \  |  | |  | |  __| |__  __| |__    __   __| | | (_) |
+   /  / \  \ |  | |  | | |__   __||__   __|   \ \ / /| | |  _  |
+  /  /___\  \|  | |__| |    |_|      |_|       \ V / | |_| (_) |
+ /__/     \__\__|\____/                         \_/  |_(_)\___/
+                                                                
+                                                                                                                       
+	- Add CSV 'REMAIN', '%', 'Sleep Before' cmd for CSV Attack
+	- Add Attack now button
+	- Add CSV Deploy Speed
+	- Add Check Collector Outside
+	- Add Clan Hop feature
+	- Add Bot Humanization feature
+	- Add Goblin XP feature
+	- Add GTFO feature
+	- Add Max logout time option
+	- Add Request CC Troops at first
+	- Add CheckCC Troops feature
+	- Add Check Grand Warden mode feature
+	- Add Smart Train feature
+	- Add Classic Four Finger
+	- Add Auto Dock, Hide Emulator & Bot
+	- Add Restart Search Legend league
+	- Add Drop Trophy with a Balloon
+	- Add Stop on Low battery
+	- Add Colorful Attack Log
+	- Add Enable/Disable GUI while botting

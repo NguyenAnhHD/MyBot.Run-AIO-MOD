@@ -1,6 +1,6 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Pico Bot Humanization
-; Description ...: This file contains all functions of Pico Bot Humanization feature
+; Name ..........: Bot Humanization
+; Description ...: This file contains all functions of Bot Humanization feature
 ; Syntax ........: ---
 ; Parameters ....: ---
 ; Return values .: ---
@@ -66,20 +66,12 @@ Func GemClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 
 EndFunc   ;==>GemClick
 
-Func randomSleep($SleepTime, $Range = 0)
-	If $g_bRunState = False Then Return
-	If $Range = 0 Then $Range = Round($SleepTime / 5)
-	Local $SleepTimeF = Random($SleepTime - $Range, $SleepTime + $Range, 1)
-	If $g_iDebugClick = 1 Then Setlog("Default sleep : " & $SleepTime & " - Random sleep : " & $SleepTimeF, $COLOR_ORANGE)
-	If _Sleep($SleepTimeF) Then Return
-EndFunc   ;==>randomSleep
-
 ; ================================================== HUMAN FUNCTIONS PART ================================================== ;
 
 Func BotHumanization()
 	If $g_ichkUseBotHumanization = 1 Then
 		Local $NoActionsToDo = 0
-		SetLog("Now, let the AIO++ Team make your BOT more human ... :)", $COLOR_SUCCESS1)
+		SetLog("Now, let the AiO++ Team make your BOT more human ... :)", $COLOR_SUCCESS1)
 
 		If $g_ichkLookAtRedNotifications = 1 Then LookAtRedNotifications()
 		If $g_ichkCollectAchievements = 1 Then CollectAchievements()
@@ -92,7 +84,7 @@ Func BotHumanization()
 
 		If $NoActionsToDo <> 13 Then
 			$g_iMaxActionsNumber = Random(1, _GUICtrlComboBox_GetCurSel($g_cmbMaxActionsNumber) + 1, 1)
-			SetLog("AIO++ will do " & $g_iMaxActionsNumber & " human actions during this loop...", $COLOR_INFO)
+			SetLog("AiO++ will do " & $g_iMaxActionsNumber & " human actions during this loop...", $COLOR_INFO)
 			For $i = 1 To $g_iMaxActionsNumber
 				randomSleep(4000)
 				ReturnAtHome()
@@ -112,43 +104,43 @@ Func RandomHumanAction()
 	$g_iActionToDo = _ArrayMaxIndex($g_aSetActionPriority)
 	Switch $g_iActionToDo
 		Case 0
-			SetLog("The spirit of AIO++ chose to read Clan Chat... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to read Clan Chat... Let's go !!! :)", $COLOR_INFO)
 			ReadClanChat()
 		Case 1
-			SetLog("The spirit of AIO++ chose to read Global Chat... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to read Global Chat... Let's go !!! :)", $COLOR_INFO)
 			ReadGlobalChat()
 		Case 2
-			SetLog("The spirit of AIO++ chose to talk with your Clan... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to talk with your Clan... Let's go !!! :)", $COLOR_INFO)
 			SaySomeChat()
 		Case 3
-			SetLog("The spirit of AIO++ chose to Watch a Defense... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to Watch a Defense... Let's go !!! :)", $COLOR_INFO)
 			WatchDefense()
 		Case 4
-			SetLog("The spirit of AIO++ chose to Watch an Attack... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to Watch an Attack... Let's go !!! :)", $COLOR_INFO)
 			WatchAttack()
 		Case 5
-			SetLog("The spirit of AIO++ chose to Look at War Log... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to Look at War Log... Let's go !!! :)", $COLOR_INFO)
 			LookAtWarLog()
 		Case 6
-			SetLog("The spirit of AIO++ chose to Visit Clanmates... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to Visit Clanmates... Let's go !!! :)", $COLOR_INFO)
 			VisitClanmates()
 		Case 7
-			SetLog("The spirit of AIO++ chose to Visit Best Players... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to Visit Best Players... Let's go !!! :)", $COLOR_INFO)
 			VisitBestPlayers()
 		Case 8
-			SetLog("The spirit of AIO++ chose to Look at Best Clans... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to Look at Best Clans... Let's go !!! :)", $COLOR_INFO)
 			LookAtBestClans()
 		Case 9
-			SetLog("The spirit of AIO++ chose to Look at Current War... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to Look at Current War... Let's go !!! :)", $COLOR_INFO)
 			LookAtCurrentWar()
 		Case 10
-			SetLog("The spirit of AIO++ chose to Watch War replays... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to Watch War replays... Let's go !!! :)", $COLOR_INFO)
 			WatchWarReplays()
 		Case 11
-			SetLog("The spirit of AIO++ chose to do nothing... Stupid BOT... :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to do nothing... Stupid BOT... :)", $COLOR_INFO)
 			DoNothing()
 		Case 12
-			SetLog("The spirit of AIO++ chose to launch Challenges... Let's go !!! :)", $COLOR_INFO)
+			SetLog("The spirit of AiO++ chose to launch Challenges... Let's go !!! :)", $COLOR_INFO)
 			LaunchChallenges()
 	EndSwitch
 EndFunc   ;==>RandomHumanAction
@@ -592,12 +584,12 @@ Func IsTextBox()
 EndFunc   ;==>IsTextBox
 
 Func IsChallengeWindow()
-	Local $Result = _ColorCheck(_GetPixelColor(698, 56, True), "FFFFFF", 20)
+	Local $Result = _ColorCheck(_GetPixelColor(698, 156, True), "FFFFFF", 20)
 	Return $Result
 EndFunc   ;==>IsChallengeWindow
 
 Func IsChangeLayoutMenu()
-	Local $Result = _ColorCheck(_GetPixelColor(184, 58, True), "FFFFFF", 20)
+	Local $Result = _ColorCheck(_GetPixelColor(184, 158, True), "FFFFFF", 20)
 	Return $Result
 EndFunc   ;==>IsChangeLayoutMenu
 

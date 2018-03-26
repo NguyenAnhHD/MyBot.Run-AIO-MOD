@@ -5,26 +5,32 @@
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: Mr.Viper
-; Modified ......: Team AiO MOD++ (2017)
+; Modified ......: Team AiO MOD++ (2018)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
+#include-once
 
-Global $grpSuperXP = 0 , $chkEnableSuperXP = 0 , $rbSXTraining = 0 , $lblLOCKEDSX = 0 , $rbSXIAttacking = 0 , $txtMaxXPtoGain = 0
-Global $chkSXBK = 0 , $chkSXAQ = 0 , $chkSXGW = 0
-Global $DocXP1 = 0 , $DocXP2 = 0 , $DocXP3 = 0 ,$DocXP4 = 0
-Global $lblXPatStart = 0 , $lblXPCurrent = 0 , $lblXPSXWon = 0 , $lblXPSXWonHour = 0
+Global $grpSuperXP = 0, $chkEnableSuperXP = 0, $chkSkipZoomOutXP = 0, $chkFastGoblinXP = 0, $rbSXTraining = 0, $lblLOCKEDSX = 0, $rbSXIAttacking = 0, $txtMaxXPtoGain = 0
+Global $chkSXBK = 0, $chkSXAQ = 0, $chkSXGW = 0
+Global $DocXP1 = 0, $DocXP2 = 0, $DocXP3 = 0, $DocXP4 = 0
+Global $lblXPatStart = 0, $lblXPCurrent = 0, $lblXPSXWon = 0, $lblXPSXWonHour = 0
 
 Func GoblinXPGUI()
 
-	Local $x = 25, $y = 50, $xStart = 25, $yStart = 50
-
-	$grpSuperXP = GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - GoblinXP", "Group_01", "Goblin XP"), $x - 20, $y - 20, 440, 340)
+	Local $x = 25, $y = 45, $xStart = 25, $yStart = 45
+	$grpSuperXP = GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - GoblinXP", "Group_01", "Goblin XP"), $x - 20, $y - 20, $g_iSizeWGrpTab2, $g_iSizeHGrpTab3)
 		$chkEnableSuperXP = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - GoblinXP", "chkEnableSuperXP", "Enable Goblin XP"), $x, $y - 1, 102, 17, -1, -1)
 		GUICtrlSetOnEvent(-1, "chkEnableSuperXP")
+			$chkSkipZoomOutXP = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - GoblinXP", "chkSkipZoomOutXP", "Skip ZoomOut"), $x + 130, $y - 3, -1, -1)
+			GUICtrlSetState(-1, $GUI_UNCHECKED)
+			GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
+			$chkFastGoblinXP = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - GoblinXP", "chkFastGoblinXP", "Fast GoblinXP"), $x + 240, $y - 3, -1, -1)
+			GUICtrlSetState(-1, $GUI_UNCHECKED)
+			GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")
 			$rbSXTraining = GUICtrlCreateRadio(GetTranslatedFileIni("MOD GUI Design - GoblinXP", "rbSXTraining", "Farm XP during troops Training"), $x, $y + 25, 175, 17)
 			GUICtrlSetState(-1, $GUI_CHECKED)
 			GUICtrlSetOnEvent(-1, "chkEnableSuperXP2")

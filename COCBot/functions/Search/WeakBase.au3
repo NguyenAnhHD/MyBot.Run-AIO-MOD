@@ -6,7 +6,7 @@
 ; Return values .:
 ; Author ........: LunaEclipse(April 2016)
 ; Modified ......: MonkeyHunter (04-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -15,7 +15,7 @@
 
 Func createWeakBaseStats()
 	; Get the directory file contents as keys for the stats file
-	Local $aKeys = _FileListToArrayRec(@ScriptDir & "\imgxml\Buildings", "*.xml", $FLTAR_FILES, $FLTAR_RECUR, $FLTAR_SORT, $FLTAR_NOPATH)
+	Local $aKeys = _FileListToArrayRec($g_sImgWeakBaseBuildingsDir, "*.xml", $FLTAR_FILES, $FLTAR_RECUR, $FLTAR_SORT, $FLTAR_NOPATH)
 	; Create our return array
 	Local $return[UBound($aKeys) - 1][2]
 
@@ -37,7 +37,7 @@ EndFunc   ;==>createWeakBaseStats
 
 Func readWeakBaseStats()
 	; Get the directory file contents as keys for the stats file
-	Local $aKeys = _FileListToArrayRec(@ScriptDir & "\imgxml\Buildings", "*.xml", $FLTAR_FILES, $FLTAR_RECUR, $FLTAR_SORT, $FLTAR_NOPATH)
+	Local $aKeys = _FileListToArrayRec($g_sImgWeakBaseBuildingsDir, "*.xml", $FLTAR_FILES, $FLTAR_RECUR, $FLTAR_SORT, $FLTAR_NOPATH)
 	; Create our return array
 	Local $return[UBound($aKeys) - 1][2]
 
@@ -117,7 +117,7 @@ Func getMaxUISetting($settingArray, $iDefenseType)
 		$result = _Max(Number($maxDB), Number($maxLB))
 	EndIf
 
-	If $g_iDebugSetlog = 1 Then SetLog("Max " & $g_aWeakDefenseNames[$iDefenseType] & " Level: " & $result, $COLOR_INFO)
+	If $g_bDebugSetlog Then SetDebugLog("Max " & $g_aWeakDefenseNames[$iDefenseType] & " Level: " & $result, $COLOR_INFO)
 	Return $result
 EndFunc   ;==>getMaxUISetting
 
@@ -135,7 +135,7 @@ Func getMinUISetting($settingArray, $iDefenseType)
 		$result = _Min(Number($minDB), Number($minLB))
 	EndIf
 
-	If $g_iDebugSetlog = 1 Then SetLog("Min " & $g_aWeakDefenseNames[$iDefenseType] & " Level: " & $result, $COLOR_INFO)
+	If $g_bDebugSetlog Then SetDebugLog("Min " & $g_aWeakDefenseNames[$iDefenseType] & " Level: " & $result, $COLOR_INFO)
 	Return $result
 EndFunc   ;==>getMinUISetting
 
@@ -144,17 +144,30 @@ Func getIsWeak($aResults, $searchType)
 			And $aResults[$eWeakInferno][2] <= Number($g_aiFilterMaxInfernoLevel[$searchType]) _
 			And $aResults[$eWeakXBow][2] <= Number($g_aiFilterMaxXBowLevel[$searchType]) _
 			And $aResults[$eWeakWizard][2] <= Number($g_aiFilterMaxWizTowerLevel[$searchType]) _
-			And $aResults[$eWeakMortar][2] <= Number($g_aiFilterMaxMortarLevel[$searchType])
+			And $aResults[$eWeakMortar][2] <= Number($g_aiFilterMaxMortarLevel[$searchType]) _
+			And $aResults[$eWeakAirDefense][2] <= Number($g_aiFilterMaxAirDefenseLevel[$searchType])
+
+	Local $text = "DB"
+	If $searchType = 1 Then $text = "LB"
+	SetLog("================ Weak Base Detection Start ================")
+	If $g_abFilterMaxEagleEnable[$searchType] Then SetLog("[" & $text & "] Eagle level " & $g_aiFilterMaxEagleLevel[$searchType] & " as max, detection higher level : " & $aResults[$eWeakEagle][2], $COLOR_DEBUG)
+	If $g_abFilterMaxInfernoEnable[$searchType] Then SetLog("[" & $text & "] Inferno level " & $g_aiFilterMaxInfernoLevel[$searchType] & " as max, detection higher level: " & $aResults[$eWeakInferno][2], $COLOR_DEBUG)
+	If $g_abFilterMaxXBowEnable[$searchType] Then SetLog("[" & $text & "] XBow level " & $g_aiFilterMaxXBowLevel[$searchType] & " as max, detection higher level: " & $aResults[$eWeakXBow][2], $COLOR_DEBUG)
+	If $g_abFilterMaxWizTowerEnable[$searchType] Then SetLog("[" & $text & "] WTower level " & $g_aiFilterMaxWizTowerLevel[$searchType] & " as max, detection higher level: " & $aResults[$eWeakWizard][2], $COLOR_DEBUG)
+	If $g_abFilterMaxMortarEnable[$searchType] Then SetLog("[ " & $text & "] Mortar level " & $g_aiFilterMaxMortarLevel[$searchType] & " as max, detection higher level: " & $aResults[$eWeakMortar][2], $COLOR_DEBUG)
+	If $g_abFilterMaxAirDefenseEnable[$searchType] Then SetLog("[" & $text & "] AirDef level " & $g_aiFilterMaxAirDefenseLevel[$searchType] & " as max, detection higher level: " & $aResults[$eWeakAirDefense][2], $COLOR_DEBUG)
+	SetLog("Is a Weak Base? " & $aResults)
+	SetLog("================ Weak Base Detection Stop =================")
+	Return $aResults
+
 EndFunc   ;==>getIsWeak
 
 Func IsWeakBaseActive($type)
 	Return ($g_abFilterMaxEagleEnable[$type] Or $g_abFilterMaxInfernoEnable[$type] Or $g_abFilterMaxXBowEnable[$type] Or $g_abFilterMaxWizTowerEnable[$type] Or _
-			$g_abFilterMaxMortarEnable[$type] Or $g_abFilterMaxAirDefenseEnable[$type]) And IsSearchModeActive($type, False, True)
+			$g_abFilterMaxMortarEnable[$type] Or $g_abFilterMaxAirDefenseEnable[$type]) And IsSearchModeActiveMini($type)
 EndFunc   ;==>IsWeakBaseActive
 
 Func defenseSearch(ByRef $aResult, $directory, $townHallLevel, $settingArray, $iDefenseType, ByRef $performSearch, $guiEnabledArray, $bForceCaptureRegion = True)
-
-	; defenseSearch($aResult, @ScriptDir & "\imgxml\Buildings\Eagle", $townHallLevel, $g_aiFilterMaxEagleLevel, $eWeakEagle, $performSearch, $g_abFilterMaxEagleEnable, $bForceCaptureRegion)
 
 	; Setup default return coords of 0,0
 	Local $defaultCoords[1][2] = [[0, 0]]
@@ -164,31 +177,39 @@ Func defenseSearch(ByRef $aResult, $directory, $townHallLevel, $settingArray, $i
 	; Results when search is not necessary because of levels
 	Local $aNotNecessary[7] = ["None", "None", 0, 0, 0, $defaultCoords, ""]
 
-	; Setup search limitations
-	Local $minSearchLevel = getMinUISetting($settingArray, $iDefenseType) + 1 ; stores lowest defense bldg level specified in all active attack modes for max buiding level in GUI
-	Local $maxSearchLevel = getTHDefenseMax($townHallLevel, $iDefenseType) ; store the maximum defense building level possible based on TH level being attacked
-	Local $guiCheckDefense = IsArray($guiEnabledArray) And ((IsSearchModeActive($DB, False, True) And $guiEnabledArray[$DB]) Or (IsSearchModeActive($LB, False, True) And $guiEnabledArray[$LB]))
-
 	; Only do the search if its required
 	If $performSearch Then
+		; Setup search limitations
+		Local $minSearchLevel = getMinUISetting($settingArray, $iDefenseType) + 1 ; stores lowest defense bldg level specified in all active attack modes for max buiding level in GUI
+		Local $maxSearchLevel = getTHDefenseMax($townHallLevel, $iDefenseType) ; store the maximum defense building level possible based on TH level being attacked
+		Local $bGuiEnableArray = IsArray($guiEnabledArray), $bIsSearchModeActiveDB = IsSearchModeActiveMini($DB), $bIsSearchModeActiveLB = IsSearchModeActiveMini($LB)
+		Local $guiCheckDefense = $bGuiEnableArray And (($bIsSearchModeActiveDB And $guiEnabledArray[$DB]) Or ($bIsSearchModeActiveLB And $guiEnabledArray[$LB]))
+
 		; Start the timer for individual defense searches
 		Local $defenseTimer = __TimerInit()
 
 		If $guiCheckDefense And $maxSearchLevel >= $minSearchLevel Then
 			; Check the defense.
 			Local $sDefenseName = StringSplit($directory, "\", $STR_NOCOUNT)
-			If $g_iDebugSetlog Then SetLog("checkDefense :" & $sDefenseName[UBound($sDefenseName) - 1] & " > " & $minSearchLevel & " < " & $maxSearchLevel & " For TH:" & $townHallLevel, $COLOR_ORANGE)
+			If $g_bDebugSetlog Then SetDebugLog("checkDefense :" & $sDefenseName[UBound($sDefenseName) - 1] & " > " & $minSearchLevel & " < " & $maxSearchLevel & " For TH:" & $townHallLevel, $COLOR_ORANGE)
 			$aDefenseResult = DefenseSearchMultiMatch($iDefenseType, $directory, $aResult[0][0], $g_sProfileBuildingStatsPath, $minSearchLevel, $maxSearchLevel, $bForceCaptureRegion)
 			; Store the redlines retrieved for use in the later searches, if you don't currently have redlines saved.
 			If $aResult[0][0] = "" Then $aResult[0][0] = $aDefenseResult[6]
 			; Check to see if further searches are required, $performSearch is passed ByRef, so this will update the value in the calling function
 			If Number($aDefenseResult[2]) > getMaxUISetting($settingArray, $iDefenseType) Then $performSearch = False
-			If $g_iDebugSetlog = 1 Then SetLog("checkDefense: " & $g_aWeakDefenseNames[$iDefenseType] & " - " & Round(__TimerDiff($defenseTimer) / 1000, 2) & " seconds")
+			If $g_bDebugSetlog Then
+				SetDebugLog("checkDefense: " & $g_aWeakDefenseNames[$iDefenseType] & " - " & Round(__TimerDiff($defenseTimer) / 1000, 2) & " seconds")
+				For $i = 0 To UBound($aDefenseResult) - 2
+					SetDebugLog("$aDefenseResult[" & $i & "]: " & $aDefenseResult[$i])
+				Next
+			EndIf
 		Else
 			$aDefenseResult = $aNotNecessary
-			If $g_iDebugSetlog = 1 Then SetLog("checkDefense: " & $g_aWeakDefenseNames[$iDefenseType] & " not necessary!")
+			If $g_bDebugSetlog Then SetDebugLog("checkDefense: " & $g_aWeakDefenseNames[$iDefenseType] & " not necessary! $bGuiEnableArray=" & $bGuiEnableArray & ", $bIsSearchModeActiveDB=" & $bIsSearchModeActiveDB & ", $bIsSearchModeActiveLB=" & $bIsSearchModeActiveLB & ", $maxSearchLevel=" & $maxSearchLevel & ", $minSearchLevel=" & $minSearchLevel)
 		EndIf
 	EndIf
+
+
 
 	Return $aDefenseResult
 EndFunc   ;==>defenseSearch
@@ -213,16 +234,16 @@ Func weakBaseCheck($townHallLevel = 11, $redlines = "", $bForceCaptureRegion = T
 	Local $hWeakTimer = __TimerInit()
 
 	; Check Eagle Artillery first as there is less images to process, mortars may not be needed.
-	$aEagleResults = defenseSearch($aResult, @ScriptDir & "\imgxml\Buildings\Eagle", $townHallLevel, $g_aiFilterMaxEagleLevel, $eWeakEagle, $performSearch, $g_abFilterMaxEagleEnable, $bForceCaptureRegion)
-	$aInfernoResults = defenseSearch($aResult, @ScriptDir & "\imgxml\Buildings\Infernos", $townHallLevel, $g_aiFilterMaxInfernoLevel, $eWeakInferno, $performSearch, $g_abFilterMaxInfernoEnable, $bForceCaptureRegion)
-	$aXBowResults = defenseSearch($aResult, @ScriptDir & "\imgxml\Buildings\Xbow", $townHallLevel, $g_aiFilterMaxXBowLevel, $eWeakXBow, $performSearch, $g_abFilterMaxXBowEnable, $bForceCaptureRegion)
+	$aEagleResults = defenseSearch($aResult, $g_sImgWeakBaseBuildingsEagleDir, $townHallLevel, $g_aiFilterMaxEagleLevel, $eWeakEagle, $performSearch, $g_abFilterMaxEagleEnable, $bForceCaptureRegion)
+	$aInfernoResults = defenseSearch($aResult, $g_sImgWeakBaseBuildingsInfernoDir, $townHallLevel, $g_aiFilterMaxInfernoLevel, $eWeakInferno, $performSearch, $g_abFilterMaxInfernoEnable, $bForceCaptureRegion)
+	$aXBowResults = defenseSearch($aResult, $g_sImgWeakBaseBuildingsXbowDir, $townHallLevel, $g_aiFilterMaxXBowLevel, $eWeakXBow, $performSearch, $g_abFilterMaxXBowEnable, $bForceCaptureRegion)
 	If $g_iDetectedImageType = 1 Then
-		$aWizardTowerResults = defenseSearch($aResult, @ScriptDir & "\imgxml\Buildings\WTower_Snow", $townHallLevel, $g_aiFilterMaxWizTowerLevel, $eWeakWizard, $performSearch, $g_abFilterMaxWizTowerEnable, $bForceCaptureRegion)
+		$aWizardTowerResults = defenseSearch($aResult, $g_sImgWeakBaseBuildingsWizTowerSnowDir, $townHallLevel, $g_aiFilterMaxWizTowerLevel, $eWeakWizard, $performSearch, $g_abFilterMaxWizTowerEnable, $bForceCaptureRegion)
 	Else
-		$aWizardTowerResults = defenseSearch($aResult, @ScriptDir & "\imgxml\Buildings\WTower", $townHallLevel, $g_aiFilterMaxWizTowerLevel, $eWeakWizard, $performSearch, $g_abFilterMaxWizTowerEnable, $bForceCaptureRegion)
+		$aWizardTowerResults = defenseSearch($aResult, $g_sImgWeakBaseBuildingsWizTowerDir, $townHallLevel, $g_aiFilterMaxWizTowerLevel, $eWeakWizard, $performSearch, $g_abFilterMaxWizTowerEnable, $bForceCaptureRegion)
 	EndIf
-	$aMortarResults = defenseSearch($aResult, @ScriptDir & "\imgxml\Buildings\Mortars", $townHallLevel, $g_aiFilterMaxMortarLevel, $eWeakMortar, $performSearch, $g_abFilterMaxMortarEnable, $bForceCaptureRegion)
-	$aAirDefenseResults = defenseSearch($aResult, @ScriptDir & "\imgxml\Buildings\ADefense", $townHallLevel, $g_aiFilterMaxAirDefenseLevel, $eWeakAirDefense, $performSearch, $g_abFilterMaxAirDefenseEnable, $bForceCaptureRegion)
+	$aMortarResults = defenseSearch($aResult, $g_sImgWeakBaseBuildingsMortarsDir, $townHallLevel, $g_aiFilterMaxMortarLevel, $eWeakMortar, $performSearch, $g_abFilterMaxMortarEnable, $bForceCaptureRegion)
+	$aAirDefenseResults = defenseSearch($aResult, $g_sImgWeakBaseBuildingsAirDefenseDir, $townHallLevel, $g_aiFilterMaxAirDefenseLevel, $eWeakAirDefense, $performSearch, $g_abFilterMaxAirDefenseEnable, $bForceCaptureRegion)
 
 	; Fill the array that will be returned with the various results, only store the results if its a valid array
 	For $i = 1 To UBound($aResult) - 1
@@ -259,38 +280,38 @@ Func IsWeakBase($townHallLevel = 11, $redlines = "", $bForceCaptureRegion = True
 	; Forces the display of the various statistical displays, if set to true
 	; displayWeakBaseLog($aResult, true)
 	; Displays the various statistical displays, if debug logging is enabled
-	displayWeakBaseLog($aResult, $g_iDebugSetlog = 1)
+	displayWeakBaseLog($aResult, $g_bDebugSetlog)
 
-	If $g_iDebugSetlog = 1 Then
+	If $g_bDebugSetlog Then
 		_LogObjList($g_oBldgAttackInfo) ; raw debug only!
 		Local $text = _ArrayToString($aResult, ",", 0, UBound($aResult, 1) - 1, "|", 0, UBound($aResult, 2) - 1)
-		If @error Then Setlog("Error _ArrayToString, code:" & @error, $COLOR_ERROR)
-		Setlog("$aResult Array: " & $text, $COLOR_DEBUG)
+		If @error Then SetDebugLog("Error _ArrayToString, code:" & @error, $COLOR_ERROR)
+		SetDebugLog("$aResult Array: " & $text, $COLOR_DEBUG)
 	EndIf
 
 	; Take Debug Pictures
 	If Number($aResult[0][2]) > 10 Then
 		; Search took longer than 10 seconds so take a debug picture no matter what the debug option is
 		captureDebugImage($aResult, "WeakBase_Detection_TooSlow")
-	ElseIf $g_iDebugImageSave = 1 And Number($aResult[1][4]) = 0 Then
+	ElseIf $g_bDebugImageSave And Number($aResult[1][4]) = 0 Then
 		; Eagle Artillery not detected, so lets log the picture for manual inspection
 		captureDebugImage($aResult, "WeakBase_Detection_Eagle_NotDetected")
-	ElseIf $g_iDebugImageSave = 1 And Number($aResult[2][4]) = 0 Then
+	ElseIf $g_bDebugImageSave And Number($aResult[2][4]) = 0 Then
 		; Inferno Towers not detected, so lets log the picture for manual inspection
 		captureDebugImage($aResult, "WeakBase_Detection_Inferno_NotDetected")
-	ElseIf $g_iDebugImageSave = 1 And Number($aResult[3][4]) = 0 Then
+	ElseIf $g_bDebugImageSave And Number($aResult[3][4]) = 0 Then
 		; X-bows not detected, so lets log the picture for manual inspection
 		captureDebugImage($aResult, "WeakBase_Detection_Xbow_NotDetected")
-	ElseIf $g_iDebugImageSave = 1 And Number($aResult[4][4]) = 0 Then
+	ElseIf $g_bDebugImageSave And Number($aResult[4][4]) = 0 Then
 		; Wizard Towers not detected, so lets log the picture for manual inspection
 		captureDebugImage($aResult, "WeakBase_Detection_WTower_NotDetected")
-	ElseIf $g_iDebugImageSave = 1 And Number($aResult[5][4]) = 0 Then
+	ElseIf $g_bDebugImageSave And Number($aResult[5][4]) = 0 Then
 		; Mortars not detected, so lets log the picture for manual inspection
 		captureDebugImage($aResult, "WeakBase_Detection_Mortar_NotDetected")
-	ElseIf $g_iDebugImageSave = 1 And Number($aResult[6][4]) = 0 Then
+	ElseIf $g_bDebugImageSave And Number($aResult[6][4]) = 0 Then
 		; Air Defenses not detected, so lets log the picture for manual inspection
 		captureDebugImage($aResult, "WeakBase_Detection_ADefense_NotDetected")
-	ElseIf $g_iDebugImageSave = 1 Then
+	ElseIf $g_bDebugImageSave Then
 		; Debug option is set, so take a debug picture
 		captureDebugImage($aResult, "WeakBase_Detection")
 	EndIf
@@ -314,7 +335,7 @@ EndFunc   ;==>IsWeakBase
 ; Return values .: 1D array with highest level matched data found
 ; Author ........: MonkeyHunter (04-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -322,7 +343,7 @@ EndFunc   ;==>IsWeakBase
 ; ===============================================================================================================================
 Func DefenseSearchMultiMatch($iDefenseType, $directory, $redlines = "DCD", $statFile = "", $minLevel = 0, $maxLevel = 100, $bForceCaptureRegion = True)
 
-	If $g_iDebugSetlog = 1 Then Setlog("Begin DefenseSearchMultiMatch: " & $g_sBldgNames[$iDefenseType + 7], $COLOR_DEBUG1)
+	If $g_bDebugSetlog Then SetDebugLog("Begin DefenseSearchMultiMatch: " & $g_sBldgNames[$iDefenseType + 7], $COLOR_DEBUG1)
 
 	Local $hTimer = __TimerInit() ; begin local timer
 
@@ -343,11 +364,14 @@ Func DefenseSearchMultiMatch($iDefenseType, $directory, $redlines = "DCD", $stat
 	; Set search area to be inside dark green border
 	Local $fullCocAreas = "DCD"
 	; Set max buidling level to search, except if using scripted CSV attack, then override max level
+	#cs Not required!
 	If isScriptedAttackActive() Then
 		$maxLevelSearch = 100
 	Else
 		$maxLevelSearch = $maxLevel
 	EndIf
+	#ce
+	$maxLevelSearch = $maxLevel
 
 	; verify if red line data exists in dictionary, or was passed as parameter, to set flag for later retrevial of red line data and storage if needed.
 	If $redlines = "" Or $redlines = "DCD" Then
@@ -357,11 +381,9 @@ Func DefenseSearchMultiMatch($iDefenseType, $directory, $redlines = "DCD", $stat
 				If IsString($redlines) And $redlines <> "" And $redlines <> "DCD" Then ; error check for null red line data in dictionary
 					$bRedLineExists = True
 				Else
-					$redlines = "DCD"
 					$bRedLineExists = False
 				EndIf
 			Else ; if less than 25 redline stored, then try again.
-				$redlines = "DCD"
 				$bRedLineExists = False
 			EndIf
 		Else
@@ -384,23 +406,26 @@ Func DefenseSearchMultiMatch($iDefenseType, $directory, $redlines = "DCD", $stat
 			EndIf
 		EndIf
 	Else ; almost impossible....
-		$redlines = "DCD"
 		$bRedLineExists = False
 	EndIf
 
-	If $g_iDebugSetlog = 1 Then
-		SetLog("> " & $g_sBldgNames[$iDefenseType + 7] & " Max Level: " & $maxLevelSearch, $COLOR_DEBUG)
-		Setlog("> Max return points: " & $maxReturnPoints, $COLOR_DEBUG)
-		SetLog("> Red Line Exists:" & $bRedLineExists & " , redlines=" & $redlines, $COLOR_DEBUG)
+	If $bRedLineExists = False Then
+		$redlines = "DCD"
 	EndIf
-	If _Sleep($DELAYCHECKARMYCAMP6) Then Return ; 10ms improve pause button response
+
+	If $g_bDebugSetlog Then
+		SetDebugLog("> " & $g_sBldgNames[$iDefenseType + 7] & " Max Level: " & $maxLevel & " Max Search Level: " & $maxLevelSearch, $COLOR_DEBUG)
+		SetDebugLog("> Max return points: " & $maxReturnPoints, $COLOR_DEBUG)
+		SetDebugLog("> Red Line Exists:" & $bRedLineExists & " , redlines=" & $redlines, $COLOR_DEBUG)
+	EndIf
+	If _Sleep($DELAYCHECKARMYCAMP6) Then Return $return; 10ms improve pause button response
 
 	; Capture the screen
 	If $bForceCaptureRegion = True Then _CaptureRegion2()
 
 	; Perform the search
-	Local $res = DllCall($g_hLibImgLoc, "str", "SearchMultipleTilesBetweenLevels", "handle", $g_hHBitmap2, "str", $directory, "str", $fullCocAreas, "Int", $maxReturnPoints, "str", $redlines, "Int", $minLevel, "Int", $maxLevelSearch)
-	If @error Then _logErrorDLLCall($g_sLibImgLocPath, @error)
+	Local $res = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $g_hHBitmap2, "str", $directory, "str", $fullCocAreas, "Int", $maxReturnPoints, "str", $redlines, "Int", $minLevel, "Int", $maxLevelSearch)
+	If @error Then _logErrorDLLCall($g_sLibMyBotPath, @error)
 
 	; Get the redline data if needed
 	If $bRedLineExists = False Then ; if already exists, then skip saving again.
@@ -419,7 +444,7 @@ Func DefenseSearchMultiMatch($iDefenseType, $directory, $redlines = "DCD", $stat
 				Setdebuglog("> Not enough red line points to save in building dictionary?", $COLOR_WARNING)
 			EndIf
 		Else
-			Setlog("> DLL Error getting Red Lines in DefenseSearchMultiMatch", $COLOR_ERROR)
+			SetLog("> DLL Error getting Red Lines in DefenseSearchMultiMatch", $COLOR_ERROR)
 		EndIf
 	Else
 		$return[6] = $redlines ; store Redline Data in weak base array's
@@ -444,14 +469,14 @@ Func DefenseSearchMultiMatch($iDefenseType, $directory, $redlines = "DCD", $stat
 			; Check for duplicate locations from DLL when more than 1 location returned?
 			If $i = 0 And StringLen($sTempCoord) > 7 Then
 				$iCountUpdate = RemoveDupNearby($sTempCoord) ; remove duplicates BYREF, return location count
-				If $iTmpObjectLevel <> $iCountUpdate And $iCountUpdate <> "" Then $iTmpObjectLevel = $iCountUpdate
+				;If $iTmpObjectLevel <> $iCountUpdate And $iCountUpdate <> "" Then $iTmpObjectLevel = $iCountUpdate
 			EndIf
 
 			; get number of buildings found
 			$iTmpBldTotal = RetrieveImglocProperty($aKeys[$i], "totalobjects")
 
 			; store "returnhighestsinglelevel" search data
-			If $iTmpObjectLevel > Number($return[2]) And (Int($maxLevel) <= $iTmpObjectLevel) Then ; Check to see if is a higher level then currently stored for weakbase return array
+			If $iTmpObjectLevel > Number($return[2]) Then ;And ($iTmpObjectLevel >= Int($maxLevel)) Then ; Check to see if is a higher level then currently stored for weakbase return array
 				; Store the retrun data because its higher, and greater than max level in GUI
 				$return[0] = $aStatData[$i + 1][0]
 				$return[1] = RetrieveImglocProperty($aKeys[$i], "objectname") ; Type
@@ -498,7 +523,7 @@ Func DefenseSearchMultiMatch($iDefenseType, $directory, $redlines = "DCD", $stat
 						If $iCountUpdate <> "" Then $iBuildingTotal = $iCountUpdate
 					EndIf
 				Else
-					SetDebuglog("> no data in 'objectpoints' request?", $COLOR_WARNING)
+					SetDebugLog("> no data in 'objectpoints' request?", $COLOR_WARNING)
 				EndIf
 			EndIf
 		Next
@@ -506,27 +531,27 @@ Func DefenseSearchMultiMatch($iDefenseType, $directory, $redlines = "DCD", $stat
 		Local $aBldgCoord = decodeMultipleCoords($sLocCoord) ; change building location string into array
 		If IsArray($aBldgCoord) Then $return[5] = $aBldgCoord ; store in return array
 
-		If $g_iDebugSetlog = 1 Or $g_iDebugBuildingPos = 1 Then
+		If $g_bDebugSetlog Or $g_bDebugBuildingPos Then
 			SetLog($g_sBldgNames[$iDefenseType + 7] & " Coordinates: " & $sLocCoord, $COLOR_DEBUG)
 			Local $sText
 			Select
 				Case UBound($aBldgCoord, 1) > 1 And IsArray($aBldgCoord[1]) ; if we have array of arrays, separate and list
 					$sText = PixelArrayToString($aBldgCoord, ",")
-				Case IsArray($aBldgCoord[0]) ; single row with array
+				Case UBound($aBldgCoord) > 0 And UBound($aBldgCoord[0]) = 2 ; single row with array
 					Local $aPixelb = $aBldgCoord[0]
 					$sText = PixelToString($aPixelb, ":")
-				Case IsArray($aBldgCoord[0]) = 0
+				Case UBound($aBldgCoord) = 2 And IsArray($aBldgCoord[0]) = 0 ; Check if $aBldCoord has 2 rows otherwise PixelToString throws an error
 					$sText = PixelToString($aBldgCoord, ":")
 				Case Else
 					$sText = "Monkey ate bad banana!"
 			EndSelect
-			Setlog($g_sBldgNames[$iDefenseType + 7] & " $aBldgCoord Array Contents: " & $sText, $COLOR_DEBUG)
+			SetLog($g_sBldgNames[$iDefenseType + 7] & " $aBldgCoord Array Contents: " & $sText, $COLOR_DEBUG)
 		EndIf
 
 		; finish storing CSV related data after retrieving all keys returned
 		If isScriptedAttackActive() Then
 
-			If $return[2] <> "" Or $return[2] <> 0 Then
+			If $return[2] <> 0 Then
 				_ObjAdd($g_oBldgAttackInfo, $iDefenseType + 7 & "_MAXLVLFOUND", $return[2]) ; save max level found, add siz to weakbase enum to equal building enum
 				If @error Then _ObjErrMsg("_ObjAdd " & $g_sBldgNames[$iDefenseType + 7] & " _MAXLVLFOUND", @error) ; log errors
 			EndIf
@@ -548,12 +573,12 @@ Func DefenseSearchMultiMatch($iDefenseType, $directory, $redlines = "DCD", $stat
 				If @error Then _ObjErrMsg("_ObjAdd " & $g_sBldgNames[$iDefenseType + 7] & " _COUNT", @error) ; Log errors
 			EndIf
 
-			SetDebuglog("Total " & $g_sBldgNames[$iDefenseType + 7] & " Buildings: " & $iBuildingTotal)
+			SetDebugLog("Total " & $g_sBldgNames[$iDefenseType + 7] & " Buildings: " & $iBuildingTotal)
 
 			Local $iTime = __TimerDiff($hTimer) * 0.001 ; Image search time saved to dictionary in seconds
 			_ObjAdd($g_oBldgAttackInfo, $iDefenseType + 7 & "_FINDTIME", $iTime)
 			If @error Then _ObjErrMsg("_ObjAdd" & $g_sBldgNames[$iDefenseType + 7] & " _FINDTIME", @error) ; Log errors
-			If $g_iDebugSetlog = 1 Then SetLog("  - Location(s) found in: " & Round($iTime, 2) & " seconds ", $COLOR_DEBUG1)
+			If $g_bDebugSetlog Then SetDebugLog("  - Location(s) found in: " & Round($iTime, 2) & " seconds ", $COLOR_DEBUG1)
 
 		EndIf
 

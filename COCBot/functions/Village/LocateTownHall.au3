@@ -7,7 +7,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: KnowJack (July 2015) Sardo 2015-08
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -29,7 +29,7 @@ Func LocateTownHall($bLocationOnly = False)
 	While 1
 		_ExtMsgBoxSet(1 + 64, 1, 0x004080, 0xFFFF00, 12, "Comic Sans MS", 600)
 		$stext = $sErrorText & @CRLF & GetTranslatedFileIni("MBR Popups", "Func_Locate_TownHall_01", "Click OK then click on your Town Hall") & @CRLF & @CRLF & _
-				GetTranslatedFileIni("MBR Popups", "Locate_building_01", -1) & @CRLF & @CRLF & GetTranslatedFileIni("MBR Popups", "Locate_building_02", "Make sure the building name is visible for me!") & @CRLF
+				GetTranslatedFileIni("MBR Popups", "Locate_building_01", -1) & @CRLF & @CRLF & GetTranslatedFileIni("MBR Popups", "Locate_building_02", -1) & @CRLF
 		$MsgBox = _ExtMsgBox(0, GetTranslatedFileIni("MBR Popups", "Ok_Cancel", "Ok|Cancel"), GetTranslatedFileIni("MBR Popups", "Func_Locate_TownHall_02", "Locate TownHall"), $stext, 30)
 		If $MsgBox = 1 Then
 			WinGetAndroidHandle()

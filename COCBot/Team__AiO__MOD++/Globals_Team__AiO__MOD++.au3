@@ -1,10 +1,10 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Globals_Team__AiO__MOD++
+; Name ..........: Globals Team AiO MOD++
 ; Description ...: This file Includes several files in the current script and all Declared variables, constant, or create an array.
 ; Syntax ........: #include , Global
 ; Parameters ....: None
 ; Return values .: None
-; Author ........: Team AiO MOD++ (2017)
+; Author ........: Team AiO MOD++ (2018)
 ; Modified ......:
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
@@ -13,108 +13,31 @@
 ; Example .......: No
 ; ===============================================================================================================================
 
-; Check Version
-Global $g_sLastModversion = "" ;latest version from GIT
-Global $g_sLastModmessage = "" ;message for last version
-Global $g_sOldModversmessage = "" ;warning message for old bot
-
-; Attack Settings [Dec 2016] used on Classic Attack
-Global Const $g_aaiTopLeftDropPoints[5][2] = [[62, 306], [156, 238], [221, 188], [288, 142], [383, 76]]
-Global Const $g_aaiTopRightDropPoints[5][2] = [[486, 59], [586, 134], [652, 184], [720, 231], [817, 308]]
-Global Const $g_aaiBottomLeftDropPoints[5][2] = [[20, 373], [101, 430], [171, 481], [244, 535], [346, 615]]
-Global Const $g_aaiBottomRightDropPoints[5][2] = [[530, 615], [632, 535], [704, 481], [781, 430], [848, 373]]
-Global Const $g_aaiEdgeDropPoints[4] = [$g_aaiBottomRightDropPoints, $g_aaiTopLeftDropPoints, $g_aaiBottomLeftDropPoints, $g_aaiTopRightDropPoints]
-
-; Unit/Wave Factor
-Global $iChkGiantSlot = 0, $iCmbGiantSlot = 0
-Global $g_iSlotsGiants = 1, $iSlotsGiants = 1
-Global $iChkUnitFactor = 0, $iTxtUnitFactor = 10
-Global $iChkWaveFactor = 0, $iTxtWaveFactor = 100
-
-; Drop Order Troops
-Global Enum $eTroopBarbarianS, $eTroopArcherS, $eTroopGiantS, $eTroopGoblinS, $eTroopWallBreakerS, $eTroopBalloonS, _
-		$eTroopWizardS, $eTroopHealerS, $eTroopDragonS, $eTroopPekkaS, $eTroopBabyDragonS, $eTroopMinerS, _
-		$eTroopMinionS, $eTroopHogRiderS, $eTroopValkyrieS, $eTroopGolemS, $eTroopWitchS, _
-		$eTroopLavaHoundS, $eTroopBowlerS, $eHeroeS, $eCCS, $eTroopCountDrop
-Global $icmbDropTroops[$eTroopCountDrop] = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]
-Global Const $g_asTroopNamesPluralDrop[$eTroopCountDrop] = ["Barbarians", "Archers", "Giants", "Goblins", "Wall Breakers", "Balloons", "Wizards", "Healers", "Dragons", "Pekkas", "Baby Dragons", "Miners", "Minions", "Hog Riders", "Valkyries", "Golems", "Witches", "Lava Hounds", "Bowlers", "Clan Castle", "Heroes"]
-
-Global Const $g_aiTroopOrderDropIcon[23] = [ _
-		$eIcnOptions, $eIcnBarbarian, $eIcnArcher, $eIcnGiant, $eIcnGoblin, $eIcnWallBreaker, $eIcnBalloon, _
-		$eIcnWizard, $eIcnHealer, $eIcnDragon, $eIcnPekka, $eIcnBabyDragon, $eIcnMiner, $eIcnMinion, _
-		$eIcnHogRider, $eIcnValkyrie, $eIcnGolem, $eIcnWitch, $eIcnLavaHound, $eIcnBowler, $eIcnCC, $eIcnHeroes]
-
-Global $g_hChkCustomTrainDropOrderEnable = 0
-Global $g_bCustomTrainDropOrderEnable = False
-Global $g_hBtnRemoveTroops2, $g_hBtnTroopOrderSet2
-Global $g_ahImgTroopDropOrderSet = 0
-Global $g_ahImgTroopDropOrder[$eTroopCountDrop] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-Global $cmbDropTroops = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-Global Const $g_asTroopDropList[] = ["", _
-		"Barbarians", "Archers", "Giants", "Goblins", _
-		"Wall Breakers", "Balloons", "Wizards", "Healers", _
-		"Dragons", "Pekkas", "Baby Dragons", "Miners", _
-		"Minions", "Hog Riders", "Valkyries", "Golems", _
-		"Witches", "Lava Hounds", "Bowlers", "Clan Castle", "Heroes"]
-
-; Auto Hide (NguyenAnhHD) - Added by NguyenAnhHD
-Global $ichkAutoHide, $ichkAutoHideDelay = 10
-
-; Check Collector Outside (McSlither) - Added by NguyenAnhHD
-#region Check Collectors Outside
-; Collectors outside filter
-Global $ichkDBMeetCollOutside, $iDBMinCollOutsidePercent, $iCollOutsidePercent ; check later if $iCollOutsidePercent obsolete
-
-; constants
-Global Const $THEllipseWidth = 200, $THEllipseHeigth = 150, $CollectorsEllipseWidth = 130, $CollectorsEllipseHeigth = 97.5
-Global Const $centerX = 430, $centerY = 335 ; check later if $THEllipseWidth, $THEllipseHeigth obsolete
-Global $hBitmapFirst
-#endregion
-
-; CSV Deploy Speed (Roro-Titi) - Added by NguyenAnhHD
+; CSV Deploy Speed - Team AiO MOD++
 Global $cmbCSVSpeed[2] = [$LB, $DB]
 Global $icmbCSVSpeed[2] = [2, 2]
 Global $g_CSVSpeedDivider[2] = [1, 1] ; default CSVSpeed for DB & LB
 
-; Switch Profile (IceCube) - Added by NguyenAnhHD
-Global $profileString = ""
-Global $ichkGoldSwitchMax, $itxtMaxGoldAmount, $icmbGoldMaxProfile, $ichkGoldSwitchMin, $itxtMinGoldAmount, $icmbGoldMinProfile
-Global $ichkElixirSwitchMax, $itxtMaxElixirAmount, $icmbElixirMaxProfile, $ichkElixirSwitchMin, $itxtMinElixirAmount, $icmbElixirMinProfile
-Global $ichkDESwitchMax, $itxtMaxDEAmount, $icmbDEMaxProfile, $ichkDESwitchMin, $itxtMinDEAmount, $icmbDEMinProfile
-Global $ichkTrophySwitchMax, $itxtMaxTrophyAmount, $icmbTrophyMaxProfile, $ichkTrophySwitchMin, $itxtMinTrophyAmount, $icmbTrophyMinProfile
+; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
+Global $g_bEnableAuto = False, $g_iChkAutoDock = False, $g_iChkAutoHideEmulator = True, $g_iChkAutoMinimizeBot = False
 
-; SwitchAcc (Demen) - Added By Demen
-Global $profile = $g_sProfilePath & "\Profile.ini"
-Global $ichkSwitchAcc = 0, $ichkTrain = 0, $icmbTotalCoCAcc, $nTotalCoCAcc = 8, $ichkSmartSwitch, $ichkCloseTraining
-Global Enum $eNull, $eActive, $eDonate, $eIdle, $eStay, $eContinuous ; Enum for Profile Type & Switch Case & ForceSwitch
-Global $ichkForceSwitch, $iForceSwitch, $eForceSwitch = 0, $iProfileBeforeForceSwitch
-Global $ichkForceStayDonate
-Global $nTotalProfile = 1, $nCurProfile = 1, $nNextProfile
-Global $ProfileList
-Global $aProfileType[8] ; Type of the all Profiles, 1 = active, 2 = donate, 3 = idle
-Global $aMatchProfileAcc[8] ; Accounts match with All Profiles
-Global $aDonateProfile, $aActiveProfile
-Global $aAttackedCountSwitch[8], $ActiveSwitchCounter = 0, $DonateSwitchCounter = 0
-Global $bReMatchAcc = False
-Global $aTimerStart[8], $aTimerEnd[8]
-Global $aRemainTrainTime[8], $aUpdateRemainTrainTime[8], $nMinRemainTrain
-Global $aLocateAccConfig[8], $aAccPosY[8]
+; Check Collector Outside - Team AiO MOD++
+Global $g_bScanMineAndElixir = False
+#region Check Collectors Outside
+; Collectors Outside Filter
+Global $g_bDBMeetCollOutside = False, $g_iTxtDBMinCollOutsidePercent = 80
+; constants
+Global Const $THEllipseWidth = 200, $THEllipseHeigth = 150, $CollectorsEllipseWidth = 130, $CollectorsEllipseHeigth = 97.5
+Global $hBitmapFirst
+Global $g_bDBCollectorsNearRedline = 1, $g_bSkipCollectorCheck = 1, $g_bSkipCollectorCheckTH = 1
+Global $g_iCmbRedlineTiles = 1, $g_iCmbSkipCollectorCheckTH = 1
+Global $g_iTxtSkipCollectorGold = 400000, $g_iTxtSkipCollectorElixir = 400000, $g_iTxtSkipCollectorDark = 0
+#endregion
 
-; SmartTrain (Demen) - Added By Demen
-Global $ichkSmartTrain, $ichkPreciseTroops, $ichkFillArcher, $iFillArcher, $ichkFillEQ
-Global $g_bWaitForCCTroopSpell = False	; ForceSwitch while waiting for CC troops - Demen
-Global Enum $g_eFull, $g_eRemained, $g_eNoTrain
-Global $g_abRCheckWrongTroops[2] = [False, False] ; Result of checking wrong troops & spells
-Global $g_bChkMultiClick, $g_iMultiClick = 1
-Global $g_aiQueueTroops[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-Global $g_aiQueueSpells[$eSpellCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+; ClanHop - Team AiO MOD++
+Global $g_bChkClanHop = False
 
-; Hero and Lab status - Demen
-Global $g_bNeedLocateLab = True, $g_bLabReady[9]
-Global $g_aLabTimeAcc[8], $g_aLabTime[4] = [0, 0, 0, 0] ; day | hour | minute | time in minutes
-Global $g_aLabTimerStart[8], $g_aLabTimerEnd[8]
-
-; Bot Humanization
+; Bot Humanization - Team AiO MOD++
 Global $g_iacmbPriority[13] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_iacmbMaxSpeed[2] = [1, 1]
 Global $g_iacmbPause[2] = [0, 0]
@@ -131,47 +54,11 @@ Global $g_ichkUseBotHumanization = 0, $g_ichkUseAltRClick = 0, $g_icmbMaxActions
 Global $g_aReplayDuration[2] = [0, 0] ; An array, [0] = Minute | [1] = Seconds
 Global $g_bOnReplayWindow, $g_iReplayToPause
 
-Global $g_iQuickMISX = 0, $g_iQuickMISY = 0
 Global $g_iLastLayout = 0
 
-; Auto Upgrade
-Global $g_ichkAutoUpgrade = 0
-Global $g_iSmartMinGold = 150000, $g_iSmartMinElixir = 150000, $g_iSmartMinDark = 1500
-Global $g_ichkUpgradesToIgnore[13] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-Global $g_ichkResourcesToIgnore[3] = [0, 0, 0]
-Global $g_iCurrentLineOffset = 0, $g_iNextLineOffset = 0
-Global $g_aUpgradeNameLevel ; [Nb of elements in Array, Name, Level]
-Global $g_aUpgradeResourceCostDuration[3] = ["", "", ""] ; Resource, Cost, Duration
-
-; Forecast - Added By Eloy (modification rulesss,kychera)
-Global Const $COLOR_DEEPPINK = 0xFF1493
-Global Const $COLOR_DARKGREEN = 0x006400
-Global $oIE = ObjCreate("Shell.Explorer.2")
-Global $grpForecast
-Global $ieForecast
-Global $dtStamps[0]
-Global $lootMinutes[0]
-Global $timeOffset = 0
-Global $TimerForecast = 0
-Global $lootIndexScaleMarkers
-Global $currentForecast
-Global $chkForecastBoost = 0, $txtForecastBoost = 0
-Global $iChkForecastBoost = 0, $iTxtForecastBoost = 6
-Global $chkForecastPause = 0, $txtForecastPause = 0
-Global $iChkForecastPause = 0, $iTxtForecastPause = 2
-Global $cmbForecastHopingSwitchMax = 0, $cmbForecastHopingSwitchMin = 0
-Global $chkForecastHopingSwitchMax = 0, $lblForecastHopingSwitchMax = 0, $txtForecastHopingSwitchMax = 2, $chkForecastHopingSwitchMin = 0, $lblForecastHopingSwitchMin = 0, $txtForecastHopingSwitchMin = 0
-Global $ichkForecastHopingSwitchMax = 0, $icmbForecastHopingSwitchMax = 0 , $itxtForecastHopingSwitchMax = 2, $ichkForecastHopingSwitchMin = 0, $icmbForecastHopingSwitchMin = 0, $itxtForecastHopingSwitchMin = 2
-Global $icmbSwLang = 0
-Global $cmbSwLang = 0
-
-; Request CC Troops at first
-Global $g_bReqCCFirst = False
-Global $chkReqCCFirst = 0
-
-; Goblin XP
-Global $ichkEnableSuperXP = 0, $irbSXTraining = 1, $ichkSXBK = 0, $ichkSXAQ = 0, $ichkSXGW = 0, $iStartXP = 0, $iCurrentXP = 0, $iGainedXP = 0, $iGainedXPHour = 0, $itxtMaxXPtoGain = 500
-Global $DebugSX = 0
+; Goblin XP - Team AiO MOD++
+Global $ichkEnableSuperXP = 0, $ichkSkipZoomOutXP = 0, $ichkFastGoblinXP = 0, $irbSXTraining = 1, $ichkSXBK = 0, $ichkSXAQ = 0, $ichkSXGW = 0, $iStartXP = 0, $iCurrentXP = 0, $iGainedXP = 0, $iGainedXPHour = 0, $itxtMaxXPtoGain = 500
+Global $g_bDebugSX = False
 
 Global $g_DpGoblinPicnic[3][4] = [[300, 205, 5, 5], [340, 140, 5, 5], [290, 220, 5, 5]]
 Global $g_BdGoblinPicnic[3] = [0, "5000-7000", "6000-8000"] ; [0] = Queen, [1] = Warden, [2] = Barbarian King
@@ -179,8 +66,50 @@ Global $g_ActivatedHeroes[3] = [False, False, False] ; [0] = Queen, [1] = Warden
 Global Const $g_minStarsToEnd = 1
 Global $g_canGainXP = False
 
-; ClanHop (Rhinoceros & MantasM) - Added by NguyenAnhHD
-Global $g_bChkClanHop = False
+; TimerHandle New Used in Donate/Train only Mode - Ezeck 6-14-17
+Global $g_hTrainTimeLeft = 0
+Global $g_hCurrentDonateButtonBitMap = 0
 
-; Max logout time (mandryd)
-Global $TrainLogoutMaxTime, $TrainLogoutMaxTimeTXT
+; GTFO - Team AiO MOD++
+Global $g_bChkUseGTFO = False, $g_bChkUseKickOut = False, $g_bChkKickOutSpammers = False
+Global $g_iTxtMinSaveGTFO_Elixir = 200000, $g_iTxtMinSaveGTFO_DE = 2000, _
+	$g_iTxtDonatedCap = 8, $g_iTxtReceivedCap = 35, _
+	$g_iTxtKickLimit = 6
+
+; Max logout time - Team AiO MOD++
+Global $g_bTrainLogoutMaxTime = False, $g_iTrainLogoutMaxTime = 4
+
+; Request CC Troops at first - Team AiO MOD++
+Global $g_bReqCCFirst = False
+
+; CheckCC Troops - Team AiO MOD++
+Global $g_aiCCTroops[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_aiCCSpells[$eSpellCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_aiCCTroopsExpected[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_aiCCSpellsExpected[$eSpellCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_bChkCC = False, $g_bChkCCTroops = False
+Global $g_aiCmbCCSlot[5], $g_aiTxtCCSlot[5]
+Global $g_iCmbCastleCapacityT = 5, $g_iCmbCastleCapacityS = 1
+
+; Attack Log New Style - Team AiO MOD++
+Global $eLootPerc = "---"
+Global $starsearned = 0
+Global $eTHLevel = "-"
+Global $g_bColorfulAttackLog = False
+
+; Additional Notifactions - Team AiO MOD++
+Global $eWinlose = "-"
+
+; Check Grand Warden Mode - Team AiO MOD++
+Global $g_bCheckWardenMode = False, $g_iCheckWardenMode = 0
+
+; Unit/Wave Factor - Team AiO MOD++
+Global $g_iChkGiantSlot = 0, $g_iChkUnitFactor = 0, $g_iChkWaveFactor = 0
+Global $g_iCmbGiantSlot = 0, $g_iTxtUnitFactor = 10, $g_iTxtWaveFactor = 100
+Global $g_iSlotsGiants = 1, $g_aiSlotsGiants = 1
+
+; Restart Search Legend league - Team AiO MOD++
+Global $g_bIsSearchTimeout = False, $g_iSearchTimeout = 10, $g_iTotalSearchTime = 0
+
+; Stop on Low battery - Team AiO MOD++
+Global $g_bStopOnBatt = False, $g_iStopOnBatt = 10

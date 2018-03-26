@@ -1,8 +1,8 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: SmartQuickTrain
+; Name ..........: SmartTrain (#-13)
 ; Description ...: This file contains the Sequence that runs all MBR Bot
 ; Author ........: DEMEN
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -10,11 +10,29 @@
 ; Example .......: No
 ; ===============================================================================================================================
 
+Func OpenTrainTabNumber($iTabNumber, $sWhereFrom)
+
+	Local $Message[4] = ["Army Camp", _
+			"Train Troops", _
+			"Brew Spells", _
+			"Quick Train"]
+	Local $aTabNumber[4][2] = [[90, 128], [245, 128], [440, 128], [650, 128]]
+	If $g_bRunState = False Then Return
+
+	If IsTrainPage() Then
+		Click($aTabNumber[$iTabNumber][0], $aTabNumber[$iTabNumber][1], 2, 200)
+		If _Sleep(700) Then Return ; Too slow with wait time 1.5s. Reduce to 0.7s. - SmartTrain - Demen_ST_#9002
+		If IsArmyWindow(False, $iTabNumber) Then SetLog("Opening " & $Message[$iTabNumber] & ($g_bDebugSetlogTrain ? "(Called from " & $sWhereFrom & ")" : ""), $COLOR_INFO)
+	Else
+		SetLog(" - Error Clicking On " & ($iTabNumber >= 0 And $iTabNumber < UBound($Message)) ? ($Message[$iTabNumber]) : ("Not selectable") & " Tab!", $COLOR_ERROR)
+	EndIf
+EndFunc   ;==>OpenTrainTabNumber
+
 Func SmartTrain()
 
 	Local $bRemoveUnpreciseTroops = False
 	Local $aeTrainMethod[2] = [$g_eNoTrain, $g_eNoTrain], $aeBrewMethod[2] = [$g_eNoTrain, $g_eNoTrain]
-	Local $bCheckWrongTroops = False, $bCheckWrongSpells = False
+	Local $bCheckWrongArmyCamp = False, $bCheckWrongSpells = False
 
 	If $g_bQuickTrainEnable = False Then
 		Setlog("Start Smart Custom Train")
@@ -22,16 +40,16 @@ Func SmartTrain()
 		Setlog("Start Smart Quick Train")
 	EndIf
 
-	$bRemoveUnpreciseTroops = CheckPreciseTroop() ; checking troop precision. remove wrong troop if any.
+	$bRemoveUnpreciseTroops = CheckPreciseArmyCamp() ; checking troop precision. remove wrong troop if any.
 	If $bRemoveUnpreciseTroops Then Setlog("Continue Smart Train...")
 
-	If $g_bRunState = False Then Return
+	If Not $g_bRunState Then Return
 
 	; Troops tab
 	$aeTrainMethod = CheckTrainingTab("troop")
 	If IsArray($aeTrainMethod) Then
 		If $aeTrainMethod[0] = $g_eRemained And $bRemoveUnpreciseTroops = False Then
-			$bCheckWrongTroops = True
+			$bCheckWrongArmyCamp = True
 		ElseIf $g_bQuickTrainEnable = False Then
 			MakeCustomTrain("troop", $aeTrainMethod)
 			$aeTrainMethod[0] = $g_eNoTrain
@@ -51,13 +69,13 @@ Func SmartTrain()
 		EndIf
 	EndIf
 
-	; Custom Train
+	; Train
 	If Not IsArray($aeTrainMethod) Or Not IsArray($aeBrewMethod) Then
 		Setlog("Some kinds of error. Quit training", $COLOR_ERROR)
 	Else
-		If $g_bQuickTrainEnable = False Then ; Custom Train
+		If Not $g_bQuickTrainEnable Then ; Custom Train
 			If _Sleep(500) Then Return
-			If $bCheckWrongTroops Or $bCheckWrongSpells Then RemoveWrongTroops($bCheckWrongTroops, $bCheckWrongSpells, False)
+			If $bCheckWrongArmyCamp Or $bCheckWrongSpells Then RemoveWrongArmyCamp($bCheckWrongArmyCamp, $bCheckWrongSpells, False)
 			If _Sleep(1000) Then Return
 			Local $aeTB_Method = $aeTrainMethod
 			_ArrayConcatenate($aeTB_Method, $aeBrewMethod)

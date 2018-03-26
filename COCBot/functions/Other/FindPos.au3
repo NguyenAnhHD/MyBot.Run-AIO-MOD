@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Your Name
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 Func FindPos()
 	getBSPos()
-	AndroidToFront() ; Activate Android Window
+	AndroidToFront(Default, "FindPos") ; Activate Android Window
 	Local $wasDown = AndroidShieldForceDown(True, True)
 	While 1
 		If _IsPressed("01") Or _IsPressed("02") Then

@@ -6,7 +6,7 @@
 ; Return values .: True if compaired resources match the search conditions, False if not
 ; Author ........: (2014)
 ; Modified ......: AtoZ, Hervidero (2015), kaganus (June 2015, August 2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......: VillageSearch, GetResources
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -106,6 +106,7 @@ EndFunc   ;==>CompareResources
 Func CompareTH($pMode)
 	Local $THL = -1, $THLO = -1
 
+	If $g_iSearchTH = 6 Then $g_iSearchTH = "4-6"
 	For $i = 0 To 5 ;add th11
 		If $g_iSearchTH = $g_asTHText[$i] Then $THL = $i
 	Next

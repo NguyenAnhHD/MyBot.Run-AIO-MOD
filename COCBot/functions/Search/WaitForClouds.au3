@@ -7,7 +7,7 @@
 ; Return values .: None
 ; Author ........: MonkeyHunter (08-2016)
 ; Modified ......: MonkeyHunter (05-2017) MMHK (07-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -15,7 +15,7 @@
 ; ===============================================================================================================================
 Func WaitForClouds()
 
-	If $g_iDebugSetlog = 1 Then Setlog("Begin WaitForClouds:", $COLOR_DEBUG1)
+	If $g_bDebugSetlog Then SetDebugLog("Begin WaitForClouds:", $COLOR_DEBUG1)
 
 	Local $iCount = 0
 	Local $bigCount = 0, $iLastTime = 0
@@ -42,7 +42,7 @@ Func WaitForClouds()
 			$maxSearchCount = Random(600, 840, 1) ; random range 2.5-3.5 minutes
 			$maxLongSearchCount = Random(80, 85, 1) ; random range 200-300 minutes
 	EndSwitch
-	If $g_iDebugSetlog Then ; display random values if debug log
+	If $g_bDebugSetlog Then ; display random values if debug log
 		SetLog("RANDOM: $maxSearchCount= " & $maxSearchCount & "= " & Round($maxSearchCount / $DELAYGETRESOURCES1, 2) & " min between cloud chk", $COLOR_DEBUG)
 		SetLog("RANDOM: $maxLongSearchCount= " & $maxLongSearchCount & "= " & Round(($maxSearchCount / $DELAYGETRESOURCES1) * $maxLongSearchCount, 2) & " min max search time", $COLOR_DEBUG)
 	EndIf
@@ -81,18 +81,42 @@ Func WaitForClouds()
 			CloseCoC(True)
 			Return
 		EndIf
-		If $g_iDebugSetlog = 1 Then _GUICtrlStatusBar_SetText($g_hStatusBar, " Status: Loop to clean screen without Clouds, # " & $iCount)
+		If $g_bDebugSetlog Then _GUICtrlStatusBar_SetTextEx($g_hStatusBar, " Status: Loop to clean screen without Clouds, # " & $iCount)
 		$iSearchTime = __TimerDiff($hMinuteTimer) / 60000 ;get time since minute timer start in minutes
 		If $iSearchTime >= $iLastTime + 1 Then
-			Setlog("Cloud wait time " & StringFormat("%.1f", $iSearchTime) & " minute(s)", $COLOR_INFO)
+			$g_iTotalSearchTime += 1
+			Setlog("Cloud wait time " & StringFormat("%.1f", $iSearchTime) & " minute(s), Total Searchtime = " & $g_iTotalSearchTime & " minute(s)", $COLOR_INFO)
+			; Stop on Low battery - Team AiO MOD++
+			If $g_bStopOnBatt Then
+				Setlog("Check Stop on battery", $COLOR_INFO)
+				_BatteryStatus()
+			EndIf
+			; Restart Search Legend league ~ back to home on certain minute on cloud and no reach enemy - Team AiO MOD++
+			If $g_bIsSearchTimeout Then
+				If $iSearchTime > $g_iSearchTimeout Then
+					$g_bIsSearchTimeout = True
+					ClickP($aReturnHomeOnSearchButton, 1, 0, "RETURN HOME") ;Click Return Home
+					getArmyTroopCapacity(True, True)
+					$g_bRestart = True ; set force runbot restart flag
+					$g_bIsClientSyncError = True ; set OOS flag for fast restart
+					Return
+				EndIf
+			EndIf
 			$iLastTime += 1
 			; once a minute safety checks for search fail/retry msg and Personal Break events and early detection if CoC app has crashed inside emulator (Bluestacks issue mainly)
 			If chkAttackSearchFail() = 2 Or chkAttackSearchPersonalBreak() = True Or GetAndroidProcessPID() = 0 Then
 				resetAttackSearch()
 				Return
 			EndIf
+			; Check if CoC app restarted without notice (where android restarted app automatically with same PID), and returned to main base
+			If _CheckPixel($aIsMain, $g_bCapturePixel) Then
+				SetLog("Strange error detected! 'WaitforClouds' returned to main base unexpectedly, OOS restart initiated", $COLOR_ERROR)
+				$g_bRestart = True ; Set flag for OOS restart condition
+				resetAttackSearch()
+				Return
+			EndIf
 			; attempt to enable GUI during long wait?
-			If $iSearchTime > 2 And $bEnabledGUI = False Then
+			If $iSearchTime > 2 And Not $bEnabledGUI Then
 				AndroidShieldForceDown(True)
 				EnableGuiControls() ; enable bot controls is more than 2 minutes wait
 				SetLog("Enabled bot controls due to long wait time", $COLOR_SUCCESS)
@@ -121,68 +145,34 @@ Func EnableLongSearch()
 	; verifies that chat tab is active on cloud window due long search time, and open/closes chat window to avoid app closing while waiting for base to attack
 	; Also checks for common error events, search fail/retry, and Personal Break that happen during long searches
 	Local $result = ""
-	Local $iCount, $jCount, $kCount, $wCount
+	Local $iCount
 
-	If $g_iDebugSetlog = 1 Then Setlog("Begin EnableLongSearch:", $COLOR_DEBUG1)
+	If $g_bDebugSetlog Then SetDebugLog("Begin EnableLongSearch:", $COLOR_DEBUG1)
 
 	If Int($g_aiCurrentLoot[$eLootTrophy]) < 3700 Then ; If not searching Champion 1 or higher, skip long waiting to return and restart due error
-		If $g_iDebugSetlog = 1 Then Setlog("Long cloud search not enabled due trophy count: " & $g_aiCurrentLoot[$eLootTrophy], $COLOR_DEBUG)
+		If $g_bDebugSetlog Then SetDebugLog("Long cloud search not enabled due trophy count: " & $g_aiCurrentLoot[$eLootTrophy], $COLOR_DEBUG)
 		Return False
 	EndIf
 
-	If chkSearchText() = True Then ;verify still in clouds by screen text and attempt to keep alive with chat tab
-		$iCount = 0 ; initialize safety loop counter #1
-		While 1
-			If _CheckPixel($aOpenChatTab, $g_bCapturePixel, Default, "OpenChatTab check", $COLOR_DEBUG) Then ; check for open chat tab
-				ClickP($aOpenChatTab, 1, 0, "#0510") ; Open chat tab
-				If _Sleep($DELAYGETRESOURCES1) Then Return
-				$jCount = 0 ; initialize safety loop counter #2
-				While 1 ; wait for close chat tab to appear
-					If _CheckPixel($aCloseChat, $g_bCapturePixel, Default, "CloseChatTab check", $COLOR_DEBUG) Then ; check for close chat tab
-						ClickP($aCloseChat, 1, 0, "#0511") ; close chat tab
-						$kCount = 0 ; initialize safety loop counter #3
-						While 1 ; paranoid verification that chat window has closed
-							If _Sleep($DELAYSLEEP) Then Return
-							$result = getCloudTextShort(260, 349 + $g_iMidOffsetY, "Cloud Search Text: sea=", $COLOR_DEBUG, Default) ; OCR "Searching for oponents..." partially blocked text
-							If _CheckPixel($aCloseChat, $g_bCapturePixel, Default, "CloseChatTab check", $COLOR_DEBUG) Then ; check for close chat tab is still there
-								$kCount += 1
-							ElseIf $result <> "" And StringInStr($result, "sea", $STR_NOCASESENSEBASIC) > 0 Then ; found "sea" characters in "Search" text?
-								Return True ; success
-							Else
-								Return True ; success
-							EndIf
-							$kCount += 1 ; not needed, error prevention
-							If $kCount > 30 Then ; wait up to 30 * (100ms delay + ~60ms OCR) = 4.8 seconds for chat window to close
-								; verify that base has not been found?
-								If chkSurrenderBtn() = True Then Return True ; check if clouds are gone.
-								SetLog("Warning - Found CloseChat Btn still open during search extension", $COLOR_WARNING)
-								Return False ; chat tab not closed, failed long search keep alive, need to restart
-							EndIf
-						WEnd
-					EndIf
-					If _Sleep($DELAYSLEEP) Then Return
-					$jCount += 1
-					If $jCount > 50 Then ; wait up to 50 * 100ms = 5 seconds for chat window to close
-						If chkSurrenderBtn() = True Then Return True ; check if clouds are gone.
-						SetLog("Warning - Not find CloseChat tab during search extension", $COLOR_WARNING)
-						Return False ; chat tab not closed, failed long search keep alive, need to restart
-					EndIf
-				WEnd
-			EndIf
-			$iCount += 1
-			If $iCount > 30 Then ; wait up to 30 * 100ms = 3 seconds for chat window to be found
-				If chkSurrenderBtn() = True Then Return True ; check if clouds are gone.
-				SetLog("Cloud Search Text found, but chat button not found, restart search..", $COLOR_ERROR)
-				Return False ; chat tab not found, failed long search keep alive, need to restart
-			EndIf
-		WEnd
-	Else ; OCR did not find cloud search messages
-		If chkSurrenderBtn() = True Then Return True ; check if clouds are gone and stop waiting
+	$iCount = 0 ; initialize safety loop counter #1
+	While 1
+		If chkSurrenderBtn() = True Then Return True ; check if clouds are gone.
 		If chkAttackSearchPersonalBreak() = True Then Return False ; OCR check for Personal Break while in clouds, return after PB prep
-		If chkAttackSearchFail() = 1 Then Return True ; OCR text for search fail message, and press rety if available, success continue searching
-		If $g_iDebugSetlog = 1 Then SetLog("Cloud Search Text not found...", $COLOR_DEBUG)
-		Return False
-	EndIf
+		If chkAttackSearchFail() = 1 Then Return True ; OCR text for search fail message, and press retry if available, success continue searching
+
+		If chkSearchText() = False Then
+			If $g_bDebugSetlog Then SetDebugLog("Cloud Search Text not found...", $COLOR_DEBUG)
+			Return False
+		Else
+			Click(271, 351 + $g_iMidOffsetY) ; click on text just to keep game alive
+		EndIf
+
+		; Small delay
+		If _Sleep(5000) Then Return
+		$iCount += 1
+		; Just in Case
+		If $iCount > 6 Then Return True ; 4500 + 5000 * 6 = 1 min
+	WEnd
 
 EndFunc   ;==>EnableLongSearch
 
@@ -203,7 +193,7 @@ Func chkAttackSearchFail()
 	$result = getCloudFailShort(271, 351 + $g_iMidOffsetY, "Cloud Search Fail Text: unable=", $COLOR_DEBUG, Default)
 	If $result <> "" And StringInStr($result, "unable", $STR_NOCASESENSEBASIC) > 0 Then ; found "unable" characters in text
 		If btnSearchFailRetry() = True Then ; if press retry button is success, then keep searching
-			Setlog("Search Fail? Retry search button pushed, continue...", $COLOR_SUCCESS)
+			SetLog("Search Fail? Retry search button pushed, continue...", $COLOR_SUCCESS)
 			Return 1
 		Else
 			SetLog("Warning, failed to find/press retry search button", $COLOR_WARNING)
@@ -217,15 +207,15 @@ Func chkAttackSearchPersonalBreak()
 	Local $result
 	$result = getCloudFailShort(499, 350 + $g_iMidOffsetY, "Cloud Search PB Text: Break=", $COLOR_DEBUG, Default)
 	If $result <> "" And StringInStr($result, "break", $STR_NOCASESENSEBASIC) > 0 Then ; found "break" characters in text
-		Setlog("Prepare base before Personal Break in clouds..", $COLOR_INFO)
+		SetLog("Prepare base before Personal Break in clouds..", $COLOR_INFO)
 		CheckBaseQuick(True, "cloud") ; check and restock base before exit.
 		Return True
 	EndIf
 	If $g_bForceSinglePBLogoff And _DateIsValid($g_sPBStartTime) Then ; silly feature to use with long clouds, but check if single PB is enabled.
 		Local $iTimeTillPBTstartSec = Int(_DateDiff('s', $g_sPBStartTime, _NowCalc())) ; time in seconds
-		If $g_iDebugSetlog = 1 Then Setlog("PB starts in: " & $iTimeTillPBTstartSec & " Seconds", $COLOR_DEBUG)
+		If $g_bDebugSetlog Then SetDebugLog("PB starts in: " & $iTimeTillPBTstartSec & " Seconds", $COLOR_DEBUG)
 		If $iTimeTillPBTstartSec >= 0 Then ; test if PBT date/time in past (positive value) or future (negative value
-			Setlog("Prepare base before user forced Break..", $COLOR_INFO)
+			SetLog("Prepare base before user forced Break..", $COLOR_INFO)
 			CheckBaseQuick(True, "cloud") ; check and restock base before exit.
 			Return True
 		EndIf
@@ -234,22 +224,8 @@ Func chkAttackSearchPersonalBreak()
 EndFunc   ;==>chkAttackSearchPersonalBreak
 
 Func btnSearchFailRetry()
-	; verify retry button exists, and press button, return false if button not found
-	Local $offColors[3][3] = [[0x121311, 50, 8], [0x6EBC1F, 55, 21], [0x11110F, 90, 7]] ; 2nd=Black in "R", 3rd=green centered under text, 4th=black in v of letter "Y" ; before 2017 May update 0x000000 0x60B014 0x020201
-	Local $ButtonPixel = _MultiPixelSearch(364, 405 + $g_iMidOffsetY, 466, 430 + $g_iMidOffsetY, 1, 1, Hex(0x171814, 6), $offColors, 20) ; first vertical black pixel of Retry button edge ; before 2017 May update 0x000000
-	If $g_iDebugSetlog = 1 Then Setlog("Retry btn clr chk-#1: " & 	_GetPixelColor(368, 347 + $g_iMidOffsetY + 60, True) & ", #2: " & _
-																	_GetPixelColor(368 + 50, 347 + 8 + $g_iMidOffsetY + 60, True) & ", #3: " & _
-																	_GetPixelColor(368 + 55, 347 + 21 + $g_iMidOffsetY + 60, True) & ", #4: " & _
-																	_GetPixelColor(368 + 90, 347 + 7 + $g_iMidOffsetY + 60, True), $COLOR_DEBUG) ; after 2017 May update Y +60
-	If IsArray($ButtonPixel) Then
-		If $g_iDebugSetlog = 1 Then
-			Setlog("ButtonPixel = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG) ;Debug
-			Setlog("Retry Btn Pixel color found #1: " & _GetPixelColor($ButtonPixel[0], $ButtonPixel[1], True) & ", #2: " & _
-														_GetPixelColor($ButtonPixel[0] + 50, $ButtonPixel[1] + 8, True) & ", #3: " & _
-														_GetPixelColor($ButtonPixel[0] + 55, $ButtonPixel[1] + 21, True) & ", #4: " & _
-														_GetPixelColor($ButtonPixel[0] + 90, $ButtonPixel[1] + 7, True), $COLOR_DEBUG) ; before 2017 May update + (0, 0) (144, 0) (54, 17) (54, 27)
-		EndIf
-		Click($ButtonPixel[0] + 68, $ButtonPixel[1] + 13, 1, 0, "#0512") ; Click Retry Button ; before 2017 May update + (75, 25)
+	If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Clouds", 270, 400, 600, 500) Then
+		Click($g_iQuickMISX + 270, $g_iQuickMISY + 400, 1, 0, "#0512")
 		Return True
 	EndIf
 	Return False
@@ -260,7 +236,7 @@ Func chkSurrenderBtn()
 	Local $wCount = 0
 	While 1
 		If _CheckPixel($aSurrenderButton, $g_bCapturePixel, Default, "Surrender btn wait #" & $wCount, $COLOR_DEBUG) = True Then
-			If $g_iDebugSetlog = 1 Then Setlog("Surrender button found, clouds gone, continue...", $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("Surrender button found, clouds gone, continue...", $COLOR_DEBUG)
 			Return True
 		EndIf
 		If _Sleep($DELAYSLEEP) Then Return

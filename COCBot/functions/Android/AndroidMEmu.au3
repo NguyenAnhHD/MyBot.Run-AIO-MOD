@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Cosote (12-2015)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -23,7 +23,7 @@ Func OpenMEmu($bRestart = False)
 	If $launchAndroid Then
 		; Launch MEmu
 		$cmdPar = GetAndroidProgramParameter()
-		$PID = LaunchAndroid($g_sAndroidProgramPath, $cmdPar, $g_sAndroidPath, 30)
+		$PID = LaunchAndroid($g_sAndroidProgramPath, $cmdPar, $g_sAndroidPath)
 		If $PID = 0 Then
 			SetError(1, 1, -1)
 			Return False
@@ -99,6 +99,36 @@ Func GetMEmuAdbPath()
 	Return ""
 EndFunc   ;==>GetMEmuAdbPath
 
+Func GetMEmuBackgroundMode()
+	Local $iDirectX = $g_iAndroidBackgroundModeDirectX
+	Local $iOpenGL = $g_iAndroidBackgroundModeOpenGL
+	; hack for super strange Windows Fall Creator Update with OpenGL and DirectX problems
+	If @OSBuild >= 16299 Then
+		SetDebugLog("DirectX/OpenGL Fix applied for Windows Build 16299")
+		$iDirectX = $g_iAndroidBackgroundModeOpenGL
+		$iOpenGL = $g_iAndroidBackgroundModeDirectX
+	EndIf
+	; Only OpenGL is supported up to version 3.1.2.5
+
+	; get OpenGL/DirectX config
+	Local $aRegExResult = StringRegExp($__VBoxGuestProperties, "Name: graphics_render_mode, value: (.+), timestamp:", $STR_REGEXPARRAYMATCH)
+	If @error = 0 Then
+		Local $graphics_render_mode = $aRegExResult[0]
+		SetDebugLog($g_sAndroidEmulator & " instance " & $g_sAndroidInstance & " rendering mode is " & $graphics_render_mode)
+		Switch $graphics_render_mode
+			Case "1" ; DirectX
+				Return $iDirectX
+			Case "2" ; DirectX+ available in version 3.6.7.0
+				Return $iDirectX
+			Case Else ; fallback to OpenGL
+				Return $iOpenGL
+		EndSwitch
+	EndIf
+
+	; fallback to OpenGL
+	Return $iOpenGL
+EndFunc   ;==>GetMEmuBackgroundMode
+
 Func InitMEmu($bCheckOnly = False)
 	Local $process_killed, $aRegExResult, $g_sAndroidAdbDeviceHost, $g_sAndroidAdbDevicePort, $oops = 0
 	Local $MEmuVersion = RegRead($g_sHKLM & "\SOFTWARE" & $g_sWow6432Node & "\Microsoft\Windows\CurrentVersion\Uninstall\MEmu\", "DisplayVersion")
@@ -119,7 +149,8 @@ Func InitMEmu($bCheckOnly = False)
 		Return False
 	EndIf
 
-	If FileExists($MEmu_Path & "adb.exe") = 0 Then
+	Local $sPreferredADB = FindPreferredAdbPath()
+	If $sPreferredADB = "" And FileExists($MEmu_Path & "adb.exe") = 0 Then
 		If Not $bCheckOnly Then
 			SetLog("Serious error has occurred: Cannot find " & $g_sAndroidEmulator & ":", $COLOR_ERROR)
 			SetLog($MEmu_Path & "adb.exe", $COLOR_ERROR)
@@ -140,17 +171,10 @@ Func InitMEmu($bCheckOnly = False)
 	; Read ADB host and Port
 	If Not $bCheckOnly Then
 		InitAndroidConfig(True) ; Restore default config
-
-		$__VBoxVMinfo = LaunchConsole($MEmu_Manage_Path, "showvminfo " & $g_sAndroidInstance, $process_killed)
-		; check if instance is known
-		If StringInStr($__VBoxVMinfo, "Could not find a registered machine named") > 0 Then
-			; Unknown vm
-			SetLog("Cannot find " & $g_sAndroidEmulator & " instance " & $g_sAndroidInstance, $COLOR_ERROR)
-			Return False
-		EndIf
+		If Not GetAndroidVMinfo($__VBoxVMinfo, $MEmu_Manage_Path) Then Return False
 		; update global variables
 		$g_sAndroidProgramPath = $MEmu_Path & "MEmu.exe"
-		$g_sAndroidAdbPath = FindPreferredAdbPath()
+		$g_sAndroidAdbPath = $sPreferredADB
 		If $g_sAndroidAdbPath = "" Then $g_sAndroidAdbPath = $MEmu_Path & "adb.exe"
 		$g_sAndroidVersion = $MEmuVersion
 		$__MEmu_Path = $MEmu_Path
@@ -159,7 +183,7 @@ Func InitMEmu($bCheckOnly = False)
 		$aRegExResult = StringRegExp($__VBoxVMinfo, "name = ADB.*host ip = ([^,]+),", $STR_REGEXPARRAYMATCH)
 		If Not @error Then
 			$g_sAndroidAdbDeviceHost = $aRegExResult[0]
-			If $g_iDebugSetlog = 1 Then Setlog("Func LaunchConsole: Read $g_sAndroidAdbDeviceHost = " & $g_sAndroidAdbDeviceHost, $COLOR_DEBUG)
+			If $g_bDebugAndroid Then SetDebugLog("Func LaunchConsole: Read $g_sAndroidAdbDeviceHost = " & $g_sAndroidAdbDeviceHost, $COLOR_DEBUG)
 		Else
 			$oops = 1
 			SetLog("Cannot read " & $g_sAndroidEmulator & "(" & $g_sAndroidInstance & ") ADB Device Host", $COLOR_ERROR)
@@ -168,7 +192,7 @@ Func InitMEmu($bCheckOnly = False)
 		$aRegExResult = StringRegExp($__VBoxVMinfo, "name = ADB.*host port = (\d{3,5}),", $STR_REGEXPARRAYMATCH)
 		If Not @error Then
 			$g_sAndroidAdbDevicePort = $aRegExResult[0]
-			If $g_iDebugSetlog = 1 Then Setlog("Func LaunchConsole: Read $g_sAndroidAdbDevicePort = " & $g_sAndroidAdbDevicePort, $COLOR_DEBUG)
+			If $g_bDebugAndroid Then SetDebugLog("Func LaunchConsole: Read $g_sAndroidAdbDevicePort = " & $g_sAndroidAdbDevicePort, $COLOR_DEBUG)
 		Else
 			$oops = 1
 			SetLog("Cannot read " & $g_sAndroidEmulator & "(" & $g_sAndroidInstance & ") ADB Device Port", $COLOR_ERROR)
@@ -271,22 +295,21 @@ EndFunc   ;==>CheckScreenMEmu
 
 Func UpdateMEmuConfig()
 
-	Local $Value, $process_killed, $aRegExResult
+	Local $aRegExResult
 	Local $iSizeConfig = FindMEmuWindowConfig()
 
 	;MEmu "phone_layout" value="2" -> no system bar
 	;MEmu "phone_layout" value="1" -> right system bar
 	;MEmu "phone_layout" value="0" -> bottom system bar
-	$Value = LaunchConsole($__VBoxManage_Path, "guestproperty get " & $g_sAndroidInstance & " phone_layout", $process_killed)
-	$aRegExResult = StringRegExp($Value, "Value: (.+)", $STR_REGEXPARRAYMATCH)
+	$aRegExResult = StringRegExp($__VBoxGuestProperties, "Name: phone_layout, value: (.+), timestamp:", $STR_REGEXPARRAYMATCH)
 
 	If @error = 0 Then
 		$__MEmu_PhoneLayout = $aRegExResult[0]
 		If $iSizeConfig > -1 And $__MEmu_Window[$iSizeConfig][4] = "-1" Then
-			SetDebugLog($g_sAndroidEmulator & " phone_layout is " & $__MEmu_PhoneLayout & ", but set to -1 to disable screen compensation", $COLOR_ERROR)
+			SetDebugLog($g_sAndroidEmulator & " phone_layout is " & $__MEmu_PhoneLayout & ", but set to -1 to disable screen compensation")
 			$__MEmu_PhoneLayout = $__MEmu_Window[$iSizeConfig][4]
 		Else
-			SetDebugLog($g_sAndroidEmulator & " phone_layout is " & $__MEmu_PhoneLayout, $COLOR_ERROR)
+			SetDebugLog($g_sAndroidEmulator & " phone_layout is " & $__MEmu_PhoneLayout)
 		EndIf
 	Else
 		SetDebugLog("Cannot read " & $g_sAndroidEmulator & " guestproperty phone_layout!", $COLOR_ERROR)

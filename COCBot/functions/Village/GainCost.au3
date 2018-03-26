@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Boju (11-2016)
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -64,12 +64,11 @@ Func EndGainCost($Type)
 				$g_iStatsTotalGain[$eLootDarkElixir] += $tempDElixirCollected
 			EndIf
 
-			If $ichkSwitchAcc = 1 Then		; Profile Stats for SwitchAcc - Demen
-				$aGoldTotalAcc[$nCurProfile -1] += $tempGoldCollected
-				$aElixirTotalAcc[$nCurProfile -1] += $tempElixirCollected
-				$aDarkTotalAcc[$nCurProfile -1] += $tempDElixirCollected
+			If ProfileSwitchAccountEnabled() Then
+				$g_aiGoldTotalAcc[$g_iCurAccount] += $tempGoldCollected
+				$g_aiElixirTotalAcc[$g_iCurAccount] += $tempElixirCollected
+				$g_aiDarkTotalAcc[$g_iCurAccount] += $tempDElixirCollected
 			EndIf
-
 		Case "Train"
 			Local $tempElixirSpent = 0
 			Local $tempDElixirSpent = 0
@@ -85,11 +84,10 @@ Func EndGainCost($Type)
 				$g_iStatsTotalGain[$eLootDarkElixir] -= $tempDElixirSpent
 			EndIf
 
-			If $ichkSwitchAcc = 1 Then		; Profile Stats for SwitchAcc - Demen
-				$aElixirTotalAcc[$nCurProfile-1] -= $tempElixirSpent
-				$aDarkTotalAcc[$nCurProfile - 1] -= $tempDElixirSpent
+			If ProfileSwitchAccountEnabled() Then
+				$g_aiElixirTotalAcc[$g_iCurAccount] -= $tempElixirSpent
+				$g_aiDarkTotalAcc[$g_iCurAccount] -= $tempDElixirSpent
 			EndIf
-
 	EndSwitch
 
 	UpdateStats()

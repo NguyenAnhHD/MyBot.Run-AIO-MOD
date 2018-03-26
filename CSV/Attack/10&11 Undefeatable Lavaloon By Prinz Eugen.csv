@@ -1,0 +1,66 @@
+NOTE  |Author : Prinz Eugen (03-01-2018)
+NOTE  |Undefeatable Version (edided by Giadima)
+NOTE  |TH10 & TH11 (260 troops support)
+NOTE  |24 Balloons, 2 Lava, 20 Mini, 2 Baby Dragon.
+NOTE  |or 22 Balloons, 2 Lava, 20 Mini, 3 Baby Dragon.
+NOTE  |3 Rage, 5 Haste
+NOTE  |CC : Lava or Balloons + Haste/Rage
+NOTE  |Note : Must use 2 same level of haste spell for TH11 CC  
+	  |-----------------------------------------------------------------------------------------------|
+	  |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |0          |0          |0          |0          |0          |0          |10         |           |
+      |EAGLE      |INFERNO    |XBOW       |WIZTOWER   |MORTAR     |AIRDEFENSE |GEMBOX     |GEMBOX     |
+SIDEB |15         |5          |0          |0          |0          |0          |0          |0          |
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |A          |FRONT-LEFT |8          |0          |INT-EXT    |0          |0          |           | Lava
+MAKE  |B          |FRONT-RIGHT|8          |0          |INT-EXT    |0          |0          |           | Lava
+MAKE  |Q          |FRONT-LEFT |8          |0          |INT-EXT    |0          |0          |           | Balloons
+MAKE  |O          |FRONT-RIGHT|8          |0          |INT-EXT    |0          |0          |           | Balloons
+MAKE  |X          |FRONT-RIGHT|8          |0          |EXT-INT    |0          |0          |           | Balloons
+MAKE  |N          |FRONT-LEFT |8          |0          |EXT-INT    |0          |0          |           | Balloons
+MAKE  |V          |LEFT-FRONT |5          |0          |EXT-INT    |0          |0          |           | Baby Dragon
+MAKE  |U          |RIGHT-FRONT|5          |0          |EXT-INT    |0          |0          |           | Baby Dragon
+MAKE  |T          |LEFT-BACK  |10         |0          |EXT-INT    |0          |0          |           | Minions
+MAKE  |P          |RIGHT-BACK |10         |0          |EXT-INT    |0          |0          |           | Baby Dragon
+MAKE  |C          |FRONT-LEFT |5          |0          |EXT-INT    |0          |0          |           | Minions
+MAKE  |D          |FRONT-RIGHT|5          |0          |EXT-INT    |0          |0          |           | Minions	
+MAKE  |F          |FRONT-LEFT |10         |-8         |INT-EXT    |0          |0          |           | Haste; 1st drop
+MAKE  |G          |FRONT-RIGHT|10         |-8         |INT-EXT    |0          |0          |           | Haste; 1st drop
+MAKE  |S          |FRONT-RIGHT|10         |-16        |INT-EXT    |0          |0          |           | Rage ; 2nd drop
+MAKE  |R          |FRONT-LEFT |10         |-16        |INT-EXT    |0          |0          |           | Rage ; 2nd drop
+MAKE  |H          |FRONT-RIGHT|10         |-24        |INT-EXT    |0          |0          |           | Haste ; 3rd drop
+MAKE  |I          |FRONT-LEFT |10         |-24        |INT-EXT    |0          |0          |           | Haste ; 3rd drop
+MAKE  |K          |BACK-RIGHT |10         |0          |INT-EXT    |0          |0          |           | Hero
+MAKE  |L          |BACK-LEFT  |10         |0          |INT-EXT    |0          |0          |           | Hero
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________| Troops
+DROP  |Q-O        |1-7        |7          |Ball       |30-50      |0          |0          |           |
+DROP  |X-N        |2-8        |7          |Ball       |30-50      |0          |0          |           |
+DROP  |A-B        |4          |1          |Lava       |30-50      |0          |0          |           | 
+DROP  |A          |1          |1          |castle     |0          |0          |0          |           |
+DROP  |A          |1          |1          |warden     |0          |0          |0          |           |
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________| Spells
+DROP  |F-G        |2,5        |2          |HaSpell    |120        |100        |1500-2000  |           | Penetration
+DROP  |C-D        |1-5        |5          |Mini       |50-60      |0          |1000       |           |
+DROP  |R          |1          |1          |RSpell     |250-500    |0          |100        |           | Citadel
+DROP  |S          |4          |1          |RSpell     |250-500    |0          |100        |           | Citadel
+DROP  |R          |5          |1          |RSpell     |250-500    |0          |100        |           | Citadel
+DROP  |A          |1          |1          |warden     |0          |0          |2000       |           |
+DROP  |V-U        |1-5        |5          |Mini       |50-60      |0          |200        |           |
+WAIT  |2000       |           |           |           |           |           |           |           |
+RECALC|           |           |           |           |           |           |           |           | 
+DROP  |H          |3          |1          |HaSpell    |0          |0          |0          |           | Last Stand
+RECALC|           |           |           |           |           |           |           |           | 
+DROP  |I          |3          |1          |HaSpell    |0          |0          |0          |           | Last Stand
+RECALC|           |           |           |           |           |           |           |           | 
+DROP  |I          |3          |1          |RSpell     |0          |0          |0          |           | Last Stand
+DROP  |I          |3          |1          |HaSpell    |0          |0          |0          |           | Last Stand
+DROP  |I          |1          |1          |HaSpell    |0          |0          |0          |           | << Use same same level haste spell  
+WAIT  |2500-5000  |           |           |           |           |           |           |           |
+DROP  |P-T        |5          |1          |BabyD      |50-60      |0          |50         |           |
+WAIT  |2500-5000  |           |           |           |           |           |           |           |
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________| Remains
+DROP  |K          |5          |1          |King       |30-50      |0          |100-200    |           |
+DROP  |L          |5          |1          |Queen      |30-50      |0          |100-200    |           |
+DROP  |K          |1          |1          |BabyD      |30-50      |0          |100-200    |           |
+DROP  |A-B        |1-8        |1          |REMAIN     |30-50      |100        |50-100     |           | << Use AIO mod for this
+      |-----------------------------------------------------------------------------------------------|

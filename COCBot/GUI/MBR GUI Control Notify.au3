@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MyBot.run team
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -63,6 +63,7 @@ Func chkPBTGenabled()
 		GUICtrlSetState($g_hChkNotifyAlertMaintenance, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkNotifyAlertBAN, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkNotifyBOTUpdate, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkNotifyAlertSmartWaitTime, $GUI_ENABLE)
 	Else
 		GUICtrlSetState($g_hChkNotifyRemote, $GUI_DISABLE)
 		GUICtrlSetState($g_hTxtNotifyOrigin, $GUI_DISABLE)
@@ -84,6 +85,7 @@ Func chkPBTGenabled()
 		GUICtrlSetState($g_hChkNotifyDeleteAllPBPushes, $GUI_DISABLE)
 		GUICtrlSetState($g_hChkNotifyDeleteOldPBPushes, $GUI_DISABLE)
 		GUICtrlSetState($g_hBtnNotifyDeleteMessages, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkNotifyAlertSmartWaitTime, $GUI_DISABLE)
 	EndIf
 EndFunc   ;==>chkPBTGenabled
 

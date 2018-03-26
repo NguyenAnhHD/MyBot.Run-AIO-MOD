@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Cosote (12-2015)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -93,6 +93,11 @@ Func GetDroid4XAdbPath()
 	Return ""
 EndFunc   ;==>GetDroid4XAdbPath
 
+Func GetDroid4XBackgroundMode()
+	; Only OpenGL is supported up to version 0.10.6 Beta
+	Return $g_iAndroidBackgroundModeOpenGL
+EndFunc   ;==>GetDroid4XBackgroundMode
+
 Func InitDroid4X($bCheckOnly = False)
 	Local $process_killed, $aRegExResult, $VirtualBox_Path, $g_sAndroidAdbDeviceHost, $g_sAndroidAdbDevicePort, $oops = 0
 
@@ -115,7 +120,8 @@ Func InitDroid4X($bCheckOnly = False)
 		Return False
 	EndIf
 
-	If FileExists($__Droid4X_Path & "adb.exe") = False Then
+	Local $sPreferredADB = FindPreferredAdbPath()
+	If $sPreferredADB = "" And FileExists($__Droid4X_Path & "adb.exe") = False Then
 		If Not $bCheckOnly Then
 			SetLog("Serious error has occurred: Cannot find " & $g_sAndroidEmulator & ":", $COLOR_ERROR)
 			SetLog($__Droid4X_Path & "adb.exe", $COLOR_ERROR)
@@ -138,17 +144,11 @@ Func InitDroid4X($bCheckOnly = False)
 		InitAndroidConfig(True) ; Restore default config
 
 		$__VBoxManage_Path = $VirtualBox_Path & "VBoxManage.exe"
-		$__VBoxVMinfo = LaunchConsole($__VBoxManage_Path, "showvminfo " & $g_sAndroidInstance, $process_killed)
-		; check if instance is known
-		If StringInStr($__VBoxVMinfo, "Could not find a registered machine named") > 0 Then
-			; Unknown vm
-			SetLog("Cannot find " & $g_sAndroidEmulator & " instance " & $g_sAndroidInstance, $COLOR_ERROR)
-			Return False
-		EndIf
+		If Not GetAndroidVMinfo($__VBoxVMinfo, $__VBoxManage_Path) Then Return False
 		$aRegExResult = StringRegExp($__VBoxVMinfo, "ADB_PORT.*host ip = ([^,]+),", $STR_REGEXPARRAYMATCH)
 		If Not @error Then
 			$g_sAndroidAdbDeviceHost = $aRegExResult[0]
-			If $g_iDebugSetlog = 1 Then Setlog("Func LaunchConsole: Read $g_sAndroidAdbDeviceHost = " & $g_sAndroidAdbDeviceHost, $COLOR_DEBUG)
+			If $g_bDebugAndroid Then SetDebugLog("Func LaunchConsole: Read $g_sAndroidAdbDeviceHost = " & $g_sAndroidAdbDeviceHost, $COLOR_DEBUG)
 		Else
 			$oops = 1
 			SetLog("Cannot read " & $g_sAndroidEmulator & "(" & $g_sAndroidInstance & ") ADB Device Host", $COLOR_ERROR)
@@ -157,7 +157,7 @@ Func InitDroid4X($bCheckOnly = False)
 		$aRegExResult = StringRegExp($__VBoxVMinfo, "ADB_PORT.*host port = (\d{3,5}),", $STR_REGEXPARRAYMATCH)
 		If Not @error Then
 			$g_sAndroidAdbDevicePort = $aRegExResult[0]
-			If $g_iDebugSetlog = 1 Then Setlog("Func LaunchConsole: Read $g_sAndroidAdbDevicePort = " & $g_sAndroidAdbDevicePort, $COLOR_DEBUG)
+			If $g_bDebugAndroid Then SetDebugLog("Func LaunchConsole: Read $g_sAndroidAdbDevicePort = " & $g_sAndroidAdbDevicePort, $COLOR_DEBUG)
 		Else
 			$oops = 1
 			SetLog("Cannot read " & $g_sAndroidEmulator & "(" & $g_sAndroidInstance & ") ADB Device Port", $COLOR_ERROR)
@@ -171,7 +171,7 @@ Func InitDroid4X($bCheckOnly = False)
 		; update global variables
 		$g_sAndroidProgramPath = $__Droid4X_Path & "Droid4X.exe"
 		$g_sAndroidPath = $__Droid4X_Path
-		$g_sAndroidAdbPath = FindPreferredAdbPath()
+		$g_sAndroidAdbPath = $sPreferredADB
 		If $g_sAndroidAdbPath = "" Then $g_sAndroidAdbPath = $__Droid4X_Path & "adb.exe"
 		$g_sAndroidVersion = $__Droid4X_Version
 		; Update Window Title if instance has been configured
@@ -197,8 +197,6 @@ Func InitDroid4X($bCheckOnly = False)
 			$g_bAndroidAdbScreencap = False
 			$g_bAndroidSharedFolderAvailable = False
 		EndIf
-
-		$__VBoxGuestProperties = LaunchConsole($__VBoxManage_Path, "guestproperty enumerate " & $g_sAndroidInstance, $process_killed)
 
 		WinGetAndroidHandle()
 

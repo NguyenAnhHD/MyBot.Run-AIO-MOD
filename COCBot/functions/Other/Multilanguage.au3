@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Sardo (2015-11), Hervidero (2015-11), Boju (2017-04)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot Copyright 2015-2017
+; Remarks .......: This file is part of MyBot Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -21,7 +21,7 @@ Func GetTranslated($iSection = -1, $iKey = -1, $sText = "", $var1 = Default, $va
 	Local $sDefaultText, $g_sLanguageText
 
 	;If GetTranslated was called without correct parameters return value -2 to show the coder there is a mistake made somewhere (debug)
-	If $g_iDebugMultilanguage = 1 Then Return ($iSection & "-" & $iKey)
+	If $g_bDebugMultilanguage Then Return ($iSection & "-" & $iKey)
 	If $iSection = -1 Or $iKey = -1 Or $sText = "" Then Return "-2"
 
 	Local $bOutBound = False
@@ -98,7 +98,7 @@ Func DetectLanguage()
 	If Not FileExists(@ScriptDir & "\Languages\" & $g_sLanguage & ".ini") Then $g_sLanguage = ""
 	If $g_sLanguage = "" Then
 		Local $OSLang = @OSLang
-		If $g_iDebugSetlog Then SetLog("Detected language code: " & $OSLang)
+		If $g_bDebugSetlog Then SetDebugLog("Detected language code: " & $OSLang)
 		Switch $OSLang;get language
 
 			Case Hex(0x0004, 4)
@@ -1021,7 +1021,7 @@ Func DetectLanguage()
 		If FileExists($g_sDirLanguages & "/" & $langName & ".ini") Then;if language file found
 			SetLog("Language file " & $langName & ".ini found in " & $g_sDirLanguages)
 			$g_sLanguage = $langName
-			IniWrite($g_sProfileConfigPath, "other", "language", $g_sLanguage)
+			If FileExists($g_sProfileConfigPath) Then IniWrite($g_sProfileConfigPath, "other", "language", $g_sLanguage)
 		Else;otherwise, use english if the language isn't available yet
 			SetLog("Language file for " & $langName & " not found! Defaulting to English", $COLOR_ERROR)
 			$g_sLanguage = $g_sDefaultLanguage
@@ -1071,10 +1071,13 @@ Func GetTranslatedFileIni($iSection = -1, $iKey = -1, $sText = "", $var1 = Defau
 			Local $aKey = IniReadSection($ini_file, $iSection)
 			 If IsArray($aKey) Then
 				For $i = 1 To $aKey[0][0]
-					$Count += 1
-					ReDim $aSection[$Count][2]
-					$aSection[$Count - 1][0] = $aKey[$i][0]
-					$aSection[$Count - 1][1] = $aKey[$i][1]
+					If _ArraySearch($aSection, $aKey[$i][0], 0, 0, 0, 0, 1, 0) = -1 Then
+						; add only unique keys
+						$Count += 1
+						ReDim $aSection[$Count][2]
+						$aSection[$Count - 1][0] = $aKey[$i][0]
+						$aSection[$Count - 1][1] = $aKey[$i][1]
+					EndIf
 				Next
 			EndIf
 			_ArraySort($aSection, 0, 0, 0, 0)
@@ -1138,10 +1141,13 @@ Func GetTranslatedFileIni($iSection = -1, $iKey = -1, $sText = "", $var1 = Defau
 			Local $aKey = IniReadSection($ini_file, $iSection)
 			 If IsArray($aKey) Then
 				For $i = 1 To $aKey[0][0]
-					$Count += 1
-					ReDim $aSection[$Count][2]
-					$aSection[$Count - 1][0] = $aKey[$i][0]
-					$aSection[$Count - 1][1] = $aKey[$i][1]
+					If _ArraySearch($aSection, $aKey[$i][0], 0, 0, 0, 0, 1, 0) = -1 Then
+						; add only unique keys
+						$Count += 1
+						ReDim $aSection[$Count][2]
+						$aSection[$Count - 1][0] = $aKey[$i][0]
+						$aSection[$Count - 1][1] = $aKey[$i][1]
+					EndIf
 				Next
 			EndIf
 			_ArraySort($aSection, 0, 0, 0, 0)
@@ -1180,9 +1186,12 @@ Func _ReadFullIni()
 		If IsArray($aKey) Then ; Si la section n'est pas vide
 			ReDim $aNewLanguage[$Count + UBound($aKey) - 1][2] ; On redimentionne le tableau en ajoutant le nombre d'éléments de la section en cours
 			For $j = 1 To Ubound($aKey) - 1 ; Boucle de lecture
-				$aNewLanguage[$Count][0] = $aSection[$i] & "§" & $aKey[$j][0]; On stocke le nom de la section
-				$aNewLanguage[$Count][1] = $aKey[$j][1]; On stocke le nom de la clé
-				$Count += 1 ; On incrémente le compteur
+				If _ArraySearch($aNewLanguage, $aSection[$i] & "§" & $aKey[$j][0], 0, 0, 0, 0, 1, 0) = -1 Then
+					; add only unique keys
+					$aNewLanguage[$Count][0] = $aSection[$i] & "§" & $aKey[$j][0]; On stocke le nom de la section
+					$aNewLanguage[$Count][1] = $aKey[$j][1]; On stocke le nom de la clé
+					$Count += 1 ; On incrémente le compteur
+				EndIf
 			Next
 		Else ; Si la section est vide
 			ReDim $aNewLanguage[$Count + 1][2] ; On redimentionne le tableau de une ligne

@@ -5,7 +5,7 @@
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: ProMac (Fev-2017)
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2018)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -13,12 +13,9 @@
 ; Example .......: No
 ; ===============================================================================================================================
 
-; EXTRAS
-
 Func getCurrentXP($x_start, $y_start) ; -> Get Current/Total XP, Used in SuperXP.au3
 	Return getOcrAndCapture("coc-ms", $x_start, $y_start, 100, 15, True)
 EndFunc   ;==>getCurrentXP
-
 
 Func multiMatchesPixelOnly($directory, $maxReturnPoints = 0, $fullCocAreas = "ECD", $redLines = "", $statFile = "", $minLevel = 0, $maxLevel = 1000, $x1 = 0, $y1 = 0, $x2 = $g_iGAME_WIDTH, $y2 = $g_iGAME_HEIGHT, $bCaptureNew = True, $xDiff = Default, $yDiff = Default, $forceReturnString = False, $saveSourceImg = False)
 	; Setup arrays, including default return values for $return
@@ -29,17 +26,17 @@ Func multiMatchesPixelOnly($directory, $maxReturnPoints = 0, $fullCocAreas = "EC
 	If $bCaptureNew Then
 		_CaptureRegion2($x1, $y1, $x2, $y2)
 		; Perform the search
-		$res = DllCall($g_sLibImgLocPath, "str", "SearchMultipleTilesBetweenLevels", "handle", $g_hHBitmap2, "str", $directory, "str", $fullCocAreas, "Int", $maxReturnPoints, "str", $redLines, "Int", $minLevel, "Int", $maxLevel)
-		If @error Then _logErrorDLLCall($g_sLibImgLocPath, @error)
+		$res = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $g_hHBitmap2, "str", $directory, "str", $fullCocAreas, "Int", $maxReturnPoints, "str", $redLines, "Int", $minLevel, "Int", $maxLevel)
+		If @error Then _logErrorDLLCall($g_sLibMyBotPath, @error)
 		If $saveSourceImg = True Then _GDIPlus_ImageSaveToFile(_GDIPlus_BitmapCreateFromHBITMAP($g_hHBitmap2), @ScriptDir & "\multiMatchesPixelOnly.png")
-		Local $aValue = DllCall($g_sLibImgLocPath, "str", "GetProperty", "str", "redline", "str", "")
+		Local $aValue = DllCallMyBot("GetProperty", "str", "redline", "str", "")
 		$redLines = $aValue[0]
 	Else
 		Local $hClone = CloneAreaToSearch($x1, $y1, $x2, $y2)
-		$res = DllCall($g_sLibImgLocPath, "str", "SearchMultipleTilesBetweenLevels", "handle", $hClone, "str", $directory, "str", $fullCocAreas, "Int", $maxReturnPoints, "str", $redLines, "Int", $minLevel, "Int", $maxLevel)
-		If @error Then _logErrorDLLCall($g_sLibImgLocPath, @error)
+		$res = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $hClone, "str", $directory, "str", $fullCocAreas, "Int", $maxReturnPoints, "str", $redLines, "Int", $minLevel, "Int", $maxLevel)
+		If @error Then _logErrorDLLCall($g_sLibMyBotPath, @error)
 		If $saveSourceImg = True Then _GDIPlus_ImageSaveToFile(_GDIPlus_BitmapCreateFromHBITMAP($hClone), @ScriptDir & "\multiMatchesPixelOnly.png")
-		Local $aValue = DllCall($g_sLibImgLocPath, "str", "GetProperty", "str", "redline", "str", "")
+		Local $aValue = DllCallMyBot("GetProperty", "str", "redline", "str", "")
 		$redLines = $aValue[0]
 		_WinAPI_DeleteObject($hClone)
 	EndIf

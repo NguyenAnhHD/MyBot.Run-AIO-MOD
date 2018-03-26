@@ -6,7 +6,7 @@
 ; Return values .: Array with data on Dark Elixir Drills found in search
 ; Author ........: TripleM (01-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -14,23 +14,24 @@
 ; ===============================================================================================================================
 
 Func drillSearch()
-	Local $aReturnResult[0][4]
+	Local $aReturnResult[0][5]
 	Local $pixelerror = 15
 
-	Local $directory = @ScriptDir & "\imgxml\Storages\Drills"
 	Local $Maxpositions = 0 ; Return all found Positions
-	Local $aResult = multiMatches($directory, $Maxpositions, "ECD", "ECD")
+	Local $aResult = multiMatches($g_sImgSearchDrill, $Maxpositions, "ECD", "ECD")
 
 	For $iResult = 1 To UBound($aResult) - 1 ; Loop through all resultrows, skipping first row, which is searcharea, each matched img has its own row, if no resultrow, for is skipped
 		If _Sleep(10) Then Return
 		Local $aTemp[0][2]
-		_ArrayAdd($aTemp, $aResult[$iResult][5]) ; Copy Positionarray to temp array
+		_ArrayAdd($aTemp, $aResult[$iResult][5], 0, "|", @CRLF, $ARRAYFILL_FORCE_STRING) ; Copy Positionarray to temp array
 		_ArrayColInsert($aTemp, 2) ; Adding Level Column
 		_ArrayColInsert($aTemp, 3) ; Adding Hold Column
+		_ArrayColInsert($aTemp, 4) ; Adding Last Zap Column
 		For $iRow = 0 To UBound($aTemp) - 1
 			$aTemp[$iRow][2] = $aResult[$iResult][2] ; Setting Level Column to Result Level
+			$aTemp[$iRow][4] = 0 ; Set Last Zap to 0
 		Next
-		_ArrayAdd($aReturnResult, $aTemp) ; Adding temp array to return array
+		_ArrayAdd($aReturnResult, $aTemp, 0, "|", @CRLF, $ARRAYFILL_FORCE_STRING) ; Adding temp array to return array
 	Next
 
 	Local $iResult = 0
@@ -68,10 +69,8 @@ EndFunc   ;==>drillSearch
 
 Func CheckDrillLvl($x, $y)
 	_CaptureRegion2($x - 25, $y - 25, $x + 25, $y + 25)
-	Local $directory = @ScriptDir & "\imgxml\Storages\Drills\Level"
-	Local $Maxpositions = 1
 
-	Local $aResult = multiMatches($directory, $Maxpositions, "FV", "FV", "", 0, 1000, False)
+	Local $aResult = multiMatches($g_sImgSearchDrillLevel, 1, "FV", "FV", "", 0, 1000, False)
 
 	If $g_bDebugSmartZap = True Then SetLog("CheckDrillLvl: UBound($aresult) = " & UBound($aResult), $COLOR_DEBUG)
 	If UBound($aResult) > 1 Then

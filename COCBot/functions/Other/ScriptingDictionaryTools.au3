@@ -6,7 +6,7 @@
 ; Return values .:
 ; Author ........: BugFix  ( bugfix@autoit.de )
 ; Modified ......: MonkeyHunter (04-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 
 Func _ObjErrMsg($sFunctionName, $iErrorCode)
-	SetDebuglog("Dictionary Error: " & $sFunctionName & " code: " & $iErrorCode, $COLOR_ERROR)
+	SetDebugLog("Dictionary Error: " & $sFunctionName & " code: " & $iErrorCode, $COLOR_ERROR, True)
 EndFunc   ;==>_ObjErrMsg
 
 Func _ObjAdd(ByRef $oDICT, $KEY, $VALUE)
@@ -159,7 +159,7 @@ EndFunc   ;==>_ObjList
 
 Func _LogObjList(ByRef $oDICT)
 	If Not IsObj($oDICT) Then
-		Setlog("_LogObjList parameter is not object dictionary!", $COLOR_ERROR)
+		SetLog("_LogObjList parameter is not object dictionary!", $COLOR_ERROR)
 		SetError(1)
 		Return -1
 	EndIf
@@ -175,10 +175,10 @@ Func _LogObjList(ByRef $oDICT)
 				Select
 					Case UBound($array, 1) > 1 And IsArray($array[1]) ; if we have array of arrays, separate and list
 						$Text &= PixelArrayToString($array, ",")
-					Case IsArray($array[0]) ; single row with one array internal
+					Case UBound($array[0]) = 2 ; single row with one array internal
 						Local $aPixel = $array[0]
 						$Text &= PixelToString($aPixel, ";")
-					Case IsArray($array[0]) = 0 ; original array has x, y
+					Case UBound($array) = 2 And IsArray($array[0]) = 0 ; original array has x, y
 						$Text &= PixelToString($array, ":")
 					Case Else
 						$Text = "Monkey found bad banana!"
@@ -187,9 +187,9 @@ Func _LogObjList(ByRef $oDICT)
 				$Text = $oDICT.Item($strKey)
 				If StringInStr($strKey, "FINDTIME", $STR_NOCASESENSEBASIC) Then $TotalTime += Number($Text)
 			EndIf
-			Setlog("Dictionary Key: " & StringFormat("[%18s]", $strKey) & " = " & $Text, $COLOR_DEBUG)
+			SetLog("Dictionary Key: " & StringFormat("[%18s]", $strKey) & " = " & $Text, $COLOR_DEBUG)
 		Next
-		Setlog("Key Summary: " & StringFormat("[%18s]", "TOTAL FINDTIME") & " = " & $TotalTime, $COLOR_DEBUG)
+		SetLog("Key Summary: " & StringFormat("[%18s]", "TOTAL FINDTIME") & " = " & $TotalTime, $COLOR_DEBUG)
 	EndIf
 EndFunc   ;==>_LogObjList
 

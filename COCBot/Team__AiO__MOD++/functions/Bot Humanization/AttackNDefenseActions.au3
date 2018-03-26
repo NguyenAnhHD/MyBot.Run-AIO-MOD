@@ -1,6 +1,6 @@
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: Bot Humanization
-; Description ...: This file contains all functions of Pico Bot Humanization feature - Attack and Defenses Part
+; Description ...: This file contains all functions of Bot Humanization feature - Attack and Defenses Part
 ; Syntax ........: ---
 ; Parameters ....: ---
 ; Return values .: ---
@@ -52,7 +52,7 @@ Func WatchDefense()
 						DoAPauseDuringReplay(0)
 					EndIf
 
-					If IsReplayWindow() Then Setlog("Waiting for replay end...", $COLOR_ACTION)
+					If IsReplayWindow() Then SetLog("Waiting for replay end...", $COLOR_ACTION)
 
 					While IsReplayWindow()
 						Sleep(2000)
@@ -110,7 +110,7 @@ Func WatchAttack()
 						DoAPauseDuringReplay(0)
 					EndIf
 
-					If IsReplayWindow() Then Setlog("Waiting for replay end...", $COLOR_ACTION)
+					If IsReplayWindow() Then SetLog("Waiting for replay end...", $COLOR_ACTION)
 
 					While IsReplayWindow()
 						Sleep(2000)

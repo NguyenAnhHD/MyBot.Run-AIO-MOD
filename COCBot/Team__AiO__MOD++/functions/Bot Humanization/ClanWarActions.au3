@@ -1,6 +1,6 @@
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: Bot Humanization
-; Description ...: This file contains all functions of Pico Bot Humanization feature - War Part
+; Description ...: This file contains all functions of Bot Humanization feature - War Part
 ; Syntax ........: ---
 ; Parameters ....: ---
 ; Return values .: ---
@@ -123,7 +123,7 @@ Func WatchWarReplays()
 							DoAPauseDuringReplay(0)
 						EndIf
 
-						Setlog("Waiting for replay end...", $COLOR_ACTION)
+						SetLog("Waiting for replay end...", $COLOR_ACTION)
 
 						While IsReplayWindow()
 							Sleep(2000)

@@ -6,13 +6,15 @@
 ; Return values .: See _GUIToolTip_AddTool
 ; Author ........: Cosote (06-2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
+
+Global $g_hToolTip = 0
 
 Func _GUICtrlSetTip($controlID, $tiptext, $title = Default, $icon = Default, $options = Default, $useControlID = True)
 	;Return GUICtrlSetTip($controlID, $tiptext, $title, $icon, $options)

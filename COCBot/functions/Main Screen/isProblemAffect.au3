@@ -6,7 +6,7 @@
 ; Return values .: True if screen is blocked by an error message from CoC or BlueStacks
 ; Author ........: HungLe (05-2015)
 ; Modified ......: Hervidero (05-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......: Click
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -14,17 +14,19 @@
 ; ===============================================================================================================================
 
 Func isProblemAffect($bNeedCaptureRegion = False)
-	If Not _ColorCheck(_GetPixelColor(253, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex(0x282828, 6), 10) Then
+	Local $iGray = 0x282828
+	If $g_iAndroidVersionAPI >= $g_iAndroidLollipop Then $iGray = 0x424242
+	If Not _ColorCheck(_GetPixelColor(253, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex($iGray, 6), 10) Then
 		Return False
-	ElseIf Not _ColorCheck(_GetPixelColor(373, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex(0x282828, 6), 10) Then
+	ElseIf Not _ColorCheck(_GetPixelColor(373, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex($iGray, 6), 10) Then
 		Return False
-	ElseIf Not _ColorCheck(_GetPixelColor(473, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex(0x282828, 6), 10) Then
+	ElseIf Not _ColorCheck(_GetPixelColor(473, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex($iGray, 6), 10) Then
 		Return False
-	ElseIf Not _ColorCheck(_GetPixelColor(283, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex(0x282828, 6), 10) Then
+	ElseIf Not _ColorCheck(_GetPixelColor(283, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex($iGray, 6), 10) Then
 		Return False
-	ElseIf Not _ColorCheck(_GetPixelColor(320, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex(0x282828, 6), 10) Then
+	ElseIf Not _ColorCheck(_GetPixelColor(320, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex($iGray, 6), 10) Then
 		Return False
-	ElseIf Not _ColorCheck(_GetPixelColor(594, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex(0x282828, 6), 10) Then
+	ElseIf Not _ColorCheck(_GetPixelColor(594, 395 + $g_iMidOffsetY, $bNeedCaptureRegion), Hex($iGray, 6), 10) Then
 		Return False
 	ElseIf _ColorCheck(_GetPixelColor(823, 32, $bNeedCaptureRegion), Hex(0xF8FCFF, 6), 10) Then
 		Return False

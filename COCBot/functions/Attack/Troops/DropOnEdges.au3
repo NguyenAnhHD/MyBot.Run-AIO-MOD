@@ -10,7 +10,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -35,7 +35,6 @@ Func DropOnEdges($troop, $nbSides, $number, $slotsPerEdge = 0)
 		Return
 	EndIf
 
-	; Classic Four Fingers attack
 	If $nbSides = 5 Then
 		If $slotsPerEdge = 2 Then
 			For $i = 0 To $nbSides - 4 ; Four Fingers Deployment Giants

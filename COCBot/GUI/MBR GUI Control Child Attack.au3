@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: GkevinOD (2014)
 ; Modified ......: Hervidero (2015), CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -218,6 +218,23 @@ Func chkTHSnipeBeforeLBEnable()
 		GUICtrlSetState($g_hCmbTHSnipeBeforeLBScript, $GUI_DISABLE)
 	EndIf
 EndFunc   ;==>chkTHSnipeBeforeLBEnable
+
+Func radHerosApply()
+	GUICtrlSetState($g_hRadAutoQueenAbility, $g_iActivateQueen = 0 ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($g_hRadManQueenAbility, $g_iActivateQueen = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($g_hRadBothQueenAbility, $g_iActivateQueen = 2 ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetData($g_hTxtManQueenAbility, ($g_iDelayActivateQueen / 1000))
+
+	GUICtrlSetState($g_hRadAutoKingAbility, $g_iActivateKing = 0 ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($g_hRadManKingAbility, $g_iActivateKing = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($g_hRadBothKingAbility, $g_iActivateKing = 2 ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetData($g_hTxtManKingAbility, ($g_iDelayActivateKing / 1000))
+
+	GUICtrlSetState($g_hRadAutoWardenAbility, $g_iActivateWarden = 0 ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($g_hRadManWardenAbility, $g_iActivateWarden = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetState($g_hRadBothWardenAbility, $g_iActivateWarden = 2 ? $GUI_CHECKED : $GUI_UNCHECKED)
+	GUICtrlSetData($g_hTxtManWardenAbility, ($g_iDelayActivateWarden / 1000))
+EndFunc   ;==>radHerosApply
 
 Func chkattackHoursE1()
 	If GUICtrlRead($g_ahChkAttackHoursE1) = $GUI_CHECKED And IschkattackHoursE1() Then
@@ -573,3 +590,46 @@ Func sldVSDelay()
 		GUICtrlSetData($g_hLblTextMaxVSDelay, GetTranslatedFileIni("MBR Global GUI Design", "seconds", "seconds"))
 	EndIf
  EndFunc   ;==>sldVSDelay
+ 
+ Func dbCheck()
+	$g_abAttackTypeEnable[$DB] = (GUICtrlRead($g_hChkDeadbase) = $GUI_CHECKED)
+
+	If IsBotLaunched() Then _GUICtrlTab_SetCurFocus($g_hGUI_SEARCH_TAB, 0) ; activate deadbase tab
+	If BitAND(GUICtrlRead($g_hChkDBActivateSearches), GUICtrlRead($g_hChkDBActivateTropies), GUICtrlRead($g_hChkDBActivateCamps), GUICtrlRead($g_hChkDBSpellsWait)) = $GUI_UNCHECKED Then
+		GUICtrlSetState($g_hChkDBActivateSearches, $GUI_CHECKED)
+		chkDBActivateSearches() ; this includes a call to dbCheckall() -> tabSEARCH()
+	Else
+		tabSEARCH() ; just call tabSEARCH()
+	EndIf
+EndFunc   ;==>dbCheck
+
+Func abCheck()
+	$g_abAttackTypeEnable[$LB] = (GUICtrlRead($g_hChkActivebase) = $GUI_CHECKED)
+
+	If IsBotLaunched() Then _GUICtrlTab_SetCurFocus($g_hGUI_SEARCH_TAB, 1)
+	If BitAND(GUICtrlRead($g_hChkABActivateSearches), GUICtrlRead($g_hChkABActivateTropies), GUICtrlRead($g_hChkABActivateCamps), GUICtrlRead($g_hChkABSpellsWait)) = $GUI_UNCHECKED Then
+		GUICtrlSetState($g_hChkABActivateSearches, $GUI_CHECKED)
+		chkABActivateSearches() ; this includes a call to abCheckall() -> tabSEARCH()
+	Else
+		tabSEARCH() ; just call tabSEARCH()
+	EndIf
+EndFunc   ;==>abCheck
+
+Func tsCheck()
+	$g_abAttackTypeEnable[$TS] = (GUICtrlRead($g_hChkTHSnipe) = $GUI_CHECKED)
+
+	If IsBotLaunched() Then _GUICtrlTab_SetCurFocus($g_hGUI_SEARCH_TAB, 2)
+	If BitAND(GUICtrlRead($g_hChkTSActivateSearches), GUICtrlRead($g_hChkTSActivateTropies), GUICtrlRead($g_hChkTSActivateCamps)) = $GUI_UNCHECKED Then
+		GUICtrlSetState($g_hChkTSActivateSearches, $GUI_CHECKED)
+		chkTSActivateSearches() ; this includes a call to tsCheckall() -> tabSEARCH()
+	Else
+		tabSEARCH() ; just call tabSEARCH()
+	EndIf
+EndFunc   ;==>tsCheck
+
+Func bullyCheck()
+	$g_abAttackTypeEnable[$TB] = (GUICtrlRead($g_hChkBully) = $GUI_CHECKED)
+
+	If IsBotLaunched() Then _GUICtrlTab_SetCurFocus($g_hGUI_SEARCH_TAB, 3)
+	tabSEARCH()
+EndFunc   ;==>bullyCheck

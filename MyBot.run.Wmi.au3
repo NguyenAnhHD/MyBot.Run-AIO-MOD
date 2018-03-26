@@ -3,7 +3,7 @@
 ; Description ...: This file contens the Sequence that runs all MBR Bot
 ; Author ........: cosote (03-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -13,6 +13,7 @@
 ; AutoIt pragmas
 #NoTrayIcon
 #RequireAdmin
+#AutoIt3Wrapper_UseUpx=y
 #AutoIt3Wrapper_UseX64=7n
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rsln /MI=3
@@ -20,12 +21,8 @@
 
 #AutoIt3Wrapper_Change2CUI=y
 #pragma compile(Console, true)
-#pragma compile(Icon, "Images\MyBot.ico")
-#pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
-#pragma compile(ProductName, My Bot)
-#pragma compile(ProductVersion, 7.2.3)
-#pragma compile(FileVersion, 7.2.3)
-#pragma compile(LegalCopyright, © https://mybot.run)
+#include "MyBot.run.version.au3"
+#pragma compile(ProductName, My Bot Wmi)
 #pragma compile(Out, MyBot.run.Wmi.exe) ; Required
 
 ; Enforce variable declarations
@@ -42,9 +39,11 @@ Opt("MustDeclareVars", 1)
 
 Global $g_sWmiTestApi = ""
 Global $g_bRunState = True
-Global $g_iDebugSetlog = 0
+Global $g_bDebugSetlog = False
+Global $g_bDebugAndroid = False
 Global $g_iGlobalActiveBotsAllowed = 0 ; Dummy
 Global $g_hMutextOrSemaphoreGlobalActiveBots = 0 ; Dummy
+Global $g_bBotLaunchOption_NoBotSlot = True
 Global $g_hStatusBar = 0 ; Dummy
 Global Const $COLOR_ORANGE = 0xFF7700 ; Used for donate GUI buttons
 Global Const $COLOR_ERROR = $COLOR_RED ; Error messages
@@ -132,3 +131,6 @@ Func GetTranslated($a, $b, $c)
 EndFunc
 Func GetTranslatedFileIni($a, $b, $c)
 EndFunc
+Func _GUICtrlStatusBar_SetTextEx($hWnd, $sText = "", $iPart = 0, $iUFlag = 0)
+EndFunc
+

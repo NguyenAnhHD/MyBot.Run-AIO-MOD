@@ -17,14 +17,14 @@
 ;                      9 = tree image file name
 ; Author ........: Cosote (Oct 17th 2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
 
-Func GetVillageSize($DebugLog = False, $sStonePrefix = Default, $sTreePrefix = "tree")
+Func GetVillageSize($DebugLog = False, $sStonePrefix = Default, $sTreePrefix = Default)
 
 	If $sStonePrefix = Default Then $sStonePrefix = "stone"
 	If $sTreePrefix = Default Then $sTreePrefix = "tree"
@@ -37,14 +37,14 @@ Func GetVillageSize($DebugLog = False, $sStonePrefix = Default, $sTreePrefix = "
 	Local $iAdditional = 75
 
 	If isOnBuilderIsland(True) Then
-		$sDirectory = @ScriptDir & "\imgxml\village\BuilderBase"
+		$sDirectory = $g_sImgZoomOutDirBB
 	Else
-		$sDirectory = @ScriptDir & "\imgxml\village\NormalVillage"
+		$sDirectory = $g_sImgZoomOutDir
 	EndIf
 
 	Local $aStoneFiles = _FileListToArray($sDirectory, $sStonePrefix & "*.*", $FLTA_FILES)
 	If @error Then
-		SetLog("Error: Missing stone files", $COLOR_ERROR)
+		SetLog("Error: Missing stone files (" & @error & ")", $COLOR_ERROR)
 		Return $aResult
 	EndIf
 	; use stoneBlueStacks2A stones first
@@ -59,10 +59,10 @@ Func GetVillageSize($DebugLog = False, $sStonePrefix = Default, $sTreePrefix = "
 	Next
 	Local $aTreeFiles = _FileListToArray($sDirectory, $sTreePrefix & "*.*", $FLTA_FILES)
 	If @error Then
-		SetLog("Error: Missing tree files", $COLOR_ERROR)
+		SetLog("Error: Missing tree (" & @error & ")", $COLOR_ERROR)
 		Return $aResult
 	EndIf
-	local $i, $findImage, $sArea, $a
+	Local $i, $findImage, $sArea, $a
 
 	For $i = 1 To $aStoneFiles[0]
 		$findImage = $aStoneFiles[$i]
@@ -79,7 +79,7 @@ Func GetVillageSize($DebugLog = False, $sStonePrefix = Default, $sTreePrefix = "
 			$bottom = $y0 + $iAdditional
 			$sArea = Int($x1) & "," & Int($y1) & "|" & Int($right) & "," & Int($y1) & "|" & Int($right) & "," & Int($bottom) & "|" & Int($x1) & "," & Int($bottom)
 			;SetDebugLog("GetVillageSize check for image " & $findImage)
-			$a = decodeSingleCoord(findImage($findImage, $sDirectory & "\" & $findImage,  $sArea, 1, False))
+			$a = decodeSingleCoord(findImage($findImage, $sDirectory & "\" & $findImage, $sArea, 1, False))
 			If UBound($a) = 2 Then
 				$x = Int($a[0])
 				$y = Int($a[1])
@@ -118,7 +118,7 @@ Func GetVillageSize($DebugLog = False, $sStonePrefix = Default, $sTreePrefix = "
 			$bottom = $y0 + $iAdditional
 			$sArea = Int($x1) & "," & Int($y1) & "|" & Int($right) & "," & Int($y1) & "|" & Int($right) & "," & Int($bottom) & "|" & Int($x1) & "," & Int($bottom)
 			;SetDebugLog("GetVillageSize check for image " & $findImage)
-			$a = decodeSingleCoord(findImage($findImage, $sDirectory & "\" & $findImage,  $sArea, 1, False))
+			$a = decodeSingleCoord(findImage($findImage, $sDirectory & "\" & $findImage, $sArea, 1, False))
 			If UBound($a) = 2 Then
 				$x = Int($a[0])
 				$y = Int($a[1])
@@ -163,8 +163,8 @@ Func GetVillageSize($DebugLog = False, $sStonePrefix = Default, $sTreePrefix = "
 	$aResult[0] = $c
 	$aResult[1] = $z
 	$aResult[2] = $x
-	$aResult[3] = $y
 	$aResult[4] = $stone[0]
+	$aResult[3] = $y
 	$aResult[5] = $stone[1]
 	$aResult[6] = $stone[5]
 	$aResult[7] = $tree[0]
@@ -173,7 +173,7 @@ Func GetVillageSize($DebugLog = False, $sStonePrefix = Default, $sTreePrefix = "
 	Return $aResult
 EndFunc   ;==>GetVillageSize
 
-Func updateGlobalVillageOffset($x, $y)
+Func UpdateGlobalVillageOffset($x, $y)
 
 	Local $updated = False
 
@@ -214,4 +214,4 @@ Func updateGlobalVillageOffset($x, $y)
 
 	Return $updated
 
-EndFunc   ;==>updateGlobalVillageOffset
+EndFunc   ;==>UpdateGlobalVillageOffset

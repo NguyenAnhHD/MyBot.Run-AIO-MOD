@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: GkevinOD (2014)
 ; Modified ......: Hervidero (2015), CodeSlinger69 [2017], MonkeyHunter (03-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -186,6 +186,7 @@ Func EnableSearchPanels($mode)
 			   GUICtrlRead($g_hChkDBKingWait) = $GUI_CHECKED Or _
 			   GUICtrlRead($g_hChkDBQueenWait) = $GUI_CHECKED Or _
 			   GUICtrlRead($g_hChkDBWardenWait) = $GUI_CHECKED Or _
+			   GUICtrlRead($g_hChkDBNotWaitHeroes) = $GUI_CHECKED Or _
 			   GUICtrlRead($g_hChkDBSpellsWait) = $GUI_CHECKED Then
 				_GUI_Value_STATE("SHOW", $groupHerosDB)
 				;search
@@ -221,6 +222,7 @@ Func EnableSearchPanels($mode)
 			   GUICtrlRead($g_hChkABKingWait) = $GUI_CHECKED Or _
 			   GUICtrlRead($g_hChkABQueenWait) = $GUI_CHECKED Or _
 			   GUICtrlRead($g_hChkABWardenWait) = $GUI_CHECKED Or _
+			   GUICtrlRead($g_hChkABNotWaitHeroes) = $GUI_CHECKED Or _
 			   GUICtrlRead($g_hChkABSpellsWait) = $GUI_CHECKED Then
 				_GUI_Value_STATE("SHOW", $groupHerosAB)
 				;search
@@ -541,7 +543,7 @@ Func cmbDBWaitForCCSpell()
 		GUICtrlSetState($g_hCmbDBWaitForCastleSpell2, $GUI_ENABLE)
 		GUICtrlSetState($g_hTxtDBWaitForCastleSpell, $GUI_ENABLE)
 	EndIf
-EndFunc
+EndFunc   ;==>cmbDBWaitForCCSpell
 
 Func cmbABWaitForCCSpell()
 	Local $iSpellSelection = _GUICtrlComboBox_GetCurSel($g_hCmbABWaitForCastleSpell)
@@ -552,7 +554,7 @@ Func cmbABWaitForCCSpell()
 		GUICtrlSetState($g_hCmbABWaitForCastleSpell2, $GUI_ENABLE)
 		GUICtrlSetState($g_hTxtABWaitForCastleSpell, $GUI_ENABLE)
 	EndIf
-EndFunc
+EndFunc   ;==>cmbABWaitForCCSpell
 
 Func chkDBSpellsWait()
 	If $g_iTownHallLevel > 4 Or $g_iTownHallLevel = 0 Then ; Must be TH5+ to have spells
@@ -565,7 +567,7 @@ Func chkDBSpellsWait()
 			If @error Then
 				GUICtrlSetState($g_hChkDBSpellsWait, $GUI_UNCHECKED)
 				$g_abSearchSpellsWaitEnable[$DB] = False
-				Setlog("Wait for Spells disabled due training count error", $COLOR_ERROR)
+				SetLog("Wait for Spells disabled due training count error", $COLOR_ERROR)
 			EndIf
 		Else
 			$g_abSearchSpellsWaitEnable[$DB] = False
@@ -576,7 +578,7 @@ Func chkDBSpellsWait()
 			GUICtrlSetState($i, $GUI_DISABLE)
 		Next
 	EndIf
-EndFunc
+EndFunc   ;==>chkDBSpellsWait
 
 Func chkABSpellsWait()
 	If $g_iTownHallLevel > 4 Or $g_iTownHallLevel = 0 Then ; Must be TH5+ to have spells
@@ -589,7 +591,7 @@ Func chkABSpellsWait()
 			If @error Then
 				GUICtrlSetState($g_hChkABSpellsWait, $GUI_UNCHECKED)
 				$g_abSearchSpellsWaitEnable[$LB] = False
-				Setlog("Wait for Spells disabled due training count error", $COLOR_ERROR)
+				SetLog("Wait for Spells disabled due training count error", $COLOR_ERROR)
 			EndIf
 		Else
 			$g_abSearchSpellsWaitEnable[$LB] = False
@@ -600,7 +602,7 @@ Func chkABSpellsWait()
 			GUICtrlSetState($i, $GUI_DISABLE)
 		Next
 	EndIf
-EndFunc
+EndFunc   ;==>chkABSpellsWait
 
 Func chkSpellWaitError()
 
@@ -651,7 +653,7 @@ Func chkSpellWaitError()
 			_ExtMsgBoxSet(1 + 64, $SS_CENTER, 0x004080, 0xFFFF00, 12, "Comic Sans MS", 480)
 			While 1
 				$MsgBox3 = _ExtMsgBox(128, "1|2|3|4|5|6|7", GetTranslatedFileIni("MBR GUI Control Tab Search", "Func_chkSpellWaitError_MsgBox_12", "You are a WINNER!!"), $sFunnyText, 900, $g_hFrmBot)
-				If @error Then Setlog("_ExtMsgBox error: " & @error, $COLOR_ERROR)
+				If @error Then SetLog("_ExtMsgBox error: " & @error, $COLOR_ERROR)
 				If $iCount > 7 And Int($MsgBox3) = Random(1,8,1) Then
 					ExitLoop
 				Else
@@ -699,25 +701,7 @@ Func chkSpellWaitError()
 		SetError(1)
 		Return
 	EndIf
-EndFunc
-
-Func ChkUseWardenAbility()
-
-	If $g_iTownHallLevel > 10 Or $g_iTownHallLevel = 0 Then ; Must be TH11 to have warden, or starting without TH level set
-		If GUICtrlRead($g_hChkUseWardenAbility) = $GUI_CHECKED Then
-			GUICtrlSetState($g_hTxtWardenAbility, $GUI_ENABLE)
-			$g_bActivateWardenCondition = True
-		Else
-			GUICtrlSetState($g_hTxtWardenAbility, $GUI_DISABLE)
-			$g_bActivateWardenCondition = False
-		EndIf
-	Else
-		GUICtrlSetState($g_hChkUseWardenAbility, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-		GUICtrlSetState($g_hTxtWardenAbility, $GUI_DISABLE)
-		$g_bActivateWardenCondition = False
-	EndIf
-
-EndFunc
+EndFunc   ;==>chkSpellWaitError
 
 Func CmbDBTH()
 	_GUI_Value_STATE("HIDE", $g_aGroupListPicDBMaxTH)
@@ -736,3 +720,37 @@ Func CmbBullyMaxTH()
 	Local $iCmbValue = _GUICtrlComboBox_GetCurSel($g_hCmbBullyMaxTH) + 6
 	GUICtrlSetState($g_ahPicBullyMaxTH[$iCmbValue], $GUI_SHOW)
 EndFunc   ;==>CmbBullyMaxTH
+
+Func dbCheckAll()
+	If BitAND(GUICtrlRead($g_hChkDBActivateSearches), GUICtrlRead($g_hChkDBActivateTropies), GUICtrlRead($g_hChkDBActivateCamps), GUICtrlRead($g_hChkDBSpellsWait)) = $GUI_UNCHECKED Then
+		GUICtrlSetState($g_hChkDeadbase, $GUI_UNCHECKED)
+	Else
+		GUICtrlSetState($g_hChkDeadbase, $GUI_CHECKED)
+	EndIf
+	tabSEARCH()
+EndFunc   ;==>dbCheckAll
+
+Func abCheckAll()
+	If BitAND(GUICtrlRead($g_hChkABActivateSearches), GUICtrlRead($g_hChkABActivateTropies), GUICtrlRead($g_hChkABActivateCamps), GUICtrlRead($g_hChkABSpellsWait)) = $GUI_UNCHECKED Then
+		GUICtrlSetState($g_hChkActivebase, $GUI_UNCHECKED)
+	Else
+		GUICtrlSetState($g_hChkActivebase, $GUI_CHECKED)
+	EndIf
+	tabSEARCH()
+EndFunc   ;==>abCheckAll
+
+Func tsCheckAll()
+	If BitAND(GUICtrlRead($g_hChkTSActivateSearches), GUICtrlRead($g_hChkTSActivateTropies), GUICtrlRead($g_hChkTSActivateCamps)) = $GUI_UNCHECKED Then
+		GUICtrlSetState($g_hChkTHSnipe, $GUI_UNCHECKED)
+	Else
+		GUICtrlSetState($g_hChkTHSnipe, $GUI_CHECKED)
+	EndIf
+	tabSEARCH()
+EndFunc   ;==>tsCheckAll
+
+Func chkNotWaitHeroes()
+	If $g_abAttackTypeEnable[$DB] Then $g_iSearchNotWaitHeroesEnable = $g_aiSearchNotWaitHeroesEnable[$DB]
+	If $g_abAttackTypeEnable[$LB] Then
+		If $g_iSearchNotWaitHeroesEnable <> 0 Then $g_iSearchNotWaitHeroesEnable = $g_aiSearchNotWaitHeroesEnable[$LB]
+	EndIf
+EndFunc   ;==>ChkNotWaitHeroes

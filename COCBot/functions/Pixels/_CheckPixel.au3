@@ -11,7 +11,7 @@
 ; Return values .: True when the referenced pixel is found, False if not found
 ; Author ........: FastFrench (2015)
 ; Modified ......: Hervidero (2015), MonkeyHunter (08-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -20,7 +20,7 @@
 
 Func _CheckPixel($aScreenCode, $bNeedCapture = Default, $Ignore = Default, $sLogText = Default, $LogTextColor = Default, $bSilentSetLog = Default)
 	If $bNeedCapture = Default Then $bNeedCapture = False
-	If $g_iDebugSetlog = 1 And $sLogText <> Default And IsString($sLogText) Then
+	If $g_bDebugSetlog And $sLogText <> Default And IsString($sLogText) Then
 		$sLogText &= ", Expected: " & Hex($aScreenCode[2], 6) & ", Tolerance: " & $aScreenCode[3]
 	Else
 		$sLogText = Default
@@ -51,7 +51,7 @@ Func _WaitForCheckPixel($aScreenCode, $bNeedCapture = Default, $Ignore = Default
 		If _Sleep($iWaitLoop ) Then Return
 		$wCount += 1
 		If $wCount > 20 Then ; wait for 20*250ms=5 seconds for pixel to appear
-			Setlog($sLogText & " not found!", $COLOR_ERROR)
+			SetLog($sLogText & " not found!", $COLOR_ERROR)
 			Return False
 		EndIf
 	WEnd

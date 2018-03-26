@@ -13,7 +13,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -23,7 +23,9 @@
 
 Global $g_oTxtLogInitText = ObjCreate("Scripting.Dictionary")
 Global $g_oTxtAtkLogInitText = ObjCreate("Scripting.Dictionary")
-
+Global $g_oTxtSALogInitText = ObjCreate("Scripting.Dictionary")
+Global $g_bSilentSetDebugLog = False
+Global $g_aLastStatusBar
 
 Func SetLog($sLogMessage, $iColor = Default, $sFont = Default, $iFontSize = Default, $iStatusbar = Default, $bConsoleWrite = Default) ;Sets the text for the log
 	If $sLogMessage <> "" Then Return _SetLog($sLogMessage, $iColor, $sFont, $iFontSize, $iStatusbar, $bConsoleWrite)
@@ -31,7 +33,10 @@ EndFunc   ;==>SetLog
 
 ; internal _SetLog(), don't use outside this file
 Func _SetLog($sLogMessage, $Color = Default, $Font = Default, $FontSize = Default, $statusbar = Default, $time = Default, $bConsoleWrite = Default, _
-			$LogPrefix = Default, $bPostponed = Default, $bSilentSetLog = Default, $bWriteToLogFile = Default)
+		$LogPrefix = Default, $bPostponed = Default, $bSilentSetLog = Default, $bWriteToLogFile = Default)
+
+	Local Static $bActive = False
+	Local Static $hLogCheckFreeSpaceTimer = 0
 
 	If $Color = Default Then $Color = $COLOR_BLACK
 	If $Font = Default Then $Font = "Verdana"
@@ -48,7 +53,7 @@ Func _SetLog($sLogMessage, $Color = Default, $Font = Default, $FontSize = Defaul
 	Local $log = $LogPrefix & $debugTime & $sLogMessage
 	If $bConsoleWrite = True And $sLogMessage <> "" Then
 		Local $sLevel = GetLogLevel($Color)
-		ConsoleWrite($sLevel & $log & @CRLF) ; Always write any log to console
+		_ConsoleWrite($sLevel & $log & @CRLF) ; Always write any log to console
 	EndIf
 	If $g_hLogFile = 0 And $g_sProfileLogsPath Then
 		CreateLogFile()
@@ -68,6 +73,8 @@ Func _SetLog($sLogMessage, $Color = Default, $Font = Default, $FontSize = Defaul
 	$a[3] = $FontSize
 	$a[4] = $statusbar
 	$a[5] = $time
+	If $statusbar Then $g_aLastStatusBar = $a
+
 	If $g_hLogFile = 0 Then
 		; could not write to log file, so add additional info (does happen only before config file is available)
 		ReDim $a[8]
@@ -77,44 +84,64 @@ Func _SetLog($sLogMessage, $Color = Default, $Font = Default, $FontSize = Defaul
 	$g_oTxtLogInitText($g_oTxtLogInitText.Count + 1) = $a
 	;ReleaseMutex($txtLogMutex)
 
-	If ($g_hTxtLog <> 0 And $g_bRunState = False) Or ($bPostponed = False And __TimerDiff($g_hTxtLogTimer) >= $g_iTxtLogTimerTimeout) Then
+	; recursion handling
+	If $bActive Then Return
+	$bActive = True
+
+	If (($g_hTxtLog <> 0 Or $g_iGuiMode <> 1) And $g_bRunState = False) Or ($bPostponed = False And __TimerDiff($g_hTxtLogTimer) >= $g_iTxtLogTimerTimeout) Then
 		; log now to GUI
 		CheckPostponedLog()
+
+		If $g_iLogCheckFreeSpaceMB And $g_bRunState Then
+			If $hLogCheckFreeSpaceTimer = 0 Or __TimerDiff($hLogCheckFreeSpaceTimer) > 600000 Then
+				; check free space of profile folder
+				Local $fFree = DriveSpaceFree($g_sProfilePath & "\" & $g_sProfileCurrentName)
+				If $hLogCheckFreeSpaceTimer = 0 Then SetDebugLog("Free disk space is " & $fFree & " MB")
+				$hLogCheckFreeSpaceTimer = __TimerInit()
+				If @error = 0 And $fFree < $g_iLogCheckFreeSpaceMB Then
+					$hLogCheckFreeSpaceTimer = 0 ; force check on next start
+					SetLog("Less than " & $g_iLogCheckFreeSpaceMB & " MB free disk space, bot is stopping!", $COLOR_ERROR)
+					If $g_bRunState Then btnStop()
+				EndIf
+			EndIf
+		EndIf
+
 	EndIf
+	$bActive = False
 EndFunc   ;==>_SetLog
 
 Func GetLogLevel($Color)
 	; translate log level
 	Local $sLevel = ""
 	Switch $Color
-	Case $COLOR_ERROR
-		$sLevel = "ERROR    "
-	Case $COLOR_WARNING
-		$sLevel = "WARN     "
-	Case $COLOR_SUCCESS
-		$sLevel = "SUCCESS  "
-	Case $COLOR_SUCCESS1
-		$sLevel = "SUCCESS1 "
-	Case $COLOR_INFO
-		$sLevel = "INFO     "
-	Case $COLOR_DEBUG
-		$sLevel = "DEBUG    "
-	Case $COLOR_DEBUG1
-		$sLevel = "DEBUG1   "
-	Case $COLOR_DEBUG2
-		$sLevel = "DEBUG2   "
-	Case $COLOR_DEBUGS
-		$sLevel = "DEBUGS   "
-	Case $COLOR_ACTION
-		$sLevel = "ACTION   "
-	Case $COLOR_ACTION1
-		$sLevel = "ACTION1  "
-	Case $COLOR_ORANGE
-		$sLevel = "ORANGE   "
-	Case $COLOR_BLACK
-		$sLevel = "NORMAL   "
-	Case Else
-		$sLevel = Hex($Color, 6) & "   "
+		Case $COLOR_ERROR
+			$sLevel = "ERROR    "
+		Case $COLOR_WARNING
+			$sLevel = "WARN     "
+		Case $COLOR_SUCCESS
+			$sLevel = "SUCCESS  "
+		Case $COLOR_SUCCESS1
+			$sLevel = "SUCCESS1 "
+		Case $COLOR_INFO
+			$sLevel = "INFO     "
+		Case $COLOR_DEBUG
+			$sLevel = "DEBUG    "
+		Case $COLOR_DEBUG1
+			$sLevel = "DEBUG1   "
+		Case $COLOR_DEBUG2
+			$sLevel = "DEBUG2   "
+		Case $COLOR_DEBUGS
+			$sLevel = "DEBUGS   "
+		Case $COLOR_ACTION
+			$sLevel = "ACTION   "
+		Case $COLOR_ACTION1
+			$sLevel = "ACTION1  "
+		Case $COLOR_ORANGE
+			$sLevel = "ORANGE   "
+		Case $COLOR_BLACK
+			$sLevel = "NORMAL   "
+		Case Else
+			$sLevel = Hex($Color, 6) & "   "
 	EndSwitch
 	Return $sLevel
 EndFunc   ;==>GetLogLevel
@@ -128,23 +155,20 @@ Func SetLogText(ByRef $hTxtLog, ByRef $sLogMessage, ByRef $Color, ByRef $Font, B
 	_GUICtrlRichEdit_AppendTextColor($hTxtLog, $sLogMessage & @CRLF, _ColorConvert($Color), False)
 EndFunc   ;==>SetLogText
 
-Func SetDebugLog($sLogMessage, $Color = Default, $bSilentSetLog = Default, $Font = Default, $FontSize = Default, $statusbar = Default)
-	If $Color = Default Then $Color = $COLOR_DEBUG
-	If $bSilentSetLog = Default Then $bSilentSetLog = False
-	If $statusbar = Default Then $statusbar = 0
+Func SetDebugLog($sLogMessage, $sColor = $COLOR_DEBUG, $bSilentSetLog = Default, $Font = Default, $FontSize = Default, $statusbar = 0)
+	Local $sLogPrefix = "D "
+	Local $sLog = $sLogPrefix & TimeDebug() & $sLogMessage
+	If $bSilentSetLog = Default Then $bSilentSetLog = $g_bSilentSetDebugLog
 
-	Local $LogPrefix = "D "
-	Local $log = $LogPrefix & TimeDebug() & $sLogMessage
-	If $g_iDebugSetlog = 1 And $bSilentSetLog = False Then
-		_SetLog($sLogMessage, $Color, $Font, $FontSize, $statusbar, Default, True, $LogPrefix)
+	If $g_bDebugSetlog And $bSilentSetLog = False Then
+		_SetLog($sLogMessage, $sColor, $Font, $FontSize, $statusbar, Default, True, $sLogPrefix)
 	Else
-		If $sLogMessage <> "" Then ConsoleWrite(GetLogLevel($Color) & $log & @CRLF) ; Always write any log to console
+		If $sLogMessage <> "" Then _ConsoleWrite(GetLogLevel($sColor) & $sLog & @CRLF) ; Always write any log to console
 		If $g_hLogFile = 0 And $g_sProfileLogsPath Then CreateLogFile()
 		If $g_hLogFile Then
-			__FileWriteLog($g_hLogFile, $log)
+			__FileWriteLog($g_hLogFile, $sLog)
 		Else
-			; log later
-			_SetLog($sLogMessage, $Color, $Font, $FontSize, $statusbar, Default, False, $LogPrefix, Default, True)
+			_SetLog($sLogMessage, $sColor, $Font, $FontSize, $statusbar, Default, False, $sLogPrefix, Default, True)
 		EndIf
 	EndIf
 EndFunc   ;==>SetDebugLog
@@ -157,13 +181,16 @@ Func SetGuiLog($sLogMessage, $Color = Default, $bGuiLog = Default)
 	Return SetDebugLog($sLogMessage, $Color)
 EndFunc   ;==>SetGuiLog
 
-Func FlushGuiLog(ByRef $hTxtLog, ByRef $aTxtLog, $bUpdateStatus = False, $sLogMutexName = "txtLog")
+Func FlushGuiLog(ByRef $hTxtLog, ByRef $oTxtLog, $bUpdateStatus = False, $sLogMutexName = "txtLog")
+	$g_bFlushGuiLogActive = True
+	;SetDebugLog("FlushGuiLog: Entered")
+
 	Local $wasLock = AndroidShieldLock(True) ; lock Android Shield as shield changes state when focus changes
 	;Local $txtLogMutex = AcquireMutex($sLogMutexName) ; synchronize access
 
-	Local $activeBot = _WinAPI_GetActiveWindow() = $g_hFrmBot ; different scroll to bottom when bot not active to fix strange bot activation flickering
-	Local $hCtrl = _WinAPI_GetFocus() ; RichEdit tampers with focus so remember and restore
 	If $hTxtLog Then
+		Local $activeBot = _WinAPI_GetForegroundWindow() = $g_hFrmBot ; different scroll to bottom when bot not active to fix strange bot activation flickering
+		Local $hCtrl = _WinAPI_GetFocus() ; RichEdit tampers with focus so remember and restore
 		_SendMessage($hTxtLog, $WM_SETREDRAW, False, 0) ; disable redraw so logging has no visiual effect
 		_WinAPI_EnableWindow($hTxtLog, False) ; disable RichEdit
 		_GUICtrlRichEdit_SetSel($hTxtLog, -1, -1) ; select end
@@ -171,8 +198,8 @@ Func FlushGuiLog(ByRef $hTxtLog, ByRef $aTxtLog, $bUpdateStatus = False, $sLogMu
 
 	;add existing Log
 	Local $sLastStatus = ""
-	For $i = 1 To $aTxtLog.Count
-		Local $a = $aTxtLog($i)
+	For $i = 1 To $oTxtLog.Count
+		Local $a = $oTxtLog($i)
 		Local $iSize = UBound($a)
 		If $hTxtLog Then
 			If $iSize = 0 And $a = 0 Then
@@ -194,23 +221,17 @@ Func FlushGuiLog(ByRef $hTxtLog, ByRef $aTxtLog, $bUpdateStatus = False, $sLogMu
 			EndIf
 		EndIf
 
-		If $bUpdateStatus = True And $g_hStatusBar <> 0 And $a[4] = 1 Then
+		If $bUpdateStatus = True And ($g_hStatusBar Or $g_iGuiMode <> 1) And $iSize > 4 And $a[4] = 1 Then
 			$sLastStatus = $a[0]
-			; only till CR/LF or text overwrites
-			Local $iPosCr = StringInStr($sLastStatus, Chr(13))
-			Local $iPosLf = StringInStr($sLastStatus, Chr(10))
-			Local $iPos = $iPosCr
-			If $iPosLf > 0 And $iPosLf < $iPosCr Then $iPos = $iPosLf
-			If $iPos > 0 Then $sLastStatus = StringLeft($sLastStatus, $iPos - 1)
 		EndIf
 	Next
 
 	If $sLastStatus Then
-		_GUICtrlStatusBar_SetText($g_hStatusBar, "Status : " & $sLastStatus)
+		_GUICtrlStatusBar_SetTextEx($g_hStatusBar, "Status : " & $sLastStatus)
 	EndIf
 
-	Local $iLogs = $aTxtLog.Count
-	$aTxtLog.RemoveAll
+	Local $iLogs = $oTxtLog.Count
+	$oTxtLog.RemoveAll
 
 	If $hTxtLog Then
 		_WinAPI_EnableWindow($hTxtLog, True) ; enabled RichEdit again
@@ -222,19 +243,41 @@ Func FlushGuiLog(ByRef $hTxtLog, ByRef $aTxtLog, $bUpdateStatus = False, $sLogMu
 
 	;ReleaseMutex($txtLogMutex) ; end of synchronized block
 	AndroidShieldLock($wasLock) ; unlock Android Shield
+	$g_bFlushGuiLogActive = False
 	Return $iLogs
 EndFunc   ;==>FlushGuiLog
 
+Func UpdateStatusBar($sText)
+	; only till CR/LF or text overwrites
+	Local $iPosCr = StringInStr($sText, Chr(13))
+	Local $iPosLf = StringInStr($sText, Chr(10))
+	Local $iPos = $iPosCr
+	If $iPosLf > 0 And $iPosLf < $iPosCr Then $iPos = $iPosLf
+	If $iPos > 0 Then $sText = StringLeft($sText, $iPos - 1)
+	_GUICtrlStatusBar_SetTextEx($g_hStatusBar, "Status : " & $sText)
+EndFunc   ;==>UpdateStatusBar
+
 Func CheckPostponedLog($bNow = False)
+	;SetDebugLog("CheckPostponedLog: Entered, $bNow=" & $bNow & ", count=" & $g_oTxtLogInitText.Count & ", $g_hTxtLog=" & $g_hTxtLog & ", $g_iGuiMode=" & $g_iGuiMode)
 	Local $iLogs = 0
 	If $g_bCriticalMessageProcessing Or ($bNow = False And __TimerDiff($g_hTxtLogTimer) < $g_iTxtLogTimerTimeout) Then Return 0
 
-	If $g_oTxtLogInitText.Count > 0 And $g_hTxtLog <> 0 Then
-		$iLogs += FlushGuiLog($g_hTxtLog, $g_oTxtLogInitText, True, "txtLog")
+	If $g_oTxtLogInitText.Count > 0 And ($g_iGuiMode <> 1 Or $g_hTxtLog) Then
+		If $g_hTxtLog And UBound($g_aLastStatusBar) > 0 And BitAND(WinGetState($g_hGUI_LOG), 2) = 0 Then
+			; Update StatusBar at least
+			UpdateStatusBar($g_aLastStatusBar[0])
+			$g_aLastStatusBar = 0
+		Else
+			$iLogs += FlushGuiLog($g_hTxtLog, $g_oTxtLogInitText, True, "txtLog")
+		EndIf
 	EndIf
 
-	If $g_oTxtAtkLogInitText.Count > 0 And $g_hTxtAtkLog <> 0 Then
+	If $g_oTxtAtkLogInitText.Count > 0 And ($g_iGuiMode <> 1 Or ($g_hTxtAtkLog And BitAND(WinGetState($g_hGUI_LOG), 2))) Then
 		$iLogs += FlushGuiLog($g_hTxtAtkLog, $g_oTxtAtkLogInitText, False, "txtAtkLog")
+	EndIf
+
+	If $g_oTxtSALogInitText.Count > 0 And ($g_iGuiMode <> 1 Or ($g_hTxtSALog And BitAND(WinGetState($g_hGUI_LOG_SA), 2))) Then
+		$iLogs += FlushGuiLog($g_hTxtSALog, $g_oTxtSALogInitText, False, "txtSALog")
 	EndIf
 
 	$g_hTxtLogTimer = __TimerInit()
@@ -247,7 +290,7 @@ Func _GUICtrlRichEdit_AppendTextColor($hWnd, $sText, $iColor, $bGotoEnd = True)
 	_GUICtrlRichEdit_AppendText($hWnd, $sText)
 EndFunc   ;==>_GUICtrlRichEdit_AppendTextColor
 
-Func _ColorConvert($nColor);RGB to BGR or BGR to RGB
+Func _ColorConvert($nColor) ;RGB to BGR or BGR to RGB
 	Return _
 			BitOR(BitShift(BitAND($nColor, 0x000000FF), -16), _
 			BitAND($nColor, 0x0000FF00), _
@@ -272,24 +315,45 @@ Func SetAtkLog($String1, $String2 = "", $Color = $COLOR_BLACK, $Font = "Lucida C
 
 EndFunc   ;==>SetAtkLog
 
+Func SetSwitchAccLog($String, $Color = $COLOR_BLACK, $Font = "Verdana", $FontSize = 7.5, $time = True)
+	If $time = True Then
+		$time = Time()
+	Else
+		$time = 0
+	EndIf
+
+	If $g_hSwitchLogFile = 0 Then CreateSwitchLogFile()
+	_FileWriteLog($g_hSwitchLogFile, $String)
+
+	Dim $a[6]
+	$a[0] = $String
+	$a[1] = $Color
+	$a[2] = $Font
+	$a[3] = $FontSize
+	$a[4] = 0 ; no status bar update
+	$a[5] = $time
+	$g_oTxtSALogInitText($g_oTxtSALogInitText.Count + 1) = $a
+
+EndFunc   ;==>SetSwitchAccLog
+
 Func AtkLogHead()
-	Local $Text = ""							; SwitchAcc Demen
-	If $ichkSwitchAcc = 1 Then $Text = "AC"	; SwitchAcc Demen
+	Local $Text = ""
+	If ProfileSwitchAccountEnabled() Then $Text = "|Account"
 	SetAtkLog(_PadStringCenter(" " & GetTranslatedFileIni("MBR Func_AtkLogHead", "AtkLogHead_Text_01", "ATTACK LOG") & " ", 71, "="), "", $COLOR_BLACK, "MS Shell Dlg", 8.5)
-	SetAtkLog($Text & GetTranslatedFileIni("MBR Func_AtkLogHead", "AtkLogHead_Text_02", '|                  --------  LOOT --------       ----- BONUS ------'), "")
-	SetAtkLog($Text & GetTranslatedFileIni("MBR Func_AtkLogHead", "AtkLogHead_Text_03", '|TIME|TROP.|SEARCH|   GOLD| ELIXIR|DARK EL|TR.|S|  GOLD|ELIXIR|  DE|L.'), "")
+	SetAtkLog(GetTranslatedFileIni("MBR Func_AtkLogHead", "AtkLogHead_Text_02", '|                 ------- RESULT ------ ---- LOOT ---- ---- BONUS ----'), "")
+	SetAtkLog(GetTranslatedFileIni("MBR Func_AtkLogHead", "AtkLogHead_Text_03", '|AC|TIME.|TROP|SRC|CLOUD|TH|TR|[%]|TR.|S|GOLD|ELIX|  DE|GOLD|ELIX|  DE|L.') & $Text, "")
 EndFunc   ;==>AtkLogHead
 
 Func __FileWriteLog($handle, $text)
-	Return FileWriteLine($handle, $text)
+	Return FileWriteLine($handle, BitAND(WinGetState($g_hFrmBot), 2) & ": " & $text)
 EndFunc   ;==>__FileWriteLog
 
 Func ClearLog($hRichEditCtrl = $g_hTxtLog)
 	Switch $hRichEditCtrl
-	Case $g_hTxtLog
-		$g_oTxtLogInitText($g_oTxtLogInitText.Count + 1) = 0
-	Case $g_hTxtAtkLog
-		$g_oTxtAtkLogInitText($g_oTxtAtkLogInitText.Count + 1) = 0
+		Case $g_hTxtLog
+			$g_oTxtLogInitText($g_oTxtLogInitText.Count + 1) = 0
+		Case $g_hTxtAtkLog
+			$g_oTxtAtkLogInitText($g_oTxtAtkLogInitText.Count + 1) = 0
 	EndSwitch
 EndFunc   ;==>ClearLog
 
@@ -298,3 +362,10 @@ Func SetLogCentered($String, $sPad = Default, $Color = Default, $bClearLog = Fal
 	If $bClearLog = True Then ClearLog($g_hTxtLog)
 	_SetLog(_PadStringCenter($String, 53, $sPad), $Color, "Lucida Console", 8)
 EndFunc   ;==>SetLogCentered
+
+Func SetDebugLogSilent($bSilent = Default)
+	If $bSilent = Default Then $bSilent = True
+	Local $bWasSilent = $g_bSilentSetDebugLog
+	$g_bSilentSetDebugLog = $bSilent
+	Return $bWasSilent
+EndFunc   ;==>SetDebugLogSilent

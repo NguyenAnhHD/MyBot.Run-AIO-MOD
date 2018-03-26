@@ -19,7 +19,7 @@
 ; Return values .: None
 ; Author ........: Sardo (2016)
 ; Modified ......: MonkeyHunter (03-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -35,7 +35,6 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 	debugAttackCSV(" - delay when  change deploy point : " & $delayDropMin & "-" & $delayDropMax)
 	debugAttackCSV(" - delay after drop all troops : " & $sleepafterMin & "-" & $sleepAfterMax)
 	debugAttackCSV(" - delay before drop all troops : " & $sleepBeforeMin & "-" & $sleepBeforeMax)
-
 	;how many vectors need to manage...
 	Local $temp = StringSplit($vectors, "-")
 	Local $numbersOfVectors
@@ -73,17 +72,18 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 	; Get the integer index of the troop name specified
 	Local $iTroopIndex = TroopIndexLookup($troopName, "DropTroopFromINI")
 	If $iTroopIndex = -1 Then
-		Setlog("CSV troop name '" & $troopName & "' is unrecognized.")
+		SetLog("CSV troop name '" & $troopName & "' is unrecognized.")
 		Return
 	EndIf
 	Local $bHeroDrop = ($iTroopIndex = $eWarden ? True : False) ;set flag TRUE if Warden was dropped
 
 	;search slot where is the troop...
 	Local $troopPosition = -1
+	Local $troopCount = -1
 	For $i = 0 To UBound($g_avAttackTroops) - 1
-		If $g_avAttackTroops[$i][0] = $iTroopIndex Then
+		If $g_avAttackTroops[$i][0] = $iTroopIndex And $g_avAttackTroops[$i][1] >= $troopCount Then
 			$troopPosition = $i
-			ExitLoop
+			$troopCount = $g_avAttackTroops[$i][1]
 		EndIf
 	Next
 
@@ -112,11 +112,12 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 	EndSwitch
 
 	If $troopPosition = -1 Or $usespell = False Then
+
 		If $usespell = True Then
-			Setlog("No troop found in your attack troops list")
+			SetLog("No troop found in your attack troops list")
 			debugAttackCSV("No troop found in your attack troops list")
 		Else
-			If $g_iDebugSetlog = 1 Then SetLog("discard use spell", $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("discard use spell", $COLOR_DEBUG)
 		EndIf
 
 	Else
@@ -129,7 +130,6 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 			$g_iCSVLastTroopPositionDropTroopFromINI = $troopPosition
 			ReleaseClicks()
 		EndIf
-
 		;sleep time Before deploy all troops
 		Local $sleepBefore = 0
 		If $sleepBeforeMin <> $sleepBeforeMax Then
@@ -137,23 +137,22 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		Else
 			$sleepBefore = Int($sleepBeforeMin)
 		EndIf
-		$sleepBefore = Int($sleepBefore / $g_CSVSpeedDivider[$g_iMatchMode])
+		$sleepBefore = Int($sleepBefore / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
 
 		If $sleepBefore > 50 And IsKeepClicksActive() = False Then
 			debugAttackCSV(">> delay Before drop all troops: " & $sleepBefore)
-			If $sleepBefore <= 1000 Then  ; check SLEEPBefore value is less than 1 second?
+			If $sleepBefore <= 1000 Then ; check SLEEPBefore value is less than 1 second?
 				If _Sleep($sleepBefore) Then Return
-				CheckHeroesHealth()  ; check hero health == does nothing if hero not dropped
+				CheckHeroesHealth() ; check hero health == does nothing if hero not dropped
 			Else  ; $sleepBefore is More than 1 second, then improve pause/stop button response with max 1 second delays
 				For $z = 1 To Int($sleepBefore/1000) ; Check hero health every second while while sleeping
-					If _Sleep(980) Then Return  ; sleep 1 second minus estimated herohealthcheck time when heroes not activiated
-					CheckHeroesHealth()  ; check hero health == does nothing if hero not dropped
+					If _Sleep(980) Then Return ; sleep 1 second minus estimated herohealthcheck time when heroes not activiated
+					CheckHeroesHealth() ; check hero health == does nothing if hero not dropped
 				Next
-				If _Sleep(Mod($sleepBefore,1000)) Then Return  ; $sleepBefore must be integer for MOD function return correct value!
+				If _Sleep(Mod($sleepBefore,1000)) Then Return ; $sleepBefore must be integer for MOD function return correct value!
 				CheckHeroesHealth() ; check hero health == does nothing if hero not dropped
 			EndIf
 		EndIf
-
 		;drop
 		For $i = $indexStart To $indexEnd
 			Local $delayDrop = 0
@@ -171,8 +170,8 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 				Else
 					$delayDrop = $delayDropMin
 				EndIf
-				debugAttackCSV(">> random delay drop point: " & $delayDrop)
-				$delayDrop = Int($delayDrop / $g_CSVSpeedDivider[$g_iMatchMode])
+				debugAttackCSV(">> delay change drop point: " & $delayDrop)
+				$delayDrop = Int($delayDrop / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
 				debugAttackCSV(">> delay change drop point: " & $delayDrop & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
 			EndIf
 
@@ -189,52 +188,54 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 					If $delayPointmin <> $delayPointmax Then
 						Local $delayPoint = Random($delayPointmin, $delayPointmax, 1)
 						debugAttackCSV(">> random delay deploy point: " & $delayPoint)
-						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider[$g_iMatchMode])
+						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
 					Else
 						Local $delayPoint = $delayPointmin
-						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider[$g_iMatchMode])
+						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
 					EndIf
 					debugAttackCSV(">> delay change deploy Point: " & $delayPoint & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
 
 					Switch $iTroopIndex
 						Case $eBarb To $eBowl ; drop normal troops
 							If $debug = True Then
-								Setlog("AttackClick( " & $pixel[0] & ", " & $pixel[1] & " , " & $qty2 & ", " & $delayPoint & ",#0666)")
+								SetLog("AttackClick( " & $pixel[0] & ", " & $pixel[1] & " , " & $qty2 & ", " & $delayPoint & ",#0666)")
 							Else
 								AttackClick($pixel[0], $pixel[1], $qty2, $delayPoint, $delayDropLast, "#0666")
 							EndIf
 						Case $eKing
 							If $debug = True Then
-								Setlog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", " & $g_iKingSlot & ", -1, -1) ")
+								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", " & $g_iKingSlot & ", -1, -1) ")
 							Else
 								dropHeroes($pixel[0], $pixel[1], $g_iKingSlot, -1, -1)
 							EndIf
 						Case $eQueen
 							If $debug = True Then
-								Setlog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ",-1," & $g_iQueenSlot & ", -1) ")
+								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ",-1," & $g_iQueenSlot & ", -1) ")
 							Else
 								dropHeroes($pixel[0], $pixel[1], -1, $g_iQueenSlot, -1)
 							EndIf
 						Case $eWarden
 							If $debug = True Then
-								Setlog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", -1, -1," & $g_iWardenSlot & ") ")
+								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", -1, -1," & $g_iWardenSlot & ") ")
 							Else
 								dropHeroes($pixel[0], $pixel[1], -1, -1, $g_iWardenSlot)
 							EndIf
 						Case $eCastle
 							If $debug = True Then
-								Setlog("dropCC(" & $pixel[0] & ", " & $pixel[1] & ", " & $g_iClanCastleSlot & ")")
+								SetLog("dropCC(" & $pixel[0] & ", " & $pixel[1] & ", " & $g_iClanCastleSlot & ")")
 							Else
 								dropCC($pixel[0], $pixel[1], $g_iClanCastleSlot)
 							EndIf
 						Case $eLSpell To $eSkSpell
 							If $debug = True Then
-								Setlog("Drop Spell AttackClick( " & $pixel[0] & ", " & $pixel[1] & " , " & $qty2 & ", " & $delayPoint & ",#0666)")
+								SetLog("Drop Spell AttackClick( " & $pixel[0] & ", " & $pixel[1] & " , " & $qty2 & ", " & $delayPoint & ",#0666)")
 							Else
 								AttackClick($pixel[0], $pixel[1], $qty2, $delayPoint, $delayDropLast, "#0667")
 							EndIf
+							; assume spells get always dropped: adjust count so CC spells can be used without recalc
+							If UBound($g_avAttackTroops) > $troopPosition And $g_avAttackTroops[$troopPosition][1] > 0 Then $g_avAttackTroops[$troopPosition][1] -= 1
 						Case Else
-							Setlog("Error parsing line")
+							SetLog("Error parsing line")
 					EndSwitch
 					debugAttackCSV($troopName & " qty " & $qty2 & " in (" & $pixel[0] & "," & $pixel[1] & ") delay " & $delayPoint)
 				EndIf
@@ -252,7 +253,7 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		Else
 			$sleepafter = Int($sleepafterMin)
 		EndIf
-		$sleepafter = Int($sleepafter / $g_CSVSpeedDivider[$g_iMatchMode])
+		$sleepafter = Int($sleepafter / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
 		If $sleepafter > 0 And IsKeepClicksActive() = False Then
 			debugAttackCSV(">> delay after drop all troops: " & $sleepafter)
 			If $sleepafter <= 1000 Then ; check SLEEPAFTER value is less than 1 second?

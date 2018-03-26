@@ -6,7 +6,7 @@
 ; Return values .: Array with data on easy targets found in search
 ; Author ........: TripleM (04-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -17,15 +17,12 @@ Func easyPreySearch()
 	Local $aReturnResult[0][3]
 	Local $pixelerror = 10, $iMaxCombDist = 60
 
-	Local $directory = @ScriptDir & "\imgxml\easybuildings"
-	Local $Maxpositions = 0 ; Return all found Positions
-
 	For $iLoop = 1 To 3 ; Search 3 times
 		If $iLoop > 1 Then ; with 5 sec pause inbetween, so whole search covers a time intervall of around 10 sec
 			If _Sleep(5000) Then Return
 		EndIf
-		
-		Local $aResult = multiMatches($directory, $Maxpositions, "ECD", "ECD")
+
+		Local $aResult = multiMatches($g_sImgEasyBuildings, 0, "ECD", "ECD")
 		If $g_bDebugSmartZap = True Then
 			If UBound($aResult) = 2 Then
 				SetLog("1 target type found in " & $iLoop & ". searchround.", $COLOR_DEBUG)
@@ -33,19 +30,19 @@ Func easyPreySearch()
 				SetLog(UBound($aResult) - 1 & " target types found in " & $iLoop & ". searchround.", $COLOR_DEBUG)
 			EndIf
 		EndIf
-	
+
 		For $iResult = 1 To UBound($aResult) - 1 ; Loop through all resultrows, skipping first row, which is searcharea, each matched img has its own row, if no resultrow, for is skipped
 			If _Sleep(10) Then Return
 			Local $aTemp[0][2]
-			_ArrayAdd($aTemp, $aResult[$iResult][5]) ; Copy Positionarray to temp array
+			_ArrayAdd($aTemp, $aResult[$iResult][5], 0, "|", @CRLF, $ARRAYFILL_FORCE_STRING) ; Copy Positionarray to temp array
 			_ArrayColInsert($aTemp, 2) ; Adding Weight Column
 			For $iRow = 0 To UBound($aTemp) - 1
 				$aTemp[$iRow][2] = 1 ; Setting Weight Column to 1
 			Next
-			_ArrayAdd($aReturnResult, $aTemp) ; Adding temp array to return array
+			_ArrayAdd($aReturnResult, $aTemp, 0, "|", @CRLF, $ARRAYFILL_FORCE_STRING) ; Adding temp array to return array
 		Next
 	Next
-	
+
 	; Removing Duplicate Targets
 	Local $iResult = 0
 	While $iResult < UBound($aReturnResult)

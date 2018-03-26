@@ -6,34 +6,36 @@
 ; Return values .: None
 ; Author ........: MyBot.run team
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
 Func cmbProfile()
-	saveConfig()
+	If LoadProfile() Then
+		Return True
+	EndIf
+	; restore combo to current profile
+	_GUICtrlComboBox_SelectString($g_hCmbProfile, $g_sProfileCurrentName)
+	Return False
+EndFunc   ;==>cmbProfile
 
-	If $g_hLogFile <> 0 Then
-	   FileClose($g_hLogFile)
-	   $g_hLogFile = 0
-    EndIf
-
-	If $g_hAttackLogFile <> 0 Then
-	   FileClose($g_hAttackLogFile)
-	   $g_hAttackLogFile = 0
-    EndIf
+Func LoadProfile($bSaveCurrentProfile = True)
+	If $bSaveCurrentProfile Then
+		saveConfig()
+	EndIf
 
 	; Setup the profile in case it doesn't exist.
-	setupProfile()
-
-	readConfig()
-	applyConfig()
-	saveConfig()
-
-	SetLog("Profile " & $g_sProfileCurrentName & " loaded from " & $g_sProfileConfigPath, $COLOR_SUCCESS)
-EndFunc   ;==>cmbProfile
+	If setupProfile() Then
+		readConfig()
+		applyConfig()
+		saveConfig()
+		SetLog("Profile " & $g_sProfileCurrentName & " loaded from " & $g_sProfileConfigPath, $COLOR_SUCCESS)
+		Return True
+	EndIf
+	Return False
+EndFunc   ;==>LoadProfile
 
 Func btnAddConfirm()
 	Switch @GUI_CtrlId
@@ -46,10 +48,8 @@ Func btnAddConfirm()
 			GUICtrlSetState($g_hBtnCancelProfileChange, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnConfirmRenameProfile, $GUI_HIDE)
 			GUICtrlSetState($g_hBtnRenameProfile, $GUI_HIDE)
-			; IceCube (Misc v1.0)
-			GUICtrlSetState($g_hBtnRecycle, $GUI_HIDE)
-			; IceCube (Misc v1.0)
-
+			GUICtrlSetState($g_hBtnPullSharedPrefs, $GUI_HIDE)
+			GUICtrlSetState($g_hBtnPushSharedPrefs, $GUI_HIDE)
 		Case $g_hBtnConfirmAddProfile
 			Local $newProfileName = StringRegExpReplace(GUICtrlRead($g_hTxtVillageName), '[/:*?"<>|]', '_')
 			If FileExists($g_sProfilePath & "\" & $newProfileName) Then
@@ -57,11 +57,12 @@ Func btnAddConfirm()
 				Return
 			EndIf
 
+			saveConfig() ; save current config so we don't miss anything recently changed
+
 			$g_sProfileCurrentName = $newProfileName
 			; Setup the profile if it doesn't exist.
 			createProfile()
 			setupProfileComboBox()
-			setupProfileComboBoxswitch()
 			selectProfile()
 			GUICtrlSetState($g_hTxtVillageName, $GUI_HIDE)
 			GUICtrlSetState($g_hCmbProfile, $GUI_SHOW)
@@ -71,44 +72,34 @@ Func btnAddConfirm()
 			GUICtrlSetState($g_hBtnCancelProfileChange, $GUI_HIDE)
 			GUICtrlSetState($g_hBtnConfirmRenameProfile, $GUI_HIDE)
 			GUICtrlSetState($g_hBtnRenameProfile, $GUI_SHOW)
-			; IceCube (Misc v1.0)
-			GUICtrlSetState($g_hBtnRecycle, $GUI_SHOW)
-			; IceCube (Misc v1.0)
+			GUICtrlSetState($g_hBtnPullSharedPrefs, $GUI_SHOW)
+			GUICtrlSetState($g_hBtnPushSharedPrefs, $GUI_SHOW)
 
 			If GUICtrlGetState($g_hBtnDeleteProfile) <> $GUI_ENABLE Then GUICtrlSetState($g_hBtnDeleteProfile, $GUI_ENABLE)
 			If GUICtrlGetState($g_hBtnRenameProfile) <> $GUI_ENABLE Then GUICtrlSetState($g_hBtnRenameProfile, $GUI_ENABLE)
-			; IceCube (Misc v1.0)
-			If GUICtrlGetState($g_hBtnRecycle) <> $GUI_ENABLE Then GUICtrlSetState($g_hBtnRecycle, $GUI_ENABLE)
-			; IceCube (Misc v1.0)
-
 		Case Else
 			SetLog("If you are seeing this log message there is something wrong.", $COLOR_ERROR)
 	EndSwitch
-	AddProfileToList()	; SwitchAcc Demen
 EndFunc   ;==>btnAddConfirm
 
 Func btnDeleteCancel()
 	Switch @GUI_CtrlId
 		Case $g_hBtnDeleteProfile
-			SaveConfig_SwitchAcc()													; SwitchAcc - Demen
-			Local $iDeleteProfile = _GUICtrlCombobox_GetCurSel($g_hCmbProfile)		; SwitchAcc - Demen
-
 			Local $msgboxAnswer = MsgBox($MB_ICONWARNING + $MB_OKCANCEL, GetTranslatedFileIni("MBR Popups", "Delete_Profile_01", "Delete Profile"), GetTranslatedFileIni("MBR Popups", "Delete_Profile_02", "Are you sure you really want to delete the profile?\r\nThis action can not be undone."))
 			If $msgboxAnswer = $IDOK Then
 				; Confirmed profile deletion so delete it.
-				deleteProfile()
-				; reset inputtext
-				GUICtrlSetData($g_hTxtVillageName, GetTranslatedFileIni("MBR Popups", "MyVillage", "MyVillage"))
-				If _GUICtrlComboBox_GetCount($g_hCmbProfile) > 1 Then
-					; select existing profile
-					setupProfileComboBox()
-					setupProfileComboBoxswitch()
-					selectProfile()
-				Else
-					; create new default profile
-					createProfile(True)
+				If deleteProfile() Then
+					; reset inputtext
+					GUICtrlSetData($g_hTxtVillageName, GetTranslatedFileIni("MBR Popups", "MyVillage", "MyVillage"))
+					If _GUICtrlComboBox_GetCount($g_hCmbProfile) > 1 Then
+						; select existing profile
+						setupProfileComboBox()
+						selectProfile()
+					Else
+						; create new default profile
+						createProfile(True)
+					EndIf
 				EndIf
-				RemoveProfileFromList($iDeleteProfile)								; SwitchAcc - Demen
 			EndIf
 		Case $g_hBtnCancelProfileChange
 			GUICtrlSetState($g_hTxtVillageName, $GUI_HIDE)
@@ -119,10 +110,8 @@ Func btnDeleteCancel()
 			GUICtrlSetState($g_hBtnDeleteProfile, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnConfirmRenameProfile, $GUI_HIDE)
 			GUICtrlSetState($g_hBtnRenameProfile, $GUI_SHOW)
-			; IceCube (Misc v1.0)
-			GUICtrlSetState($g_hBtnRecycle, $GUI_SHOW)
-			; IceCube (Misc v1.0)
-
+			GUICtrlSetState($g_hBtnPullSharedPrefs, $GUI_SHOW)
+			GUICtrlSetState($g_hBtnPushSharedPrefs, $GUI_SHOW)
 		Case Else
 			SetLog("If you are seeing this log message there is something wrong.", $COLOR_ERROR)
 	EndSwitch
@@ -136,7 +125,11 @@ EndFunc   ;==>btnDeleteCancel
 Func btnRenameConfirm()
 	Switch @GUI_CtrlId
 		Case $g_hBtnRenameProfile
-			GUICtrlSetData($g_hTxtVillageName, GUICtrlRead($g_hCmbProfile))
+			Local $sProfile = GUICtrlRead($g_hCmbProfile)
+			If aquireProfileMutex($sProfile, False, True) = 0 Then
+				Return
+			EndIf
+			GUICtrlSetData($g_hTxtVillageName, $sProfile)
 			GUICtrlSetState($g_hCmbProfile, $GUI_HIDE)
 			GUICtrlSetState($g_hTxtVillageName, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnAddProfile, $GUI_HIDE)
@@ -145,10 +138,8 @@ Func btnRenameConfirm()
 			GUICtrlSetState($g_hBtnCancelProfileChange, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnRenameProfile, $GUI_HIDE)
 			GUICtrlSetState($g_hBtnConfirmRenameProfile, $GUI_SHOW)
-			; IceCube (Misc v1.0)
-			GUICtrlSetState($g_hBtnRecycle, $GUI_HIDE)
-			; IceCube (Misc v1.0)
-
+			GUICtrlSetState($g_hBtnPullSharedPrefs, $GUI_HIDE)
+			GUICtrlSetState($g_hBtnPushSharedPrefs, $GUI_HIDE)
 		Case $g_hBtnConfirmRenameProfile
 			Local $newProfileName = StringRegExpReplace(GUICtrlRead($g_hTxtVillageName), '[/:*?"<>|]', '_')
 			If FileExists($g_sProfilePath & "\" & $newProfileName) Then
@@ -160,7 +151,6 @@ Func btnRenameConfirm()
 			; Rename the profile.
 			renameProfile()
 			setupProfileComboBox()
-			setupProfileComboBoxswitch()
 			selectProfile()
 
 			GUICtrlSetState($g_hTxtVillageName, $GUI_HIDE)
@@ -171,14 +161,21 @@ Func btnRenameConfirm()
 			GUICtrlSetState($g_hBtnDeleteProfile, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnConfirmRenameProfile, $GUI_HIDE)
 			GUICtrlSetState($g_hBtnRenameProfile, $GUI_SHOW)
-			; IceCube (Misc v1.0)
-			GUICtrlSetState($g_hBtnRecycle, $GUI_SHOW)
-			; IceCube (Misc v1.0)
-
+			GUICtrlSetState($g_hBtnPullSharedPrefs, $GUI_SHOW)
+			GUICtrlSetState($g_hBtnPushSharedPrefs, $GUI_SHOW)
 		Case Else
 			SetLog("If you are seeing this log message there is something wrong.", $COLOR_ERROR)
 	EndSwitch
 EndFunc   ;==>btnRenameConfirm
+
+Func btnPullSharedPrefs()
+	PullSharedPrefs()
+EndFunc
+
+Func btnPushSharedPrefs()
+	PushSharedPrefs()
+EndFunc
+
 Func cmbBotCond()
 	If _GUICtrlComboBox_GetCurSel($g_hCmbBotCond) = 15 Then
 		If _GUICtrlComboBox_GetCurSel($g_hCmbHoursStop) = 0 Then _GUICtrlComboBox_SetCurSel($g_hCmbHoursStop, 1)
@@ -193,9 +190,11 @@ Func chkBotStop()
 	If GUICtrlRead($g_hChkBotStop) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hCmbBotCommand, $GUI_ENABLE)
 		GUICtrlSetState($g_hCmbBotCond, $GUI_ENABLE)
+		_GUI_Value_STATE("ENABLE", $g_hTxtRestartGold & "#" & $g_hTxtRestartElixir & "#" & $g_hTxtRestartDark)
 	Else
 		GUICtrlSetState($g_hCmbBotCommand, $GUI_DISABLE)
 		GUICtrlSetState($g_hCmbBotCond, $GUI_DISABLE)
+		_GUI_Value_STATE("DISABLE", $g_hTxtRestartGold & "#" & $g_hTxtRestartElixir & "#" & $g_hTxtRestartDark)
 	EndIf
 EndFunc   ;==>chkBotStop
 
@@ -259,24 +258,27 @@ EndFunc   ;==>btnLocateWardenAltar
 
 Func btnLocateTownHall()
 	Local $wasRunState = $g_bRunState
+	Local $g_iOldTownHallLevel = $g_iTownHallLevel
 	$g_bRunState = True
 	ZoomOut()
 	LocateTownHall()
-	_ExtMsgBoxSet(1 + 64, $SS_CENTER, 0x004080, 0xFFFF00, 12, "Comic Sans MS", 600)
-	Local $stext = @CRLF & GetTranslatedFileIni("MBR Popups", "Locating_your_TH", "If you locating your TH because you upgraded,") & @CRLF & _
-			GetTranslatedFileIni("MBR Popups", "Must_restart_bot", "then you must restart bot!!!") & @CRLF & @CRLF & _
-			GetTranslatedFileIni("MBR Popups", "OK_to_restart_bot", "Click OK to restart bot") & @CRLF & @CRLF & GetTranslatedFileIni("MBR Popups", "Cancel_to_exit", "Or Click Cancel to exit") & @CRLF
-	Local $MsgBox = _ExtMsgBox(0, GetTranslatedFileIni("MBR Popups", "Ok_Cancel", "Ok|Cancel"), GetTranslatedFileIni("MBR Popups", "Close_Bot", "Close Bot Please!"), $stext, 120)
-	If $g_iDebugSetlog = 1 Then Setlog("$MsgBox= " & $MsgBox, $COLOR_DEBUG)
-	If $MsgBox = 1 Then
-		#cs
-		Local $stext = @CRLF & GetTranslatedFileIni("MBR Popups", "Sure_Close Bot", "Are you 100% sure you want to restart bot ?") & @CRLF & @CRLF & _
+	If Not $g_iOldTownHallLevel = $g_iTownHallLevel Then
+		_ExtMsgBoxSet(1 + 64, $SS_CENTER, 0x004080, 0xFFFF00, 12, "Comic Sans MS", 600)
+		Local $stext = @CRLF & GetTranslatedFileIni("MBR Popups", "Locating_your_TH", "If you locating your TH because you upgraded,") & @CRLF & _
+				GetTranslatedFileIni("MBR Popups", "Must_restart_bot", "then you must restart bot!!!") & @CRLF & @CRLF & _
+				GetTranslatedFileIni("MBR Popups", "OK_to_restart_bot", "Click OK to restart bot,") & @CRLF & @CRLF & GetTranslatedFileIni("MBR Popups", "Cancel_to_exit", "Or Click Cancel to exit") & @CRLF
+		Local $MsgBox = _ExtMsgBox(0, GetTranslatedFileIni("MBR Popups", "Ok_Cancel", "Ok|Cancel"), GetTranslatedFileIni("MBR Popups", "Close_Bot", "Close Bot Please!"), $stext, 120)
+		If $g_bDebugSetlog Then SetDebugLog("$MsgBox= " & $MsgBox, $COLOR_DEBUG)
+		If $MsgBox = 1 Then
+			#cs
+				Local $stext = @CRLF & GetTranslatedFileIni("MBR Popups", "Sure_Close Bot", "Are you 100% sure you want to restart bot ?") & @CRLF & @CRLF & _
 				GetTranslatedFileIni("MBR Popups", "Restart_bot", "Click OK to close bot and then restart the bot (manually)") & @CRLF & @CRLF & GetTranslatedFileIni("MBR Popups", "Cancel_to_exit", -1) & @CRLF
-		Local $MsgBox = _ExtMsgBox(0, GetTranslatedFileIni("MBR Popups", "Ok_Cancel", -1), GetTranslatedFileIni("MBR Popups", "Close_Bot", -1), $stext, 120)
-		If $g_iDebugSetlog = 1 Then Setlog("$MsgBox= " & $MsgBox, $COLOR_DEBUG)
-		If $MsgBox = 1 Then BotClose(False)
-		#ce
-		RestartBot(False, $wasRunState)
+				Local $MsgBox = _ExtMsgBox(0, GetTranslatedFileIni("MBR Popups", "Ok_Cancel", -1), GetTranslatedFileIni("MBR Popups", "Close_Bot", -1), $stext, 120)
+				If $g_bDebugSetlog Then SetDebugLog("$MsgBox= " & $MsgBox, $COLOR_DEBUG)
+				If $MsgBox = 1 Then BotClose(False)
+			#ce
+			RestartBot(False, $wasRunState)
+		EndIf
 	EndIf
 	$g_bRunState = $wasRunState
 	AndroidShield("btnLocateTownHall") ; Update shield status due to manual $g_bRunState
@@ -294,23 +296,23 @@ Func btnResetBuilding()
 			Local $stext = @CRLF & GetTranslatedFileIni("MBR Popups", "Delete_and_Reset_Building_info", "Click OK to Delete and Reset all Building info,") & @CRLF & @CRLF & _
 					GetTranslatedFileIni("MBR Popups", "Bot_will_exit", "NOTE =>> Bot will exit and need to be restarted when complete") & @CRLF & @CRLF & GetTranslatedFileIni("MBR Popups", "Cancel_to_exit", "Or Click Cancel to exit") & @CRLF
 			Local $MsgBox = _ExtMsgBox(0, GetTranslatedFileIni("MBR Popups", "Ok_Cancel", "Ok|Cancel"), GetTranslatedFileIni("MBR Popups", "Delete_Building_Info", "Delete Building Infomation ?"), $stext, 120)
-			If $g_iDebugSetlog = 1 Then Setlog("$MsgBox= " & $MsgBox, $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("$MsgBox= " & $MsgBox, $COLOR_DEBUG)
 			If $MsgBox = 1 Then
 				Local $stext = @CRLF & GetTranslatedFileIni("MBR Popups", "Sure_Delete_Building_Info", "Are you 100% sure you want to delete Building information ?") & @CRLF & @CRLF & _
 						GetTranslatedFileIni("MBR Popups", "Delete_then_restart_bot", "Click OK to Delete and then restart the bot (manually)") & @CRLF & @CRLF & GetTranslatedFileIni("MBR Popups", "Cancel_to_exit", -1) & @CRLF
 				Local $MsgBox = _ExtMsgBox(0, GetTranslatedFileIni("MBR Popups", "Ok_Cancel", -1), GetTranslatedFileIni("MBR Popups", "Delete_Building_Info", -1), $stext, 120)
-				If $g_iDebugSetlog = 1 Then Setlog("$MsgBox= " & $MsgBox, $COLOR_DEBUG)
+				If $g_bDebugSetlog Then SetDebugLog("$MsgBox= " & $MsgBox, $COLOR_DEBUG)
 				If $MsgBox = 1 Then
 					Local $Result = FileDelete($g_sProfileBuildingPath)
 					If $Result = 0 Then
-						Setlog("Unable to remove building.ini file, please use manual method", $COLOR_ERROR)
+						SetLog("Unable to remove building.ini file, please use manual method", $COLOR_ERROR)
 					Else
 						BotClose(False)
 					EndIf
 				EndIf
 			EndIf
 		Else
-			Setlog("Building.ini file does not exist", $COLOR_INFO)
+			SetLog("Building.ini file does not exist", $COLOR_INFO)
 		EndIf
 		ExitLoop
 	WEnd
@@ -357,8 +359,8 @@ Func chkTrophyRange()
 		GUICtrlSetState($g_hTxtDropTrophyArmyMin, $GUI_DISABLE)
 		GUICtrlSetState($g_hLblDropTrophyArmyMin, $GUI_DISABLE)
 		GUICtrlSetState($g_hLblDropTrophyArmyPercent, $GUI_DISABLE)
-	    GUICtrlSetState($g_hLblTrophyHeroesPriority, $GUI_DISABLE)
-	    GUICtrlSetState($g_hCmbTrophyHeroesPriority, $GUI_DISABLE)
+		GUICtrlSetState($g_hLblTrophyHeroesPriority, $GUI_DISABLE)
+		GUICtrlSetState($g_hCmbTrophyHeroesPriority, $GUI_DISABLE)
 	EndIf
 EndFunc   ;==>chkTrophyRange
 
@@ -517,27 +519,28 @@ Func TxtMaxTrophy()
 	EndIf
 EndFunc   ;==>TxtMaxTrophy
 
- Func chkTrophyHeroes()
-	If  GUICtrlRead($g_hChkTrophyHeroes) = $GUI_CHECKED  Then
-	   GUICtrlSetState($g_hLblTrophyHeroesPriority, $GUI_ENABLE)
-	   GUICtrlSetState($g_hCmbTrophyHeroesPriority, $GUI_ENABLE)
+Func chkTrophyHeroes()
+	If GUICtrlRead($g_hChkTrophyHeroes) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hLblTrophyHeroesPriority, $GUI_ENABLE)
+		GUICtrlSetState($g_hCmbTrophyHeroesPriority, $GUI_ENABLE)
 	Else
-	   GUICtrlSetState($g_hLblTrophyHeroesPriority, $GUI_DISABLE)
-	   GUICtrlSetState($g_hCmbTrophyHeroesPriority, $GUI_DISABLE)
+		GUICtrlSetState($g_hLblTrophyHeroesPriority, $GUI_DISABLE)
+		GUICtrlSetState($g_hCmbTrophyHeroesPriority, $GUI_DISABLE)
 	EndIf
-
- EndFunc   ;==>chkTrophyHeroes
+EndFunc   ;==>chkTrophyHeroes
 
 Func ChkCollect()
-	If  GUICtrlRead($g_hChkCollect) = $GUI_CHECKED  Then
+	If GUICtrlRead($g_hChkCollect) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hChkTreasuryCollect, $GUI_ENABLE)
 	Else
+		GUICtrlSetState($g_hChkTreasuryCollect, $GUI_UNCHECKED)
 		GUICtrlSetState($g_hChkTreasuryCollect, $GUI_DISABLE)
 	EndIf
-EndFunc		;==> ChkCollect
+	ChkTreasuryCollect()
+EndFunc   ;==>ChkCollect
 
 Func ChkTreasuryCollect()
-	If  GUICtrlRead($g_hChkTreasuryCollect) = $GUI_CHECKED  Then
+	If GUICtrlRead($g_hChkTreasuryCollect) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hTxtTreasuryGold, $GUI_ENABLE)
 		GUICtrlSetState($g_hTxtTreasuryElixir, $GUI_ENABLE)
 		GUICtrlSetState($g_hTxtTreasuryDark, $GUI_ENABLE)
@@ -546,7 +549,7 @@ Func ChkTreasuryCollect()
 		GUICtrlSetState($g_hTxtTreasuryElixir, $GUI_DISABLE)
 		GUICtrlSetState($g_hTxtTreasuryDark, $GUI_DISABLE)
 	EndIf
-EndFunc		;==> ChkTreasuryCollect
+EndFunc   ;==>ChkTreasuryCollect
 
 Func chkStartClockTowerBoost()
 	If GUICtrlRead($g_hChkStartClockTowerBoost) = $GUI_CHECKED Then
@@ -555,3 +558,52 @@ Func chkStartClockTowerBoost()
 		GUICtrlSetState($g_hChkCTBoostBlderBz, $GUI_DISABLE)
 	EndIf
 EndFunc   ;==>chkStartClockTowerBoost
+
+
+
+Func chkActivateClangames()
+	If GUICtrlRead($g_hChkClanGamesEnabled) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hChkClanGamesAir, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkClanGamesGround, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkClanGamesMisc, $GUI_ENABLE)
+
+		;V3
+		GUICtrlSetState($g_hChkClanGamesLoot, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkClanGamesBattle, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkClanGamesDestruction, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkClanGamesAirTroop, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkClanGamesGroundTroop, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkClanGamesMiscellaneous, $GUI_ENABLE)
+
+		GUICtrlSetState($g_hChkClanGamesPurge, $GUI_ENABLE)
+		If GUICtrlRead($g_hChkClanGamesPurge) = $GUI_CHECKED then GUICtrlSetState($g_hcmbPurgeLimit, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkClanGamesStopBeforeReachAndPurge, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkClanGamesDebug, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hChkClanGamesAir, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkClanGamesGround, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkClanGamesMisc, $GUI_DISABLE)
+
+		;V3
+		GUICtrlSetState($g_hChkClanGamesLoot, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkClanGamesBattle, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkClanGamesDestruction, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkClanGamesAirTroop, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkClanGamesGroundTroop, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkClanGamesMiscellaneous, $GUI_DISABLE)
+		GUICtrlSetState($g_hcmbPurgeLimit, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkClanGamesStopBeforeReachAndPurge, $GUI_DISABLE)
+
+		GUICtrlSetState($g_hChkClanGamesPurge, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkClanGamesDebug, $GUI_DISABLE)
+	EndIf
+EndFunc   ;==>chkActivateClangames
+
+Func chkPurgeLimits()
+	If GUICtrlRead($g_hChkClanGamesPurge) = $GUI_CHECKED AND _
+	   GUICtrlRead($g_hChkClanGamesEnabled) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hcmbPurgeLimit, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hcmbPurgeLimit, $GUI_DISABLE)
+	EndIf
+EndFunc

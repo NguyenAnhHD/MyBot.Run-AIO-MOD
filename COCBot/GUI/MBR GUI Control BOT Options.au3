@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MyBot.run Team
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -68,7 +68,7 @@ Func cmbLanguage()
 	$g_sLanguage = $aLanguageFile[$g_sLanguageIndex][0] ; the filename = 0, the display name = 1
 	MsgBox("", "", GetTranslatedFileIni("MBR Popups", "Func_cmbLanguage", "Restart Bot to load program with new language:") & " " & $aLanguageFile[$g_sLanguageIndex][1] & " (" & $g_sLanguage & ")")
 	IniWriteS($g_sProfileConfigPath, "other", "language", $g_sLanguage) ; save language before restarting
-	ShellExecute(@ScriptFullPath, $g_sProfileCurrentName & " " & $g_sAndroidEmulator & " " & $g_sAndroidInstance & " /r")
+	RestartBot(False, False)
 EndFunc   ;==>cmbLanguage
 
 Func chkBotCustomTitleBarClick()
@@ -82,6 +82,10 @@ Func chkBotAutoSlideClick()
 	$g_iBotDesignFlags = BitOR(BitAND($g_iBotDesignFlags, BitNOT(2)), (($bChecked) ? 2 : 0))
 EndFunc   ;==>chkBotAutoSlideClick
 
+Func chkDisableNotifications()
+	$g_bDisableNotifications = (GUICtrlRead($g_hChkDisableNotifications) = $GUI_CHECKED)
+EndFunc   ;==>chkDisableNotifications
+
 Func chkUseRandomClick()
 	$g_bUseRandomClick = (GUICtrlRead($g_hChkUseRandomClick) = $GUI_CHECKED)
 EndFunc   ;==>chkUseRandomClick
@@ -91,7 +95,12 @@ EndFunc   ;==>chkUseRandomClick
 	EndFunc   ;==>chkUpdatingWhenMinimized
 #ce
 Func chkHideWhenMinimized()
-	$g_bHideWhenMinimized = (GUICtrlRead($g_hChkHideWhenMinimized) = $GUI_CHECKED)
+	If GUICtrlRead($g_hChkHideWhenMinimized) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hChkAutoMinimizeBot, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hChkAutoMinimizeBot, $GUI_UNCHECKED)
+		GUICtrlSetState($g_hChkAutoMinimizeBot, $GUI_DISABLE)
+	EndIf
 	TrayItemSetState($g_hTiHide, ($g_bHideWhenMinimized = 1 ? $TRAY_CHECKED : $TRAY_UNCHECKED))
 EndFunc   ;==>chkHideWhenMinimized
 
@@ -162,7 +171,7 @@ Func txtSinglePBTimeForced()
 EndFunc   ;==>txtSinglePBTimeForced
 
 Func chkAutoResume()
-	$g_bAutoResumeEnable = (GUICtrlRead($g_hChkAutoResume) = $GUI_CHECKED)
+	GUICtrlSetState($g_hTxtAutoResumeTime, GUICtrlRead($g_hChkAutoResume) = $GUI_CHECKED ? $GUI_ENABLE : $GUI_DISABLE)
 EndFunc   ;==>chkAutoResume
 
 Func txtGlobalActiveBotsAllowed()
@@ -192,77 +201,266 @@ EndFunc   ;==>txtGlobalThreads
 Func txtThreads()
 	Local $iValue = Int(GUICtrlRead($g_hTxtThreads))
 	If $g_iThreads <> $iValue Then
-		; value changed... for globally changed values, save immediately
+		; value changed...
 		SetDebugLog("Threading: Using " & $g_iThreads & " threads for parallelism changedd to " & $iValue)
 		$g_iThreads = $iValue
-		SaveProfileConfig(Default, True)
+		setMaxDegreeOfParallelism($g_iThreads)
 	EndIf
 EndFunc   ;==>txtThreads
 
+; #SWITCHACC FUNCTION# ==============================================================================================================
+Func chkSwitchAcc()
+	If GUICtrlRead($g_hChkSwitchAcc) = $GUI_CHECKED And aquireSwitchAccountMutex($g_iCmbSwitchAcc, False, True) Then
+		For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
+			GUICtrlSetState($i, $GUI_ENABLE)
+		Next
+	Else
+		releaseSwitchAccountMutex()
+		For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
+			GUICtrlSetState($i, $GUI_DISABLE)
+		Next
+	EndIf
+EndFunc   ;==>chkSwitchAcc
+
+Func cmbSwitchAcc()
+	Return _cmbSwitchAcc()
+EndFunc   ;==>cmbSwitchAcc
+
+Func _cmbSwitchAcc($bReadSaveConfig = True)
+	Static $s_bActive = False
+	If $s_bActive Then Return
+	$s_bActive = True
+	Local $iCmbSwitchAcc = _GUICtrlComboBox_GetCurSel($g_hCmbSwitchAcc)
+	Local $bAcquired = aquireSwitchAccountMutex($iCmbSwitchAcc, False, True)
+	Local $bEnable = False
+	If $iCmbSwitchAcc And $bAcquired Then
+		$bEnable = True
+	Else
+		If $g_iCmbSwitchAcc And $iCmbSwitchAcc = 0 Then
+			; No Switch Accounts selected, check if current profile was enabled and disable if so
+			For $i = 0 To UBound($g_ahChkDonate) - 7
+				If GUICtrlRead($g_ahChkAccount[$i]) = $GUI_CHECKED And GUICtrlRead($g_ahCmbProfile[$i]) = $g_sProfileCurrentName Then
+					SetLog("Disabled Profile " & $g_sProfileCurrentName & " in Group " & $g_iCmbSwitchAcc)
+					SetSwitchAccLog("Disabled Profile " & $g_sProfileCurrentName & " in Group " & $g_iCmbSwitchAcc)
+					GUICtrlSetState($g_ahChkAccount[$i], $GUI_UNCHECKED)
+					ExitLoop
+				EndIf
+			Next
+		EndIf
+		If $iCmbSwitchAcc And Not $bAcquired Then
+			$iCmbSwitchAcc = $g_iCmbSwitchAcc
+			_GUICtrlComboBox_SetCurSel($g_hCmbSwitchAcc, $iCmbSwitchAcc)
+			$bAcquired = aquireSwitchAccountMutex($iCmbSwitchAcc, False, True)
+			$bEnable = $bAcquired
+		EndIf
+	EndIf
+
+	; load selected config
+	If $bReadSaveConfig Then
+		If $g_iCmbSwitchAcc Then
+			; temp restore old selection for saving
+			SetLog("Save Switch Accounts Group " & $g_iCmbSwitchAcc)
+			SetSwitchAccLog("Save Group " & $g_iCmbSwitchAcc)
+			_GUICtrlComboBox_SetCurSel($g_hCmbSwitchAcc, $g_iCmbSwitchAcc)
+			SaveConfig_600_35_2()
+			_GUICtrlComboBox_SetCurSel($g_hCmbSwitchAcc, $iCmbSwitchAcc)
+		EndIf
+		$g_iCmbSwitchAcc = $iCmbSwitchAcc
+		If $g_iCmbSwitchAcc Then
+			SetLog("Read Switch Accounts Group " & $g_iCmbSwitchAcc)
+			SetSwitchAccLog("Read Group " & $g_iCmbSwitchAcc)
+		EndIf
+		ReadConfig_SwitchAccounts()
+		ApplyConfig_600_35_2("Read")
+	Else
+		$g_iCmbSwitchAcc = $iCmbSwitchAcc
+	EndIf
+
+	If $bEnable And GUICtrlRead($g_hChkSwitchAcc) = $GUI_UNCHECKED Then
+		$bEnable = False
+	EndIf
+
+	GUICtrlSetState($g_hChkSwitchAcc, (($bEnable Or ($iCmbSwitchAcc And $bAcquired)) ? $GUI_ENABLE : $GUI_DISABLE))
+	For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
+		GUICtrlSetState($i, (($bEnable) ? $GUI_ENABLE : $GUI_DISABLE))
+	Next
+	cmbTotalAcc()
+	$s_bActive = False
+EndFunc   ;==>_cmbSwitchAcc
+
+Func cmbTotalAcc()
+	Local $iCmbTotalAcc = _GUICtrlComboBox_GetCurSel($g_hCmbTotalAccount) + 1 ; combobox data starts with 2
+	For $i = 0 To 7
+		If $iCmbTotalAcc >= 0 And $i <= $iCmbTotalAcc Then
+			_GUI_Value_STATE("SHOW", $g_ahChkAccount[$i] & "#" & $g_ahCmbProfile[$i] & "#" & $g_ahChkDonate[$i])
+		ElseIf $i > $iCmbTotalAcc Then
+			GUICtrlSetState($g_ahChkAccount[$i], $GUI_UNCHECKED)
+			_GUI_Value_STATE("HIDE", $g_ahChkAccount[$i] & "#" & $g_ahCmbProfile[$i] & "#" & $g_ahChkDonate[$i])
+		EndIf
+		chkAccount($i)
+	Next
+EndFunc   ;==>cmbTotalAcc
+
+Func chkSmartSwitch()
+	If GUICtrlRead($g_hChkSmartSwitch) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hChkDonateLikeCrazy, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hChkDonateLikeCrazy, $GUI_UNCHECKED)
+		GUICtrlSetState($g_hChkDonateLikeCrazy, $GUI_DISABLE)
+	EndIf
+EndFunc   ;==>chkSmartSwitch
+
+Func chkAccount($i)
+	If GUICtrlRead($g_ahChkAccount[$i]) = $GUI_CHECKED Then
+		_GUI_Value_STATE("ENABLE", $g_ahCmbProfile[$i] & "#" & $g_ahChkDonate[$i])
+		SwitchAccountCheckProfileInUse($g_asProfileName[$i])
+	Else
+		;GUICtrlSetState($g_ahChkDonate[$i], $GUI_UNCHECKED)
+		_GUI_Value_STATE("DISABLE", $g_ahCmbProfile[$i] & "#" & $g_ahChkDonate[$i])
+	EndIf
+EndFunc   ;==>chkAccount
+
+Func chkAccountX()
+	For $i = 0 To UBound($g_ahChkAccount) - 1
+		If @GUI_CtrlId = $g_ahChkAccount[$i] Then
+			Return chkAccount($i)
+		EndIf
+	Next
+EndFunc   ;==>chkAccountX
+
+Func cmbSwitchAccProfile($i)
+	; check if switch with other
+	Local $sOldProfile = $g_asProfileName[$i]
+	Local $sNewProfile = GUICtrlRead($g_ahCmbProfile[$i])
+
+	SwitchAccountCheckProfileInUse($sNewProfile)
+
+	Local $sOthProfile
+	If $sNewProfile Then
+		For $j = 0 To UBound($g_ahCmbProfile) - 1
+			If $j <> $i Then
+				$sOthProfile = GUICtrlRead($g_ahCmbProfile[$j]) ; $g_asProfileName[$j]
+				If $sOthProfile = $sNewProfile Then
+					; switch
+					;_GUICtrlComboBox_SetCurSel($g_ahCmbProfile[$i], _GUICtrlComboBox_FindStringExact($g_ahCmbProfile[$i], $g_asProfileName[$i]))
+					;$g_asProfileName[$j] = ""
+					; clear other
+					;_GUICtrlComboBox_SetCurSel($g_ahCmbProfile[$j], 0)
+					; set other
+					$g_asProfileName[$j] = $sOldProfile
+					_GUICtrlComboBox_SetCurSel($g_ahCmbProfile[$j], _GUICtrlComboBox_FindStringExact($g_ahCmbProfile[$j], $sOldProfile))
+					ExitLoop
+				EndIf
+			EndIf
+		Next
+	EndIf
+	$g_asProfileName[$i] = $sNewProfile
+EndFunc   ;==>cmbSwitchAccProfile
+
+Func cmbSwitchAccProfileX()
+	For $i = 0 To UBound($g_ahCmbProfile) - 1
+		If @GUI_CtrlId = $g_ahCmbProfile[$i] Then
+			Return cmbSwitchAccProfile($i)
+		EndIf
+	Next
+EndFunc   ;==>cmbSwitchAccProfileX
+
+Func chkAccSwitchMode()
+	If GUICtrlRead($g_hRadSwitchGooglePlay) = $GUI_CHECKED Then
+		$g_bChkGooglePlay = True
+		$g_bChkSuperCellID = False
+		$g_bChkSharedPrefs = False
+	ElseIf GUICtrlRead($g_hRadSwitchSuperCellID) = $GUI_CHECKED Then
+		$g_bChkGooglePlay = False
+		$g_bChkSuperCellID = True
+		$g_bChkSharedPrefs = False
+	ElseIf GUICtrlRead($g_hRadSwitchSharedPrefs) = $GUI_CHECKED Then
+		$g_bChkGooglePlay = False
+		$g_bChkSuperCellID = False
+		$g_bChkSharedPrefs = True
+	Else
+		$g_bChkGooglePlay = False
+		$g_bChkSuperCellID = False
+		$g_bChkSharedPrefs = False
+	EndIf
+EndFunc   ;==>chkAccSwitchMode
+
 ; #DEBUG FUNCTION# ==============================================================================================================
 
+Func chkDebugSetLog()
+	$g_bDebugSetlog = (GUICtrlRead($g_hChkDebugSetlog) = $GUI_CHECKED) ;
+	SetDebugLog("DebugSetlog " & ($g_bDebugSetlog ? "enabled" : "disabled"))
+EndFunc   ;==>chkDebugSetLog
+
+Func chkDebugAndroid()
+	$g_bDebugAndroid = (GUICtrlRead($g_hChkDebugAndroid) = $GUI_CHECKED)
+	SetDebugLog("DebugAndroid " & ($g_bDebugAndroid ? "enabled" : "disabled"))
+EndFunc   ;==>chkDebugAndroid
+
 Func chkDebugClick()
-	$g_iDebugClick = (GUICtrlRead($g_hChkDebugClick) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("DebugClick " & ($g_iDebugClick = 1 ? "enabled" : "disabled"))
+	$g_bDebugClick = (GUICtrlRead($g_hChkDebugClick) = $GUI_CHECKED)
+	SetDebugLog("DebugClick " & ($g_bDebugClick ? "enabled" : "disabled"))
 EndFunc   ;==>chkDebugClick
 
-Func chkDebugSetlog()
-	$g_iDebugSetlog = (GUICtrlRead($g_hChkDebugSetlog) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("DebugSetlog " & ($g_iDebugSetlog = 1 ? "enabled" : "disabled"))
-EndFunc   ;==>chkDebugSetlog
+Func chkDebugFunc()
+	Local $bDebugFunc = (GUICtrlRead($g_hChkDebugFunc) = $GUI_CHECKED)
+	$g_bDebugFuncTime = $bDebugFunc
+	$g_bDebugFuncCall = $bDebugFunc
+	SetDebugLog("DebugFunc " & ($bDebugFunc ? "enabled" : "disabled"))
+EndFunc   ;==>chkDebugFunc
 
 Func chkDebugDisableZoomout()
-	$g_iDebugDisableZoomout = (GUICtrlRead($g_hChkDebugDisableZoomout) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("DebugDisableZoomout " & ($g_iDebugDisableZoomout = 1 ? "enabled" : "disabled"))
+	$g_bDebugDisableZoomout = (GUICtrlRead($g_hChkDebugDisableZoomout) = $GUI_CHECKED)
+	SetDebugLog("DebugDisableZoomout " & ($g_bDebugDisableZoomout ? "enabled" : "disabled"))
 EndFunc   ;==>chkDebugDisableZoomout
 
 Func chkDebugDisableVillageCentering()
-	$g_iDebugDisableVillageCentering = (GUICtrlRead($g_hChkDebugDisableVillageCentering) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("DebugDisableVillageCentering " & ($g_iDebugDisableVillageCentering = 1 ? "enabled" : "disabled"))
+	$g_bDebugDisableVillageCentering = (GUICtrlRead($g_hChkDebugDisableVillageCentering) = $GUI_CHECKED)
+	SetDebugLog("DebugDisableVillageCentering " & ($g_bDebugDisableVillageCentering ? "enabled" : "disabled"))
 EndFunc   ;==>chkDebugDisableVillageCentering
 
 Func chkDebugDeadbaseImage()
-	$g_iDebugDeadBaseImage = (GUICtrlRead($g_hChkDebugDeadbaseImage) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("DebugDeadbaseImage " & ($g_iDebugDeadBaseImage = 1 ? "enabled" : "disabled"))
+	$g_bDebugDeadBaseImage = (GUICtrlRead($g_hChkDebugDeadbaseImage) = $GUI_CHECKED)
+	SetDebugLog("DebugDeadbaseImage " & ($g_bDebugDeadBaseImage ? "enabled" : "disabled"))
 EndFunc   ;==>chkDebugDeadbaseImage
 
 Func chkDebugOcr()
-	$g_iDebugOcr = (GUICtrlRead($g_hChkDebugOCR) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("DebugOcr " & ($g_iDebugOcr = 1 ? "enabled" : "disabled"))
+	$g_bDebugOcr = (GUICtrlRead($g_hChkDebugOCR) = $GUI_CHECKED)
+	SetDebugLog("DebugOcr " & ($g_bDebugOcr ? "enabled" : "disabled"))
 EndFunc   ;==>chkDebugOcr
 
 Func chkDebugImageSave()
-	$g_iDebugImageSave = (GUICtrlRead($g_hChkDebugImageSave) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("DebugImageSave " & ($g_iDebugImageSave = 1 ? "enabled" : "disabled"))
+	$g_bDebugImageSave = (GUICtrlRead($g_hChkDebugImageSave) = $GUI_CHECKED)
+	SetDebugLog("DebugImageSave " & ($g_bDebugImageSave ? "enabled" : "disabled"))
 EndFunc   ;==>chkDebugImageSave
 
 Func chkDebugBuildingPos()
-	$g_iDebugBuildingPos = (GUICtrlRead($g_hChkdebugBuildingPos) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("DebugBuildingPos " & ($g_iDebugBuildingPos = 1 ? "enabled" : "disabled"))
+	$g_bDebugBuildingPos = (GUICtrlRead($g_hChkdebugBuildingPos) = $GUI_CHECKED)
+	SetDebugLog("DebugBuildingPos " & ($g_bDebugBuildingPos ? "enabled" : "disabled"))
 EndFunc   ;==>chkDebugBuildingPos
 
 Func chkDebugTrain()
-	$g_iDebugSetlogTrain = (GUICtrlRead($g_hChkdebugTrain) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("DebugTrain " & ($g_iDebugSetlogTrain = 1 ? "enabled" : "disabled"))
+	$g_bDebugSetlogTrain = (GUICtrlRead($g_hChkdebugTrain) = $GUI_CHECKED)
+	SetDebugLog("DebugTrain " & ($g_bDebugSetlogTrain ? "enabled" : "disabled"))
 EndFunc   ;==>chkDebugTrain
 
 Func chkdebugOCRDonate()
-	$g_iDebugOCRdonate = (GUICtrlRead($g_hChkDebugOCRDonate) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("DebugOCRDonate " & ($g_iDebugOCRdonate = 1 ? "enabled" : "disabled"))
+	$g_bDebugOCRdonate = (GUICtrlRead($g_hChkDebugOCRDonate) = $GUI_CHECKED)
+	SetDebugLog("DebugOCRDonate " & ($g_bDebugOCRdonate ? "enabled" : "disabled"))
 EndFunc   ;==>chkdebugOCRDonate
 
 Func chkdebugAttackCSV()
-	$g_iDebugAttackCSV = (GUICtrlRead($g_hChkdebugAttackCSV) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("DebugAttackCSV " & ($g_iDebugAttackCSV = 1 ? "enabled" : "disabled"))
+	$g_bDebugAttackCSV = (GUICtrlRead($g_hChkdebugAttackCSV) = $GUI_CHECKED)
+	SetDebugLog("DebugAttackCSV " & ($g_bDebugAttackCSV ? "enabled" : "disabled"))
 EndFunc   ;==>chkdebugAttackCSV
 
 Func chkmakeIMGCSV()
-	$g_iDebugMakeIMGCSV = (GUICtrlRead($g_hChkMakeIMGCSV) = $GUI_CHECKED ? 1 : 0)
-	SetDebugLog("MakeIMGCSV " & ($g_iDebugMakeIMGCSV = 1 ? "enabled" : "disabled"))
+	$g_bDebugMakeIMGCSV = (GUICtrlRead($g_hChkMakeIMGCSV) = $GUI_CHECKED)
+	SetDebugLog("MakeIMGCSV " & ($g_bDebugMakeIMGCSV ? "enabled" : "disabled"))
 EndFunc   ;==>chkmakeIMGCSV
 
 Func btnTestTrain()
-	Local $currentOCR = $g_iDebugOcr
+	Local $currentOCR = $g_bDebugOcr
 	Local $currentRunState = $g_bRunState
 	$g_bRunState = True
 	BeginImageTest()
@@ -271,28 +469,44 @@ Func btnTestTrain()
 	SetLog("Testing checkArmyCamp()", $COLOR_INFO)
 	$result = checkArmyCamp()
 	If @error Then $result = "Error " & @error & ", " & @extended & ", " & ((IsArray($result)) ? (_ArrayToString($result, ",")) : ($result))
-	SetLog("Result checkArmyCamp() = " & $result, $COLOR_INFO)
+	SetLog("Result checkArmyCamp() = " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result)), $COLOR_INFO)
 
 	SetLog("Testing getArmyHeroTime()", $COLOR_INFO)
 	$result = getArmyHeroTime("all")
 	If @error Then $result = "Error " & @error & ", " & @extended & ", " & ((IsArray($result)) ? (_ArrayToString($result, ",")) : ($result))
-	SetLog("Result getArmyHeroTime() = " & $result, $COLOR_INFO)
-	SetLog("Testing Train DONE", $COLOR_INFO)
+	SetLog("Result getArmyHeroTime() = " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result)), $COLOR_INFO)
 
+	$result = "" ;
+	SetLog("Testing ArmyHeroStatus()", $COLOR_INFO)
+	For $i = 0 To 2
+		$result &= " " & ArmyHeroStatus($i)
+	Next
+	If @error Then $result = "Error " & @error & ", " & @extended & ", " & ((IsArray($result)) ? (_ArrayToString($result, ",")) : ($result))
+	SetLog("Result ArmyHeroStatus(0, 1, 2) = " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result)), $COLOR_INFO)
+
+	SetLog("Testing GetCurCCSpell()", $COLOR_INFO)
+	$result = GetCurCCSpell(1)
+	If @error Then $result = "Error " & @error & ", " & @extended & ", " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result))
+	SetLog("Result GetCurCCSpell(1) = " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result)), $COLOR_INFO)
+	$result = GetCurCCSpell(2)
+	If @error Then $result = "Error " & @error & ", " & @extended & ", " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result))
+	SetLog("Result GetCurCCSpell(2) = " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result)), $COLOR_INFO)
+
+	SetLog("Testing Train DONE", $COLOR_INFO)
 	EndImageTest()
 
-	$g_iDebugOcr = $currentOCR
+	$g_bDebugOcr = $currentOCR
 	$g_bRunState = $currentRunState
 EndFunc   ;==>btnTestTrain
 
 Func btnTestDonateCC()
-	Local $currentOCR = $g_iDebugOcr
+	Local $currentOCR = $g_bDebugOcr
 	Local $currentRunState = $g_bRunState
-	Local $currentSetlog = $g_iDebugSetlog
+	Local $currentSetlog = $g_bDebugSetlog
 	_GUICtrlTab_ClickTab($g_hTabMain, 0)
-	$g_iDebugOcr = 1
+	$g_bDebugOcr = True
 	$g_bRunState = True
-	$g_iDebugSetlog = 1
+	$g_bDebugSetlog = True
 	ForceCaptureRegion()
 	DebugImageSave("donateCC_")
 
@@ -304,21 +518,21 @@ Func btnTestDonateCC()
 	If IsArray($aDonationWindow) Then
 		$g_iDonationWindowY = $aDonationWindow[1]
 		_Sleep(250)
-		Setlog("$DonationWindowY: " & $g_iDonationWindowY, $COLOR_DEBUG)
+		SetLog("$DonationWindowY: " & $g_iDonationWindowY, $COLOR_DEBUG)
 	Else
 		SetLog("Could not find the Donate Window :(", $COLOR_ERROR)
 		Return False
 	EndIf
-	Setlog("Detecting Troops...")
+	SetLog("Detecting Troops...")
 	DetectSlotTroop($eBowl)
-	Setlog("Detecting Spells...")
+	SetLog("Detecting Spells...")
 	DetectSlotTroop($eSkSpell)
 	SetLog(_PadStringCenter(" Test DonateCC end ", 54, "="), $COLOR_INFO)
 	ShellExecute($g_sProfileTempDebugPath & "donateCC_")
 
-	$g_iDebugOcr = $currentOCR
+	$g_bDebugOcr = $currentOCR
 	$g_bRunState = $currentRunState
-	$g_iDebugSetlog = $currentSetlog
+	$g_bDebugSetlog = $currentSetlog
 EndFunc   ;==>btnTestDonateCC
 
 Func btnTestRequestCC()
@@ -342,18 +556,19 @@ Func btnTestSendText()
 EndFunc   ;==>btnTestSendText
 
 Func btnTestAttackBar()
-	Local $currentOCR = $g_iDebugOcr
+	BeginImageTest() ; get image for testing
+	Local $currentOCR = $g_bDebugOcr
 	Local $currentRunState = $g_bRunState
 	_GUICtrlTab_ClickTab($g_hTabMain, 0)
 
-	$g_iDebugOcr = 1
+	$g_bDebugOcr = True
 	$g_bRunState = True
 	ForceCaptureRegion()
 	SetLog(_PadStringCenter(" Test Attack Bar begin (" & $g_sBotVersion & ")", 54, "="), $COLOR_INFO)
 
 	_CaptureRegion2(0, 571 + $g_iBottomOffsetY, 859, 671 + $g_iBottomOffsetY)
-	Local $result = DllCall($g_hLibMyBot, "str", "searchIdentifyTroop", "ptr", $g_hHBitmap2)
-	Setlog("DLL Troopsbar list: " & $result[0], $COLOR_DEBUG)
+	Local $result = DllCallMyBot("searchIdentifyTroop", "ptr", $g_hHBitmap2)
+	SetLog("DLL Troopsbar list: " & $result[0], $COLOR_DEBUG)
 	If $g_bForceClanCastleDetection Then $result[0] = FixClanCastle($result[0])
 	Local $aTroopDataList = StringSplit($result[0], "|")
 	Local $aTemp[12][3]
@@ -362,9 +577,9 @@ Func btnTestAttackBar()
 			Local $troopData = StringSplit($aTroopDataList[$i], "#", $STR_NOCOUNT)
 ;~ 				$aTemp[Number($troopData[1])][0] = $troopData[0]
 ;~ 				$aTemp[Number($troopData[1])][1] = Number($troopData[2])
-;~ 				Setlog("-" & NameOfTroop( $aTemp[$i][0]) & " pos  " & $aTemp[$i][0] & " qty " & $aTemp[$i][2])
+;~ 				SetLog("-" & NameOfTroop( $aTemp[$i][0]) & " pos  " & $aTemp[$i][0] & " qty " & $aTemp[$i][2])
 			If $troopData[0] = 17 Or $troopData[0] = 18 Or $troopData[0] = 19 Or $troopData[0] = 20 Then $troopData[2] = 1
-			Setlog("position: " & $troopData[1] & " | troop code: " & $troopData[0] & " troop name:" & NameOfTroop($troopData[0]) & " | qty: " & $troopData[2])
+			SetLog("position: " & $troopData[1] & " | troop code: " & $troopData[0] & " troop name:" & NameOfTroop($troopData[0]) & " | qty: " & $troopData[2])
 		Next
 	EndIf
 
@@ -380,50 +595,47 @@ Func btnTestAttackBar()
 	_GDIPlus_ImageSaveToFile($g_hBitmap, $savefolder & $debugfile)
 	;make snapshot end
 
+	EndImageTest() ; clear test image handle
+
 	SetLog(_PadStringCenter(" Test Attack Bar end ", 54, "="), $COLOR_INFO)
 	ShellExecute($savefolder)
 
-	$g_iDebugOcr = $currentOCR
+	$g_bDebugOcr = $currentOCR
 	$g_bRunState = $currentRunState
 EndFunc   ;==>btnTestAttackBar
 
 
 Func btnTestClickDrag()
+	Local $sUserInputCoor = InputBox("Coordinators", "x1,y1,x2,y2", "650,473,323,473")
+	Local $asCoor = StringSplit($sUserInputCoor, ",")
 
-	Local $i
+	If @error Or $asCoor[0] <> 4 Then
+		SetLog("Please try again with the correct format...", $COLOR_ERROR)
+		Return
+	EndIf
 
 	SetLog("Testing Click drag functionality...", $COLOR_INFO)
-	For $i = 0 To 4
-		SetLog("Click x1/y1=100/600 and drag to x2/y2=150/600", $COLOR_INFO)
-		ClickDrag(100, 600, 150, 600)
-	Next
-	SetDebugLog("Waiting 3 Seconds...")
-	_SleepStatus(3000, True, True, False)
-	For $i = 0 To 4
-		SetLog("Click x1/y1=150/600 and drag to x2/y2=100/600", $COLOR_INFO)
-		ClickDrag(150, 600, 100, 600)
-	Next
 
+	SetLog("Drag from (" & $asCoor[1] & "," & $asCoor[2] & ") to (" & $asCoor[3] & "," & $asCoor[4] & ")", $COLOR_DEBUG)
+	ClickDrag(Int($asCoor[1]), Int($asCoor[2]), Int($asCoor[3]), Int($asCoor[4]))
+
+	SetLog("Sleep 3 seconds...", $COLOR_DEBUG)
+	_Sleep(3000, True, False)
+
+	SetLog("Save the image...", $COLOR_DEBUG)
+	DebugImageSave("TestClickDrag")
+
+	SetLog("Sleep 1 seconds...", $COLOR_DEBUG)
+	_Sleep(1000, True, False)
+
+	SetLog("Drag back", $COLOR_DEBUG)
+	ClickDrag(Int($asCoor[3]), Int($asCoor[4]), Int($asCoor[1]), Int($asCoor[2]))
 EndFunc   ;==>btnTestClickDrag
 
 Func btnTestImage()
 
-	Local $hBMP = 0, $hHBMP = 0
-	Local $sImageFile = FileOpenDialog("Select CoC screenshot to test, cancel to use live screenshot", $g_sProfileTempPath, "Image (*.png)", $FD_FILEMUSTEXIST, "", $g_hFrmBot)
-	If @error <> 0 Then
-		SetLog("Testing image cancelled, taking screenshot from " & $g_sAndroidEmulator, $COLOR_INFO)
-		_CaptureRegion()
-		$hHBMP = $g_hHBitmap
-		TestCapture($hHBMP)
-	Else
-		SetLog("Testing image " & $sImageFile, $COLOR_INFO)
-		; load test image
-		$hBMP = _GDIPlus_BitmapCreateFromFile($sImageFile)
-		$hHBMP = _GDIPlus_BitmapCreateDIBFromBitmap($hBMP)
-		_GDIPlus_BitmapDispose($hBMP)
-		TestCapture($hHBMP)
-		SetLog("Testing image hHBitmap = " & $hHBMP)
-	EndIf
+	Local $sImageFile = BeginImageTest() ; get image for testing
+	If $sImageFile = False Then $sImageFile = "Live Screenshot"
 
 	Local $i
 	Local $result
@@ -433,9 +645,9 @@ Func btnTestImage()
 
 	For $i = 0 To 0
 
-		SetLog("Testing image #" & $i & " " & $sImageFile, $COLOR_INFO)
-
-		_CaptureRegion()
+		SetLog("Testing isProblemAffect...", $COLOR_SUCCESS)
+		$result = isProblemAffect(False)
+		SetLog("Testing isProblemAffect DONE, $Result=" & $result, $COLOR_SUCCESS)
 
 		SetLog("Testing checkObstacles...", $COLOR_SUCCESS)
 		$result = checkObstacles()
@@ -453,20 +665,21 @@ Func btnTestImage()
 		SetLog("$aNoCloudsAttack pixel check: " & _CheckPixel($aNoCloudsAttack, $g_bCapturePixel))
 		SetLog("Testing WaitForClouds DONE", $COLOR_SUCCESS)
 
-		SetLog("Testing checkAttackDisable...", $COLOR_SUCCESS)
-		SetLog("Testing checkAttackDisable($g_iTaBChkAttack)...", $COLOR_SUCCESS)
-		SetLog("checkAttackDisable($g_iTaBChkAttack) = " & checkAttackDisable($g_iTaBChkAttack))
-		SetLog("Testing checkAttackDisable($g_iTaBChkIdle)...", $COLOR_SUCCESS)
-		SetLog("checkAttackDisable($g_iTaBChkIdle) = " & checkAttackDisable($g_iTaBChkIdle))
-		SetLog("Testing checkAttackDisable($g_iTaBChkTime)...", $COLOR_SUCCESS)
-		SetLog("checkAttackDisable($g_iTaBChkTime) = " & checkAttackDisable($g_iTaBChkTime))
-		SetLog("Testing checkAttackDisable DONE", $COLOR_SUCCESS)
+		#cs
+			SetLog("Testing checkAttackDisable...", $COLOR_SUCCESS)
+			SetLog("Testing checkAttackDisable($g_iTaBChkAttack)...", $COLOR_SUCCESS)
+			SetLog("checkAttackDisable($g_iTaBChkAttack) = " & checkAttackDisable($g_iTaBChkAttack))
+			SetLog("Testing checkAttackDisable($g_iTaBChkIdle)...", $COLOR_SUCCESS)
+			SetLog("checkAttackDisable($g_iTaBChkIdle) = " & checkAttackDisable($g_iTaBChkIdle))
+			SetLog("Testing checkAttackDisable($g_iTaBChkTime)...", $COLOR_SUCCESS)
+			SetLog("checkAttackDisable($g_iTaBChkTime) = " & checkAttackDisable($g_iTaBChkTime))
+			SetLog("Testing checkAttackDisable DONE", $COLOR_SUCCESS)
+		#ce
 	Next
 
 	SetLog("Testing finished", $COLOR_INFO)
 
-	_WinAPI_DeleteObject($hHBMP)
-	TestCapture(0)
+	EndImageTest() ; clear test image handle
 
 	$g_bRunState = $currentRunState
 
@@ -481,22 +694,24 @@ Func btnTestVillageSize()
 	_CaptureRegion()
 	_CaptureRegion2Sync()
 
-	SetLog("Testing GetVillageSize()", $COLOR_INFO)
-	Local $hTimer = __TimerInit()
-	Local $village = GetVillageSize(True)
-	Local $ms = __TimerDiff($hTimer)
-	If $village = 0 Then
-		SetLog("Village not found (" & Round($ms, 0) & " ms.)", $COLOR_WARNING)
-	Else
-		SetLog("Village found (" & Round($ms, 0) & " ms.)", $COLOR_WARNING)
-		SetLog("Village size: " & $village[0])
-		SetLog("Village zoom level: " & $village[1])
-		SetLog("Village offset x: " & $village[2])
-		SetLog("Village offset y: " & $village[3])
-		SetLog("Village stone " & $village[6] & ": " & $village[4] & ", " & $village[5])
-		SetLog("Village tree " & $village[9] & ": " & $village[7] & ", " & $village[8])
-	EndIf
-
+	Local $a[2][2] = [["stone", "tree"], ["2stone", "2tree"]]
+	For $i = 0 To 1
+		SetLog("Testing GetVillageSize(True, """ & $a[$i][0] & """, """ & $a[$i][1] & """)", $COLOR_INFO)
+		Local $hTimer = __TimerInit()
+		Local $village = GetVillageSize(True, $a[$i][0], $a[$i][1])
+		Local $ms = __TimerDiff($hTimer)
+		If $village = 0 Then
+			SetLog("Village not found (" & Round($ms, 0) & " ms.)", $COLOR_WARNING)
+		Else
+			SetLog("Village found (" & Round($ms, 0) & " ms.)", $COLOR_WARNING)
+			SetLog("Village size: " & $village[0])
+			SetLog("Village zoom level: " & $village[1])
+			SetLog("Village offset x: " & $village[2])
+			SetLog("Village offset y: " & $village[3])
+			SetLog("Village stone " & $village[6] & ": " & $village[4] & ", " & $village[5])
+			SetLog("Village tree " & $village[9] & ": " & $village[7] & ", " & $village[8])
+		EndIf
+	Next
 	EndImageTest()
 
 	$g_bRunState = $currentRunState
@@ -561,17 +776,17 @@ Func btnTestAttackCSV()
 	BeginImageTest() ; get image for testing
 
 	Local $currentRunState = $g_bRunState
-	Local $currentDebugAttackCSV = $g_iDebugAttackCSV
-	Local $currentMakeIMGCSV = $g_iDebugMakeIMGCSV
+	Local $currentDebugAttackCSV = $g_bDebugAttackCSV
+	Local $currentMakeIMGCSV = $g_bDebugMakeIMGCSV
 	Local $currentiMatchMode = $g_iMatchMode
-	Local $currentdebugsetlog = $g_iDebugSetlog
-	Local $currentDebugBuildingPos = $g_iDebugBuildingPos
+	Local $currentdebugsetlog = $g_bDebugSetlog
+	Local $currentDebugBuildingPos = $g_bDebugBuildingPos
 
 	$g_bRunState = True
-	$g_iDebugAttackCSV = 1
-	$g_iDebugMakeIMGCSV = 1
-	$g_iDebugSetlog = 1
-	$g_iDebugBuildingPos = 1
+	$g_bDebugAttackCSV = True
+	$g_bDebugMakeIMGCSV = True
+	$g_bDebugSetlog = True
+	$g_bDebugBuildingPos = True
 
 	$g_iMatchMode = $DB ; define which script to use
 
@@ -591,11 +806,11 @@ Func btnTestAttackCSV()
 	EndImageTest() ; clear test image handle
 
 	$g_bRunState = $currentRunState
-	$g_iDebugAttackCSV = $currentDebugAttackCSV
-	$g_iDebugMakeIMGCSV = $currentMakeIMGCSV
+	$g_bDebugAttackCSV = $currentDebugAttackCSV
+	$g_bDebugMakeIMGCSV = $currentMakeIMGCSV
 	$g_iMatchMode = $currentiMatchMode
-	$g_iDebugSetlog = $currentdebugsetlog
-	$g_iDebugBuildingPos = $currentDebugBuildingPos
+	$g_bDebugSetlog = $currentdebugsetlog
+	$g_bDebugBuildingPos = $currentDebugBuildingPos
 
 EndFunc   ;==>btnTestAttackCSV
 
@@ -607,17 +822,17 @@ Func btnTestGetLocationBuilding()
 
 	; Store variables changed, set test values
 	Local $currentRunState = $g_bRunState
-	Local $currentDebugBuildingPos = $g_iDebugBuildingPos
-	Local $currentdebugsetlog = $g_iDebugSetlog
+	Local $currentDebugBuildingPos = $g_bDebugBuildingPos
+	Local $currentdebugsetlog = $g_bDebugSetlog
 	$g_bRunState = True
-	$g_iDebugBuildingPos = 1
-	$g_iDebugSetlog = 1
+	$g_bDebugBuildingPos = True
+	$g_bDebugSetlog = True
 
 	SearchZoomOut($aCenterEnemyVillageClickDrag, True, "btnTestAttackCSV")
 	ResetTHsearch()
 	SetLog("Testing FindTownhall()", $COLOR_INFO)
 	SetLog("FindTownhall() = " & FindTownhall(True), $COLOR_INFO)
-;	SetLog("$g_sImglocRedline = " & $g_sImglocRedline, $COLOR_INFO)
+	;	SetLog("$g_sImglocRedline = " & $g_sImglocRedline, $COLOR_INFO)
 
 	_LogObjList($g_oBldgAttackInfo) ; log dictionary contents
 
@@ -626,7 +841,7 @@ Func btnTestGetLocationBuilding()
 	For $b = $eBldgGoldS To $eBldgAirDefense
 		If $b = $eBldgDarkS Then ContinueLoop ; skip dark elixir as images not available
 		$aResult = GetLocationBuilding($b, $g_iSearchTH, False)
-		If $aResult = -1 Then Setlog("Monkey ate bad banana: " & "GetLocationBuilding " & $g_sBldgNames[$b], $COLOR_ERROR)
+		If $aResult = -1 Then SetLog("Monkey ate bad banana: " & "GetLocationBuilding " & $g_sBldgNames[$b], $COLOR_ERROR)
 	Next
 
 	_LogObjList($g_oBldgAttackInfo) ; log dictionary contents
@@ -637,7 +852,7 @@ Func btnTestGetLocationBuilding()
 	For $string In $iKeys
 		If StringInStr($string, "_FINDTIME", $STR_NOCASESENSEBASIC) > 0 Then $iFindBldgTotalTestTime += $g_oBldgAttackInfo.item($string)
 	Next
-	Setlog("GetLocationBuilding() Total Image search time= " & $iFindBldgTotalTestTime, $COLOR_SUCCESS)
+	SetLog("GetLocationBuilding() Total Image search time= " & $iFindBldgTotalTestTime, $COLOR_SUCCESS)
 
 	$g_oBldgAttackInfo.RemoveAll ; remove all data
 
@@ -647,8 +862,8 @@ Func btnTestGetLocationBuilding()
 
 	; restore changed variables
 	$g_bRunState = $currentRunState
-	$g_iDebugBuildingPos = $currentDebugBuildingPos
-	$g_iDebugSetlog = $currentdebugsetlog
+	$g_bDebugBuildingPos = $currentDebugBuildingPos
+	$g_bDebugSetlog = $currentdebugsetlog
 
 EndFunc   ;==>btnTestGetLocationBuilding
 
@@ -785,7 +1000,7 @@ Func btnTestGetLocationBuildingImage()
 	_GDIPlus_BitmapDispose($EditedImage)
 
 	; open image
-	If TestCapture() = True Then
+	If TestCapture() Then
 		ShellExecute($filename)
 	EndIf
 
@@ -837,7 +1052,7 @@ Func BeginImageTest($directory = $g_sProfileTempPath)
 	Local $sImageFile = FileOpenDialog("Select CoC screenshot to test, cancel to use live screenshot", $directory, "Image (*.png)", $FD_FILEMUSTEXIST, "", $g_hFrmBot)
 	If @error <> 0 Then
 		SetLog("Testing image cancelled, taking screenshot from " & $g_sAndroidEmulator, $COLOR_INFO)
-		ZoomOut()
+		;ZoomOut()
 		_CaptureRegion()
 		$hHBMP = $g_hHBitmap
 		TestCapture($hHBMP)
@@ -850,7 +1065,7 @@ Func BeginImageTest($directory = $g_sProfileTempPath)
 	_GDIPlus_BitmapDispose($hBMP)
 	TestCapture($hHBMP)
 	SetLog("Testing image hHBitmap = " & $hHBMP)
-	Return True
+	Return $sImageFile
 EndFunc   ;==>BeginImageTest
 
 Func EndImageTest()
@@ -872,7 +1087,7 @@ Func FixClanCastle($inputString)
 			If $counter <> Number($troopData[1]) Then
 				$OutputFinal &= $eCastle & "#" & $counter & "#" & "1" & "|"
 				$counter = $troopData[1]
-				Setlog("Clan castle Forced in slot " & $counter, $COLOR_INFO)
+				SetLog("Clan castle Forced in slot " & $counter, $COLOR_INFO)
 			EndIf
 			$counter += 1
 			$OutputFinal &= $troopData[0] & "#" & $troopData[1] & "#" & $troopData[2]
@@ -887,7 +1102,7 @@ Func btnTestOcrMemory()
 	_CaptureRegion2(162, 200, 162 + 120, 200 + 27)
 
 	For $i = 1 To 5000
-		DllCall($g_hLibMyBot, "str", "ocr", "ptr", $g_hHBitmap2, "str", "coc-DonTroops", "int", $g_iDebugOcr)
+		DllCallMyBot("ocr", "ptr", $g_hHBitmap2, "str", "coc-DonTroops", "int", $g_bDebugOcr ? 1 : 0)
 		;getOcr($g_hHBitmap2, "coc-DonTroops")
 		;getOcrAndCapture("coc-DonTroops", 162, 200, 120, 27, True)
 
@@ -895,3 +1110,49 @@ Func btnTestOcrMemory()
 
 EndFunc   ;==>btnTestOcrMemory
 
+Func btnTestWeakBase()
+	Local $currentRunState = $g_bRunState
+	$g_bRunState = True
+	BeginImageTest()
+	IsWeakBase()
+	EndImageTest()
+	$g_bRunState = $currentRunState
+EndFunc   ;==>btnTestWeakBase
+
+Func btnTestClickAway()
+	ClickP($aAway, 2, 0)
+EndFunc   ;==>btnTestClickAway
+
+Func btnTestUpgradeWindow()
+	Local $currentRunState = $g_bRunState
+	Local $iCurrFreeBuilderCount = $g_iFreeBuilderCount
+	$g_iTestFreeBuilderCount = 5
+	$g_bRunState = True
+	BeginImageTest()
+	Local $result
+	SetLog("Testing LocateUpgrade", $COLOR_INFO)
+	;$result = UpgradeNormal(0, True)
+	SetLog("Result = " & $result, $COLOR_INFO)
+	EndImageTest()
+	; restore original state
+	$g_iTestFreeBuilderCount = -1
+	$g_iFreeBuilderCount = $iCurrFreeBuilderCount
+	$g_bRunState = $currentRunState
+EndFunc   ;==>btnTestUpgradeWindow
+
+Func btnTestSmartWait()
+	Local $currentRunState = $g_bRunState
+	Local $bCloseWhileTrainingEnable = $g_bCloseWhileTrainingEnable
+
+	$g_bRunState = True
+	$g_bCloseWhileTrainingEnable = True
+
+	SmartWait4Train(20)
+
+	$g_bRunState = $currentRunState
+	$g_bCloseWhileTrainingEnable = $bCloseWhileTrainingEnable
+EndFunc   ;==>btnTestSmartWait
+
+Func btnConsoleWindow()
+	ConsoleWindow()
+EndFunc   ;==>btnConsoleWindow

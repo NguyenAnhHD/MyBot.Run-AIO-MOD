@@ -4,141 +4,79 @@
 ; Syntax ........: BoostBarracks(), BoostSpellFactory()
 ; Parameters ....:
 ; Return values .: None
-; Author ........: MR.ViPER
-; Modified ......: MR.ViPER (9-9-2016), MR.ViPER (17-10-2016) Oct Update
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Author ........: MR.ViPER (9/9/2016)
+; Modified ......: MR.ViPER (17/10/2016), Fliegerfaust (21/12/2017)
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
-
-Global Const $g_bDebugBarrackBoost = False
-
 Func BoostBarracks()
-	If $g_bTrainEnabled = False Then Return
-	If $g_iCmbBoostBarracks = 0 Then Return
-	If $g_iCmbBoostBarracks >= 1 Then
-		Local $hour = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
-		If $g_abBoostBarracksHours[$hour[0]] = False Then
-			SetLog("Boost Barracks are not Planned, Skipped..", $COLOR_BLUE)
-			Return ; exit func if no planned Boost Barracks checkmarks
-		EndIf
-	EndIf
-
-	If GUICtrlRead($chkForecastBoost) = $GUI_CHECKED Then
-		If $currentForecast > Number($iTxtForecastBoost, 3) Then
-			Local $hour = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
-			If $g_abBoostBarracksHours[$hour[0]] = False Then
-				SetLog("No planned boosting for this hour.", $COLOR_RED)
-				Return ; exit func if no planned Boost Barracks checkmarks
-			EndIf
-		Else
-			Return
-		EndIf
-	EndIf
-
-	If OpenArmyWindow() = True Then
-		Local $CheckArmyWindow = ISArmyWindow()
-		OpenTrainTabNumber(1, "BoostBarracks")
-		If _Sleep(400) Then Return
-
-		Local $ClickResult = ClickOnBoostArmyWindow()
-		If $ClickResult = True Then
-			Local $GemResult = IsGemWindowOpen(True)
-			If $GemResult = True Then
-				If $g_iCmbBoostBarracks >= 1 And $g_iCmbBoostBarracks <= 24 Then
-					$g_iCmbBoostBarracks -= 1
-					Setlog(" Total remain cycles to boost Barracks:" & $g_iCmbBoostBarracks, $COLOR_GREEN)
-					GUICtrlSetData($g_hCmbBoostBarracks, $g_iCmbBoostBarracks)
-				ElseIf $g_iCmbBoostBarracks = 25 Then
-					Setlog(" Total remain cycles to boost Barracks: Unlimited", $COLOR_GREEN)
-				EndIf
-			EndIf
-		EndIf
-
-		ClickP($aAway, 1, 0, "#0161")
-		PureClickP($aAway, 1, 0, "#0140")
-	EndIf
-	_Sleep($DELAYBOOSTBARRACKS5 + 1000)
-	checkMainScreen(False) ; Check for errors during function
-	Return True
-EndFunc   ;==>BoostBarracks
+	Return BoostTrainBuilding("Barracks", $g_iCmbBoostBarracks, $g_hCmbBoostBarracks)
+EndFunc
 
 Func BoostSpellFactory()
-	If $g_bTrainEnabled = False Then Return
-	If $g_iCmbBoostSpellFactory >= 1 Then
-		SetLog("Boosting Spell Factory...", $COLOR_BLUE)
-
-		If $iChkForecastBoost = 1 And $currentForecast <= Number($iTxtForecastBoost, 3) Then Return
-
-		If OpenArmyWindow() = True Then
-			Local $CheckArmyWindow = ISArmyWindow()
-			OpenTrainTabNumber(2, "BoostSpellFactory")
-			If _Sleep(400) Then Return
-
-			Local $ClickResult = ClickOnBoostArmyWindow()
-			If $ClickResult = True Then
-				Local $GemResult = IsGemWindowOpen(True)
-				If $GemResult = True Then
-					If $g_iCmbBoostSpellFactory >= 1 And $g_iCmbBoostSpellFactory <= 24 Then
-						$g_iCmbBoostSpellFactory -= 1
-						Setlog(" Total remain cycles to boost Spells:" & $g_iCmbBoostSpellFactory, $COLOR_GREEN)
-						GUICtrlSetData($g_hCmbBoostSpellFactory, $g_iCmbBoostSpellFactory)
-					ElseIf $g_iCmbBoostSpellFactory = 25 Then
-						Setlog(" Total remain cycles to boost Spells: Unlimited", $COLOR_GREEN)
-					EndIf
-				EndIf
-			EndIf
-
-			ClickP($aAway, 1, 0, "#0161")
-			PureClickP($aAway, 1, 0, "#0140")
-		EndIf
-		_Sleep($DELAYBOOSTBARRACKS5 + 1000)
-		checkMainScreen(False) ; Check for errors during function
-		Return True
-	EndIf
+	Return BoostTrainBuilding("Spell Factory", $g_iCmbBoostSpellFactory, $g_hCmbBoostSpellFactory)
 EndFunc   ;==>BoostSpellFactory
 
-Func ClickOnBoostArmyWindow()
-	If $g_bDebugBarrackBoost Then SetLog("Func ClickOnBoostArmyWindow()", $COLOR_DEBUG) ;Debug
-	_Sleep($DELAYBOOSTBARRACKS2)
-	Local $ClockColor = _GetPixelColor(780, 312 + $g_iMidOffsetY, True)
-	Local $ResColCheck = _ColorCheck($ClockColor, Hex(0x65AF20, 6), 40)
-	If $ResColCheck = True Then
-		SetLog("Boost Button is Available, Clicking On...", $COLOR_BLUE)
-		Click(770, 325)
-		_Sleep($DELAYBOOSTBARRACKS2)
-		Return True
-	Else
-		If _ColorCheck(_GetPixelColor(718, 285 + $g_iMidOffsetY, True), Hex(0xEEF470, 6), 40) Then
-			SetLog("Already Boosted! Skipping...", $COLOR_GREEN)
-		Else
-			SetLog("Cannot Verify Boost Button! Skipping...", $COLOR_ORANGE)
-		EndIf
-		Return False
-	EndIf
-EndFunc   ;==>ClickOnBoostArmyWindow
+Func BoostTrainBuilding($sName, $iCmbBoost, $iCmbBoostCtrl)
+	Local $boosted = False
 
-Func IsGemWindowOpen($AcceptGem = False)
-	If $g_bDebugBarrackBoost Then SetLog("Func IsGemWindowOpen(" & $AcceptGem & ")", $COLOR_DEBUG) ;Debug
-	_Sleep($DELAYISGEMOPEN1)
-	If _ColorCheck(_GetPixelColor(590, 235 + $g_iMidOffsetY, True), Hex(0xD80408, 6), 20) Then
-		If _ColorCheck(_GetPixelColor(375, 383 + $g_iMidOffsetY, True), Hex(0x222322, 6), 20) Then
-			If $g_iDebugSetlog = 1 Or $g_bDebugBarrackBoost Then Setlog("DETECTED, GEM Window Is OPEN", $COLOR_DEBUG) ;Debug
-			If $AcceptGem = True Then
-				Click(435, 445)
-				_Sleep($DELAYBOOSTBARRACKS2)
-				SetLog('Boost was Successful.', $COLOR_GREEN)
-			Else
-				PureClickP($aAway, 1, 0, "#0140") ; click away to close gem window
-			EndIf
-			_Sleep($DELAYBOOSTSPELLFACTORY3)
+	If Not $g_bTrainEnabled Or $iCmbBoost <= 0 Then Return $boosted
+
+	Local $aHours = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
+	If Not $g_abBoostBarracksHours[$aHours[0]] Then
+		SetLog("Boosting " & $sName & " isn't planned, skipping", $COLOR_INFO)
+		Return $boosted
+	EndIf
+
+	Local $sIsAre = "are"
+	SetLog("Boosting " & $sName, $COLOR_INFO)
+
+	If OpenArmyOverview(True, "BoostTrainBuilding()") Then
+		If $sName = "Barracks" Then
+			OpenTroopsTab(True, "BoostTrainBuilding()")
+		ElseIf $sName = "Spell Factory" Then
+			OpenSpellsTab(True, "BoostTrainBuilding()")
+			$sIsAre = "is"
+		Else
+			SetDebugLog("BoostTrainBuilding(): $sName called with a wrong Value.", $COLOR_ERROR)
 			ClickP($aAway, 1, 0, "#0161")
-			If $g_bDebugBarrackBoost Then SetLog("Func IsGemWindowOpen(" & $AcceptGem & ") = TRUE", $COLOR_GREEN)
-			Return True
+			_Sleep($DELAYBOOSTBARRACKS2)
+			Return $boosted
+		EndIf
+		Local $aBoostBtn = findButton("BoostBarrack")
+		If IsArray($aBoostBtn) Then
+			ClickP($aBoostBtn)
+			_Sleep($DELAYBOOSTBARRACKS1)
+			Local $aGemWindowBtn = findButton("GEM")
+			If IsArray($aGemWindowBtn) Then
+				ClickP($aGemWindowBtn)
+				_Sleep($DELAYBOOSTBARRACKS2)
+				If IsArray(findButton("EnterShop")) Then
+					SetLog("Not enough gems to boost " & $sName, $COLOR_ERROR)
+				Else
+					If $iCmbBoost >= 1 And $iCmbBoost <= 24 Then
+						$iCmbBoost -= 1
+						_GUICtrlComboBox_SetCurSel($iCmbBoostCtrl, $iCmbBoost)
+						SetLog("Remaining " & $sName & " Boosts: " & $iCmbBoost, $COLOR_SUCCESS)
+					ElseIf $iCmbBoost = 25 Then
+						SetLog("Remain " & $sName & " Boosts: Unlimited", $COLOR_SUCCESS)
+					EndIf
+					$boosted = True
+				EndIf
+			EndIf
+		Else
+			If IsArray(findButton("BarrackBoosted")) Then
+				SetLog($sName & " " & $sIsAre & " already boosted", $COLOR_SUCCESS)
+			Else
+				SetLog($sName & "boost button not found", $COLOR_ERROR)
+			EndIf
 		EndIf
 	EndIf
-	If $g_bDebugBarrackBoost Then SetLog("Func IsGemWindowOpen(" & $AcceptGem & ") = FALSE", $COLOR_GREEN)
-	Return False
-EndFunc   ;==>IsGemWindowOpen
+
+	ClickP($aAway, 1, 0, "#0161")
+	_Sleep($DELAYBOOSTBARRACKS2)
+	Return $boosted
+EndFunc

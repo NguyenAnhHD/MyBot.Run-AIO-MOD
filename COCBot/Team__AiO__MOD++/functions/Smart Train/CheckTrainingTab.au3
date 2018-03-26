@@ -1,8 +1,8 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: CheckTrainingTab
+; Name ..........: CheckTrainingTab (#-13)
 ; Description ...: Check Troops training tab and Spells brewing tab, return suggested training methods for army camp & queue
 ; Author ........: DEMEN
-; Modified ......:
+; Modified ......: Team AiO MOD++ (2017)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -14,14 +14,14 @@ Func CheckTrainingTab($sText = "troop")
 
 	Local $aeTrainMethod[2] = [$g_eNoTrain, $g_eNoTrain] ; return value: train army | train queue
 	Local $Tab = $TrainTroopsTAB
-	If $ichkFillArcher <> 1 Then $iFillArcher = 0
+	If Not $g_bChkFillArcher Then $g_iTxtFillArcher = 0
 
-	Local $iTopUp = $iFillArcher
+	Local $iTopUp = $g_iTxtFillArcher
 
 	If $sText = "spell" Then
 		$Tab = $BrewSpellsTAB
 		If Not $g_bQuickTrainEnable And TotalSpellsToBrewInGUI() = 0 Then Return $aeTrainMethod ; quit checking spell tab (no brew all)
-		$iTopUp = $ichkFillEQ ; (0 or 1)
+		$iTopUp = $g_bChkFillEQ ; (0 or 1)
 	EndIf
 
 	OpenTrainTabNumber($Tab, "CheckTrainingTab()")
@@ -30,19 +30,17 @@ Func CheckTrainingTab($sText = "troop")
 
 	Local $ArmyCamp = GetOCRCurrent(43, 160)
 
-	Setlog(" »» Checking " & $sText & " tab: " & $ArmyCamp[0] & "/" & $ArmyCamp[1] * 2)
+	Setlog("»» Checking " & $sText & " tab: " & $ArmyCamp[0] & "/" & $ArmyCamp[1] * 2)
 
 	Switch $ArmyCamp[0]
 		Case 0 ;	0/240 troop	| 0/11 spell
 			SetLog("  » No " & $sText)
-			If $g_bQuickTrainEnable = False Then
-				$aeTrainMethod[0] = $g_eFull
-				$aeTrainMethod[1] = $g_eFull ; full army + full queue
-			EndIf
+			$aeTrainMethod[0] = $g_eFull
+			$aeTrainMethod[1] = $g_eFull ; full army + full queue
 
 		Case 1 To $ArmyCamp[1] - $iTopUp - 1 ; 1-234/240 troops | 1-9/11 spells
 			SetLog("  » Not full " & $sText & " camp")
-			If ClearTrainingTroops() Then SetLog("  » All training " & $sText & " cleared!")
+			If ClearTrainingArmyCamp() Then SetLog("  » All training " & $sText & " cleared!")
 			$aeTrainMethod[0] = $g_eRemained
 			$aeTrainMethod[1] = $g_eFull ; remained army + full queue
 
@@ -82,11 +80,11 @@ Func CheckTrainingTab($sText = "troop")
 			Local $bSkipTraining = $g_bFullArmy
 			If $sText = "spell" Then $bSkipTraining = $g_bFullArmySpells Or $g_bForceBrewSpells
 			If Not $bSkipTraining And _ColorCheck(_GetPixelColor(824, 243, True), Hex(0x949522, 6), 20) Then ; the green check symbol [bottom right] at slot 0 troop
-				If $ichkSwitchAcc = 1 And $aProfileType[$nCurProfile - 1] = $eDonate Then
+				If $g_bChkSwitchAcc And $g_abDonateOnly[$g_iCurAccount] Then
 					SetLog("  » A big guy is blocking our camp, but you are in donate account, so just leave it")
 				Else
 					SetLog("  » A big guy is blocking in queue, try delete queued troops")
-					ClearTrainingTroops()
+					ClearTrainingArmyCamp()
 					If CheckBlockTroops($sText) = False Then ; check if camp is not full after delete queue
 						$aeTrainMethod[1] = $g_eFull
 					Else
@@ -103,24 +101,24 @@ Func CheckTrainingTab($sText = "troop")
 
 EndFunc   ;==>CheckTrainingTab
 
-Func ClearTrainingTroops($eOpenTrainTab = -1)
+Func ClearTrainingArmyCamp($eOpenTrainTab = -1)
 	If $g_bQuickTrainEnable Then Return False ;	not applicable for quick-train mode
 
-	If $eOpenTrainTab > 0 Then OpenTrainTabNumber($eOpenTrainTab, "ClearTrainingTroops()")
+	If $eOpenTrainTab > 0 Then OpenTrainTabNumber($eOpenTrainTab, "ClearTrainingArmyCamp()")
 
 	If _ColorCheck(_GetPixelColor(820, 220, True), Hex(0xCFCFC8, 6), 15) Then Return False ; Gray background found, no troop is training
 
 	Local $x = 0
-	While _ColorCheck(_GetPixelColor(820, 220, True), Hex(0xCFCFC8, 6), 15) = False ; the gray background at slot 0 troop
+	While Not _ColorCheck(_GetPixelColor(820, 220, True), Hex(0xCFCFC8, 6), 15) ; the gray background at slot 0 troop
 		PureClick(820, 202, 2, 50)
 		$x += 1
-		If $x = 480 Then ExitLoop
+		If $x = 520 Then ExitLoop
 	WEnd
 	If _Sleep(250) Then Return
 
 	Return True
 
-EndFunc   ;==>ClearTrainingTroops
+EndFunc   ;==>ClearTrainingArmyCamp
 
 Func TopUpCamp($sText = "troop", $ArchToMake = 0)
 	If $ArchToMake <= 0 Then Return False
@@ -138,7 +136,7 @@ EndFunc   ;==>TopUpCamp
 
 Func ForceBrewSpells($iRemainQueue)
 	For $i = 0 To ($eSpellCount - 1)
-		If $g_bRunState = False Then Return
+		If Not $g_bRunState Then Return
 		If $g_aiArmyCompSpells[$i] > 0 And $iRemainQueue - $g_aiSpellSpace[$i] >= 0 Then
 			Local $iBrewedCount = 0
 			While $iRemainQueue - $g_aiSpellSpace[$i] >= 0
@@ -155,7 +153,7 @@ Func ForceBrewSpells($iRemainQueue)
 				EndIf
 				If $iBrewedCount >= $g_aiArmyCompSpells[$i] Then ExitLoop
 			WEnd
-			If $iBrewedCount > 0 Then Setlog("  » Brewed " & $g_asSpellNames[$i] & " x" & $iBrewedCount)
+			If $iBrewedCount > 0 Then Setlog("    Brewed " & $g_asSpellNames[$i] & " x" & $iBrewedCount, $COLOR_GREEN)
 		EndIf
 	Next
 EndFunc   ;==>ForceBrewSpells
@@ -166,14 +164,14 @@ Func CheckBlockTroops($sText = "troop")
 		Return False ; train $g_efull
 	Else
 		If $sText = "troop" Then
-			If $NewCampOCR[1] - $NewCampOCR[0] <= $iFillArcher Then
+			If $NewCampOCR[1] - $NewCampOCR[0] <= $g_iTxtFillArcher Then
 				TopUpCamp($sText, $NewCampOCR[1] - $NewCampOCR[0])
 				Return False ; train $g_efull
 			Else
 				Return True ; train remained
 			EndIf
 		ElseIf $sText = "spell" Then
-			If $ichkFillEQ = 1 And $NewCampOCR[1] - $NewCampOCR[0] = 1 Then
+			If $g_bChkFillEQ And $NewCampOCR[1] - $NewCampOCR[0] = 1 Then
 				TopUpCamp($sText, 1)
 				Return False ; train $g_efull
 			Else

@@ -4,7 +4,7 @@
 ; Syntax ........: $iDelayXXXXXXYYY  : XXXX = function name using the delay, YYY = delay value or position of delay in file
 ; Author ........: Sardo (08-2015)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -174,8 +174,9 @@ Global Const $DELAYVILLAGESEARCH3 = 500
 Global Const $DELAYVILLAGESEARCH5 = 2000
 
 ;BoostBarracks
-Global Const $DELAYBOOSTBARRACKS2 = 2000
-Global Const $DELAYBOOSTBARRACKS5 = 200
+Global Const $DELAYBOOSTBARRACKS1 = 1000
+Global Const $DELAYBOOSTBARRACKS2 = 600
+Global Const $DELAYBOOSTBARRACKS3 = 200
 
 ;BoostSpellFactory
 Global Const $DELAYBOOSTSPELLFACTORY3 = 500
@@ -251,6 +252,7 @@ Global Const $DELAYUPGRADEVALUE1 = 200
 Global Const $DELAYUPGRADEVALUE2 = 800
 Global Const $DELAYUPGRADEVALUE3 = 750
 Global Const $DELAYUPGRADEVALUE4 = 1000
+Global Const $DELAYUPGRADEVALUE5 = 1250
 
 ;DebugImageSave
 Global Const $DELAYDEBUGIMAGESAVE1 = 200
@@ -291,14 +293,19 @@ Global Const $DELAYMAKEREQUEST1 = 500
 Global Const $DELAYMAKEREQUEST2 = 1500
 
 ;Train
+Global Const $DELAYTRAIN1 = 1000
 Global Const $DELAYTRAIN4 = 200
 Global Const $DELAYTRAIN6 = 20 ; click
 Global Const $DELAYTRAIN8 = 5000 ; wait for a while to desapear the 'received castle troops' msg
 Global Const $DELAYLVUP = 150 ; delay in repeatly increasing levels on the train troops screen when button is held down
+Global Const $g_iQuickTrainButtonRetryDelay = 1000
 
 ;IsTrainPage
 Global Const $DELAYISTRAINPAGE1 = 100
 Global Const $DELAYISTRAINPAGE2 = 1000
+
+;AutoUpgradeBuilding
+Global Const $DELAYAUTOUPGRADEBUILDING1 = 1000
 
 ;UpgradeBuilding
 Global Const $DELAYUPGRADEBUILDING1 = 200
@@ -372,14 +379,14 @@ Global Const $DELAYCLOSEOPEN3000 = 3000
 ;Smart Zap
 Global $DELAYSMARTZAP1 = 1000
 Global $DELAYSMARTZAP4 = 4000
+Global $DELAYSMARTZAP10 = 10000
 
 ;SwitchBetweenBases
 Global $DELAYSWITCHBASES1 = 1000
-Global $DELAYSWITCHBASES2 = 200
 
 ;ClockTower
-Global $DELAYCLOCKTOWER1 = 200
-Global $DELAYCLOCKTOWER2 = 100
+Global $DELAYCLOCKTOWER1 = 1000
+Global $DELAYCLOCKTOWER2 = 200
 
 ;SuperXP / GoblinXP
 Global Const $DELAYDROPSuperXP1= 500

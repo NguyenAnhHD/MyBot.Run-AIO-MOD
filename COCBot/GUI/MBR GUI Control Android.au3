@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MMHK (11-2016)
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -64,10 +64,10 @@ Func cmbCOCDistributors()
 	EndIf
 EndFunc   ;==>cmbCOCDistributors
 
-Func DistributorsBotStopEvent()
+Func DistributorsUpdateGUI()
 	LoadCOCDistributorsComboBox()
 	SetCurSelCmbCOCDistributors()
-EndFunc   ;==>DistributorsBotStopEvent
+EndFunc   ;==>DistributorsUpdateGUI
 
 Func AndroidSuspendFlagsToIndex($iFlags)
 	Local $idx = 0
@@ -93,8 +93,13 @@ Func AndroidSuspendIndexToFlags($idx)
 			$iFlags = 2 + 4
 	EndSwitch
 	Return $iFlags
-EndFunc   ;==>AndroidSuspendFlagsToIndex
+EndFunc   ;==>AndroidSuspendIndexToFlags
 
 Func cmbSuspendAndroid()
 	$g_iAndroidSuspendModeFlags = AndroidSuspendIndexToFlags(_GUICtrlComboBox_GetCurSel($g_hCmbSuspendAndroid))
 EndFunc   ;==>cmbSuspendAndroid
+
+Func cmbAndroidBackgroundMode()
+	$g_iAndroidBackgroundMode = _GUICtrlComboBox_GetCurSel($g_hCmbAndroidBackgroundMode)
+	UpdateAndroidBackgroundMode()
+EndFunc   ;==>cmbAndroidBackgroundMode

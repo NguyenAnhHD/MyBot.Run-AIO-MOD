@@ -1,6 +1,6 @@
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: Bot Humanization
-; Description ...: This file contains all functions of Pico Bot Humanization feature - Best Clans and Players Part
+; Description ...: This file contains all functions of Bot Humanization feature - Best Clans and Players Part
 ; Syntax ........: ---
 ; Parameters ....: ---
 ; Return values .: ---

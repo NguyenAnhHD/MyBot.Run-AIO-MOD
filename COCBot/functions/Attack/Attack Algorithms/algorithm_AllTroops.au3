@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Didipe (05-2015), ProMac(2016), MonkeyHunter(03-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 
 Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
-	If $g_iDebugSetlog = 1 Then Setlog("algorithm_AllTroops()", $COLOR_DEBUG)
+	If $g_bDebugSetlog Then SetDebugLog("algorithm_AllTroops()", $COLOR_DEBUG)
 	SetSlotSpecialTroops()
 
 	If _Sleep($DELAYALGORITHM_ALLTROOPS1) Then Return
@@ -44,7 +44,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 			SetLog("King and/or Queen dropped, close attack")
 			If $g_bSmartZapEnable = True Then SetLog("Skipping SmartZap to protect your royals!", $COLOR_FUCHSIA)
 		ElseIf IsAttackPage() And Not SmartZap() And $g_bTHSnipeUsedKing = False And $g_bTHSnipeUsedQueen = False Then
-			Setlog("Wait few sec before close attack")
+			SetLog("Wait few sec before close attack")
 			If _Sleep(Random(0, 2, 1) * 1000) Then Return ;wait 0-2 second before exit if king and queen are not dropped
 		EndIf
 
@@ -86,8 +86,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 	If ($nbSides = 0) Then Return
 	If _Sleep($DELAYALGORITHM_ALLTROOPS2) Then Return
 
-	LocaL $GiantComp = $g_ahTxtTrainArmyTroopCount[$eTroopGiant]
-
+	Local $GiantComp = $g_ahTxtTrainArmyTroopCount[$eTroopGiant]
 	If Number($GiantComp) > 16 Or (Number($GiantComp) >= 8 And $nbSides = 5) Then $g_iSlotsGiants = 2
 	If Number($GiantComp) > 20 Or (Number($GiantComp) >= 12 And $nbSides = 5) Then $g_iSlotsGiants = 0
 
@@ -95,7 +94,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 	If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then ; Customise DE side wave deployment here
 		Switch $g_aiAttackStdDropOrder[$g_iMatchMode]
 			Case 0
-				If $g_bCustomTrainDropOrderEnable = True Then
+				If $g_bCustomDropOrderEnable Then
 					Local $listInfoDeploy[21][5] = [[MatchTroopDropName(0), MatchSidesDrop(0), MatchTroopWaveNb(0), 1, MatchSlotsPerEdge(0)], _
 						[MatchTroopDropName(1), MatchSidesDrop(1), MatchTroopWaveNb(1), 1, MatchSlotsPerEdge(1)], _
 						[MatchTroopDropName(2), MatchSidesDrop(2), MatchTroopWaveNb(2), 1, MatchSlotsPerEdge(2)], _
@@ -121,8 +120,8 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 					Local $listInfoDeploy[21][5] = [[$eGole, $nbSides, 1, 1, 2] _
 						, [$eLava, $nbSides, 1, 1, 2] _
 						, [$eGiant, $nbSides, 1, 1, $g_iSlotsGiants] _
-						, ["CC", 1, 1, 1, 1] _
 						, [$eDrag, $nbSides, 1, 1, 0] _
+						, ["CC", 1, 1, 1, 1] _
 						, [$eBall, $nbSides, 1, 1, 0] _
 						, [$eBabyD, $nbSides, 1, 1, 1] _
 						, [$eHogs, $nbSides, 1, 1, 1] _
@@ -165,11 +164,9 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 						, [$eGobl, $nbSides, 1, 1, 1] _
 						]
 		EndSwitch
-
-	; Classic Four Fingers
 	ElseIf $nbSides = 5 Then
-	   	CmbGiantSlot()
-		If $g_bCustomTrainDropOrderEnable = True Then
+		CmbGiantSlot()
+		If $g_bCustomDropOrderEnable Then
 			Local $listInfoDeploy[21][5] = [[MatchTroopDropName(0), MatchSidesDrop(0), MatchTroopWaveNb(0), 1, MatchSlotsPerEdge(0)], _
 						[MatchTroopDropName(1), MatchSidesDrop(1), MatchTroopWaveNb(1), 1, MatchSlotsPerEdge(1)], _
 						[MatchTroopDropName(2), MatchSidesDrop(2), MatchTroopWaveNb(2), 1, MatchSlotsPerEdge(2)], _
@@ -192,7 +189,7 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 						[MatchTroopDropName(19), MatchSidesDrop(19), MatchTroopWaveNb(19), 1, MatchSlotsPerEdge(19)], _
 						[MatchTroopDropName(20), MatchSidesDrop(20), MatchTroopWaveNb(20), 1, MatchSlotsPerEdge(20)]]
 		Else
-			Local $listInfoDeploy[21][5] = [[$eGiant, $nbSides, 1, 1, $iSlotsGiants], _
+			Local $listInfoDeploy[21][5] = [[$eGiant, $nbSides, 1, 1, $g_aiSlotsGiants], _
 						["CC", 1, 1, 1, 1], _
 						[$eGole, $nbSides, 1, 1, 2], _
 						[$eLava, $nbSides, 1, 1, 2], _
@@ -213,12 +210,11 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 						[$eMini, $nbSides, 1, 1, 0], _
 						["HEROES", 1, 2, 1, 1]]
 		EndIf
-
 	Else
-		If $g_iDebugSetlog = 1 Then SetLog("listdeploy standard for attack", $COLOR_DEBUG)
+		If $g_bDebugSetlog Then SetDebugLog("listdeploy standard for attack", $COLOR_DEBUG)
 		Switch $g_aiAttackStdDropOrder[$g_iMatchMode]
 			Case 0
-				If $g_bCustomTrainDropOrderEnable = True Then
+				If $g_bCustomDropOrderEnable Then
 					Local $listInfoDeploy[21][5] = [[MatchTroopDropName(0), MatchSidesDrop(0), MatchTroopWaveNb(0), 1, MatchSlotsPerEdge(0)], _
 						[MatchTroopDropName(1), MatchSidesDrop(1), MatchTroopWaveNb(1), 1, MatchSlotsPerEdge(1)], _
 						[MatchTroopDropName(2), MatchSidesDrop(2), MatchTroopWaveNb(2), 1, MatchSlotsPerEdge(2)], _
@@ -244,8 +240,8 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 					Local $listInfoDeploy[21][5] = [[$eGole, $nbSides, 1, 1, 2] _
 						, [$eLava, $nbSides, 1, 1, 2] _
 						, [$eGiant, $nbSides, 1, 1, $g_iSlotsGiants] _
-						, ["CC", 1, 1, 1, 1] _
 						, [$eDrag, $nbSides, 1, 1, 0] _
+						, ["CC", 1, 1, 1, 1] _
 						, [$eBall, $nbSides, 1, 1, 0] _
 						, [$eBabyD, $nbSides, 1, 1, 0] _
 						, [$eHogs, $nbSides, 1, 1, 1] _
@@ -321,16 +317,13 @@ Func algorithm_AllTroops() ;Attack Algorithm for all existing troops
 	SetLog("Dropping left over troops", $COLOR_INFO)
 	For $x = 0 To 1
 		If PrepareAttack($g_iMatchMode, True) = 0 Then
-			If $g_iDebugSetlog = 1 Then Setlog("No Wast time... exit, no troops usable left", $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("No Wast time... exit, no troops usable left", $COLOR_DEBUG)
 			ExitLoop ;Check remaining quantities
 		EndIf
 		For $i = $eBarb To $eBowl ; launch all remaining troops
 			;If $i = $eBarb Or $i = $eArch Then
 			LaunchTroop($i, $nbSides, 0, 1)
-			If $g_iActivateKQCondition = "Auto" Then CheckHeroesHealth()
-			;Else
-			;	 LaunchTroop($i, $nbSides, 0, 1, 2)
-			;EndIf
+			If $g_iActivateQueen = 0 Or $g_iActivateKing = 0 Or $g_iActivateWarden = 0 Then CheckHeroesHealth()
 			If _Sleep($DELAYALGORITHM_ALLTROOPS5) Then Return
 		Next
 	Next
@@ -358,11 +351,11 @@ Func SetSlotSpecialTroops()
 		EndIf
 	Next
 
-	If $g_iDebugSetlog = 1 Then
-		SetLog("SetSlotSpecialTroops() King Slot: " & $g_iKingSlot, $COLOR_DEBUG)
-		SetLog("SetSlotSpecialTroops() Queen Slot: " & $g_iQueenSlot, $COLOR_DEBUG)
-		SetLog("SetSlotSpecialTroops() Warden Slot: " & $g_iWardenSlot, $COLOR_DEBUG)
-		SetLog("SetSlotSpecialTroops() Clan Castle Slot: " & $g_iClanCastleSlot, $COLOR_DEBUG)
+	If $g_bDebugSetlog Then
+		SetDebugLog("SetSlotSpecialTroops() King Slot: " & $g_iKingSlot, $COLOR_DEBUG)
+		SetDebugLog("SetSlotSpecialTroops() Queen Slot: " & $g_iQueenSlot, $COLOR_DEBUG)
+		SetDebugLog("SetSlotSpecialTroops() Warden Slot: " & $g_iWardenSlot, $COLOR_DEBUG)
+		SetDebugLog("SetSlotSpecialTroops() Clan Castle Slot: " & $g_iClanCastleSlot, $COLOR_DEBUG)
 	EndIf
 
 EndFunc   ;==>SetSlotSpecialTroops
@@ -408,21 +401,21 @@ Func SmartAttackStrategy($imode)
 				If $g_abAttackStdSmartNearCollectors[$imode][0] Then
 					$g_aiPixelMine = GetLocationMine()
 					If (IsArray($g_aiPixelMine)) Then
-						_ArrayAdd($g_aiPixelNearCollector, $g_aiPixelMine)
+						_ArrayAdd($g_aiPixelNearCollector, $g_aiPixelMine, 0, "|", @CRLF, $ARRAYFILL_FORCE_STRING)
 					EndIf
 				EndIf
 				; If drop troop near elixir collector
 				If $g_abAttackStdSmartNearCollectors[$imode][1] Then
 					$g_aiPixelElixir = GetLocationElixir()
 					If (IsArray($g_aiPixelElixir)) Then
-						_ArrayAdd($g_aiPixelNearCollector, $g_aiPixelElixir)
+						_ArrayAdd($g_aiPixelNearCollector, $g_aiPixelElixir, 0, "|", @CRLF, $ARRAYFILL_FORCE_STRING)
 					EndIf
 				EndIf
 				; If drop troop near dark elixir drill
 				If $g_abAttackStdSmartNearCollectors[$imode][2] Then
 					$g_aiPixelDarkElixir = GetLocationDarkElixir()
 					If (IsArray($g_aiPixelDarkElixir)) Then
-						_ArrayAdd($g_aiPixelNearCollector, $g_aiPixelDarkElixir)
+						_ArrayAdd($g_aiPixelNearCollector, $g_aiPixelDarkElixir, 0, "|", @CRLF, $ARRAYFILL_FORCE_STRING)
 					EndIf
 				EndIf
 				SetLog("Located  (in " & Round(__TimerDiff($hTimer) / 1000, 2) & " seconds) :")

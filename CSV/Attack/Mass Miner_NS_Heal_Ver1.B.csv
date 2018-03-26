@@ -1,0 +1,60 @@
+NOTE  |Author: NavySeals - Ver. 1.B
+NOTE  |Mass Miners Strategy
+NOTE  |Town Hall 10-11: 240-260 troops
+NOTE  |Make Troops: All Miners, Archers to fill-in
+NOTE  |Make Spells: 1Rage, 3Heal, 1Jump, 1Poison(optional) (Add CC rage)
+NOTE  |Request Giants or Golem in CC
+NOTE  |Edited by KeyMaker to support bigger camp space and fill-in troops
+
+      |For 240 camp space, make 40 miners
+      |For 245 camp space, make 40 miners, 5 archers
+      |For 250 camp space, make 41 miners, 4 archers
+      |For 255 camp space, make 42 miners, 3 archers
+      |For 260 camp space, make 43 miners, 2 archers
+      
+      |----------------------------------- Script: Mass Bowller Start --------------------------------|
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |0          |0          |0          |0          |0          |0          |10         |           |
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|
+MAKE  |N          |FRONT-LEFT |10         |6          |INT-EXT    |0          |0          |           |
+MAKE  |A          |FRONT-RIGHT|10         |6          |INT-EXT    |0          |0          |           |
+MAKE  |F          |FRONT-LEFT |10         |8          |INT-EXT    |0          |0          |           |
+MAKE  |G          |FRONT-RIGHT|10         |8          |INT-EXT    |0          |0          |           |
+MAKE  |I          |FRONT-LEFT |10         |-4         |INT-EXT    |0          |0          |           |
+MAKE  |D          |FRONT-LEFT |10         |-9         |INT-EXT    |0          |0          |           |
+MAKE  |J          |FRONT-RIGHT|10         |-9         |INT-EXT    |0          |0          |           |
+MAKE  |B          |FRONT-LEFT |10         |-18        |INT-EXT    |0          |0          |           |
+MAKE  |K          |FRONT-RIGHT|10         |-12        |INT-EXT    |0          |0          |           |
+MAKE  |L          |FRONT-LEFT |10         |-16        |INT-EXT    |0          |0          |           |
+MAKE  |W          |FRONT-LEFT |10         |-22        |INT-EXT    |0          |0          |           |
+MAKE  |Y          |FRONT-LEFT |10         |2          |INT-EXT    |0          |0          |           |
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|           |
+DROP  |I          |1          |1          |JSpell     |0          |0          |500-600    |           |
+DROP  |N          |1          |1          |Castle     |0          |0          |200-500    |           |
+DROP  |F          |6-10       |20%        |Mine       |50         |0          |0          |           |
+DROP  |G          |6-10       |20%        |Mine       |50         |0          |100-200    |           |
+DROP  |N          |1          |1          |King       |0          |0          |100-200    |           |
+DROP  |N          |1          |1          |Queen      |0          |0          |100-200    |           |
+DROP  |N          |1          |1          |Warden     |0          |0          |400-500    |           |
+DROP  |F          |1-5        |30%        |Mine       |50         |0          |0          |           |
+DROP  |G          |1-5        |30%        |Mine       |50         |0          |100-200    |           |
+DROP  |F          |1-5        |50%        |Arch       |50         |0          |0          |           |
+DROP  |G          |1-5        |50%        |Arch       |50         |0          |0          |           |
+DROP  |F          |1-5        |5          |Mine       |0          |0          |0          |           |
+DROP  |G          |1-5        |5          |Mine       |0          |0          |0          |           |
+DROP  |G          |1-5        |100%       |Remain     |0          |0          |0          |           |
+WAIT  |4000-5000  |           |           |           |           |           |           |           |
+DROP  |D          |3          |1          |HSpell     |0          |0          |10-20      |           |
+DROP  |J          |2-3        |1          |HSpell     |0          |0          |500-1000   |           |
+DROP  |K          |1          |2          |PSpell     |0          |0          |200-600    |           |
+WAIT  |6000-8000  |           |           |           |           |           |           |           |
+DROP  |N          |1          |1          |Warden     |0          |0          |100-200    |           |
+WAIT  |24000-28000|           |           |           |           |           |           |           |
+DROP  |F-G        |1          |16         |Mine       |50         |0          |500-1000   |           |
+DROP  |F-G        |1          |16         |Mine       |50         |0          |500-1000   |           |
+WAIT  |1000-1500  |           |           |           |           |           |           |           |
+DROP  |L          |1-2        |1          |RSpell     |0          |0          |200-500    |           |
+DROP  |B          |1-2        |1          |HSpell     |0          |0          |0          |           |
+RECALC|           |           |           |           |           |           |           |           |
+DROP  |W          |1          |1          |RSpell     |0          |0          |100        |           |
+DROP  |Y          |1          |30         |Mine       |50         |0          |10-20      |           |
