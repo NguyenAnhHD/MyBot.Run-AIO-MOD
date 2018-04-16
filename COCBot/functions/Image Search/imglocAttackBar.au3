@@ -37,6 +37,8 @@ Func AttackBarCheck($Remaining = False)
 		$CheckSlotwHero = False
 	EndIf
 
+	; ExtendedAttackBar - Team AiO MOD++
+	If $g_bDraggedAttackBar Then DragAttackBar($g_iTotalAttackSlot, True)
 
 	; Reset to level one the Spells level
 	$g_iLSpellLevel = 1
@@ -166,7 +168,9 @@ Func AttackBarCheck($Remaining = False)
 						$aResult[$i][3] = -1
 						$aResult[$i][4] = -1
 					EndIf
-					$strinToReturn &= "|" & TroopIndexLookup($aResult[$i][0]) & "#" & $aResult[$i][4] & "#" & $aResult[$i][3]
+					If $aResult[$i][4] <= 10 Or Not $g_abChkExtendedAttackBar[$g_iMatchMode] Then ; ExtendedAttackBar - Team AiO MOD++
+						$strinToReturn &= "|" & TroopIndexLookup($aResult[$i][0]) & "#" & $aResult[$i][4] & "#" & $aResult[$i][3]
+					EndIf
 				EndIf
 			Next
 		EndIf
@@ -193,6 +197,21 @@ Func AttackBarCheck($Remaining = False)
 		_GDIPlus_PenDispose($hPenRED)
 		_GDIPlus_GraphicsDispose($hGraphic)
 		_GDIPlus_BitmapDispose($editedImage)
+	EndIf
+
+	; ExtendedAttackBar - Team AiO MOD++
+	If $g_iMatchMode <= $LB Then
+		If $g_abChkExtendedAttackBar[$g_iMatchMode] And $CheckSlot12 And IsArray($aResult) Then
+			If $g_bDebugSetlog Then Setlog("$strinToReturn 1st page = " & $strinToReturn)
+			Local $aTroop1stPage[UBound($aResult)][2] ; Troop Name & Slot
+			For $i = 0 To UBound($aResult) - 1
+				$aTroop1stPage[$i][0] = $aResult[$i][0]
+				$aTroop1stPage[$i][1] = $aResult[$i][4]
+			Next
+			DragAttackBar()
+			$strinToReturn &= ExtendedAttackBarCheck($aTroop1stPage, $Remaining)
+			If Not $Remaining Then DragAttackBar($g_iTotalAttackSlot, True) ; return drag
+		EndIf
 	EndIf
 
 	$strinToReturn = StringTrimLeft($strinToReturn, 1)

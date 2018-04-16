@@ -95,10 +95,16 @@ Func waitMainScreenMini()
 
 	; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
 	If $g_iChkAutoDock Then
-		AndroidEmbed(True)
+		If Not $g_bAndroidEmbedded Then
+			SetLog("Bot Auto Dock to Emulator", $COLOR_INFO)
+			btnEmbed()
+		EndIf
 	ElseIf $g_iChkAutoHideEmulator Then
-		HideAndroidWindow(True)
-		updateBtnHideState()
+		If Not $g_bIsHidden Then
+			SetLog("Bot Auto Hide Emulator", $COLOR_INFO)
+			btnHide()
+			$g_bIsHidden = True
+		EndIf
 	EndIf
 
 	For $i = 0 To 60 ;30*2000 = 1 Minutes

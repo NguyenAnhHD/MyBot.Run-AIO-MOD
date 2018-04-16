@@ -6,7 +6,7 @@
 ; Return values .: ---
 ; Author ........: RoroTiti
 ; Modified ......: TheRevenor 22/10/2016, RoroTiti 08/05/2017, ProMac 02/2017
-; Remarks .......: This file is part of MyBotRun. Copyright 2016
+; Remarks .......: This file is part of MyBotRun. Copyright 2018
 ;                  MyBotRun is distributed under the terms of the GNU GPL
 ; Related .......: ---
 ; Link ..........: https://www.mybot.run
@@ -70,6 +70,7 @@ EndFunc   ;==>GemClick
 
 Func BotHumanization()
 	If $g_ichkUseBotHumanization = 1 Then
+		If Not $g_bRunState Then Return
 		Local $NoActionsToDo = 0
 		SetLog("Now, let the AiO++ Team make your BOT more human ... :)", $COLOR_SUCCESS1)
 
@@ -94,6 +95,7 @@ Func BotHumanization()
 			SetLog("All actions disabled, skipping...", $COLOR_WARNING)
 		EndIf
 		SetLog("Bot Humanization finished !!! :)", $COLOR_SUCCESS1)
+		randomSleep(3000)
 	EndIf
 EndFunc   ;==>BotHumanization
 
@@ -584,12 +586,12 @@ Func IsTextBox()
 EndFunc   ;==>IsTextBox
 
 Func IsChallengeWindow()
-	Local $Result = _ColorCheck(_GetPixelColor(698, 156, True), "FFFFFF", 20)
+	Local $Result = _ColorCheck(_GetPixelColor(700, 110, True), "FFFFFF", 20)
 	Return $Result
 EndFunc   ;==>IsChallengeWindow
 
 Func IsChangeLayoutMenu()
-	Local $Result = _ColorCheck(_GetPixelColor(184, 158, True), "FFFFFF", 20)
+	Local $Result = _ColorCheck(_GetPixelColor(180, 110, True), "FFFFFF", 20)
 	Return $Result
 EndFunc   ;==>IsChangeLayoutMenu
 

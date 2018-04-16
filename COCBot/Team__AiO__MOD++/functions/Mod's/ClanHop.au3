@@ -1,13 +1,13 @@
 ; #FUNCTION# ============================================================================================================================
-; Name ..........: ClanHop (#-20)
+; Name ..........: ClanHop
 ; Version........:
 ; Description ...: This function joins/quit random clans and fills requests indefinitly
 ; Syntax ........: clanHop()
 ; Parameters ....: None
 ; Return values .: None
 ; Author ........: zengzeng, MantasM (complete overhaul)
-; Modified ......: Rhinoceros, Team AiO MOD++ (2017)
-; Remarks .......: This file is a part of MyBotRun. Copyright 2015
+; Modified ......: Rhinoceros, Team AiO MOD++ (2018)
+; Remarks .......: This file is a part of MyBotRun. Copyright 2018
 ; ................ MyBotRun is distributed under the terms of the GNU GPL
 ; Related .......: No
 ; =======================================================================================================================================

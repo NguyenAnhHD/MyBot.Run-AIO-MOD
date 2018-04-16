@@ -6,7 +6,7 @@
 ; Return values .: ---
 ; Author ........: RoroTiti
 ; Modified ......: 11/11/2016
-; Remarks .......: This file is part of MyBotRun. Copyright 2016
+; Remarks .......: This file is part of MyBotRun. Copyright 2018
 ;                  MyBotRun is distributed under the terms of the GNU GPL
 ; Related .......: ---
 ; Link ..........: https://www.mybot.run

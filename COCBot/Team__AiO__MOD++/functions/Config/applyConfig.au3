@@ -6,7 +6,7 @@
 ; Return values .: NA
 ; Author ........: Team AiO MOD++ (2018)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -27,14 +27,12 @@ Func ApplyConfig_MOD($TypeReadSave)
 			If $g_iChkAutoDock Then
 				GUICtrlSetState($g_hChkAutoDock, $GUI_CHECKED)
 				GUICtrlSetState($g_hChkAutoHideEmulator, $GUI_UNCHECKED)
-			EndIf
-			If $g_iChkAutoHideEmulator Then
+			ElseIf $g_iChkAutoHideEmulator Then
 				GUICtrlSetState($g_hChkAutoHideEmulator, $GUI_CHECKED)
 				GUICtrlSetState($g_hChkAutoDock, $GUI_UNCHECKED)
 			EndIf
 			btnEnableAuto()
 			GUICtrlSetState($g_hChkAutoMinimizeBot, $g_iChkAutoMinimizeBot = True ? $GUI_CHECKED : $GUI_UNCHECKED)
-			chkHideWhenMinimized()
 
 			; Check Collector Outside - Team AiO MOD++
 			GUICtrlSetState($g_hChkDBMeetCollOutside, $g_bDBMeetCollOutside = True ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -104,6 +102,10 @@ Func ApplyConfig_MOD($TypeReadSave)
 			GUICtrlSetState($g_hChkTrainLogoutMaxTime, $g_bTrainLogoutMaxTime = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			chkTrainLogoutMaxTime()
 			GUICtrlSetData($g_hTxtTrainLogoutMaxTime, $g_iTrainLogoutMaxTime)
+
+			; ExtendedAttackBar - Team AiO MOD++
+			GUICtrlSetState($g_hChkExtendedAttackBarDB, $g_abChkExtendedAttackBar[$DB] ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkExtendedAttackBarLB, $g_abChkExtendedAttackBar[$LB] ? $GUI_CHECKED : $GUI_UNCHECKED)
 
 			; Request CC Troops at first - Team AiO MOD++
 			GUICtrlSetState($g_hChkReqCCFirst, $g_bReqCCFirst = True ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -221,6 +223,10 @@ Func ApplyConfig_MOD($TypeReadSave)
 			; Max logout time - Team AiO MOD++
 			$g_bTrainLogoutMaxTime = (GUICtrlRead($g_hChkTrainLogoutMaxTime) = $GUI_CHECKED)
 			$g_iTrainLogoutMaxTime = GUICtrlRead($g_hTxtTrainLogoutMaxTime)
+
+			; ExtendedAttackBar - Team AiO MOD++
+			$g_abChkExtendedAttackBar[$DB] = GUICtrlRead($g_hChkExtendedAttackBarDB) = $GUI_CHECKED ? True : False
+			$g_abChkExtendedAttackBar[$LB] = GUICtrlRead($g_hChkExtendedAttackBarLB) = $GUI_CHECKED ? True : False
 
 			; Request CC Troops at first - Team AiO MOD++
 			$g_bReqCCFirst = (GUICtrlRead($g_hChkReqCCFirst) = $GUI_CHECKED)

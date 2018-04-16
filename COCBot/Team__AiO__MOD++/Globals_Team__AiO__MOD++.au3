@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Team AiO MOD++ (2018)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -79,6 +79,10 @@ Global $g_iTxtMinSaveGTFO_Elixir = 200000, $g_iTxtMinSaveGTFO_DE = 2000, _
 ; Max logout time - Team AiO MOD++
 Global $g_bTrainLogoutMaxTime = False, $g_iTrainLogoutMaxTime = 4
 
+; ExtendedAttackBar - Team AiO MOD++
+Global $g_hChkExtendedAttackBarLB, $g_hChkExtendedAttackBarDB, $g_abChkExtendedAttackBar[2]
+Global $g_iTotalAttackSlot = 10, $g_bDraggedAttackBar = False ; flag if AttackBar is dragged or not
+
 ; Request CC Troops at first - Team AiO MOD++
 Global $g_bReqCCFirst = False
 
@@ -87,7 +91,7 @@ Global $g_aiCCTroops[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 Global $g_aiCCSpells[$eSpellCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_aiCCTroopsExpected[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_aiCCSpellsExpected[$eSpellCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-Global $g_bChkCC = False, $g_bChkCCTroops = False
+Global $g_bChkCC = False, $g_bChkCCTroops = False, $g_bChkCCSpells = False
 Global $g_aiCmbCCSlot[5], $g_aiTxtCCSlot[5]
 Global $g_iCmbCastleCapacityT = 5, $g_iCmbCastleCapacityS = 1
 

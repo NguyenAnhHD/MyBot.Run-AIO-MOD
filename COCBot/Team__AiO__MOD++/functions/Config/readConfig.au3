@@ -6,7 +6,7 @@
 ; Return values .: NA
 ; Author ........: Team AiO MOD++ (2018)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -90,6 +90,10 @@ Func ReadConfig_MOD()
 	IniReadS($g_bTrainLogoutMaxTime, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTime", $g_bTrainLogoutMaxTime, "Bool")
 	IniReadS($g_iTrainLogoutMaxTime, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTimeTXT", $g_iTrainLogoutMaxTime, "int")
 
+	; ExtendedAttackBar - Team AiO MOD++
+	IniReadS($g_abChkExtendedAttackBar[$DB], $g_sProfileConfigPath, "attack", "ExtendedAttackBarDB", False, "Bool")
+	IniReadS($g_abChkExtendedAttackBar[$LB], $g_sProfileConfigPath, "attack", "ExtendedAttackBarLB", False, "Bool")
+
 	; Request CC Troops at first - Team AiO MOD++
 	IniReadS($g_bReqCCFirst, $g_sProfileConfigPath, "planned", "ReqCCFirst", $g_bReqCCFirst, "Bool")
 
@@ -104,6 +108,7 @@ Func ReadConfig_MOD()
 		$g_aiCCSpellsExpected[$i] = 0
 	Next
 	$g_bChkCCTroops = False
+	$g_bChkCCSpells = False
 
 	For $i = 0 To 4
 		Local $default = 19
@@ -114,11 +119,12 @@ Func ReadConfig_MOD()
 			Local $j = $g_aiCmbCCSlot[$i]
 			If $i <= 2 Then
 				$g_aiCCTroopsExpected[$j] += $g_aiTxtCCSlot[$i]
+				$g_bChkCCTroops = $g_bChkCC
 			Else
 				If $j > $eSpellFreeze Then $j += 1 ; exclude Clone Spell
 				$g_aiCCSpellsExpected[$j] += $g_aiTxtCCSlot[$i]
+				$g_bChkCCSpells = $g_bChkCC
 			EndIf
-			If $g_bChkCC Then $g_bChkCCTroops = True
 		EndIf
 	Next
 

@@ -122,20 +122,32 @@ Func BotStart($bAutostartDelay = 0)
 			; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
 			If $g_iChkAutoDock Then
 				If Not $g_bAndroidEmbedded Then
-					SetLog("Bot Auto Dock to Emulator", $COLOR_ERROR)
+					SetLog("Bot Auto Dock to Emulator", $COLOR_INFO)
 					btnEmbed()
 				EndIf
 			ElseIf $g_iChkAutoHideEmulator Then
 				If Not $g_bIsHidden Then
-					SetLog("Bot Auto Hide Emulator", $COLOR_ERROR)
+					SetLog("Bot Auto Hide Emulator", $COLOR_INFO)
 					btnHide()
 					$g_bIsHidden = True
 				EndIf
 			EndIf
 
 			If $g_iChkAutoMinimizeBot Then
-				SetLog("Bot Auto Minimize Bot", $COLOR_ERROR)
-				If $g_bHideWhenMinimized Then
+				SetLog("Bot Auto Minimize Bot", $COLOR_INFO)
+				If $g_bUpdatingWhenMinimized Then
+					If $g_bHideWhenMinimized Then
+						WinMove2($g_hFrmBot, "", -32000, -32000, -1, -1, 0, $SWP_HIDEWINDOW, False)
+						_WinAPI_SetWindowLong($g_hFrmBot, $GWL_EXSTYLE, BitOR(_WinAPI_GetWindowLong($g_hFrmBot, $GWL_EXSTYLE), $WS_EX_TOOLWINDOW))
+					EndIf
+					If _WinAPI_IsIconic($g_hFrmBot) Then WinSetState($g_hFrmBot, "", @SW_RESTORE)
+					If _WinAPI_IsIconic($g_hAndroidWindow) Then WinSetState($g_hAndroidWindow, "", @SW_RESTORE)
+					WinMove2($g_hFrmBot, "", -32000, -32000, -1, -1, 0, BitOR($SWP_SHOWWINDOW, $SWP_NOACTIVATE), False)
+				Else
+					If $g_bHideWhenMinimized Then
+						WinMove2($g_hFrmBot, "", -1, -1, -1, -1, 0, $SWP_HIDEWINDOW, False)
+						_WinAPI_SetWindowLong($g_hFrmBot, $GWL_EXSTYLE, BitOR(_WinAPI_GetWindowLong($g_hFrmBot, $GWL_EXSTYLE), $WS_EX_TOOLWINDOW))
+					EndIf
 					WinSetState($g_hFrmBot, "", @SW_MINIMIZE)
 				EndIf
 			EndIf
@@ -200,6 +212,7 @@ Func BotStop()
 	GUICtrlSetState($g_hBtnAttackNowTS, $GUI_HIDE)
 	GUICtrlSetState($g_hPicTwoArrowShield, $GUI_SHOW)
 	GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
+	GUICtrlSetState($g_hLblMod, $GUI_SHOW)
 
 	; update try items
 	TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Start", "Start bot"))

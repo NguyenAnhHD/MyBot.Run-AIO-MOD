@@ -1046,6 +1046,7 @@ Func BotStopped()
 	;GUICtrlSetState($g_hBtnAttackNowTS, $GUI_HIDE)
 	;GUICtrlSetState($g_hPicTwoArrowShield, $GUI_SHOW)
 	;GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
+	;GUICtrlSetState($g_hLblMod, $GUI_SHOW)
 
 	; update try items
 	TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Start", "Start bot"))

@@ -87,6 +87,18 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		EndIf
 	Next
 
+	; ExtendedAttackBar - Team AiO MOD++
+	debugAttackCSV("Troop position / Total slots: " & $troopPosition & " / " & $g_iTotalAttackSlot)
+	If $troopPosition >= 0 And $troopPosition < $g_iTotalAttackSlot - 10 Then ; can only be selected when in 1st page of troopbar
+		If $g_bDraggedAttackBar Then DragAttackBar($g_iTotalAttackSlot, True) ; return drag
+	ElseIf $troopPosition > 10 Then ; can only be selected when in 2nd page of troopbar
+		If $g_bDraggedAttackBar = False Then DragAttackBar($g_iTotalAttackSlot, False) ; drag forward
+	EndIf
+	If $g_bDraggedAttackBar Then
+		$troopPosition -= $g_iTotalAttackSlot - 10
+		debugAttackCSV("New troop position: " & $troopPosition)
+	EndIf
+
 	Local $usespell = True
 	Switch $iTroopIndex
 		Case $eLSpell
@@ -206,25 +218,25 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 							If $debug = True Then
 								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", " & $g_iKingSlot & ", -1, -1) ")
 							Else
-								dropHeroes($pixel[0], $pixel[1], $g_iKingSlot, -1, -1)
+								dropHeroes($pixel[0], $pixel[1], $troopPosition, -1, -1) ; was $g_iKingSlot, Demen - ExtendedAttackBar - Team AiO MOD++
 							EndIf
 						Case $eQueen
 							If $debug = True Then
 								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ",-1," & $g_iQueenSlot & ", -1) ")
 							Else
-								dropHeroes($pixel[0], $pixel[1], -1, $g_iQueenSlot, -1)
+								dropHeroes($pixel[0], $pixel[1], -1, $troopPosition, -1) ; was $g_iQueenSlot, Demen - ExtendedAttackBar - Team AiO MOD++
 							EndIf
 						Case $eWarden
 							If $debug = True Then
 								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", -1, -1," & $g_iWardenSlot & ") ")
 							Else
-								dropHeroes($pixel[0], $pixel[1], -1, -1, $g_iWardenSlot)
+								dropHeroes($pixel[0], $pixel[1], -1, -1, $troopPosition) ; was $g_iWardenSlot, Demen - ExtendedAttackBar - Team AiO MOD++
 							EndIf
 						Case $eCastle
 							If $debug = True Then
 								SetLog("dropCC(" & $pixel[0] & ", " & $pixel[1] & ", " & $g_iClanCastleSlot & ")")
 							Else
-								dropCC($pixel[0], $pixel[1], $g_iClanCastleSlot)
+								dropCC($pixel[0], $pixel[1], $troopPosition) ; was $g_iClanCastleSlot, Demen - ExtendedAttackBar - Team AiO MOD++
 							EndIf
 						Case $eLSpell To $eSkSpell
 							If $debug = True Then

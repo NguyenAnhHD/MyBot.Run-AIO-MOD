@@ -6,7 +6,7 @@
 ; Return values .: ---
 ; Author ........: ProMac
 ; Modified ......: 06/2017
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......: ---
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -82,7 +82,7 @@ Func MainKickout()
 					EndSelect
 
 					If $g_bDebugSetlog Then SetDebugLog("Is This member 2 Kick? " & $2Kick, $COLOR_DEBUG)
-					If $2Kick = False Then ContinueLoop
+					If Not $2Kick Then ContinueLoop
 
 					; Click $p_NewWord[0] , $p_NewWord[1] To Open Dialog
 					Click($p_NewWord[0] + 150, $p_NewWord[1])
@@ -256,7 +256,7 @@ Func Swipe($x1, $y1, $X2, $Y2, $Delay, $wasRunState = $g_bRunState)
 
 	Local $error = 0
 
-	If $g_bAndroidAdbClickDrag = True Then
+	If $g_bAndroidAdbClickDrag Then
 		AndroidAdbLaunchShellInstance($wasRunState)
 		If @error = 0 Then
 			AndroidAdbSendShellCommand("input swipe " & $x1 & " " & $y1 & " " & $X2 & " " & $Y2, Default, $wasRunState)
@@ -269,7 +269,7 @@ Func Swipe($x1, $y1, $X2, $Y2, $Delay, $wasRunState = $g_bRunState)
 		If _Sleep($Delay / 5) Then Return SetError(-1, "", False)
 	EndIf
 
-	If $g_bAndroidAdbClickDrag = False Or $error <> 0 Then
+	If Not $g_bAndroidAdbClickDrag Or $error <> 0 Then
 		Return _PostMessage_ClickDrag($x1, $y1, $X2, $Y2, "left", $Delay)
 	EndIf
 

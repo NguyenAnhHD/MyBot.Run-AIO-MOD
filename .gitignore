@@ -117,8 +117,13 @@
 ![Ii]mgxml/deadbase/elix/*.png
 ![Ii]mgxml/deadbase/elix/50/*.png
 ![Ii]mgxml/deadbase/elix/100/*.png
-![Ii]mgxml/Train/Queue_troop/*.png
-![Ii]mgxml/Train/Queue_spell/*.png
+![Ii]mgxml/Train/Queue_Troops/*.png
+![Ii]mgxml/Train/Queue_Spells/*.png
+![Ii]mgxml/other/SwitchAccounts/LogOutButton/*.png
+![Ii]mgxml/other/SwitchAccounts/ConfirmButton/*.png
+![Ii]mgxml/other/SwitchAccounts/ListAccounts/*.png
+![Ii]mgxml/other/GrandWardenMode/GrandWardenHeal/*.png
+![Ii]mgxml/other/GrandWardenMode/GrandWardenAir/*.png
 
 # ignore test strategies
 [Ss]trategies/[Tt]est*.ini

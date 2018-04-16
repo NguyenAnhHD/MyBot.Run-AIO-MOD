@@ -16,7 +16,7 @@
 
 Global $g_hBtnStart = 0, $g_hBtnStop = 0, $g_hBtnPause = 0, $g_hBtnResume = 0, $g_hBtnSearchMode = 0, $g_hBtnMakeScreenshot = 0, $g_hBtnHide = 0, $g_hBtnEmbed = 0, _
 	   $g_hChkBackgroundMode = 0, $g_hLblDonate = 0, $g_hBtnAttackNowDB = 0, $g_hBtnAttackNowLB = 0, $g_hBtnAttackNowTS = 0
-Global $g_hPicTwoArrowShield = 0, $g_hLblVersion = 0, $g_hPicArrowLeft = 0, $g_hPicArrowRight = 0
+Global $g_hPicTwoArrowShield = 0, $g_hLblVersion = 0, $g_hLblMod = 0, $g_hPicArrowLeft = 0, $g_hPicArrowRight = 0
 Global $g_hGrpVillage = 0
 Global $g_hLblResultGoldNow = 0, $g_hLblResultGoldHourNow = 0, $g_hPicResultGoldNow = 0, $g_hPicResultGoldTemp = 0
 Global $g_hLblResultElixirNow = 0, $g_hLblResultElixirHourNow = 0, $g_hPicResultElixirNow = 0, $g_hPicResultElixirTemp = 0
@@ -76,8 +76,8 @@ Func CreateBottomPanel()
 			If $g_bBtnColor Then GUICtrlSetBkColor(-1, 0x22C4F5)
 			GUICtrlSetState(-1, $GUI_DISABLE)
 			GUICtrlSetOnEvent(-1, "btnEmbed")
-		$g_hChkBackgroundMode = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode", "Background"), $x + 1, $y + 72, 75, 24)
-			GUICtrlSetFont(-1, 8.5)
+		$g_hChkBackgroundMode = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode", "Background Mode"), $x + 1, $y + 72, 90, 24)
+			GUICtrlSetFont(-1, 7)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode_Info_01", "Check this to ENABLE the Background Mode of the Bot.") & @CRLF & _
 							   GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode_Info_02", "With this you can also hide the Android Emulator window out of sight."))
 			If $g_bGuiRemote Then GUICtrlSetState(-1, $GUI_DISABLE)
@@ -94,20 +94,20 @@ Func CreateBottomPanel()
 		$g_hLblBatteryAC = GUICtrlCreateLabel("", $x + 102, $y + 75, 50, 15)
 		$g_hLblBatteryStatus = GUICtrlCreateLabel("", $x + 154, $y + 75, 30, 15)
 
-		$g_hLblDonate = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate", "Support the development"), $x + 224, $y + 80, 220, 24, $SS_RIGHT)
+		$g_hLblDonate = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate", "Support the development"), $x + 264, $y + 80, 190, 24, $SS_CENTER)
 			GUICtrlSetCursor(-1, 0) ; https://www.autoitscript.com/autoit3/docs/functions/MouseGetCursor.htm
 			GUICtrlSetFont(-1, 8.5, $FW_BOLD) ;, $GUI_FONTITALIC + $GUI_FONTUNDER)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate_Info_01", "Paypal Donate?"))
 
 		; Enable/Disable GUI while botting - Team AiO MOD++
-	    $g_hBtnEnableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI", "Enable GUI"), $x + 90, $y + 72, 90, 22)
+	    $g_hBtnEnableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI", "Enable GUI"), $x + 100, $y + 72, 80, 22)
 		    _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_01", "Enable GUI control while botting") & @CRLF & _
 			 				  GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_02", "Warning: USE THIS WITH CAUTION!") & @CRLF & _
 			 				  GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_03", "This function may create errors that require bot/PC restart") & @CRLF & _
 			 				  GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_04", "Better to stop the Bot completely if you need to change the setting"))
 		    GUICtrlSetOnEvent(-1, "btnEnableGUI")
 		    GUICtrlSetState(-1, $GUI_HIDE)
-	    $g_hBtnDisableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnDisableGUI", "Disable GUI"), $x + 90, $y + 72, 90, 22)
+	    $g_hBtnDisableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnDisableGUI", "Disable GUI"), $x + 100, $y + 72, 80, 22)
 		    _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnDisableGUI_Info_01", "Disable GUI control to continue botting"))
 		    GUICtrlSetOnEvent(-1, "btnDisableGUI")
 		    GUICtrlSetState(-1, $GUI_HIDE)
@@ -118,10 +118,10 @@ Func CreateBottomPanel()
 
 	$g_hPicTwoArrowShield = _GUICtrlCreateIcon($g_sLibIconPath, $eIcn2Arrow, $x + 197, $y + 10, 48, 48)
 
-	$g_hLblVersion = GUICtrlCreateLabel($g_sBotVersion, 200, $y + 66, 60, 17, $SS_CENTER)
+	$g_hLblVersion = GUICtrlCreateLabel($g_sModversion, 200, $y + 66, 60, 17, $SS_CENTER)
 		GUICtrlSetColor(-1, 0X008080)
 		GUICtrlSetFont(-1, 8)
-    GUICtrlCreateLabel("AIO++ MOD", 195, $y + 82, 70, 17, $SS_CENTER)
+    $g_hLblMod = GUICtrlCreateLabel("AiO++ MOD", 195, $y + 82, 70, 17, $SS_CENTER)
         GUICtrlSetColor(-1, 0x008080)
         GUICtrlSetFont(-1, 8.5)
 

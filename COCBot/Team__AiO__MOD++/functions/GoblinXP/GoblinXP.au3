@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MR.ViPER (2016-11-5)
 ; Modified ......: MR.ViPER (2016-11-13), MR.ViPER (2017-1-1)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -241,7 +241,7 @@ Func CheckForFullArmy()
 	$g_bCanRequestCC = _ColorCheck(_GetPixelColor($aRequestTroopsAO[0], $aRequestTroopsAO[1], True), Hex($aRequestTroopsAO[2], 6), $aRequestTroopsAO[5])
 
 	; $g_bCanRequestCC was updated on previous Function getArmyCCStatus()
-	If $g_bCanRequestCC = True Then
+	If $g_bCanRequestCC Then
 		; If Use CC Balanced : check the ratio
 		If $g_bUseCCBalanced Then
 			If Number($g_iTroopsDonated) / Number($g_iTroopsReceived) >= Number($g_iCCDonated) / Number($g_iCCReceived) Then
@@ -263,13 +263,13 @@ Func CheckForFullArmy()
 	If $g_bDebugSX Then SetDebugLog("1 Pixel : " & _GetPixelColor(391, 126, True))
 	If $g_bDebugSX Then SetDebugLog("2 Pixel : " & _GetPixelColor(587, 126, True))
 
-	If $g_bIsFullArmywithHeroesAndSpells = False And _
-			(($g_bFullArmy = False And _ColorCheck(_GetPixelColor(391, 126, True), Hex(0x605C4C, 6), 15)) Or _
-			($g_bFullArmySpells = False And _ColorCheck(_GetPixelColor(587, 126, True), Hex(0x605C4D, 6), 15))) Then ; if Full army was false and nothing was in 'Train' and 'Brew' Queue then check for train
+	If Not $g_bIsFullArmywithHeroesAndSpells And _
+			((Not $g_bFullArmy And _ColorCheck(_GetPixelColor(391, 126, True), Hex(0x605C4C, 6), 15)) Or _
+			(Not $g_bFullArmySpells And _ColorCheck(_GetPixelColor(587, 126, True), Hex(0x605C4D, 6), 15))) Then ; if Full army was false and nothing was in 'Train' and 'Brew' Queue then check for train
 
 		If $g_bDebugSX Then SetDebugLog("SX|CFFA TrainRevamp Condi. #1")
 		TrainRevamp()
-	ElseIf $g_bIsFullArmywithHeroesAndSpells = True And $ichkEnableSuperXP = 1 And $irbSXTraining = 1 Then ; Train Troops Before Attack
+	ElseIf $g_bIsFullArmywithHeroesAndSpells And $ichkEnableSuperXP = 1 And $irbSXTraining = 1 Then ; Train Troops Before Attack
 		If $g_bDebugSX Then SetDebugLog("SX|CFFA TrainRevamp Condi. #2")
 		TrainRevamp()
 	EndIf
@@ -365,10 +365,10 @@ Func WaitToFinishSuperXP()
 	If $g_bDebugSX Then SetDebugLog("SX|WaitToFinishSuperXP", $COLOR_PURPLE)
 	Local $BdTimer = TimerInit()
 	While 1
-		If CheckEarnedStars($g_minStarsToEnd) = True Then ExitLoop
+		If CheckEarnedStars($g_minStarsToEnd) Then ExitLoop
 		If _Sleep(70) Then ExitLoop
-		If $g_bRunState = False Then ExitLoop
-		If IsInAttackSuperXP() = False Then ExitLoop
+		If Not $g_bRunState Then ExitLoop
+		If Not IsInAttackSuperXP() Then ExitLoop
 		ActivateHeroesByDelay($BdTimer)
 		If TimerDiff($BdTimer) >= 120000 Then ; If Battle Started 2 Minutes ago, Then Return
 			If $g_bDebugSX Then SetDebugLog("SX|WaitToFinishSuperXP TimeOut", $COLOR_RED)
@@ -391,17 +391,17 @@ Func ActivateHeroesByDelay($hBdTimer)
 	If StringInStr($KingDelay, "-") > 0 Then $KingDelay = Random(Number(StringSplit($KingDelay, "-", 2)[0]), Number(StringSplit($KingDelay, "-", 2)[1]), 1)
 
 	Local $tDiff = TimerDiff($hBdTimer)
-	If $tDiff >= $QueenDelay And $QueenDelay <> 0 And $g_ActivatedHeroes[0] = False And $g_iQueenSlot <> -1 And $ichkSXAQ <> $eHeroNone Then
+	If $tDiff >= $QueenDelay And $QueenDelay <> 0 And Not $g_ActivatedHeroes[0] And $g_iQueenSlot <> -1 And $ichkSXAQ <> $eHeroNone Then
 		If $g_bDebugSX Then SetDebugLog("SX|Activating Queen Ability After " & Round($tDiff, 3) & "/" & $QueenDelay & " ms(s)")
 		SelectDropTroop($g_iQueenSlot)
 		$g_ActivatedHeroes[0] = True
 	EndIf
-	If $tDiff >= $WardenDelay And $WardenDelay <> 0 And $g_ActivatedHeroes[1] = False And $g_iWardenSlot <> -1 And $ichkSXGW <> $eHeroNone Then
+	If $tDiff >= $WardenDelay And $WardenDelay <> 0 And Not $g_ActivatedHeroes[1] And $g_iWardenSlot <> -1 And $ichkSXGW <> $eHeroNone Then
 		If $g_bDebugSX Then SetDebugLog("SX|Activating Warden Ability After " & Round($tDiff, 3) & "/" & $WardenDelay & " ms(s)")
 		SelectDropTroop($g_iWardenSlot)
 		$g_ActivatedHeroes[1] = True
 	EndIf
-	If $tDiff >= $KingDelay And $KingDelay <> 0 And $g_ActivatedHeroes[2] = False And $g_iKingSlot <> -1 And $ichkSXBK <> $eHeroNone Then
+	If $tDiff >= $KingDelay And $KingDelay <> 0 And Not $g_ActivatedHeroes[2] And $g_iKingSlot <> -1 And $ichkSXBK <> $eHeroNone Then
 		If $g_bDebugSX Then SetDebugLog("SX|Activating King Ability After " & Round($tDiff, 3) & "/" & $KingDelay & " ms(s)")
 		SelectDropTroop($g_iKingSlot)
 		$g_ActivatedHeroes[2] = True
@@ -424,21 +424,21 @@ EndFunc   ;==>IsInSPPage
 
 Func AttackSuperXP()
 	If $g_bDebugSX Then SetDebugLog("SX|AttackSuperXP", $COLOR_PURPLE)
-	If WaitForNoClouds() = False Then
+	If Not WaitForNoClouds() Then
 		If $g_bDebugSX Then SetDebugLog("SX|ASX|Wait For Clouds = False")
 		$g_bIsClientSyncError = False
 		Return False
 	EndIf
 	PrepareSuperXPAttack()
-	If CheckAvailableHeroes() = False Then
+	If Not CheckAvailableHeroes() Then
 		SetLog("No heroes available to attack with", $COLOR_ORANGE)
 		ReturnHomeSuperXP()
 		Return False
 	EndIf
 	DropAQSuperXP($g_BdGoblinPicnic[0] = 0)
-	If CheckEarnedStars($g_minStarsToEnd) = True Then Return True
+	If CheckEarnedStars($g_minStarsToEnd) Then Return True
 	DropGWSuperXP($g_BdGoblinPicnic[1] = 0)
-	If CheckEarnedStars($g_minStarsToEnd) = True Then Return True
+	If CheckEarnedStars($g_minStarsToEnd) Then Return True
 	DropBKSuperXP($g_BdGoblinPicnic[2] = 0)
 	If $g_bDebugSX Then SetDebugLog("SX|AttackSuperXP Finished", $COLOR_PURPLE)
 	Return True
@@ -458,7 +458,7 @@ Func DropAQSuperXP($bActivateASAP = True)
 		If CheckEarnedStars($g_minStarsToEnd) = True Then Return True
 		ClickP(GetDropPointSuperXP(1), 1, 0, "#0000") ;Drop Queen
 		If _Sleep($DELAYDROPSuperXP3) Then Return False
-		If $bActivateASAP = True Then
+		If $bActivateASAP Then
 			If IsAttackPage() Then
 				SelectDropTroop($g_iQueenSlot) ;If Queen was not activated: Boost Queen
 				$g_ActivatedHeroes[0] = True
@@ -473,10 +473,10 @@ Func DropGWSuperXP($bActivateASAP = True)
 		SetLog("Deploying Warden", $COLOR_BLUE)
 		Click(GetXPosOfArmySlot($g_iWardenSlot, 68), 595 + $g_ibottomOffsetY, 1, 0, "#0179") ;Select Warden
 		If _Sleep($DELAYDROPSuperXP1) Then Return False
-		If CheckEarnedStars($g_minStarsToEnd) = True Then Return True
+		If CheckEarnedStars($g_minStarsToEnd) Then Return True
 		ClickP(GetDropPointSuperXP(2), 1, 0, "#0180") ;Drop Warden
 		If _Sleep($DELAYDROPSuperXP3) Then Return False
-		If $bActivateASAP = True Then
+		If $bActivateASAP Then
 			If IsAttackPage() Then
 				SelectDropTroop($g_iWardenSlot) ;If Warden was not activated: Boost Warden
 				$g_ActivatedHeroes[1] = True
@@ -491,10 +491,10 @@ Func DropBKSuperXP($bActivateASAP = True)
 		SetLog("Deploying King", $COLOR_BLUE)
 		Click(GetXPosOfArmySlot($g_iKingSlot, 68), 595 + $g_ibottomOffsetY, 1, 0, "#0177") ;Select King
 		If _Sleep($DELAYDROPSuperXP1) Then Return False
-		If CheckEarnedStars($g_minStarsToEnd) = True Then Return True
+		If CheckEarnedStars($g_minStarsToEnd) Then Return True
 		ClickP(GetDropPointSuperXP(3), 1, 0, "#0178") ;Drop King
 		If _Sleep($DELAYDROPSuperXP3) Then Return False
-		If $bActivateASAP = True Then
+		If $bActivateASAP Then
 			If IsAttackPage() Then
 				SelectDropTroop($g_iKingSlot) ;If King was not activated: Boost King
 				$g_ActivatedHeroes[2] = True
@@ -596,7 +596,7 @@ Func CheckEarnedStars($ExitWhileHave = 0) ; If the parameter is 0, will not exit
 		; Please Simply Comment This If Condition If you Saw Problems And Bot Returned to Home Without Getting At Least One Star
 		If _ColorCheck(_GetPixelColor(455, 405, True), Hex(0xD0D8D0, 6), 20) Then
 			SetLog("1 Star earned", $COLOR_GREEN)
-			If ReturnHomeSuperXP() = False Then CloseCoC(True) ; If Something Was Wrong with Returning Home, Close CoC And Open Again
+			If Not ReturnHomeSuperXP() Then CloseCoC(True) ; If Something Was Wrong with Returning Home, Close CoC And Open Again
 			Return True
 		EndIf
 	EndIf
@@ -605,7 +605,7 @@ Func CheckEarnedStars($ExitWhileHave = 0) ; If the parameter is 0, will not exit
 
 	If $ExitWhileHave <> 0 And $starsearned >= $ExitWhileHave Then
 		SetLog($starsearned & " Star earned", $COLOR_GREEN)
-		If ReturnHomeSuperXP() = False Then CloseCoC(True) ; If Something Was Wrong with Returning Home, Close CoC And Open Again
+		If Not ReturnHomeSuperXP() Then CloseCoC(True) ; If Something Was Wrong with Returning Home, Close CoC And Open Again
 		Return True
 	EndIf
 
@@ -614,7 +614,7 @@ Func CheckEarnedStars($ExitWhileHave = 0) ; If the parameter is 0, will not exit
 
 		If $ExitWhileHave <> 0 And $starsearned >= $ExitWhileHave Then
 			SetLog($starsearned & " Stars earned", $COLOR_GREEN)
-			If ReturnHomeSuperXP() = False Then CloseCoC(True) ; If Something Was Wrong with Returning Home, Close CoC And Open Again
+			If Not ReturnHomeSuperXP() Then CloseCoC(True) ; If Something Was Wrong with Returning Home, Close CoC And Open Again
 			Return True
 		EndIf
 
@@ -623,7 +623,7 @@ Func CheckEarnedStars($ExitWhileHave = 0) ; If the parameter is 0, will not exit
 
 			If $ExitWhileHave <> 0 And $starsearned >= $ExitWhileHave Then
 				SetLog($starsearned & " Stars earned", $COLOR_GREEN)
-				If ReturnHomeSuperXP() = False Then CloseCoC(True) ; If Something Was Wrong with Returning Home, Close CoC And Open Again
+				If Not ReturnHomeSuperXP() Then CloseCoC(True) ; If Something Was Wrong with Returning Home, Close CoC And Open Again
 				Return True
 			EndIf
 		EndIf
@@ -644,7 +644,7 @@ Func ReturnHomeSuperXP()
 	SetLog("Returning Home - SuperXP", $COLOR_BLUE)
 
 	; 1st Step
-	While _ColorCheck(_GetPixelColor($EndBattleText[0], $EndBattleText[1], True), Hex($EndBattleText[2], 6), $EndBattleText[3]) = False ; First EndBattle Button
+	While Not  _ColorCheck(_GetPixelColor($EndBattleText[0], $EndBattleText[1], True), Hex($EndBattleText[2], 6), $EndBattleText[3]) ; First EndBattle Button
 		If $g_bDebugSX Then SetDebugLog("SX|RHSX|1-Loop #" & $Counter, $COLOR_DEBUG)
 		If _Sleep($DELAYEachCheck) Then Return False
 		$Counter += 1
@@ -659,7 +659,7 @@ Func ReturnHomeSuperXP()
 
 	; 2nd Step
 	$Counter = 0 ; Reset Counter
-	While _ColorCheck(_GetPixelColor($EndBattle2Text[0], $EndBattle2Text[1], True), Hex($EndBattle2Text[2], 6), $EndBattle2Text[3]) = False ; Second EndBattle Button
+	While Not _ColorCheck(_GetPixelColor($EndBattle2Text[0], $EndBattle2Text[1], True), Hex($EndBattle2Text[2], 6), $EndBattle2Text[3]) ; Second EndBattle Button
 		If $g_bDebugSX Then SetDebugLog("SX|RHSX|2-Loop #" & $Counter, $COLOR_DEBUG)
 		If _Sleep($DELAYEachCheck) Then Return False
 		$Counter += 1
@@ -674,7 +674,7 @@ Func ReturnHomeSuperXP()
 
 	; 3rd Step
 	$Counter = 0 ; Reset Counter
-	While _ColorCheck(_GetPixelColor($ReturnHomeText[0], $ReturnHomeText[1], True), Hex($ReturnHomeText[2], 6), $ReturnHomeText[3]) = False ; Last - Return Home Button
+	While Not _ColorCheck(_GetPixelColor($ReturnHomeText[0], $ReturnHomeText[1], True), Hex($ReturnHomeText[2], 6), $ReturnHomeText[3]) ; Last - Return Home Button
 		If $g_bDebugSX Then SetDebugLog("SX|RHSX|3-Loop #" & $Counter, $COLOR_DEBUG)
 		If _Sleep($DELAYEachCheck) Then Return False
 		$Counter += 1
@@ -740,13 +740,13 @@ EndFunc   ;==>WaitForNoClouds
 Func OpenGoblinPicnic()
 	If $g_bDebugSX Then SetDebugLog("SX|OpenGoblinPicnic", $COLOR_PURPLE)
 	;Local $rOpenSinglePlayerPage = OpenSinglePlayerPage()
-	If OpenSinglePlayerPage() = False Then
+	If Not OpenSinglePlayerPage() Then
 		SetLog("Failed to open Attack page, Single Player", $COLOR_RED)
 		SafeReturnSX()
 		Return False
 	EndIf
 	Local $rDragToGoblinPicnic = DragToGoblinPicnic()
-	If $rDragToGoblinPicnic = False Then
+	If Not $rDragToGoblinPicnic Then
 		SetLog("Failed to find Goblin Picnic", $COLOR_RED)
 		SafeReturnSX()
 		Return False
@@ -756,12 +756,12 @@ Func OpenGoblinPicnic()
 	Click($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1]) ; Click On Goblin Picnic Text To Show Attack Button
 	Local $Counter = 0
 
-	While _ColorCheck(_GetPixelColor($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1] + 88, True), Hex(0xF14E15, 6), 30) = False
+	While Not _ColorCheck(_GetPixelColor($rDragToGoblinPicnic[0], $rDragToGoblinPicnic[1] + 88, True), Hex(0xF14E15, 6), 30)
 		If _Sleep(50) Then ExitLoop
 		;Setlog("waiting for button color")
 		$Counter += 1
 		If $Counter > 200 Then
-			If IsGoblinPicnicLocked($rDragToGoblinPicnic) = True Then
+			If IsGoblinPicnicLocked($rDragToGoblinPicnic) Then
 				SetLog("Are you kidding me? Goblin Picnic is Locked", $COLOR_RED)
 				DisableSX()
 				SafeReturnSX()
@@ -800,7 +800,7 @@ Func OpenGoblinPicnic()
 	#CE
 
 	Local $rIsGoblinPicnic = IsInGoblinPicnic() ; Wait/Check if is In Goblin Picnic Base
-	If $rIsGoblinPicnic = False Then
+	If Not $rIsGoblinPicnic Then
 		SetLog("Looks like we're not in Goblin Picnic", $COLOR_RED)
 		If _CheckPixel($aCancelFight, $g_bNoCapturePixel) Or _CheckPixel($aCancelFight2, $g_bNoCapturePixel) Then
 			If $g_bDebugSetlog Then SetDebugLog("#cOb# Clicks X 2, $aCancelFight", $COLOR_BLUE)
@@ -824,7 +824,7 @@ Func IsInGoblinPicnic($Retry = True, $maxRetry = 30, $timeBetweenEachRet = 300)
 	Local $result = ""
 	While $Found = False
 		If _Sleep($timeBetweenEachRet) Then Return False
-		If IsInAttackSuperXP() = False Then ContinueLoop
+		If Not IsInAttackSuperXP() Then ContinueLoop
 
 		$result = multiMatchesPixelOnly($directory, 0, "FV", "FV", "", 0, 1000, 0, 0, 111, 31)
 		If $g_bDebugSX Then SetDebugLog("SX|IGP|$result=" & $result)
@@ -863,7 +863,7 @@ Func DragToGoblinPicnic()
 		$rIsGoblinPicnicFound = IsGoblinPicnicFound()
 		If IsArray($rIsGoblinPicnicFound) Then Return $rIsGoblinPicnicFound
 		If $g_bDebugSX Then SetDebugLog("SX|DTGP|Pos middle, Dragging To End")
-		If DragToEndSinglePlayer() = True Then $posInSinglePlayer = "END" ; If position was Middle, then try to Drag to end
+		If DragToEndSinglePlayer() Then $posInSinglePlayer = "END" ; If position was Middle, then try to Drag to end
 	EndIf
 	If $posInSinglePlayer = "MIDDLE" Then
 		If $g_bDebugSX Then SetDebugLog("SX|DTGP|Failed to Drag To End, Still middle")
@@ -882,7 +882,7 @@ Func DragToGoblinPicnic()
 				$posInSinglePlayer2 = GetPositionInSinglePlayer()
 				If $Counter = 15 Or $posInSinglePlayer2 = "FIRST" Then ExitLoop
 			WEnd
-			If $Counter = 15 Or $posInSinglePlayer2 And IsArray($rIsGoblinPicnicFound) = False Then Return False
+			If $Counter = 15 Or $posInSinglePlayer2 And Not IsArray($rIsGoblinPicnicFound) Then Return False
 			Return $rIsGoblinPicnicFound
 		Case "FIRST"
 			While Not (IsArray($rIsGoblinPicnicFound))
@@ -895,7 +895,7 @@ Func DragToGoblinPicnic()
 				$posInSinglePlayer2 = GetPositionInSinglePlayer()
 				If $Counter = 15 Or $posInSinglePlayer2 = "FIRST" Then ExitLoop
 			WEnd
-			If $Counter = 15 Or $posInSinglePlayer2 And IsArray($rIsGoblinPicnicFound) = False Then Return False
+			If $Counter = 15 Or $posInSinglePlayer2 And Not IsArray($rIsGoblinPicnicFound) Then Return False
 			Return $rIsGoblinPicnicFound
 	EndSwitch
 EndFunc   ;==>DragToGoblinPicnic
@@ -929,7 +929,7 @@ Func DragToEndSinglePlayer()
 	If $g_bDebugSX Then SetDebugLog("SX|DragToEndSinglePlayer", $COLOR_PURPLE)
 	Local $rColCheckEnd = _ColorCheck(_GetPixelColor(670, 695, True), Hex(0x393224, 6), 20)
 	Local $Counter = 0
-	While $rColCheckEnd = False
+	While Not $rColCheckEnd
 		If $g_bDebugSX Then SetDebugLog("SX|DTESP|Loop #" & $Counter)
 		ClickDrag(500, 635 + $g_iMidOffsetY, 500, 60 + $g_iMidOffsetY, 100)
 		$rColCheckEnd = _ColorCheck(_GetPixelColor(670, 695, True), Hex(0x393224, 6), 20)

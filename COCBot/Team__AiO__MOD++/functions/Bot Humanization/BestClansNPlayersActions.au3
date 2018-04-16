@@ -6,7 +6,7 @@
 ; Return values .: ---
 ; Author ........: RoroTiti
 ; Modified ......: 11/11/2016
-; Remarks .......: This file is part of MyBotRun. Copyright 2016
+; Remarks .......: This file is part of MyBotRun. Copyright 2018
 ;                  MyBotRun is distributed under the terms of the GNU GPL
 ; Related .......: ---
 ; Link ..........: https://www.mybot.run
@@ -32,6 +32,7 @@ Func VisitBestPlayers()
 					Click(70, 680) ; return home
 				Case 2
 					Click(640, 140) ; look at local list
+					randomSleep(1000)
 					Click(580, 190 + 52 * Random(0, 9, 1))
 					randomSleep(500)
 					VisitAPlayer()

@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Team AiO MOD++ (2018)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -50,6 +50,9 @@
 ; GTFO - Team AiO MOD++
 #include "functions\Bot GTFO\GTFO.au3"
 #include "functions\Bot GTFO\KickOut.au3"
+
+; ExtendedAttackBar - Team AiO MOD++ 
+#include "functions\Mod's\ExtendedAttackBarCheck.au3"
 
 ; Smart Train - Team AiO MOD++
 #include "functions\Smart Train\SmartTrain.au3"

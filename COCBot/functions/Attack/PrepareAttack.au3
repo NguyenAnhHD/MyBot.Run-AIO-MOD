@@ -32,6 +32,9 @@ Func PrepareAttack($pMatchMode, $Remaining = False) ;Assigns troops
 		If $g_iActivateKing = 1 Or $g_iActivateKing = 2 Then $g_aHeroesTimerActivation[$eHeroBarbarianKing] = 0
 		If $g_iActivateQueen = 1 Or $g_iActivateQueen = 2 Then $g_aHeroesTimerActivation[$eHeroArcherQueen] = 0
 		If $g_iActivateWarden = 1 Or $g_iActivateWarden = 2 Then $g_aHeroesTimerActivation[$eHeroGrandWarden] = 0
+		; ExtendedAttackBar - Persian MOD
+		$g_iTotalAttackSlot = 10 ; reset all flag
+		$g_bDraggedAttackBar = False
 	EndIf
 
 	Local $troopsnumber = 0
@@ -55,6 +58,13 @@ Func PrepareAttack($pMatchMode, $Remaining = False) ;Assigns troops
 	If $g_bDebugSetlog Then SetDebugLog("DLL Troopsbar list: " & $result, $COLOR_DEBUG)
 	Local $aTroopDataList = StringSplit($result, "|")
 	Local $aTemp[12][3]
+	; ExtendedAttackBar - Team AiO MOD++
+	If $pMatchMode <= $LB Then
+		If $g_abChkExtendedAttackBar[$pMatchMode] Then
+			ReDim $aTemp[22][3]
+			ReDim $g_avAttackTroops[22][2]
+		EndIf
+	EndIf
 	If $result <> "" Then
 		; example : 0#0#92|1#1#108|2#2#8|22#3#1|20#4#1|21#5#1|26#5#0|23#6#1|24#7#2|25#8#1|29#10#1
 		; [0] = Troop Enum Cross Reference [1] = Slot position [2] = Quantities

@@ -1746,7 +1746,7 @@ Func TrainArmyNumber($Army, $iMultiClick = 1)
 			If $Army[$Num] Then
 				Local $iClick = 2, $sLog = ""
 				If $Num = 2 Then $iClick = $iMultiClick
-				If $iClick > 2 Then $sLog = ", multi-click x" & $iClick & " times"
+				If $iClick > 2 Then $sLog = ", Multi-click x" & $iClick & " times"
 
 				If _ColorCheck(_GetPixelColor($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], True), Hex($a_TrainArmy[$Num][2], 6), $a_TrainArmy[$Num][3]) Then
 					Click($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], $iClick)

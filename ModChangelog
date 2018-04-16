@@ -3,15 +3,21 @@
             | | | _| / _ \| |\/| |    / _ \| | (_) |
             |_| |___/_/ \_\_|  |_|   /_/ \_\_|\___/
 
-                    Based on MyBot.run v7.4
-      ___         ____                              ___    ___
-     /   \    __ / __ \      _        _            |__ |  / _ \ 
-    /  _  \  |  | |  | |  __| |__  __| |__    __   __| | | (_) |
-   /  / \  \ |  | |  | | |__   __||__   __|   \ \ / /| | |  _  |
-  /  /___\  \|  | |__| |    |_|      |_|       \ V / | |_| (_) |
- /__/     \__\__|\____/                         \_/  |_(_)\___/
-                                                                
-                                                                                                                       
+                    Based on MyBot.run v7.5.1
+
+	**V1.8.1**
+	- Add Slot +11
+	- Improve switch accounts (compatible with multiple types for Supercell ID)
+	- Improve Smart Train (improve system logs and fixed some a of minor bugs)
+	- Improve check Grand Warden Mode (fixed some a of minor bugs)
+	- Improve check Clan Castle (fixed some a of minor bugs)
+	- Improve and fix Auto use Dock/Hide/Minimized emulator & bot feature
+	- Fix Bot Humanization feature
+	- Fix Attack Log
+	- Update to MBR v7.5.1
+
+
+	**V1.8**
 	- Add CSV 'REMAIN', '%', 'Sleep Before' cmd for CSV Attack
 	- Add Attack now button
 	- Add CSV Deploy Speed

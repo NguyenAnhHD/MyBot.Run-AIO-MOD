@@ -3,7 +3,7 @@
 ; Description ...: This file contains the Sequence that runs all MBR Bot
 ; Author ........: Demen
 ; Modified ......: Team AiO MOD++ (2018)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -14,10 +14,10 @@ Func CheckPreciseArmyCamp()
 
 	If Not $g_bChkPreciseArmyCamp Then Return False
 
-	Local $sTextTroop = "Troops are so far so good."
-	Local $sTextSpell = "Spells are so far so good."
+	Local $sTextTroop = "Troops are so far so good!"
+	Local $sTextSpell = "Spells are so far so good!"
 
-	SetLog("»» Checking ArmyWindow for Troops & Spells precision")
+	SetLog("Checking ArmyWindow for Troops & Spells precision", $COLOR_INFO)
 
 	Local $bReturnArmyTab = False
 	Local $toRemove = CheckWrongArmyCamp(True, Not ($g_bForceBrewSpells), False) ; If $g_bForceBrewSpells = True Then CheckWrongArmyCamp(True, FALSE, False); $g_abRCheckWrongArmyCamp[1] always FALSE
@@ -25,9 +25,9 @@ Func CheckPreciseArmyCamp()
 	If Not $g_abRCheckWrongArmyCamp[0] And Not $g_abRCheckWrongArmyCamp[1] Then ; Troops & Spells are correct
 		If $g_bFullArmy Then $sTextTroop = "All troops are correct!"
 		If $g_bFullArmySpells Then $sTextSpell = "All spells are correct!"
-		If $g_bForceBrewSpells Then $sTextSpell = "Skip checking spells as ForceBrewSpell is activated."
+		If $g_bForceBrewSpells Then $sTextSpell = "Skip checking spells as ForceBrewSpell is activated!"
 
-		Setlog("  » " & $sTextTroop & " " & $sTextSpell)
+		SetLog($sTextTroop & " " & $sTextSpell, $COLOR_SUCCESS)
 		Return False
 
 	Else ; Wrong troops or Wrong spells
@@ -37,7 +37,7 @@ Func CheckPreciseArmyCamp()
 		If StringRight($text, 1) = "&" Then $text = StringTrimRight($text, 1) ; Remove last " &" as it is not needed
 
 		If $text <> "" Then
-			Setlog("  » Need to clear queued" & $text & "before removing")
+			SetLog("Need to clear queued" & $text & "before removing!")
 			If $g_abRCheckWrongArmyCamp[0] Then ClearTrainingArmyCamp($TrainTroopsTAB)
 			If $g_abRCheckWrongArmyCamp[1] Then ClearTrainingArmyCamp($BrewSpellsTAB)
 			$bReturnArmyTab = True
@@ -45,7 +45,7 @@ Func CheckPreciseArmyCamp()
 
 		If $bReturnArmyTab Then OpenArmyTab(True, "CheckPreciseArmyCamp()")
 		If _Sleep(200) Then Return
-		RemoveWrongArmyCamp($g_abRCheckWrongArmyCamp[0], $g_abRCheckWrongArmyCamp[1], $toRemove)
+		RemoveWrongArmyCamp($g_abRCheckWrongArmyCamp[0], $g_abRCheckWrongArmyCamp[1], $toRemove, $bReturnArmyTab)
 		Return True
 
 	EndIf
@@ -57,10 +57,10 @@ Func CheckWrongArmyCamp($Troops = True, $Spells = False, $CheckExistentArmy = Tr
 	$g_abRCheckWrongArmyCamp[1] = False
 	Local $toRemove[1][2] = [["Arch", 0]] ; Wrong Troops & Spells to be removed
 
-	If ISArmyWindow(False, $ArmyTAB) = False Then OpenTrainTabNumber($ArmyTAB, "CheckWrongArmyCamp()")
+	If Not ISArmyWindow(False, $ArmyTAB) Then OpenTrainTabNumber($ArmyTAB, "CheckWrongArmyCamp()")
 	If _Sleep(500) Then Return
 
-	If $Troops = True Then
+	If $Troops Then
 		If $CheckExistentArmy Then getArmyTroops()
 		For $i = 0 To ($eTroopCount - 1)
 			If Not $g_bRunState Then Return
@@ -72,7 +72,7 @@ Func CheckWrongArmyCamp($Troops = True, $Spells = False, $CheckExistentArmy = Tr
 		Next
 	EndIf
 
-	If $Spells = True Then
+	If $Spells Then
 		If $CheckExistentArmy Then getArmySpells()
 		For $i = 0 To ($eSpellCount - 1)
 			If Not $g_bRunState Then Return
@@ -86,23 +86,23 @@ Func CheckWrongArmyCamp($Troops = True, $Spells = False, $CheckExistentArmy = Tr
 	If UBound($toRemove) = 1 And $toRemove[0][0] = "Arch" And $toRemove[0][1] = 0 Then Return ; If was default Wrong Troops
 
 	If UBound($toRemove) > 0 Then ; If needed to remove troops
-		SetLog("  » Troops To Remove: ", $COLOR_GREEN)
+		SetLog("Troops To Remove: ", $COLOR_INFO)
 		; Loop through Troops needed to get removed Just to write some Logs
 		Local $CounterToRemove = 0
 		For $i = 0 To (UBound($toRemove) - 1)
 			If IsSpellToBrew($toRemove[$i][0]) Then ExitLoop
 			$CounterToRemove += 1
 			If $toRemove[$i][1] > 0 Then
-				SetLog(" - " & $g_asTroopNames[TroopIndexLookup($toRemove[$i][0])] & ": " & $toRemove[$i][1] & "x", $COLOR_ACTION)
+				SetLog(" - " & $g_asTroopNames[TroopIndexLookup($toRemove[$i][0])] & ": " & $toRemove[$i][1] & "x", $COLOR_SUCCESS)
 				$g_abRCheckWrongArmyCamp[0] = True
 			EndIf
 		Next
 
 		If TotalSpellsToBrewInGUI() > 0 Then
 			If $CounterToRemove <= UBound($toRemove) - 1 Then
-				SetLog("  » Spells To Remove: ", $COLOR_GREEN)
+				SetLog("Spells To Remove: ", $COLOR_INFO)
 				For $i = $CounterToRemove To (UBound($toRemove) - 1)
-					If $toRemove[$i][1] > 0 Then SetLog(" - " & $g_asSpellNames[TroopIndexLookup($toRemove[$i][0]) - $eLSpell] & ": " & $toRemove[$i][1] & "x", $COLOR_ACTION)
+					If $toRemove[$i][1] > 0 Then SetLog(" - " & $g_asSpellNames[TroopIndexLookup($toRemove[$i][0]) - $eLSpell] & ": " & $toRemove[$i][1] & "x", $COLOR_SUCCESS)
 				Next
 				$g_abRCheckWrongArmyCamp[1] = True
 			EndIf
@@ -113,10 +113,10 @@ Func CheckWrongArmyCamp($Troops = True, $Spells = False, $CheckExistentArmy = Tr
 EndFunc   ;==>CheckWrongArmyCamp
 
 
-Func RemoveWrongArmyCamp($Troops, $Spells, $toRemove)
+Func RemoveWrongArmyCamp($Troops, $Spells, $toRemove, $bReCheckArmy = False)
 
-	If $Troops = False And $Spells = False Then Return
-	If IsArray($toRemove) = False Then $toRemove = CheckWrongArmyCamp($Troops, $Spells, True)
+	If Not $Troops And Not $Spells Then Return
+	If Not IsArray($toRemove) Or $bReCheckArmy Then $toRemove = CheckWrongArmyCamp($Troops, $Spells, True)
 
 	If UBound($toRemove) = 1 And $toRemove[0][0] = "Arch" And $toRemove[0][1] = 0 Then Return ; If was default Wrong Troops
 
@@ -163,7 +163,7 @@ Func RemoveWrongArmyCamp($Troops, $Spells, $toRemove)
 		EndIf
 
 		If _Sleep(700) Then Return
-		If $g_bRunState = False Then Return
+		If Not $g_bRunState Then Return
 		Click(Random(720, 815, 1), Random(558, 589, 1)) ; Click on 'Okay' button to save changes
 
 		If _Sleep(1200) Then Return
@@ -175,7 +175,7 @@ Func RemoveWrongArmyCamp($Troops, $Spells, $toRemove)
 
 		Click(Random(445, 583, 1), Random(402, 455, 1)) ; Click on 'Okay' button to Save changes... Last button
 
-		SetLog("    All wrong troops removed")
+		SetLog("All wrong troops removed", $COLOR_SUCCESS)
 		If _Sleep(200) Then Return
 	EndIf
 

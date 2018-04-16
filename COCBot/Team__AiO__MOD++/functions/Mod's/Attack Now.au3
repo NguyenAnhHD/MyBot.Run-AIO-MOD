@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Mr.Viper
 ; Modified ......: Team AiO MOD++ (2018)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -44,7 +44,7 @@ Func AttackNowAB()
 
 	; Let's check the ZoomOut
 	SetLog("[ZommOut]", $COLOR_INFO)
-	If CheckZoomOut("VillageSearch", True, False) = False Then
+	If Not CheckZoomOut("VillageSearch", True, False) Then
 		; check two more times, only required for snow theme (snow fall can make it easily fail), but don't hurt to keep it
 		$i = 0
 		Local $bMeasured
@@ -54,8 +54,8 @@ Func AttackNowAB()
 			ForceCaptureRegion()
 			_CaptureRegion2()
 			$bMeasured = CheckZoomOut("VillageSearch", $i < 2, False)
-		Until $bMeasured = True Or $i >= 2
-		If $bMeasured = False Then Return ; exit func
+		Until $bMeasured Or $i >= 2
+		If Not $bMeasured Then Return ; exit func
 	EndIf
 
 	; Reset the TH and Buildings detection Obj
@@ -102,7 +102,7 @@ Func AttackNowDB()
 
 	; Let's check the ZoomOut
 	SetLog("[ZommOut]", $COLOR_INFO)
-	If CheckZoomOut("VillageSearch", True, False) = False Then
+	If Not CheckZoomOut("VillageSearch", True, False) Then
 		; check two more times, only required for snow theme (snow fall can make it easily fail), but don't hurt to keep it
 		$i = 0
 		Local $bMeasured
@@ -112,8 +112,8 @@ Func AttackNowDB()
 			ForceCaptureRegion()
 			_CaptureRegion2()
 			$bMeasured = CheckZoomOut("VillageSearch", $i < 2, False)
-		Until $bMeasured = True Or $i >= 2
-		If $bMeasured = False Then Return ; exit func
+		Until $bMeasured Or $i >= 2
+		If Not $bMeasured Then Return ; exit func
 	EndIf
 
 	; Reset the TH and Buildings detection Obj

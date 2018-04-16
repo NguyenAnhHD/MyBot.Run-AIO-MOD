@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MR.ViPER (23-11-2016)
 ; Modified ......: Team AiO MOD++ (2018)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2016
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -60,7 +60,7 @@ Func _ArryRemoveBlanks(ByRef $Array)
 						ExitLoop
 					EndIf
 				Next
-				If $canKeep = True Then
+				If $canKeep Then
 					For $j = 0 To (UBound($Array, 2) - 1)
 						$Array[$Counter][$j] = $Array[$i][$j]
 					Next

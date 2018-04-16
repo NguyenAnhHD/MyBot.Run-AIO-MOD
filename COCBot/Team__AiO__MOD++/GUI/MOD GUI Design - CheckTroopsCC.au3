@@ -3,7 +3,7 @@
 ; Description ...: This file contains the Sequence that runs all MBR Bot
 ; Author ........: NguyenAnhHD, Demen
 ; Modified ......: Team AiO MOD++ (2018)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -30,6 +30,11 @@ Func GUIControlCheckCC()
 	; updating icon
 	For $i = 0 To 4
 		Local $CmbSel = _GUICtrlComboBox_GetCurSel($g_ahCmbCCSlot[$i])
+		Local $TxtCC = GUICtrlRead($g_ahTxtCCSlot[$i])
+		Local $Limit = 1
+		If $i < 3 And ($CmbSel = 0 Or $CmbSel = 1 Or $CmbSel = 3 Or $CmbSel = 4 Or $CmbSel = 12) Then $Limit = 2
+		If $Limit = 1 And $TxtCC >= 10 Then GUICtrlSetData($g_ahTxtCCSlot[$i], 0)
+		GUICtrlSetLimit($g_ahTxtCCSlot[$i], $Limit)
 		If $i >= 3 Then $CmbSel += 20
 		If $CmbSel <> $aIcons[$CmbSel] Then _GUICtrlSetImage($g_ahPicCCSlot[$i], $g_sLibIconPath, $aIcons[$CmbSel])
 	Next
@@ -122,6 +127,7 @@ Func CreateGUICheckCC()
 		GUICtrlCreateLabel("Troops", $x + 125, $y, -1, -1)
 	$g_hCmbCastleCapacityS = GUICtrlCreateCombo("", $x + 195, $y - 2, 35, 25)
 		GUICtrlSetData(-1, "1|2", "2")
+		GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 		GUICtrlCreateLabel("Spells", $x + 235, $y, -1, -1)
 
 	$y += 30
@@ -131,7 +137,6 @@ Func CreateGUICheckCC()
 			GUICtrlSetData(-1, $sCmbList, "Any")
 			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 		$g_ahTxtCCSlot[0] = GUICtrlCreateInput("0", $x + 125, $y, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-			GUICtrlSetLimit(-1, 1)
 			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
 		$g_ahPicCCSlot[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDonBlank, $x + 5, $y + 25, 24, 24)
@@ -139,7 +144,6 @@ Func CreateGUICheckCC()
 			GUICtrlSetData(-1, $sCmbList, "Any")
 			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 		$g_ahTxtCCSlot[1] = GUICtrlCreateInput("0", $x + 125, $y + 25, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-			GUICtrlSetLimit(-1, 1)
 			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
 		$g_ahPicCCSlot[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDonBlank, $x + 5, $y + 50, 24, 24)
@@ -147,7 +151,6 @@ Func CreateGUICheckCC()
 			GUICtrlSetData(-1, $sCmbList, "Any")
 			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 		$g_ahTxtCCSlot[2] = GUICtrlCreateInput("0", $x + 125, $y + 50, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-			GUICtrlSetLimit(-1, 1)
 			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
 	$sCmbList = StringReplace(_ArrayToString($g_asSpellNames), "Clone|", "") & "|Any" ; removing "Clone" as it does not fit for CC slots.
@@ -156,7 +159,6 @@ Func CreateGUICheckCC()
 			GUICtrlSetData(-1, $sCmbList, "Any")
 			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 		$g_ahTxtCCSlot[3] = GUICtrlCreateInput("0", $x + 285, $y, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-			GUICtrlSetLimit(-1, 1)
 			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
 		$g_ahPicCCSlot[4] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDonBlank, $x + 165, $y + 25, 24, 24)
@@ -164,7 +166,6 @@ Func CreateGUICheckCC()
 			GUICtrlSetData(-1, $sCmbList, "Any")
 			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 		$g_ahTxtCCSlot[4] = GUICtrlCreateInput("0", $x + 285, $y + 25, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-			GUICtrlSetLimit(-1, 1)
 			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
 	$y += 80

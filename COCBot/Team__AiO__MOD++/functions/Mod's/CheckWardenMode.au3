@@ -1,9 +1,9 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: CheckWardenMode (#-26)
+; Name ..........: CheckWardenMode
 ; Description ...: Check in which Mode the Warden is and switch if needed
-; Author ........: MantasM (10-2017)
-; Modified ......: Team AiO MOD++ (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Author ........: MantasM (10-2017), NguyenAnhHD (04-2018)
+; Modified ......: Team AiO MOD++ (2018)
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -14,39 +14,35 @@ Func CheckWardenMode($bOpenArmyWindow = False, $bCloseArmyWindow = False)
 	If Not $g_bCheckWardenMode Or $g_iCheckWardenMode = -1 Then Return
 	SetLog("Checking if Warden is in the correct Mode", $COLOR_INFO)
 
-	If $bOpenArmyWindow Then
-		If Not openArmyOverview() Then
+	If Not $bOpenArmyWindow And Not IsTrainPage() Then ; check for train page
+		SetError(1)
+		Return; not open, not requested to be open - error.
+	ElseIf $bOpenArmyWindow Then
+		If Not OpenArmyOverview(True, "CheckWardenMode()") Then
 			SetError(2)
-			Return
+			Return; not open, requested to be open - error.
 		EndIf
+		If _Sleep($DELAYCHECKARMYCAMP5) Then Return
 	EndIf
 
-	Local $sTile = "WardenAirMode_0_89.png", $sRegionToSearch = "795,400,825,425", $bGroundMode = False
-
-	If Not IsTrainPage() Then
-		If Not openArmyOverview() Then
-			SetError(2)
-			Return
-		EndIf
+	If QuickMIS("BC1", $g_sImgGrandWardenHeal, 800, 341, 829, 369) Then
+		SetLog("Grand Warden not available, skip check....!", $COLOR_ACTION)
+		If $bCloseArmyWindow Then ClickP($aAway, 2, $DELAYCHECKARMYCAMP4, "#0000")
+		Return
 	EndIf
 
-	If FindImageInPlace($sTile, @ScriptDir & "\imgxml\imglocbuttons\" & $sTile, $sRegionToSearch) = "" Then
-		SetLog("Found Grand Warden in Ground Mode!")
-		If $g_iCheckWardenMode = 1 Then
-			SetLog("Switching Wardens Mode to Air", $COLOR_INFO)
-			SwitchWardenMode(Not $bCloseArmyWindow)
-		EndIf
-	Else
+	If QuickMIS("BC1", $g_sImgGrandWardenMode, 795, 403, 825, 426) Then
 		SetLog("Found Grand Warden in Air Mode!")
 		If $g_iCheckWardenMode = 0 Then
 			SetLog("Switching Wardens Mode to Ground", $COLOR_INFO)
 			SwitchWardenMode(Not $bCloseArmyWindow)
 		EndIf
-	EndIf
-
-	If $bCloseArmyWindow Then
-		ClickP($aAway, 1, 0, "#0000")
-		If _Sleep($DELAYCHECKARMYCAMP4) Then Return
+	Else
+		SetLog("Found Grand Warden in Ground Mode!")
+		If $g_iCheckWardenMode = 1 Then
+			SetLog("Switching Wardens Mode to Air", $COLOR_INFO)
+			SwitchWardenMode(Not $bCloseArmyWindow)
+		EndIf
 	EndIf
 EndFunc   ;==>CheckWardenMode
 
@@ -65,7 +61,7 @@ Func SwitchWardenMode($bReopenArmyWindow = True)
 	Local $sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
 	If @error Then SetError(0, 0, 0)
 	Local $iCount = 0
-	While IsArray($sInfo) = False
+	While Not IsArray($sInfo)
 		$sInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY) ; 860x780
 		If @error Then SetError(0, 0, 0)
 		If _Sleep(100) Then Return
@@ -77,18 +73,18 @@ Func SwitchWardenMode($bReopenArmyWindow = True)
 
 	If $sInfo[0] > 1 Or $sInfo[0] = "" Then
 		If StringInStr($sInfo[1], "Grand") = 0 Then
-			SetLog("Bad Grand Warden Location", $COLOR_ACTION)
+			SetLog("Bad Grand Warden location, please reposition again!", $COLOR_ACTION)
 			Return
 		Else
-			Local $aBtnCoordinates = findButton("GrandWardenSwitchBtn", Default, 1)
+			Local $aBtnCoordinates = findButton("GrandWarden", Default, 1, True)
 			If IsArray($aBtnCoordinates) Then
-				ClickP($aBtnCoordinates)
+				ClickP($aBtnCoordinates, 1, 0, "#0000")
 				If _Sleep($DELAYCHECKARMYCAMP4) Then Return
 				SetLog("Switched Grand Warden Mode successfully!", $COLOR_SUCCESS)
 				ClickP($aAway, 1, 0, "#0000")
 				If _Sleep($DELAYCHECKARMYCAMP4) Then Return
 			Else
-				SetLog("Cannot find the Grand Wardens Switch Mode Button!", $COLOR_ERROR)
+				SetLog("Cannot find the Grand Wardens Switch Mode button!", $COLOR_ERROR)
 				Return
 			EndIf
 		EndIf
@@ -97,7 +93,7 @@ Func SwitchWardenMode($bReopenArmyWindow = True)
 	If _Sleep($DELAYUPGRADEHERO1) Then Return
 
 	If $bReopenArmyWindow Then
-		If Not openArmyOverview() Then
+		If Not OpenArmyOverview(True, "SwitchWardenMode()") Then
 			SetError(2)
 			Return
 		EndIf

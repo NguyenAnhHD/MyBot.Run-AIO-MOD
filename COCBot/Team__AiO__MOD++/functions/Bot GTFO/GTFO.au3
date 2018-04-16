@@ -6,7 +6,7 @@
 ; Return values .: ---
 ; Author ........: ProMac
 ; Modified ......: 06/2017
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......: ---
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -44,7 +44,7 @@ Func MainGTFO()
 		SetLogCentered(" GTFO v0.2 ", Default, Default, True)
 		; Just a user log
 		$_diffTimer = (TimerDiff($_timer) / 1000) / 60
-		If $_bFirstLoop = False Then
+		If Not $_bFirstLoop Then
 			SetLog(" - Running GTFO for " & StringFormat("%.2f", $_diffTimer) & " min", $COLOR_DEBUG)
 		EndIf
 		$_bFirstLoop = False
@@ -73,7 +73,7 @@ Func MainGTFO()
 			Local $aRndFuncList = ['Collect', 'CheckTombs', 'ReArm', 'CleanYard', 'BuilderBase', 'Boost']
 			While 1
 				If Not $g_bRunState Then Return
-				If $g_bRestart = True Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
+				If $g_bRestart Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
 				If UBound($aRndFuncList) > 1 Then
 					Local $Index = Random(0, UBound($aRndFuncList), 1)
 					If $Index > UBound($aRndFuncList) - 1 Then $Index = UBound($aRndFuncList) - 1
@@ -83,7 +83,7 @@ Func MainGTFO()
 					_RunFunction($aRndFuncList[0])
 					ExitLoop
 				EndIf
-				If $g_bRestart = True Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
+				If $g_bRestart Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
 			WEnd
 		EndIf
 
@@ -101,7 +101,7 @@ Func MainGTFO()
 		DonateGTFO()
 
 		; Update the Resources values , compare with a Limit to stop The GTFO and return to Farm
-		If IfIsToStayInGTFO() = False Then
+		If Not IfIsToStayInGTFO() Then
 			; TurnOFF the GTFO
 			; $g_ichkGTFO = false
 			Return
@@ -210,7 +210,7 @@ Func DonateGTFO()
 		If Not $g_bRunState Then Return
 		If _Sleep($DELAYRUNBOT3) Then Return
 
-		If $y < 620 And $firstrun = False Then
+		If $y < 620 And Not $firstrun Then
 			$y += 30
 		Else
 			$y = 90
@@ -238,16 +238,16 @@ Func DonateGTFO()
 				$y = $g_aiDonatePixel[1] + 30
 
 				; Open Donate Window
-				If _DonateWindow() = False Then ContinueLoop
+				If Not _DonateWindow() Then ContinueLoop
 
 				; Donate It : Troops & Spells [slot 2] is the Third slot from the left : [0 ,1 ,2 ,3 ,4 ]
-				If DonateIT(0) = True Then $_bReturnT = True ; Donated troops, lets Train it
-				If $g_OutOfTroops = True Then
+				If DonateIT(0) Then $_bReturnT = True ; Donated troops, lets Train it
+				If $g_OutOfTroops Then
 					Click(150, 705, 1)
 					CloseClanChat()
 					Return
 				EndIf
-				If DonateIT(10) = True Then $_bReturnS = True ; Donated Spells , lets Train it
+				If DonateIT(10) Then $_bReturnS = True ; Donated Spells , lets Train it
 
 				; Close Donate Window - Return to Chat
 				Click(150, 705, 1)
@@ -258,7 +258,7 @@ Func DonateGTFO()
 				ExitLoop
 			EndIf
 
-			If ($_bReturnT = False And $_bReturnS = False) Then $y += 50
+			If (Not $_bReturnT And Not $_bReturnS) Then $y += 50
 
 			; Check if exist other Donate button
 			ForceCaptureRegion()
@@ -444,7 +444,7 @@ Func IfIsToStayInGTFO()
 	If $g_aiCurrentLoot[$eLootElixir] <> 0 And $g_aiCurrentLoot[$eLootElixir] < $g_iTxtMinSaveGTFO_Elixir Then
 		SetLog("Reach the Elixir Limit , Let's Farm!!", $COLOR_INFO)
 		; Force double army on GTFO
-		If $g_bTotalCampForced = True And $g_bSetDoubleArmy Then
+		If $g_bTotalCampForced And $g_bSetDoubleArmy Then
 			$g_iTotalCampSpace = Number($g_iTotalCampForcedValue) / 2
 			For $T = 0 To $eTroopCount - 1
 				If $g_aiArmyCompTroops[$T] <> 0 Then
@@ -458,7 +458,7 @@ Func IfIsToStayInGTFO()
 	ElseIf $g_aiCurrentLoot[$eLootDarkElixir] <> 0 And $g_aiCurrentLoot[$eLootDarkElixir] < $g_itxtMinSaveGTFO_DE Then
 		SetLog("Reach the Dark Elixir Limit , Let's Farm!!", $COLOR_INFO)
 		; Force double army on GTFO
-		If $g_bTotalCampForced = True And $g_bSetDoubleArmy Then
+		If $g_bTotalCampForced And $g_bSetDoubleArmy Then
 			$g_iTotalCampSpace = Number($g_iTotalCampForcedValue) / 2
 			For $T = 0 To $eTroopCount - 1
 				If $g_aiArmyCompTroops[$T] <> 0 Then

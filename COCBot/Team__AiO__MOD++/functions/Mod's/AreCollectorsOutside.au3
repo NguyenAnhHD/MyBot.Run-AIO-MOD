@@ -7,7 +7,7 @@
 ;				 : False				less collectors outside than specified
 ; Author ........: McSlither (Jan-2016)
 ; Modified ......: TheRevenor (Jul 2016), Samkie (13 Jan 2017), Team AiO MOD++ (2018)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -84,7 +84,7 @@ EndFunc   ;==>AreCollectorsOutside
 ;				 : False				less collectors outside than specified
 ; Author ........: Samkie (7 FEB 2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -162,7 +162,7 @@ EndFunc
 ; Return values .: True or False
 ; Author ........: McSlither (Jan-2016)
 ; Modified ......: TheRevenor (Jul-2016)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2016
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......: isInsideDiamond($aCoords)
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki

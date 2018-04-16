@@ -97,20 +97,21 @@ Func CreateBotOptions()
 			GUICtrlSetState(-1, $GUI_DISABLE)
 		GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "sec.", -1), $x + 150, $y + 4, 27, 18)
 
+	; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
 	$y += 20
-		$g_hChkEnableAuto = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkEnableAuto", "Enable Auto for Emulator after Start") & ":", $x - 10, $y, -1, -1)
-			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkEnableAuto_Info_01", "Check it to Enable Auto Hide & Dock for Emulator after Start"))
+		$g_hChkEnableAuto = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkEnableAuto", "Enable Auto for Emulator") & ":", $x - 10, $y, -1, -1)
+			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkEnableAuto_Info_01", "Check it to Enable Auto Hide & Dock for Emulator after Start bot & Restart Emulator"))
 			GUICtrlSetState(-1, $GUI_UNCHECKED)
 			GUICtrlSetOnEvent(-1, "chkEnableAuto")
 
 	$y += 20
 		$g_hChkAutoDock = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkAutoDock", "Auto Dock"), $x + 10, $y, -1, -1)
-			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkAutoDock_Info_01", "Auto Dock to Emulator after Start"))
+			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkAutoDock_Info_01", "Auto Dock to Emulator after Start bot & Restart Emulator"))
 			GUICtrlSetState(-1, $GUI_DISABLE)
 			GUICtrlSetOnEvent(-1, "btnEnableAuto")
 
 		$g_hChkAutoHideEmulator = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkAutoHideEmulator", "Auto HIDE"), $x + 90, $y, -1, -1)
-			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkAutoHideEmulator_Info_01", "Auto Hide Emulator after Start"))
+			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkAutoHideEmulator_Info_01", "Auto Hide Emulator after Start bot & Restart Emulator"))
 			GUICtrlSetState(-1, $GUI_CHECKED)
 			GUICtrlSetState(-1, $GUI_DISABLE)
 			GUICtrlSetOnEvent(-1, "btnEnableAuto")
@@ -119,7 +120,6 @@ Func CreateBotOptions()
 		$g_hChkAutoMinimizeBot = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkAutoMinimizeBot", "Auto Minimize Bot after Start"), $x - 10, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkAutoMinimizeBot_Info_01", "Check it to enable Auto Minimize Bot after Start"))
 			GUICtrlSetState(-1, $GUI_UNCHECKED)
-			GUICtrlSetOnEvent(-1, "chkHideWhenMinimized")
 
 	$y += 20
 		$g_hChkCheckGameLanguage = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkCheckGameLanguage", "Check Game Language (EN)"), $x - 10, $y, -1, -1)

@@ -6,7 +6,7 @@
 ; Return values .: NA
 ; Author ........: Team AiO MOD++ (2018)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2017
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -84,6 +84,10 @@ Func SaveConfig_MOD()
 	; Max logout time - Team AiO MOD++
 	_Ini_Add("TrainLogout", "TrainLogoutMaxTime", $g_bTrainLogoutMaxTime)
 	_Ini_Add("TrainLogout", "TrainLogoutMaxTimeTXT", $g_iTrainLogoutMaxTime)
+
+	; ExtendedAttackBar - Team AiO MOD++
+	_Ini_Add("attack", "ExtendedAttackBarDB", $g_abChkExtendedAttackBar[$DB] ? 1 : 0)
+	_Ini_Add("attack", "ExtendedAttackBarLB", $g_abChkExtendedAttackBar[$LB] ? 1 : 0)
 
 	; Request CC Troops at first - Team AiO MOD++
 	_Ini_Add("planned", "ReqCCFirst", $g_bReqCCFirst)

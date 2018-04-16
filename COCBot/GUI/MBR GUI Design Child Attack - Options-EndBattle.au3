@@ -87,7 +87,7 @@ Func CreateAttackSearchOptionsEndBattle()
 
 	$x = 20
 	$y += 55
-	GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-EndBattle", "Group_03", "Attack Log"), $x - 15, $y - 20, $g_iSizeWGrpTab4, 67)
+	GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-EndBattle", "Group_03", "Attack Log"), $x - 15, $y - 20, $g_iSizeWGrpTab4, 60)
 		$g_hChkColorfulAttackLog = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-EndBattle", "ChkColorfulAttackLog", "Colorful Attack Log"), $x, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Options-EndBattle", "ChkColorfulAttackLog_Info_01", "When you select this option, the avatar will be displayed in color. Each color indicates a star"))
 			GUICtrlSetState(-1, $GUI_UNCHECKED)
