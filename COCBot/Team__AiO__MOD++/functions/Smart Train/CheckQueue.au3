@@ -1,7 +1,7 @@
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: CheckQueue
 ; Description ...: This file contains the Sequence that runs all MBR Bot
-; Author ........: DEMEN
+; Author ........: Demen
 ; Modified ......: Team AiO MOD++ (2018)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
@@ -10,11 +10,18 @@
 ; Example .......: No
 ; ===============================================================================================================================
 
-Func CheckQueue($sText = "Troops")
+Func CheckQueue(ByRef $eTrainMethod_0, $sText = "Troops")
 	Local $CheckTroop[4] = [825, 204, 0xCFCFC8, 15] ; the gray background
+	Local $CheckPink[4] = [825, 186, 0xD7AFA9, 10] ; the pink background
 	Local $directory = @ScriptDir & "\imgxml\Train\Queue_" & $sText
-	Local $aeResult[2] = [$g_eNoTrain, $g_eNoTrain]
 	Local $iTotalQueue = 0
+	Local $bResult = False
+
+	If $g_bQuickTrainEnable Then
+		SetLog("Delete all queue for quick train", $COLOR_WARNING)
+		DeleteQueue($sText)
+		$bResult = True
+	EndIf
 
 	; Reset $g_aiQueueTroops Or $g_aiQueueSpells data
 	If $sText = "Troops" Then
@@ -27,10 +34,10 @@ Func CheckQueue($sText = "Troops")
 		Next
 	EndIf
 
-	SetLog("Checking queue " & $sText)
+	SetLog("Checking queue " & $sText, $COLOR_INFO)
 
 	; Delete slot 11 anyway
-	If Not _ColorCheck(_GetPixelColor($CheckTroop[0] - 11 * 70, $CheckTroop[1], True), Hex($CheckTroop[2], 6), $CheckTroop[3]) Then ; Pink bkground found
+	If Not _ColorCheck(_GetPixelColor($CheckTroop[0] - 11 * 70, $CheckTroop[1], True), Hex($CheckTroop[2], 6), $CheckTroop[3]) Then ; Grey bkground
 		SetLog("So many troops queued, removing queues at the last slot", $COLOR_ACTION)
 		Local $x = 0
 		While Not _ColorCheck(_GetPixelColor($CheckTroop[0] - 11 * 70, $CheckTroop[1], True), Hex($CheckTroop[2], 6), $CheckTroop[3])
@@ -44,24 +51,19 @@ Func CheckQueue($sText = "Troops")
 
 	; Check queue troops/spells & quantity
 	For $i = 0 To 10
-		If Not _ColorCheck(_GetPixelColor($CheckTroop[0] - $i * 70, $CheckTroop[1], True), Hex($CheckTroop[2], 6), $CheckTroop[3]) Then ; Pink bkground found
-			_CaptureRegion2(Int(795 - 70.5 * $i), 210, Int(815 - 70.5 * $i), 230)
-			Local $Res = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $g_hHBitmap2, "str", $directory, "str", "FV", "Int", 0, "str", "FV", "Int", 0, "Int", 1000)
-			If $Res[0] = "" Or $Res[0] = "0" Then
-				SetLog("Some kind of error, no image file return for slot: " & $i, $COLOR_RED)
-			ElseIf StringInStr($Res[0], "-1") <> 0 Then
-				SetLog("DLL Error", $COLOR_RED)
-			Else ; name of first file found
-				Local $aResult = StringSplit($Res[0], "_") ; $aResult[1] = troop short name "Barb" or "Arch"
-				Local $iQty = getQueueTroopsQuantity(Int(772 - (70.5 * $i)), 190)
+		If _ColorCheck(_GetPixelColor($CheckPink[0] - $i * 70, $CheckPink[1], True), Hex($CheckPink[2], 6), $CheckPink[3]) Then ; Pink bkground found
 
-				Local $eIndex = Eval("e" & $aResult[1])
+			; name of first file found: troop short name e.g. "Barb"
+			Local $sTroopNameFound = QuickMIS("N1", $directory, Int(795 - 70.5 * $i), 210, Int(815 - 70.5 * $i), 230, True, $g_bDebugSetlog)
+			If $sTroopNameFound = "none" Then ContinueLoop
 
-				If $sText = "Troops" Then
-					$g_aiQueueTroops[$eIndex] += $iQty
-				ElseIf $sText = "Spells" Then
-					$g_aiQueueSpells[$eIndex - $eLSpell] += $iQty
-				EndIf
+			Local $iQty = getQueueTroopsQuantity(Int(772 - (70.5 * $i)), 190)
+			Local $eIndex = Eval("e" & $sTroopNameFound)
+
+			If $sText = "Troops" Then
+				$g_aiQueueTroops[$eIndex] += $iQty
+			ElseIf $sText = "Spells" Then
+				$g_aiQueueSpells[$eIndex - $eLSpell] += $iQty
 			EndIf
 		EndIf
 	Next
@@ -73,7 +75,6 @@ Func CheckQueue($sText = "Troops")
 				$iTotalQueue += $g_aiQueueTroops[$j] * $g_aiTroopSpace[$j]
 			EndIf
 		Next
-
 	ElseIf $sText = "Spells" Then
 		For $j = 0 To $eSpellCount - 1
 			If $g_aiQueueSpells[$j] > 0 Then
@@ -81,7 +82,6 @@ Func CheckQueue($sText = "Troops")
 				$iTotalQueue += $g_aiQueueSpells[$j] * $g_aiSpellSpace[$j]
 			EndIf
 		Next
-
 	EndIf
 
 	; Check block troop
@@ -89,46 +89,44 @@ Func CheckQueue($sText = "Troops")
 	If $NewCampOCR[0] < $NewCampOCR[1] + $iTotalQueue Then
 		SetLog("A big guy blocks our camp", $COLOR_ACTION)
 		ClearTrainingArmyCamp()
-		If Not CheckBlockTroops($sText) Then ; check if camp is not full after clear training
-			$aeResult[1] = $g_eFull
+		If CheckBlockTroops($sText) Then
+			$eTrainMethod_0 = $g_eRemained
 		Else
-			$aeResult[0] = $g_eRemained ; need check wrong army, then train remain
-			$aeResult[1] = $g_eFull
+			$eTrainMethod_0 = $g_eNoTrain
 		EndIf
+		$bResult = True
 
 	Else ; check wrong queue
-		Local $bWrongQueue = False
 		If $sText = "Troops" Then
 			For $i = 0 To ($eTroopCount - 1)
-				If $g_aiQueueTroops[$i] - $g_aiArmyCompTroops[$i] > 0 Then $bWrongQueue = True
-				If $bWrongQueue Then ExitLoop
+				If $g_aiQueueTroops[$i] - $g_aiArmyCompTroops[$i] > 0 Then $bResult = True
+				If $bResult Then ExitLoop
 			Next
-
 		ElseIf $sText = "Spells" Then
 			For $i = 0 To ($eSpellCount - 1)
-				If $g_aiQueueSpells[$i] - $g_aiArmyCompSpells[$i] > 0 Then $bWrongQueue = True
-				If $bWrongQueue Then ExitLoop
+				If $g_aiQueueSpells[$i] - $g_aiArmyCompSpells[$i] > 0 Then $bResult = True
+				If $bResult Then ExitLoop
 			Next
 		EndIf
 
-		If $bWrongQueue Then
-			SetLog("Queue is not correct", $COLOR_ACTION)
+		If $bResult Then
+			SetLog("Some wrong " & $sText & " in queue", $COLOR_WARNING)
 			DeleteQueue($sText)
-			$aeResult[1] = $g_eFull ; train full
-		Else
-			$aeResult[1] = $g_eRemained ; train remain queue
 		EndIf
+
 	EndIf
-	If _Sleep(250) Then Return
-	Return $aeResult
+
+	Return $bResult
 
 EndFunc   ;==>CheckQueue
 
 Func DeleteQueue($sText = "Troops")
 	Local $CheckTroop[4] = [825, 204, 0xCFCFC8, 15] ; the gray background
+	Local $CheckPink[4] = [825, 186, 0xD7AFA9, 10] ; the pink background
 	SetLog("Removing all queue " & $sText, $COLOR_SUCCESS)
 	For $i = 0 To 11
-		If Not _ColorCheck(_GetPixelColor($CheckTroop[0] - $i * 70, $CheckTroop[1], True), Hex($CheckTroop[2], 6), $CheckTroop[3]) Then
+		If _ColorCheck(_GetPixelColor($CheckPink[0] - $i * 70, $CheckPink[1], True), Hex($CheckPink[2], 6), $CheckPink[3]) Then ; Pink background found
+			If $g_bDebugSetlog Then SetDebugLog("Slot: " & $i & " Found queue", $COLOR_DEBUG)
 			Local $x = 0
 			While Not _ColorCheck(_GetPixelColor($CheckTroop[0] - $i * 70, $CheckTroop[1], True), Hex($CheckTroop[2], 6), $CheckTroop[3])
 				If _Sleep(20) Then Return
@@ -141,6 +139,7 @@ Func DeleteQueue($sText = "Troops")
 					If $x = 22 Then ExitLoop
 				EndIf
 			WEnd
+			If $g_bDebugSetlog Then SetDebugLog("Delete all queue, let's exit clicking", $COLOR_DEBUG)
 			ExitLoop
 		EndIf
 	Next

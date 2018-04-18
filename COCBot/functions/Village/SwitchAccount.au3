@@ -381,7 +381,9 @@ Func SwitchCOCAcc($NextAccount)
 		SetLog("Switching account failed!", $COLOR_ERROR)
 		SetSwitchAccLog("Switching to Acc " & $NextAccount + 1 & " Failed!", $COLOR_ERROR)
 		If $iRetry <= 3 Then
-			ClickP($aAway, 3, 500)
+			Local $ClickPoint = $aAway
+			If $g_bChkSuperCellID Then $ClickPoint = $aCloseTabSCID
+			ClickP($ClickPoint, 2, 500)
 			checkMainScreen()
 		Else
 			$iRetry = 0
@@ -597,13 +599,13 @@ Func SwitchCOCAcc_ConnectedSCID(ByRef $bResult)
 EndFunc   ;==>SwitchCOCAcc_ConnectedSCID
 
 Func SwitchCOCAcc_ConfirmSCID(ByRef $bResult)
-	For $i = 0 To 20 ; Checking LogOut & Confirm button continuously in 20sec
+	For $i = 0 To 30 ; Checking LogOut & Confirm button continuously in 30sec
 		If QuickMIS("BC1", $g_sImgLogOutButton, 587, 268, 734, 334) Then ; Check Log Out button
 			SetLog("   2. Click Log Out Supercell ID")
 			Click($g_iQuickMISX + 587, $g_iQuickMISY + 268, 2, 500, "Click Log Out SC_ID") ; Click LogOut button
 			If _Sleep(500) Then Return "Exit"
 
-			For $j = 0 To 10
+			For $j = 0 To 20
 				If QuickMIS("BC1", $g_sImgConfirmButton, 370, 402, 636, 476) Then ; Check Confirm button
 					SetLog("   3. Click Confirm Supercell ID")
 					Click($g_iQuickMISX + 370, $g_iQuickMISY + 402, 1, 0, "Click Confirm SC_ID") ; Click Confirm button
@@ -611,7 +613,7 @@ Func SwitchCOCAcc_ConfirmSCID(ByRef $bResult)
 					;ExitLoop
 					Return "OK"
 				EndIf
-				If $j = 10 Then
+				If $j = 20 Then
 					$bResult = False
 					;ExitLoop 3
 					Return "Error"
@@ -619,7 +621,7 @@ Func SwitchCOCAcc_ConfirmSCID(ByRef $bResult)
 				If _Sleep(900) Then Return "Exit"
 			Next
 		EndIf
-		If $i = 20 Then
+		If $i = 30 Then
 			$bResult = False
 			;ExitLoop 2
 			Return "Error"
@@ -645,19 +647,20 @@ Func SwitchCOCAcc_ClickAccountSCID(ByRef $bResult, $NextAccount, $iStep = 4)
 						$YCoord = Int(408 - 73.5 * ($g_iTotalAcc - $NextAccount))
 						SetLog("Drag for more accounts")
 						ClickDrag(700, 590, 700, 172, 2000)
-						If _Sleep(500) Then Return "Exit"
+						If _Sleep(250) Then Return "Exit"
 					EndIf
-					Click(270, $YCoord, 2, 3000) ; Click Account
+					Click(270, $YCoord, 3, 1000) ; Click Account
+					If _Sleep(250) Then Return "Exit"
 					$bResult = True
 				ElseIf QuickMIS("BC1", $g_sImgListAccounts, 470, 190, 497, 297) Then
 					$YCoord = Int(359 - 16 * ($g_iTotalAcc - 1) + 32 * $NextAccount) + $DeltaTotal8Acc
-					Click(300, $YCoord, 2, 3000) ; Click Account
+					Click(300, $YCoord, 3, 1000) ; Click Account
+					If _Sleep(250) Then Return "Exit"
 					$bResult = True
 				EndIf
 
 				If $bResult Then
 					SetLog("   " & ($iStep + 1) & ". Click Account [" & $NextAccount + 1 & "] Supercell ID")
-					If _Sleep(500) Then Return "Exit"
 					SetLog("Please wait for loading CoC...!")
 					Return "OK"
 				EndIf
@@ -676,7 +679,6 @@ Func SwitchCOCAcc_ClickAccountSCID(ByRef $bResult, $NextAccount, $iStep = 4)
 						Return "Error"
 					EndIf
 				EndIf
-
 				If _Sleep(900) Then Return "Exit"
 			Next
 		EndIf
@@ -899,7 +901,6 @@ Func CheckLoginWithSupercellID()
 			Else
 				If $g_bChkSuperCellID And ProfileSwitchAccountEnabled() Then ; select the correct account matching with current profile
 					Local $NextAccount = 0
-					$bResult = True
 					For $i = 0 To $g_iTotalAcc
 						If $g_abAccountNo[$i] = True And SwitchAccountEnabled($i) And $g_asProfileName[$i] = $g_sProfileCurrentName Then $NextAccount = $i
 					Next

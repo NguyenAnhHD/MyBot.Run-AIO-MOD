@@ -20,9 +20,10 @@ Func CheckPreciseArmyCamp()
 	SetLog("Checking ArmyWindow for Troops & Spells precision", $COLOR_INFO)
 
 	Local $bReturnArmyTab = False
-	Local $toRemove = CheckWrongArmyCamp(True, Not ($g_bForceBrewSpells), False) ; If $g_bForceBrewSpells = True Then CheckWrongArmyCamp(True, FALSE, False); $g_abRCheckWrongArmyCamp[1] always FALSE
+	Local $toRemove = CheckWrongArmyCamp(False) ; Return $toRemove, Get value of $g_bWrongTroop & $g_bWrongSpell
+	If @error Then Return SetError(2) ; Quit SmartTrain
 
-	If Not $g_abRCheckWrongArmyCamp[0] And Not $g_abRCheckWrongArmyCamp[1] Then ; Troops & Spells are correct
+	If Not $g_bWrongTroop And Not $g_bWrongSpell Then ; Troops & Spells are correct
 		If $g_bFullArmy Then $sTextTroop = "All troops are correct!"
 		If $g_bFullArmySpells Then $sTextSpell = "All spells are correct!"
 		If $g_bForceBrewSpells Then $sTextSpell = "Skip checking spells as ForceBrewSpell is activated!"
@@ -31,51 +32,61 @@ Func CheckPreciseArmyCamp()
 		Return False
 
 	Else ; Wrong troops or Wrong spells
-		Local $text = ""
-		If $g_abRCheckWrongArmyCamp[0] And _ColorCheck(_GetPixelColor($aGreenArrowTrainTroops[0], $aGreenArrowTrainTroops[1], True), Hex(0xA0D077, 6), 30) Then $text = " Troops &"
-		If $g_abRCheckWrongArmyCamp[1] And _ColorCheck(_GetPixelColor($aGreenArrowBrewSpells[0], $aGreenArrowBrewSpells[1], True), Hex(0xA0D077, 6), 30) Then $text &= " Spells "
-		If StringRight($text, 1) = "&" Then $text = StringTrimRight($text, 1) ; Remove last " &" as it is not needed
+		Local $bNeedClearTroop = $g_bWrongTroop And _ColorCheck(_GetPixelColor($aGreenArrowTrainTroops[0], $aGreenArrowTrainTroops[1], True), Hex(0xA0D077, 6), 30)
+		Local $bNeedClearSpell = $g_bWrongSpell And _ColorCheck(_GetPixelColor($aGreenArrowBrewSpells[0], $aGreenArrowBrewSpells[1], True), Hex(0xA0D077, 6), 30)
 
-		If $text <> "" Then
-			SetLog("Need to clear queued" & $text & "before removing!")
-			If $g_abRCheckWrongArmyCamp[0] Then ClearTrainingArmyCamp($TrainTroopsTAB)
-			If $g_abRCheckWrongArmyCamp[1] Then ClearTrainingArmyCamp($BrewSpellsTAB)
-			$bReturnArmyTab = True
+		If $bNeedClearTroop Then
+			SetLog("Need to clear queued troops before removing!", $COLOR_ACTION)
+			ClearTrainingArmyCamp("Troop", Not $bNeedClearSpell) ; open Troop tab, clear all training, return to Army tab if Not $bNeedClearSpell.
+			If @error Then Return SetError(2) ; Quit SmartTrain
 		EndIf
 
-		If $bReturnArmyTab Then OpenArmyTab(True, "CheckPreciseArmyCamp()")
-		If _Sleep(200) Then Return
-		RemoveWrongArmyCamp($g_abRCheckWrongArmyCamp[0], $g_abRCheckWrongArmyCamp[1], $toRemove, $bReturnArmyTab)
-		Return True
+		If $bNeedClearSpell Then
+			SetLog("Need to clear queued spells before removing!", $COLOR_ACTION)
+			ClearTrainingArmyCamp("Spell", True) ; open Troop tab, clear all training, return to Army tab.
+			If @error Then Return SetError(2) ; Quit SmartTrain
+		EndIf
 
+		If $bNeedClearTroop Or $bNeedClearSpell Then $toRemove = CheckWrongArmyCamp()
+		If @error Then Return SetError(2) ; Quit SmartTrain
+
+		If _Sleep(200) Then Return
+		RemoveWrongArmyCamp($toRemove)
+		If @error Then Return SetError(2) ; Quit SmartTrain
+		Return True
 	EndIf
 
 EndFunc   ;==>CheckPreciseArmyCamp
 
-Func CheckWrongArmyCamp($Troops = True, $Spells = False, $CheckExistentArmy = True)
-	$g_abRCheckWrongArmyCamp[0] = False
-	$g_abRCheckWrongArmyCamp[1] = False
-	Local $toRemove[1][2] = [["Arch", 0]] ; Wrong Troops & Spells to be removed
+Func CheckWrongArmyCamp($bCheckExistentArmy = True)
 
-	If Not ISArmyWindow(False, $ArmyTAB) Then OpenTrainTabNumber($ArmyTAB, "CheckWrongArmyCamp()")
+	$g_sSmartTrainError = ""
+	Local $toRemove[1][2] = [["Arch", 0]] ; Wrong Troops & Spells to be removed
+	$g_bWrongTroop = False
+	$g_bWrongSpell = False
+
+	If Not OpenArmyTab() Then $g_sSmartTrainError = SetError(3, 0, "Error OpenArmyTab called from CheckWrongArmyCamp.")
+	If @error Then Return ; quit smarttrain
+
 	If _Sleep(500) Then Return
 
-	If $Troops Then
-		If $CheckExistentArmy Then getArmyTroops()
-		For $i = 0 To ($eTroopCount - 1)
-			If Not $g_bRunState Then Return
-			If $g_aiCurrentTroops[$i] - $g_aiArmyCompTroops[$i] > 0 Then
-				$toRemove[UBound($toRemove) - 1][0] = $g_asTroopShortNames[$i]
-				$toRemove[UBound($toRemove) - 1][1] = $g_aiCurrentTroops[$i] - $g_aiArmyCompTroops[$i]
-				ReDim $toRemove[UBound($toRemove) + 1][2]
-			EndIf
-		Next
+	If $bCheckExistentArmy Then
+		getArmyTroops()
+		If Not $g_bForceBrewSpells Then getArmySpells()
 	EndIf
 
-	If $Spells Then
-		If $CheckExistentArmy Then getArmySpells()
+	; Troops
+	For $i = 0 To ($eTroopCount - 1)
+		If $g_aiCurrentTroops[$i] - $g_aiArmyCompTroops[$i] > 0 Then
+			$toRemove[UBound($toRemove) - 1][0] = $g_asTroopShortNames[$i]
+			$toRemove[UBound($toRemove) - 1][1] = $g_aiCurrentTroops[$i] - $g_aiArmyCompTroops[$i]
+			ReDim $toRemove[UBound($toRemove) + 1][2]
+		EndIf
+	Next
+
+	; Spells
+	If Not $g_bForceBrewSpells Then
 		For $i = 0 To ($eSpellCount - 1)
-			If Not $g_bRunState Then Return
 			If $g_aiCurrentSpells[$i] - $g_aiArmyCompSpells[$i] > 0 Then
 				$toRemove[UBound($toRemove) - 1][0] = $g_asSpellShortNames[$i]
 				$toRemove[UBound($toRemove) - 1][1] = $g_aiCurrentSpells[$i] - $g_aiArmyCompSpells[$i]
@@ -83,6 +94,7 @@ Func CheckWrongArmyCamp($Troops = True, $Spells = False, $CheckExistentArmy = Tr
 			EndIf
 		Next
 	EndIf
+
 	If UBound($toRemove) = 1 And $toRemove[0][0] = "Arch" And $toRemove[0][1] = 0 Then Return ; If was default Wrong Troops
 
 	If UBound($toRemove) > 0 Then ; If needed to remove troops
@@ -94,7 +106,7 @@ Func CheckWrongArmyCamp($Troops = True, $Spells = False, $CheckExistentArmy = Tr
 			$CounterToRemove += 1
 			If $toRemove[$i][1] > 0 Then
 				SetLog(" - " & $g_asTroopNames[TroopIndexLookup($toRemove[$i][0])] & ": " & $toRemove[$i][1] & "x", $COLOR_SUCCESS)
-				$g_abRCheckWrongArmyCamp[0] = True
+				$g_bWrongTroop = True
 			EndIf
 		Next
 
@@ -104,7 +116,7 @@ Func CheckWrongArmyCamp($Troops = True, $Spells = False, $CheckExistentArmy = Tr
 				For $i = $CounterToRemove To (UBound($toRemove) - 1)
 					If $toRemove[$i][1] > 0 Then SetLog(" - " & $g_asSpellNames[TroopIndexLookup($toRemove[$i][0]) - $eLSpell] & ": " & $toRemove[$i][1] & "x", $COLOR_SUCCESS)
 				Next
-				$g_abRCheckWrongArmyCamp[1] = True
+				$g_bWrongSpell = True
 			EndIf
 		EndIf
 	EndIf
@@ -113,12 +125,10 @@ Func CheckWrongArmyCamp($Troops = True, $Spells = False, $CheckExistentArmy = Tr
 EndFunc   ;==>CheckWrongArmyCamp
 
 
-Func RemoveWrongArmyCamp($Troops, $Spells, $toRemove, $bReCheckArmy = False)
+Func RemoveWrongArmyCamp($toRemove)
 
-	If Not $Troops And Not $Spells Then Return
-	If Not IsArray($toRemove) Or $bReCheckArmy Then $toRemove = CheckWrongArmyCamp($Troops, $Spells, True)
-
-	If UBound($toRemove) = 1 And $toRemove[0][0] = "Arch" And $toRemove[0][1] = 0 Then Return ; If was default Wrong Troops
+	If Not IsArray($toRemove) Then Return
+	$g_sSmartTrainError = ""
 
 	If UBound($toRemove) > 0 Then ; If needed to remove troops
 		Local $rGetSlotNumber = GetSlotNumber() ; Get all available Slot numbers with troops assigned on them
@@ -126,7 +136,8 @@ Func RemoveWrongArmyCamp($Troops, $Spells, $toRemove, $bReCheckArmy = False)
 
 		If Not _ColorCheck(_GetPixelColor(806, 516, True), Hex(0xCEEF76, 6), 25) Then ; If no 'Edit Army' Button found in army tab to edit troops
 			SetLog("Cannot find/verify 'Edit Army' Button in Army tab", $COLOR_WARNING)
-			Return ; Exit function
+			$g_sSmartTrainError = SetError(3, 0, "Error finding 'Edit Army' button, called from RemoveWrongArmyCamp.")
+			Return ; quit SmartTrain
 		EndIf
 
 		Click(Random(715, 825, 1), Random(507, 545, 1)) ; Click on Edit Army Button
@@ -159,18 +170,19 @@ Func RemoveWrongArmyCamp($Troops, $Spells, $toRemove, $bReCheckArmy = False)
 
 		If Not _ColorCheck(_GetPixelColor(806, 567, True), Hex(0xCEEF76, 6), 25) Then ; If no 'Okay' button found in army tab to save changes
 			SetLog("Cannot find/verify 'Okay' Button in Army tab", $COLOR_WARNING)
-			Return ; Exit Function
+			$g_sSmartTrainError = SetError(3, 0, "Error finding 'Okay' button, called from RemoveWrongArmyCamp.")
+			Return ; quit SmartTrain
 		EndIf
 
 		If _Sleep(700) Then Return
-		If Not $g_bRunState Then Return
 		Click(Random(720, 815, 1), Random(558, 589, 1)) ; Click on 'Okay' button to save changes
 
 		If _Sleep(1200) Then Return
 
 		If Not _ColorCheck(_GetPixelColor(508, 428, True), Hex(0xFFFFFF, 6), 30) Then ; If no 'Okay' button found to verify that we accept the changes
 			SetLog("Cannot find/verify 'Okay #2' Button in Army tab", $COLOR_WARNING)
-			Return ; Exit function
+			$g_sSmartTrainError = SetError(3, 0, "Error finding 'Okay #2' button, called from RemoveWrongArmyCamp.")
+			Return ; quit SmartTrain
 		EndIf
 
 		Click(Random(445, 583, 1), Random(402, 455, 1)) ; Click on 'Okay' button to Save changes... Last button

@@ -5,6 +5,12 @@
 
                     Based on MyBot.run v7.5.1
 
+	**V1.8.2**
+	- Fix Goblin XP not find button
+	- Fix GTFO not find Donate button
+	- Improve Switch Account (fixed not closing tab supercell id when image was not detected)
+	- Improve Smart Train (change some new code and fix some bugs)
+
 	**V1.8.1**
 	- Add Slot +11
 	- Improve switch accounts (compatible with multiple types for Supercell ID)
@@ -15,7 +21,6 @@
 	- Fix Bot Humanization feature
 	- Fix Attack Log
 	- Update to MBR v7.5.1
-
 
 	**V1.8**
 	- Add CSV 'REMAIN', '%', 'Sleep Before' cmd for CSV Attack

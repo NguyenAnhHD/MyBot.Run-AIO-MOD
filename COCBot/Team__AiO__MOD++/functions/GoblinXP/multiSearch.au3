@@ -28,14 +28,14 @@ Func multiMatchesPixelOnly($directory, $maxReturnPoints = 0, $fullCocAreas = "EC
 		; Perform the search
 		$res = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $g_hHBitmap2, "str", $directory, "str", $fullCocAreas, "Int", $maxReturnPoints, "str", $redLines, "Int", $minLevel, "Int", $maxLevel)
 		If @error Then _logErrorDLLCall($g_sLibMyBotPath, @error)
-		If $saveSourceImg Then _GDIPlus_ImageSaveToFile(_GDIPlus_BitmapCreateFromHBITMAP($g_hHBitmap2), @ScriptDir & "\multiMatchesPixelOnly.png")
+		If $saveSourceImg = True Then _GDIPlus_ImageSaveToFile(_GDIPlus_BitmapCreateFromHBITMAP($g_hHBitmap2), @ScriptDir & "\multiMatchesPixelOnly.png")
 		Local $aValue = DllCallMyBot("GetProperty", "str", "redline", "str", "")
 		$redLines = $aValue[0]
 	Else
 		Local $hClone = CloneAreaToSearch($x1, $y1, $x2, $y2)
 		$res = DllCallMyBot("SearchMultipleTilesBetweenLevels", "handle", $hClone, "str", $directory, "str", $fullCocAreas, "Int", $maxReturnPoints, "str", $redLines, "Int", $minLevel, "Int", $maxLevel)
 		If @error Then _logErrorDLLCall($g_sLibMyBotPath, @error)
-		If $saveSourceImg Then _GDIPlus_ImageSaveToFile(_GDIPlus_BitmapCreateFromHBITMAP($hClone), @ScriptDir & "\multiMatchesPixelOnly.png")
+		If $saveSourceImg = True Then _GDIPlus_ImageSaveToFile(_GDIPlus_BitmapCreateFromHBITMAP($hClone), @ScriptDir & "\multiMatchesPixelOnly.png")
 		Local $aValue = DllCallMyBot("GetProperty", "str", "redline", "str", "")
 		$redLines = $aValue[0]
 		_WinAPI_DeleteObject($hClone)
@@ -137,7 +137,7 @@ Func _DelPosWithDiff1(ByRef $Arr, $xDiff, $yDiff, $ReturnAsString = True, $And =
 		$Arr = $tmpArr
 	EndIf
 
-	If $ReturnAsString Then
+	If $ReturnAsString = True Then
 		Local $ToReturn = ""
 		For $k = 0 To (UBound($Arr) - 1)
 			$ToReturn &= $Arr[$k][0] & "," & $Arr[$k][1] & "|"
@@ -172,7 +172,7 @@ Func _DelPosWithDiff2(ByRef $sResult, $xDiff, $yDiff, $ReturnAsString = True, $A
 		For $j = $i + 1 To (UBound($Arr) - 1)
 			$iXDiff = Number(Abs(Number(Number($Arr[$i][0]) - Number($Arr[$j][0]))))
 			$iYDiff = Number(Abs(Number(Number($Arr[$i][1]) - Number($Arr[$j][1]))))
-			If $And Then
+			If $And = True Then
 				If ($iXDiff <= $xDiff) And ($iYDiff <= $yDiff) Then
 					$IndexesToDelete &= $j & ","
 					$i += 1
@@ -211,7 +211,7 @@ Func _DelPosWithDiff2(ByRef $sResult, $xDiff, $yDiff, $ReturnAsString = True, $A
 		$Arr = $tmpArr
 	EndIf
 
-	If $ReturnAsString Then
+	If $ReturnAsString = True Then
 		Local $ToReturn = ""
 		For $k = 0 To (UBound($Arr) - 1)
 			$ToReturn &= $Arr[$k][0] & "," & $Arr[$k][1] & "|"

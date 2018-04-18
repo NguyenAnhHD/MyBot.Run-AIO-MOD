@@ -210,7 +210,7 @@ Func DonateGTFO()
 		If Not $g_bRunState Then Return
 		If _Sleep($DELAYRUNBOT3) Then Return
 
-		If $y < 620 And Not $firstrun Then
+		If $y < 620 And $firstrun = False Then
 			$y += 30
 		Else
 			$y = 90
@@ -232,42 +232,40 @@ Func DonateGTFO()
 			$firstrun = False
 
 			; Check Donate Pixel
-			ForceCaptureRegion()
 			$g_aiDonatePixel = _MultiPixelSearch(200, $y, 230, 660 + $g_iBottomOffsetY, -2, 1, Hex(0x6da725, 6), $aChatDonateBtnColors, 20)
 			If IsArray($g_aiDonatePixel) Then
 				$y = $g_aiDonatePixel[1] + 30
 
 				; Open Donate Window
-				If Not _DonateWindow() Then ContinueLoop
+				If _DonateWindow() = False Then ContinueLoop
 
 				; Donate It : Troops & Spells [slot 2] is the Third slot from the left : [0 ,1 ,2 ,3 ,4 ]
-				If DonateIT(0) Then $_bReturnT = True ; Donated troops, lets Train it
-				If $g_OutOfTroops Then
+				If DonateIT(0) = True Then $_bReturnT = True ; Donated troops, lets Train it
+				If $g_OutOfTroops = True Then
 					Click(150, 705, 1)
 					CloseClanChat()
 					Return
 				EndIf
-				If DonateIT(10) Then $_bReturnS = True ; Donated Spells , lets Train it
+				If DonateIT(10) = True Then $_bReturnS = True ; Donated Spells , lets Train it
 
 				; Close Donate Window - Return to Chat
 				Click(150, 705, 1)
 			Else
 				; Doesn't exist Requests lets exits from this loop
 				Click(150, 705, 1)
-				If ScrollDown() Then $y = 600
+				If ScrollDown() Then $y = 200
 				ExitLoop
 			EndIf
 
-			If (Not $_bReturnT And Not $_bReturnS) Then $y += 50
+			If ($_bReturnT = False And $_bReturnS = False) Then $y += 50
 
 			; Check if exist other Donate button
-			ForceCaptureRegion()
 			$g_aiDonatePixel = _MultiPixelSearch(200, $y, 230, 660 + $g_iBottomOffsetY, -2, 1, Hex(0x6da725, 6), $aChatDonateBtnColors, 20)
 			If IsArray($g_aiDonatePixel) Then
 				If $g_bDebugSetlog Then SetDebugLog("More Donate buttons found, new $g_aiDonatePixel: (" & $g_aiDonatePixel[0] & "," & $g_aiDonatePixel[1] & ")", $COLOR_DEBUG)
 				ContinueLoop
 			Else
-				If ScrollDown() Then $y = 600
+				If ScrollDown() Then $y = 200
 				ContinueLoop
 			EndIf
 		WEnd
@@ -320,7 +318,6 @@ EndFunc   ;==>OpenClanChat
 
 Func CloseClanChat()
 
-	$i = 0
 	While 1
 		If _Sleep(100) Then Return
 		If _ColorCheck(_GetPixelColor($aCloseChat[0], $aCloseChat[1], True), Hex($aCloseChat[2], 6), $aCloseChat[3]) Then
@@ -345,7 +342,6 @@ Func ScrollUp()
 	Local $Scroll, $i_attempts = 0
 
 	While 1
-		ForceCaptureRegion()
 		Local $y = 90
 		$Scroll = _PixelSearch(293, 8 + $y, 295, 23 + $y, Hex(0xFFFFFF, 6), 18)
 		If IsArray($Scroll) And _ColorCheck(_GetPixelColor(300, 110, True), Hex(0x509808, 6), 20) Then ; a second pixel for the green
@@ -361,10 +357,8 @@ Func ScrollUp()
 EndFunc   ;==>ScrollUp
 
 Func ScrollDown()
-
 	Local $Scroll
-
-	ForceCaptureRegion()
+	; Scroll Down
 	$Scroll = _PixelSearch(293, 687 - 30, 295, 693 - 30, Hex(0xFFFFFF, 6), 10)
 	If IsArray($Scroll) Then
 		Click($Scroll[0], $Scroll[1], 1, 0, "#0172")
@@ -444,7 +438,7 @@ Func IfIsToStayInGTFO()
 	If $g_aiCurrentLoot[$eLootElixir] <> 0 And $g_aiCurrentLoot[$eLootElixir] < $g_iTxtMinSaveGTFO_Elixir Then
 		SetLog("Reach the Elixir Limit , Let's Farm!!", $COLOR_INFO)
 		; Force double army on GTFO
-		If $g_bTotalCampForced And $g_bSetDoubleArmy Then
+		If $g_bTotalCampForced = True And $g_bSetDoubleArmy Then
 			$g_iTotalCampSpace = Number($g_iTotalCampForcedValue) / 2
 			For $T = 0 To $eTroopCount - 1
 				If $g_aiArmyCompTroops[$T] <> 0 Then
@@ -484,7 +478,6 @@ Func _DonateWindow()
 
 	; longer delay to ensure white donate troop window fully open
 	Local $icount = 0
-	ForceCaptureRegion()
 	While Not (_ColorCheck(_GetPixelColor(331, $g_aiDonatePixel[1], True, "_DonateWindow"), Hex(0xFFFFFF, 6), 0))
 		If _Sleep(100) Then Return
 		$icount += 1

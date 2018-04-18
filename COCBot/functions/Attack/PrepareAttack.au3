@@ -32,7 +32,7 @@ Func PrepareAttack($pMatchMode, $Remaining = False) ;Assigns troops
 		If $g_iActivateKing = 1 Or $g_iActivateKing = 2 Then $g_aHeroesTimerActivation[$eHeroBarbarianKing] = 0
 		If $g_iActivateQueen = 1 Or $g_iActivateQueen = 2 Then $g_aHeroesTimerActivation[$eHeroArcherQueen] = 0
 		If $g_iActivateWarden = 1 Or $g_iActivateWarden = 2 Then $g_aHeroesTimerActivation[$eHeroGrandWarden] = 0
-		; ExtendedAttackBar - Persian MOD
+		; ExtendedAttackBar - Team AiO MOD++
 		$g_iTotalAttackSlot = 10 ; reset all flag
 		$g_bDraggedAttackBar = False
 	EndIf

@@ -925,7 +925,7 @@ Global $g_iTotalSpellValue = 0
 
 Global $g_bChkSmartTrain = False, $g_bChkPreciseArmyCamp = False, $g_bChkFillArcher = False, $g_bChkFillEQ = False, $g_iTxtFillArcher = 5
 Global Enum $g_eFull, $g_eRemained, $g_eNoTrain
-Global $g_abRCheckWrongArmyCamp[2] = [False, False] ; Result of checking wrong Troops & Spells
+Global $g_bWrongTroop, $g_bWrongSpell, $g_sSmartTrainError = ""
 Global $g_bChkMultiClick, $g_iMultiClick = 1
 Global $g_aiQueueTroops[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_aiQueueSpells[$eSpellCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
