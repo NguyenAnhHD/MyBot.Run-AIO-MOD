@@ -3,7 +3,17 @@
             | | | _| / _ \| |\/| |    / _ \| | (_) |
             |_| |___/_/ \_\_|  |_|   /_/ \_\_|\___/
 
-                    Based on MyBot.run v7.5.1
+                    Based on MyBot.run v7.5.2
+
+	**V1.8.3**
+	- Add Farm Schedule feature
+	- Add Stop For War By Demen
+	- Add Request troops for defense By Demen
+	- Fix & Improve GTFO
+	- Fix & Improve Slot+11 By Demen
+	- Fix Quick Train
+	- Fix bug sometimes not pull SCID account list
+	- Update to MBR v7.5.2
 
 	**V1.8.2**
 	- Fix Goblin XP not find button
@@ -12,7 +22,7 @@
 	- Improve Smart Train (change some new code and fix some bugs)
 
 	**V1.8.1**
-	- Add Slot +11
+	- Add Slot+11
 	- Improve switch accounts (compatible with multiple types for Supercell ID)
 	- Improve Smart Train (improve system logs and fixed some a of minor bugs)
 	- Improve check Grand Warden Mode (fixed some a of minor bugs)

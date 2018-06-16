@@ -959,6 +959,7 @@ Func GetPositionInSinglePlayer()
 		EndIf
 	WEnd
 
+	If _Sleep(100) Then Return
 	Local $rColCheckEnd = _ColorCheck(_GetPixelColor(830, 724, True), Hex(0x383123, 6), 20)
 	If $rColCheckEnd Then
 		If $g_bDebugSX Then SetDebugLog("SX|GPISP|Return END")

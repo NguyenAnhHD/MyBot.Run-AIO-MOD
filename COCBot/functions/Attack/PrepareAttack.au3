@@ -32,7 +32,8 @@ Func PrepareAttack($pMatchMode, $Remaining = False) ;Assigns troops
 		If $g_iActivateKing = 1 Or $g_iActivateKing = 2 Then $g_aHeroesTimerActivation[$eHeroBarbarianKing] = 0
 		If $g_iActivateQueen = 1 Or $g_iActivateQueen = 2 Then $g_aHeroesTimerActivation[$eHeroArcherQueen] = 0
 		If $g_iActivateWarden = 1 Or $g_iActivateWarden = 2 Then $g_aHeroesTimerActivation[$eHeroGrandWarden] = 0
-		; ExtendedAttackBar - Team AiO MOD++
+
+		; Slot11 - Team AiO MOD++
 		$g_iTotalAttackSlot = 10 ; reset all flag
 		$g_bDraggedAttackBar = False
 	EndIf
@@ -44,6 +45,30 @@ Func PrepareAttack($pMatchMode, $Remaining = False) ;Assigns troops
 	Else
 		SetLog("Initiating attack for: " & $g_asModeText[$pMatchMode], $COLOR_ERROR)
 	EndIf
+
+	; JUNE 2018 @PROMAC
+	; Lets Select The CC and not the Siege Machine ; $eCastle
+	If Not $Remaining  And IsTroopToBeUsed($pMatchMode, $eCastle) Then
+		If QuickMIS("BC1", $g_sImgSwitchSiegeMacines, 28, 698, 820, 726, True, False) Then
+			Setlog("Switching button in a Siege Machine detected.")
+			; Was detectable lets click
+			Click($g_iQuickMISX + 28, $g_iQuickMISY + 698, 1)
+			; wait to appears the new small window
+			Local $lastX = $g_iQuickMISX , $LastX1 = $g_iQuickMISX + 165 , $lastY = $g_iQuickMISY
+			If _Sleep(1500) then return
+			; Lets detect the CC and click
+			If QuickMIS("BC1", $g_sImgSwitchSiegeCastle, $lastX, 535, $LastX1, 560, True, False) Then
+				; Was detectable lets click
+				Click($g_iQuickMISX + $lastX, $g_iQuickMISY + 535, 1)
+				Setlog("Clan Castle troops selected!", $COLOR_SUCCESS)
+			Else
+				; If was not detectable lets click again on green icon to hide the window!
+				Click($lastX + 28, $lastY + 698, 1)
+			EndIf
+			If _Sleep(1500) then return
+		EndIf
+	EndIf
+	;
 
 	_CaptureRegion2(0, 571 + $g_iBottomOffsetY, 859, 671 + $g_iBottomOffsetY)
 	If _Sleep($DELAYPREPAREATTACK1) Then Return
@@ -58,13 +83,15 @@ Func PrepareAttack($pMatchMode, $Remaining = False) ;Assigns troops
 	If $g_bDebugSetlog Then SetDebugLog("DLL Troopsbar list: " & $result, $COLOR_DEBUG)
 	Local $aTroopDataList = StringSplit($result, "|")
 	Local $aTemp[12][3]
-	; ExtendedAttackBar - Team AiO MOD++
+
+	; Slot11 - Team AiO MOD++
 	If $pMatchMode <= $LB Then
 		If $g_abChkExtendedAttackBar[$pMatchMode] Then
 			ReDim $aTemp[22][3]
 			ReDim $g_avAttackTroops[22][2]
 		EndIf
 	EndIf
+
 	If $result <> "" Then
 		; example : 0#0#92|1#1#108|2#2#8|22#3#1|20#4#1|21#5#1|26#5#0|23#6#1|24#7#2|25#8#1|29#10#1
 		; [0] = Troop Enum Cross Reference [1] = Slot position [2] = Quantities

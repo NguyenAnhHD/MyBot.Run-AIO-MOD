@@ -52,7 +52,7 @@ Global $g_aGroupLeague = ""
 ; Groups of controls
 Global $aTabControlsVillage, $aTabControlsMisc, $aTabControlsDonate, $aTabControlsUpgrade, $aTabControlsNotify
 Global $aTabControlsAttack, $aTabControlsArmy, $aTabControlsSearch, $aTabControlsDeadbase, $aTabControlsActivebase, $aTabControlsTHSnipe, $aTabControlsAttackOptions
-Global $aTabControlsStrategies, $aTabControlsBot, $aTabControlsMOD, $aTabControlsStats
+Global $aTabControlsStrategies, $aTabControlsBot, $aTabControlsSwitchOpt, $aTabControlsMOD, $aTabControlsStats
 Global $oAlwaysEnabledControls = ObjCreate("Scripting.Dictionary")
 
 Func InitializeControlVariables()
@@ -187,19 +187,19 @@ Func InitializeControlVariables()
 
    ;TH Level
    $g_aGroupListTHLevels = $g_ahPicTHLevels[4]&"#"&$g_ahPicTHLevels[5]&"#"&$g_ahPicTHLevels[6]&"#"&$g_ahPicTHLevels[7]&"#"&$g_ahPicTHLevels[8]&"#"& _
-						$g_ahPicTHLevels[9]&"#"&$g_ahPicTHLevels[10]&"#"&$g_ahPicTHLevels[11]
+						$g_ahPicTHLevels[9]&"#"&$g_ahPicTHLevels[10]&"#"&$g_ahPicTHLevels[11]&"#"&$g_ahPicTHLevels[12]
 
    ;PicDBMaxTH
    $g_aGroupListPicDBMaxTH = $g_ahPicDBMaxTH[6]&"#"&$g_ahPicDBMaxTH[7]&"#"&$g_ahPicDBMaxTH[8]&"#"& _
-						$g_ahPicDBMaxTH[9]&"#"&$g_ahPicDBMaxTH[10]&"#"&$g_ahPicDBMaxTH[11]
+						$g_ahPicDBMaxTH[9]&"#"&$g_ahPicDBMaxTH[10]&"#"&$g_ahPicDBMaxTH[11]&"#"&$g_ahPicDBMaxTH[12]
 
    ;PicABMaxTH
    $g_aGroupListPicABMaxTH = $g_ahPicABMaxTH[6]&"#"&$g_ahPicABMaxTH[7]&"#"&$g_ahPicABMaxTH[8]&"#"& _
-						$g_ahPicABMaxTH[9]&"#"&$g_ahPicABMaxTH[10]&"#"&$g_ahPicABMaxTH[11]
+						$g_ahPicABMaxTH[9]&"#"&$g_ahPicABMaxTH[10]&"#"&$g_ahPicABMaxTH[11]&"#"&$g_ahPicABMaxTH[12]
 
    ;PicBullyMaxTH
    $g_aGroupListPicBullyMaxTH = $g_ahPicBullyMaxTH[6]&"#"&$g_ahPicBullyMaxTH[7]&"#"&$g_ahPicBullyMaxTH[8]&"#"& _
-						$g_ahPicBullyMaxTH[9]&"#"&$g_ahPicBullyMaxTH[10]&"#"&$g_ahPicBullyMaxTH[11]
+						$g_ahPicBullyMaxTH[9]&"#"&$g_ahPicBullyMaxTH[10]&"#"&$g_ahPicBullyMaxTH[11]&"#"&$g_ahPicBullyMaxTH[12]
 
    ;League
    $g_aGroupLeague = $g_ahPicLeague[$eLeagueUnranked]&"#"&$g_ahPicLeague[$eLeagueBronze]&"#"&$g_ahPicLeague[$eLeagueSilver]&"#"&$g_ahPicLeague[$eLeagueGold] &"#"& _
@@ -224,6 +224,7 @@ Func InitializeControlVariables()
 
    Dim $aTabControlsMOD = [$g_hGUI_MOD_TAB, $g_hGUI_MOD_TAB_ITEM1, $g_hGUI_MOD_TAB_ITEM2, $g_hGUI_MOD_TAB_ITEM3]
    Dim $aTabControlsBot = [$g_hGUI_BOT_TAB, $g_hGUI_BOT_TAB_ITEM1, $g_hGUI_BOT_TAB_ITEM2, $g_hGUI_BOT_TAB_ITEM3, $g_hGUI_BOT_TAB_ITEM4, $g_hGUI_BOT_TAB_ITEM5]
+   Dim $aTabControlsSwitchOpt = [$g_hGUI_SWITCH_OPTIONS_TAB, $g_hGUI_SWITCH_OPTIONS_TAB_ITEM1, $g_hGUI_SWITCH_OPTIONS_TAB_ITEM2]
    Dim $aTabControlsStats = [$g_hGUI_STATS_TAB, $g_hGUI_STATS_TAB_ITEM1, $g_hGUI_STATS_TAB_ITEM2, $g_hGUI_STATS_TAB_ITEM3, $g_hGUI_STATS_TAB_ITEM4, $g_hGUI_STATS_TAB_ITEM5]
 
 	; always enabled / unchanged controls during enabling/disabling all GUI controls function
@@ -329,6 +330,9 @@ Func InitializeControlVariables()
 		$oAlwaysEnabledControls($i) = 1
 	Next
 	For $i in $aTabControlsBot
+		$oAlwaysEnabledControls($i) = 1
+	Next
+	For $i in $aTabControlsSwitchOpt
 		$oAlwaysEnabledControls($i) = 1
 	Next
 	For $i in $aTabControlsStats

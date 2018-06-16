@@ -134,7 +134,7 @@ Func TestMaxCamp()
 			$ToReturn = 1
 		Else
 			; The number of troops is not correct
-			If $ArmyCamp[1] > 520 Then SetLog(" Your CoC is outdated!!! ", $COLOR_ERROR)
+			If $ArmyCamp[1] > 540 Then SetLog(" Your CoC is outdated!!! ", $COLOR_ERROR)
 			SetLog(" - Your army is: " & $ArmyCamp[0], $COLOR_ACTION)
 			$ToReturn = 0
 		EndIf
@@ -604,13 +604,13 @@ EndFunc   ;==>CompareCCSpellWithGUI
 
 Func GetCurCCSpell($iSpellSlot = 1)
 	If Not $g_bRunState Then Return
-	Local $x1 = 508, $x2 = 615, $y1 = 500, $y2 = 585
+	Local $x1 = 451, $x2 = 575, $y1 = 500, $y2 = 585
 
 	If $iSpellSlot = 1 Then
 		;Nothing
 	ElseIf $iSpellSlot = 2 Then
-		$x1 = 600
-		$x2 = 660
+		$x1 = 530
+		$x2 = 605
 	Else
 		If $g_bDebugSetlog Then SetDebugLog("GetCurCCSpell() called with the wrong argument!", $COLOR_ERROR)
 		Return
@@ -1313,7 +1313,7 @@ EndFunc   ;==>GetSlotRemoveBtnPosition
 Func GetSlotNumber($bSpells = False)
 	Select
 		Case $bSpells = False
-			Local Const $Orders[19] = [$eBarb, $eArch, $eGiant, $eGobl, $eWall, $eBall, $eWiza, $eHeal, $eDrag, $ePekk, $eBabyD, $eMine, _
+			Local Const $Orders[20] = [$eBarb, $eArch, $eGiant, $eGobl, $eWall, $eBall, $eWiza, $eHeal, $eDrag, $ePekk, $eBabyD, $eMine, $eEDrag, _
 					$eMini, $eHogs, $eValk, $eGole, $eWitc, $eLava, $eBowl] ; Set Order of troop display in Army Tab
 
 			Local $allCurTroops[UBound($Orders)]
@@ -1737,30 +1737,22 @@ EndFunc   ;==>ResetVariables
 
 Func TrainArmyNumber($Army, $iMultiClick = 1)
 
-	Local $a_TrainArmy[3][4] = [[784, 368, 0x71BB2B, 10], [784, 485, 0x74BD2D, 10], [784, 602, 0x73BD2D, 10]]
+	Local $a_TrainArmy[3][4] = [[784, 368, 0x6fb830, 10], [784, 485, 0x72bb2f, 10], [784, 602, 0x71ba2f, 10]]
 	SetLog("Using Quick Train Tab", $COLOR_INFO)
 	If Not $g_bRunState Then Return
 
-	If IsArmyWindow(False, $QuickTrainTAB) Then
-		For $Num = 0 To 2
-			If $Army[$Num] Then
-				Local $iClick = 2, $sLog = ""
-				If $Num = 2 Then $iClick = $iMultiClick
-				If $iClick > 2 Then $sLog = ", Multi-click x" & $iClick & " times"
-
-				If _ColorCheck(_GetPixelColor($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], True), Hex($a_TrainArmy[$Num][2], 6), $a_TrainArmy[$Num][3]) Then
-					Click($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], $iClick)
-					SetLog(" - Making the Army " & $Num + 1 & $sLog, $COLOR_INFO)
-					If _Sleep(500) Then Return
-				Else
-					SetLog(" - Error Clicking On Army: " & $Num + 1 & "| Pixel was :" & _GetPixelColor($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], True), $COLOR_ACTION)
-					SetLog(" - Please 'edit' the Army " & $Num + 1 & " before start the BOT!!!", $COLOR_ERROR)
-				EndIf
+	For $Num = 0 To 2
+		If $Army[$Num] Then
+			If _ColorCheck(_GetPixelColor($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], True), Hex($a_TrainArmy[$Num][2], 6), $a_TrainArmy[$Num][3]) Then
+				Click($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], 1)
+				SetLog(" - Making the Army " & $Num + 1, $COLOR_INFO)
+				If _Sleep(500) Then Return
+			Else
+				SetLog(" - Error Clicking On Army: " & $Num + 1 & "| Pixel was :" & _GetPixelColor($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], True), $COLOR_ACTION)
+				SetLog(" - Please 'edit' the Army " & $Num + 1 & " before start the BOT!!!", $COLOR_ERROR)
 			EndIf
-		Next
-	Else
-		SetLog(" - Error Clicking On Army! You are not on the Quicktrain Tab", $COLOR_ERROR)
-	EndIf
+		EndIf
+	Next
 
 EndFunc   ;==>TrainArmyNumber
 
@@ -1782,17 +1774,17 @@ Func DeleteQueued($sArmyTypeQueued, $iOffsetQueued = 802)
 		If Not $g_bRunState Then Return
 		Click($iOffsetQueued + 24, 202, 2, 50)
 		$x += 1
-		If $x = 270 Then ExitLoop
+		If $x = 290 Then ExitLoop
 	WEnd
 EndFunc   ;==>DeleteQueued
 
 Func MakingDonatedTroops()
 	; notes $avDefaultTroopGroup[19][0] = TroopName | [1] = TroopNamePosition | [2] = TroopHeight | [3] = Times | [4] = qty | [5] = marker for DarkTroop or ElixerTroop]
-	Local $avDefaultTroopGroup[19][6] = [ _
-			["Arch", 1, 1, 25, 0, "e"], ["Giant", 2, 5, 120, 0, "e"], ["Wall", 4, 2, 60, 0, "e"], ["Barb", 0, 1, 20, 0, "e"], ["Gobl", 3, 1, 30, 0, "e"], ["Heal", 7, 14, 600, 0, "e"], _
-			["Pekk", 9, 25, 900, 0, "e"], ["Ball", 5, 5, 300, 0, "e"], ["Wiza", 6, 4, 300, 0, "e"], ["Drag", 8, 20, 900, 0, "e"], ["BabyD", 10, 10, 600, 0, "e"], ["Mine", 11, 6, 300, 0, "e"], _
-			["Mini", 0, 2, 45, 0, "d"], ["Hogs", 1, 5, 120, 0, "d"], ["Valk", 2, 8, 300, 0, "d"], ["Gole", 3, 30, 900, 0, "d"], ["Witc", 4, 12, 600, 0, "d"], ["Lava", 5, 30, 900, 0, "d"], _
-			["Bowl", 6, 6, 300, 0, "d"]]
+	Local $avDefaultTroopGroup[20][6] = [ _
+			["Arch", 1, 1, 24, 0, "e"], ["Giant", 2, 5, 120, 0, "e"], ["Wall", 4, 2, 60, 0, "e"], ["Barb", 0, 1, 20, 0, "e"], ["Gobl", 3, 1, 28, 0, "e"], ["Heal", 7, 14, 480, 0, "e"], _
+			["Pekk", 9, 25, 720, 0, "e"], ["Ball", 5, 5, 120, 0, "e"], ["Wiza", 6, 4, 120, 0, "e"], ["Drag", 8, 20, 720, 0, "e"], ["BabyD", 10, 10, 360, 0, "e"], ["Mine", 11, 6, 120, 0, "e"], ["EDrag", 12, 30, 1440, 0, "e"], _
+			["Mini", 0, 2, 36, 0, "d"], ["Hogs", 1, 5, 90, 0, "d"], ["Valk", 2, 8, 180, 0, "d"], ["Gole", 3, 30, 600, 0, "d"], ["Witc", 4, 12, 360, 0, "d"], ["Lava", 5, 30, 600, 0, "d"], _
+			["Bowl", 6, 6, 120, 0, "d"]]
 
 	; notes $avDefaultTroopGroup[19][5]
 	; notes $avDefaultTroopGroup[19][0] = TroopName | [1] = TroopNamePosition | [2] = TroopHeight | [3] = Times | [4] = qty | [5] = marker for DarkTroop or ElixerTroop]

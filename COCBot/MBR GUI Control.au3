@@ -720,6 +720,8 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 			tabMod()
 		Case $g_hGUI_BOT_TAB
 			tabBot()
+		Case $g_hGUI_SWITCH_OPTIONS_TAB
+			tabSwitchOptions()
 		Case Else
 			$bCheckEmbeddedShield = False
 	EndSwitch
@@ -1121,6 +1123,7 @@ Func BotGuiModeToggle()
 			GUICtrlDelete($g_hGUI_MOD_TAB)
 			GUICtrlDelete($g_hGUI_BOT_TAB)
 			GUICtrlDelete($g_hGUI_LOG_SA)
+			GUICtrlDelete($g_hGUI_SWITCH_OPTIONS_TAB)
 			GUICtrlDelete($g_hGUI_STATS_TAB)
 
 			For $i = $g_hFirstControlToHide To $g_hLastControlToHide
@@ -1161,6 +1164,7 @@ Func BotGuiModeToggle()
 			tabSEARCH()
 			tabAttack()
 			tabVillage()
+			tabSwitchOptions()
 
 			InitializeMainGUI(True)
 
@@ -1908,6 +1912,8 @@ Func tabMod()
 			; Tab Bot Humanization
 		Case $tabidx = 2
 			; Tab GoblinXP
+		Case $tabidx = 3
+			; Tab War Preparation
 	EndSelect
 EndFunc   ;==>tabMod
 
@@ -1916,27 +1922,38 @@ Func tabBot()
 	Select
 		Case $tabidx = 0 ; Options tab
 			GUISetState(@SW_HIDE, $g_hGUI_STATS)
-			GUISetState(@SW_HIDE, $g_hGUI_LOG_SA)
+			GUISetState(@SW_HIDE, $g_hGUI_SWITCH_OPTIONS)
 			ControlShow("", "", $g_hCmbGUILanguage)
 		Case $tabidx = 1 ; Android tab
 			GUISetState(@SW_HIDE, $g_hGUI_STATS)
-			GUISetState(@SW_HIDE, $g_hGUI_LOG_SA)
+			GUISetState(@SW_HIDE, $g_hGUI_SWITCH_OPTIONS)
 			ControlHide("", "", $g_hCmbGUILanguage)
 		Case $tabidx = 2 ; Debug tab
 			GUISetState(@SW_HIDE, $g_hGUI_STATS)
-			GUISetState(@SW_HIDE, $g_hGUI_LOG_SA)
+			GUISetState(@SW_HIDE, $g_hGUI_SWITCH_OPTIONS)
 			ControlHide("", "", $g_hCmbGUILanguage)
 		Case $tabidx = 3 ; Profiles tab
 			GUISetState(@SW_HIDE, $g_hGUI_STATS)
-			GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_LOG_SA)
+			GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_SWITCH_OPTIONS)
 			ControlHide("", "", $g_hCmbGUILanguage)
+			tabSwitchOptions()
 		Case $tabidx = 4 ; Stats tab
 			GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_STATS)
-			GUISetState(@SW_HIDE, $g_hGUI_LOG_SA)
+			GUISetState(@SW_HIDE, $g_hGUI_SWITCH_OPTIONS)
 			If Not $g_bRunState Then UpdateMultiStats()
 			ControlHide("", "", $g_hCmbGUILanguage)
 	EndSelect
 EndFunc   ;==>tabBot
+
+Func tabSwitchOptions()
+	Local $tabidx = GUICtrlRead($g_hGUI_SWITCH_OPTIONS_TAB)
+	Select
+		Case $tabidx = 0
+			GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_LOG_SA)
+		Case Else
+			GUISetState(@SW_HIDE, $g_hGUI_LOG_SA)
+	EndSelect
+EndFunc   ;==>tabSwitchOptions
 
 Func tabDeadbase()
 	Local $tabidx = GUICtrlRead($g_hGUI_DEADBASE_TAB)
@@ -2007,7 +2024,7 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 	Switch $nCtrl
 		Case $g_hTabMain
 			; the icons for main tab
-			Local $aIconIndex = [$eIcnHourGlass, $eIcnTH11, $eIcnAttack, $eIcnAiOMOD, $eIcnGUI, $eIcnInfo]
+			Local $aIconIndex = [$eIcnHourGlass, $eIcnTH12, $eIcnAttack, $eIcnAiOMOD, $eIcnGUI, $eIcnInfo]
 
 		Case $g_hGUI_VILLAGE_TAB
 			; the icons for village tab
@@ -2018,7 +2035,7 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 			Local $aIconIndex = [$eIcnTrain, $eIcnGem, $eIcnReOrder, $eIcnOptions]
 
 		Case $g_hGUI_MISC_TAB
-			Local $aIconIndex = [$eIcnTH1, $eIcnBuilderHall]
+			Local $aIconIndex = [$eIcnTH1, $eIcnBuilderHall, $eIcnClanGames]
 
 		Case $g_hGUI_DONATE_TAB
 			; the icons for donate tab
@@ -2059,12 +2076,16 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 		; Team AiO MOD++ (2018)
 		Case $g_hGUI_MOD_TAB
 			; the icons for Mods tab
-			Local $aIconIndex = [$eIcnMiscMod, $eIcnHumanization, $eIcnGoblinXP, $eIcnForecast]
+			Local $aIconIndex = [$eIcnMiscMod, $eIcnHumanization, $eIcnGoblinXP, $eIcnWarPreparation]
 
 		Case $g_hGUI_BOT_TAB
 			; the icons for Bot tab
 			Local $aIconIndex = [$eIcnOptions, $eIcnAndroid, $eIcnDebug, $eIcnProfile, $eIcnGold]
 			; The Android Robot is a Google Trademark and follows Creative Common Attribution 3.0
+
+		Case $g_hGUI_SWITCH_OPTIONS_TAB
+			; the icons for Switch Options tab
+			Local $aIconIndex = [$eIcnSwitchAcc, $eIcnFarmingSchedule]
 
 		Case $g_hGUI_STRATEGIES_TAB
 			; the icons for strategies tab

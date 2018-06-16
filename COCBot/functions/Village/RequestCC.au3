@@ -15,11 +15,33 @@
 
 Func RequestCC($ClickPAtEnd = True, $specifyText = "")
 
-	If Not $g_bRequestTroopsEnable Or Not $g_bCanRequestCC Or Not $g_bDonationEnabled Then
+	; Request troops for defense - Team AiO MOD++
+	Local $bRequestDefense = False
+	If $g_bRequestTroopsEnableDefense And $g_bCanRequestCC Then
+		Local $bRequestDefenseEarly = False
+		If $g_asShieldStatus[0] = "shield" Then
+			If _DateIsValid($g_asShieldStatus[2]) Then
+				Local $iTimeTillShieldExpireMin = Int(_DateDiff('n', _NowCalc(), $g_asShieldStatus[2])) ; time in minutes
+				SetDebugLog("Shield expires in: " & $iTimeTillShieldExpireMin & " Minutes")
+				$bRequestDefenseEarly = ($iTimeTillShieldExpireMin <= $g_iRequestDefenseEarly)
+			EndIf
+		EndIf
+		$bRequestDefense = $g_asShieldStatus[0] = "guard" Or $g_asShieldStatus[0] = "none" Or $bRequestDefenseEarly
+		If $bRequestDefense Then
+			SetLog(($bRequestDefenseEarly ? "Shield is about to expire!" : "No shield!") & " Request troops for defense", $COLOR_INFO)
+			$g_sRequestTroopsText = $g_sRequestTroopsTextDefense
+			SetDebugLog("$g_sRequestTroopsText is now: " & $g_sRequestTroopsText)
+		Else
+			$g_sRequestTroopsText = IniRead($g_sProfileConfigPath, "donate", "txtRequest", "")
+			SetDebugLog("Reload $g_sRequestTroopsText: " & $g_sRequestTroopsText)
+		EndIf
+	EndIf
+
+	If (Not $g_bRequestTroopsEnable Or Not $g_bCanRequestCC Or Not $g_bDonationEnabled) And Not $bRequestDefense Then
 		Return
 	EndIf
 
-	If $g_bRequestTroopsEnable Then
+	If $g_bRequestTroopsEnable And Not $bRequestDefense Then
 		Local $hour = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
 		If $g_abRequestCCHours[$hour[0]] = False Then
 			SetLog("Request Clan Castle troops not planned, Skipped..", $COLOR_ACTION)

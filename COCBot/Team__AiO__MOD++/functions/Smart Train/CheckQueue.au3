@@ -45,7 +45,7 @@ Func CheckQueue(ByRef $eTrainMethod_0, $sText = "Troops")
 			If Not $g_bRunState Then Return
 			PureClick($CheckTroop[0] - 11 * 70, 202, 2, 50)
 			$x += 1
-			If $x = 270 Then ExitLoop
+			If $x = 290 Then ExitLoop
 		WEnd
 	EndIf
 
@@ -85,7 +85,7 @@ Func CheckQueue(ByRef $eTrainMethod_0, $sText = "Troops")
 	EndIf
 
 	; Check block troop
-	Local $NewCampOCR = GetOCRCurrent(43, 160)
+	Local $NewCampOCR = GetOCRCurrent(48, 160)
 	If $NewCampOCR[0] < $NewCampOCR[1] + $iTotalQueue Then
 		SetLog("A big guy blocks our camp", $COLOR_ACTION)
 		ClearTrainingArmyCamp()
@@ -134,7 +134,7 @@ Func DeleteQueue($sText = "Troops")
 				PureClick($CheckTroop[0] - $i * 70, 202, 2, 50)
 				$x += 1
 				If $sText = "Troops" Then
-					If $x = 270 Then ExitLoop
+					If $x = 290 Then ExitLoop
 				ElseIf $sText = "Spells" Then
 					If $x = 22 Then ExitLoop
 				EndIf

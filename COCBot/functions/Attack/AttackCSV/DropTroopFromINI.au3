@@ -78,26 +78,28 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 	Local $bHeroDrop = ($iTroopIndex = $eWarden ? True : False) ;set flag TRUE if Warden was dropped
 
 	;search slot where is the troop...
-	Local $troopPosition = -1
-	Local $troopCount = -1
+	Local $troopPosition = -1, $troopSlotConst = -1 ; $troopSlotConst = xx/22 (the unique slot number of troop) - Slot11 - Demen_S11_#9003
 	For $i = 0 To UBound($g_avAttackTroops) - 1
-		If $g_avAttackTroops[$i][0] = $iTroopIndex And $g_avAttackTroops[$i][1] >= $troopCount Then
-			$troopPosition = $i
-			$troopCount = $g_avAttackTroops[$i][1]
+		If $g_avAttackTroops[$i][0] = $iTroopIndex And $g_avAttackTroops[$i][1] > 0 Then
+			debugAttackCSV("Found troop position " & $i & ". " & $troopName & " x" & $g_avAttackTroops[$i][1])
+			$troopSlotConst = $i
+			$troopPosition = $troopSlotConst
+			ExitLoop
 		EndIf
 	Next
 
-	; ExtendedAttackBar - Team AiO MOD++
-	debugAttackCSV("Troop position / Total slots: " & $troopPosition & " / " & $g_iTotalAttackSlot)
-	If $troopPosition >= 0 And $troopPosition < $g_iTotalAttackSlot - 10 Then ; can only be selected when in 1st page of troopbar
+	; Slot11 - Team AiO MOD++
+	debugAttackCSV("Troop position / Total slots: " & $troopSlotConst & " / " & $g_iTotalAttackSlot)
+	If $troopSlotConst >= 0 And $troopSlotConst < $g_iTotalAttackSlot - 10 Then ; can only be selected when in 1st page of troopbar
 		If $g_bDraggedAttackBar Then DragAttackBar($g_iTotalAttackSlot, True) ; return drag
-	ElseIf $troopPosition > 10 Then ; can only be selected when in 2nd page of troopbar
+	ElseIf $troopSlotConst > 10 Then ; can only be selected when in 2nd page of troopbar
 		If $g_bDraggedAttackBar = False Then DragAttackBar($g_iTotalAttackSlot, False) ; drag forward
 	EndIf
-	If $g_bDraggedAttackBar Then
-		$troopPosition -= $g_iTotalAttackSlot - 10
+	If $g_bDraggedAttackBar And $troopPosition > -1 Then
+		$troopPosition = $troopSlotConst - ($g_iTotalAttackSlot - 10)
 		debugAttackCSV("New troop position: " & $troopPosition)
 	EndIf
+	; Slot11 - Team AiO MOD++
 
 	Local $usespell = True
 	Switch $iTroopIndex
@@ -183,8 +185,6 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 					$delayDrop = $delayDropMin
 				EndIf
 				debugAttackCSV(">> delay change drop point: " & $delayDrop)
-				$delayDrop = Int($delayDrop / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
-				debugAttackCSV(">> delay change drop point: " & $delayDrop & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
 			EndIf
 
 			For $j = 1 To $numbersOfVectors
@@ -218,25 +218,25 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 							If $debug = True Then
 								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", " & $g_iKingSlot & ", -1, -1) ")
 							Else
-								dropHeroes($pixel[0], $pixel[1], $troopPosition, -1, -1) ; was $g_iKingSlot, Demen - ExtendedAttackBar - Team AiO MOD++
+								dropHeroes($pixel[0], $pixel[1], $troopPosition, -1, -1) ; was $g_iKingSlot, Team AiO MOD++
 							EndIf
 						Case $eQueen
 							If $debug = True Then
 								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ",-1," & $g_iQueenSlot & ", -1) ")
 							Else
-								dropHeroes($pixel[0], $pixel[1], -1, $troopPosition, -1) ; was $g_iQueenSlot, Demen - ExtendedAttackBar - Team AiO MOD++
+								dropHeroes($pixel[0], $pixel[1], -1, $troopPosition, -1) ; was $g_iQueenSlot, Team AiO MOD++
 							EndIf
 						Case $eWarden
 							If $debug = True Then
 								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", -1, -1," & $g_iWardenSlot & ") ")
 							Else
-								dropHeroes($pixel[0], $pixel[1], -1, -1, $troopPosition) ; was $g_iWardenSlot, Demen - ExtendedAttackBar - Team AiO MOD++
+								dropHeroes($pixel[0], $pixel[1], -1, -1, $troopPosition) ; was $g_iWardenSlot, Team AiO MOD++
 							EndIf
 						Case $eCastle
 							If $debug = True Then
 								SetLog("dropCC(" & $pixel[0] & ", " & $pixel[1] & ", " & $g_iClanCastleSlot & ")")
 							Else
-								dropCC($pixel[0], $pixel[1], $troopPosition) ; was $g_iClanCastleSlot, Demen - ExtendedAttackBar - Team AiO MOD++
+								dropCC($pixel[0], $pixel[1], $troopPosition) ; was $g_iClanCastleSlot, Team AiO MOD++
 							EndIf
 						Case $eLSpell To $eSkSpell
 							If $debug = True Then
@@ -245,7 +245,10 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 								AttackClick($pixel[0], $pixel[1], $qty2, $delayPoint, $delayDropLast, "#0667")
 							EndIf
 							; assume spells get always dropped: adjust count so CC spells can be used without recalc
-							If UBound($g_avAttackTroops) > $troopPosition And $g_avAttackTroops[$troopPosition][1] > 0 Then $g_avAttackTroops[$troopPosition][1] -= 1
+							If UBound($g_avAttackTroops) > $troopSlotConst And $g_avAttackTroops[$troopSlotConst][1] > 0 And $qty2 > 0 Then ; Slot11 - Team AiO MOD++
+								$g_avAttackTroops[$troopSlotConst][1] -= $qty2
+								debugAttackCSV("Adjust quantity of spell use: " & $g_avAttackTroops[$troopSlotConst][0] & " x" & $g_avAttackTroops[$troopSlotConst][1])
+							EndIf
 						Case Else
 							SetLog("Error parsing line")
 					EndSwitch

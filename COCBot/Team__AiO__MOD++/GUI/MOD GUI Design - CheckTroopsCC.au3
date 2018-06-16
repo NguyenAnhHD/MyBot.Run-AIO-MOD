@@ -16,8 +16,8 @@ Global $g_ahPicCCSlot[5] = [0, 0, 0, 0, 0], $g_ahCmbCCSlot[5] = [0, 0, 0, 0, 0],
 
 Func GUIControlCheckCC()
 
-	Local $aIcons[30] = [$eIcnDonBarbarian, $eIcnDonArcher, $eIcnDonGiant, $eIcnDonGoblin, $eIcnDonWallBreaker, $eIcnDonBalloon, _
-			$eIcnDonWizard, $eIcnDonHealer, $eIcnDonDragon, $eIcnDonPekka, $eIcnDonBabyDragon, $eIcnDonMiner, $eIcnDonMinion, _
+	Local $aIcons[31] = [$eIcnDonBarbarian, $eIcnDonArcher, $eIcnDonGiant, $eIcnDonGoblin, $eIcnDonWallBreaker, $eIcnDonBalloon, _
+			$eIcnDonWizard, $eIcnDonHealer, $eIcnDonDragon, $eIcnDonPekka, $eIcnDonBabyDragon, $eIcnDonMiner, $eIcnElectroDragon, $eIcnDonMinion, _
 			$eIcnDonHogRider, $eIcnDonValkyrie, $eIcnDonGolem, $eIcnDonWitch, $eIcnDonLavaHound, $eIcnDonBowler, $eIcnDonBlank, _
 			$eIcnLightSpell, $eIcnHealSpell, $eIcnRageSpell, $eIcnJumpSpell, $eIcnFreezeSpell, _
 			$eIcnPoisonSpell, $eIcnEarthQuakeSpell, $eIcnHasteSpell, $eIcnSkeletonSpell, $eIcnDonBlank]
@@ -35,7 +35,7 @@ Func GUIControlCheckCC()
 		If $i < 3 And ($CmbSel = 0 Or $CmbSel = 1 Or $CmbSel = 3 Or $CmbSel = 4 Or $CmbSel = 12) Then $Limit = 2
 		If $Limit = 1 And $TxtCC >= 10 Then GUICtrlSetData($g_ahTxtCCSlot[$i], 0)
 		GUICtrlSetLimit($g_ahTxtCCSlot[$i], $Limit)
-		If $i >= 3 Then $CmbSel += 20
+		If $i >= 3 Then $CmbSel += 21
 		If $CmbSel <> $aIcons[$CmbSel] Then _GUICtrlSetImage($g_ahPicCCSlot[$i], $g_sLibIconPath, $aIcons[$CmbSel])
 	Next
 
@@ -115,8 +115,8 @@ Func GUIControlCheckCC()
 EndFunc   ;==>GUIControlCheckCC
 
 Func CreateGUICheckCC()
-	Local $x = 100, $y = 80, $sCmbList = ""
-	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "Group", "CC Troop && Spell expectation"), $x, $y, 325, 200)
+	Local $x = 100, $y = 90, $sCmbList = ""
+	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "Group", "CC Troop && Spell expectation"), $x, $y, 325, 195)
 	$y += 25
 	$x += 5
 

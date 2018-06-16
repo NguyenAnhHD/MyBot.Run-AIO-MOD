@@ -14,13 +14,13 @@
 #Au3Stripper_Off
 #pragma compile(Icon, "Images\MyBot.ico")
 #pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
-#pragma compile(ProductVersion, 7.5.1)
-#pragma compile(FileVersion, 7.5.1)
+#pragma compile(ProductVersion, 7.5.2)
+#pragma compile(FileVersion, 7.5.2)
 #pragma compile(LegalCopyright, © https://mybot.run)
 #Au3Stripper_On
 
-Global $g_sBotVersion = "v7.5.1" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
+Global $g_sBotVersion = "v7.5.2" ;~ Don't add more here, but below. Version can't be longer than vX.y.z because it is also use on Checkversion()
 
 ; Check Version - Team AiO MOD++
-Global $g_sModversion = "v1.8.2" ;<== Just Change This to Version Number
+Global $g_sModversion = "v1.8.3" ;<== Just Change This to Version Number
 Global $g_sModSupportUrl = "https://github.com/NguyenAnhHD/MyBot.Run-AIO-MOD/releases" ;<== Our Website Link Download

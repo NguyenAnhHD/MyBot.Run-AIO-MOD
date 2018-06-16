@@ -29,30 +29,34 @@ Func SmartTrain()
 		If $bRemoveUnpreciseTroops Then SetLog("Continue Smart Train...!")
 
 		; Troops tab
-		$aeTrainMethod = CheckTrainingTab("Troops")
-		If @error Then ExitLoop
-		If IsArray($aeTrainMethod) Then
-			If $aeTrainMethod[0] = $g_eRemained And Not $bRemoveUnpreciseTroops Then
-				$bCheckWrongArmyCamp = True
-			ElseIf Not $g_bQuickTrainEnable Then
-				MakeCustomTrain("Troops", $aeTrainMethod)
-				If @error Then ExitLoop
-				$aeTrainMethod[0] = $g_eNoTrain
-				$aeTrainMethod[1] = $g_eNoTrain
+		If $g_iTotalCampSpace <> 0 Then
+			$aeTrainMethod = CheckTrainingTab("Troops")
+			If @error Then ExitLoop
+			If IsArray($aeTrainMethod) Then
+				If $aeTrainMethod[0] = $g_eRemained And Not $bRemoveUnpreciseTroops Then
+					$bCheckWrongArmyCamp = True
+				ElseIf Not $g_bQuickTrainEnable Then
+					MakeCustomTrain("Troops", $aeTrainMethod)
+					If @error Then ExitLoop
+					$aeTrainMethod[0] = $g_eNoTrain
+					$aeTrainMethod[1] = $g_eNoTrain
+				EndIf
 			EndIf
 		EndIf
 
 		; Spells tab
-		$aeBrewMethod = CheckTrainingTab("Spells")
-		If @error Then ExitLoop
-		If IsArray($aeBrewMethod) Then
-			If $aeBrewMethod[0] = $g_eRemained And Not $bRemoveUnpreciseTroops Then
-				$bCheckWrongSpells = True
-			ElseIf Not $g_bQuickTrainEnable Then
-				MakeCustomTrain("Spells", $aeBrewMethod)
-				If @error Then ExitLoop
-				$aeBrewMethod[0] = $g_eNoTrain
-				$aeBrewMethod[1] = $g_eNoTrain
+		If $g_iTotalSpellValue <> 0 Then
+			$aeBrewMethod = CheckTrainingTab("Spells")
+			If @error Then ExitLoop
+			If IsArray($aeBrewMethod) Then
+				If $aeBrewMethod[0] = $g_eRemained And Not $bRemoveUnpreciseTroops Then
+					$bCheckWrongSpells = True
+				ElseIf Not $g_bQuickTrainEnable Then
+					MakeCustomTrain("Spells", $aeBrewMethod)
+					If @error Then ExitLoop
+					$aeBrewMethod[0] = $g_eNoTrain
+					$aeBrewMethod[1] = $g_eNoTrain
+				EndIf
 			EndIf
 		EndIf
 

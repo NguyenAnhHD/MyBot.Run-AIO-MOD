@@ -103,10 +103,6 @@ Func ApplyConfig_MOD($TypeReadSave)
 			chkTrainLogoutMaxTime()
 			GUICtrlSetData($g_hTxtTrainLogoutMaxTime, $g_iTrainLogoutMaxTime)
 
-			; ExtendedAttackBar - Team AiO MOD++
-			GUICtrlSetState($g_hChkExtendedAttackBarDB, $g_abChkExtendedAttackBar[$DB] ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_hChkExtendedAttackBarLB, $g_abChkExtendedAttackBar[$LB] ? $GUI_CHECKED : $GUI_UNCHECKED)
-
 			; Request CC Troops at first - Team AiO MOD++
 			GUICtrlSetState($g_hChkReqCCFirst, $g_bReqCCFirst = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 
@@ -152,6 +148,35 @@ Func ApplyConfig_MOD($TypeReadSave)
 
 			; Attack Log - Team AiO MOD++
 			GUICtrlSetState($g_hChkColorfulAttackLog, $g_bColorfulAttackLog ? $GUI_CHECKED : $GUI_UNCHECKED)
+
+			; Stop For War - Team AiO MOD++
+			GUICtrlSetState($g_hChkStopForWar, $g_bStopForWar ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($g_hCmbStopTime, $g_iStopTime)
+			_GUICtrlComboBox_SetCurSel($g_CmbStopBeforeBattle, $g_bStopBeforeBattle ? 0 : 1)
+			_GUICtrlComboBox_SetCurSel($g_hCmbReturnTime, $g_iReturnTime)
+
+			GUICtrlSetState($g_hChkTrainWarTroop, $g_bTrainWarTroop ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkUseQuickTrainWar, $g_bUseQuickTrainWar ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_ahChkArmyWar[0], $g_aChkArmyWar[0] ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_ahChkArmyWar[1], $g_aChkArmyWar[1] ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_ahChkArmyWar[2], $g_aChkArmyWar[2] ? $GUI_CHECKED : $GUI_UNCHECKED)
+
+			For $i = 0 To $eTroopCount - 1
+				GUICtrlSetData($g_ahTxtTrainWarTroopCount[$i], $g_aiWarCompTroops[$i])
+			Next
+			For $j = 0 To $eSpellCount - 1
+				GUICtrlSetData($g_ahTxtTrainWarSpellCount[$j], $g_aiWarCompSpells[$j])
+			Next
+			GUICtrlSetState($g_hChkRequestCCForWar, $g_bRequestCCForWar ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetData($g_hTxtRequestCCForWar, $g_sTxtRequestCCForWar)
+			ReadConfig_600_52_2()
+			ChkStopForWar()
+
+			; Request troops for defense - Team AiO MOD++
+			GUICtrlSetState($g_hChkRequestTroopsEnableDefense, $g_bRequestTroopsEnableDefense ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkRequestDefense()
+			GUICtrlSetData($g_hTxtRequestCCDefense, $g_sRequestTroopsTextDefense)
+			GUICtrlSetData($g_hTxtRequestDefenseEarly, $g_iRequestDefenseEarly)
 
 		Case "Save"
 			; CSV Deploy Speed - Team AiO MOD++
@@ -224,10 +249,6 @@ Func ApplyConfig_MOD($TypeReadSave)
 			$g_bTrainLogoutMaxTime = (GUICtrlRead($g_hChkTrainLogoutMaxTime) = $GUI_CHECKED)
 			$g_iTrainLogoutMaxTime = GUICtrlRead($g_hTxtTrainLogoutMaxTime)
 
-			; ExtendedAttackBar - Team AiO MOD++
-			$g_abChkExtendedAttackBar[$DB] = GUICtrlRead($g_hChkExtendedAttackBarDB) = $GUI_CHECKED ? True : False
-			$g_abChkExtendedAttackBar[$LB] = GUICtrlRead($g_hChkExtendedAttackBarLB) = $GUI_CHECKED ? True : False
-
 			; Request CC Troops at first - Team AiO MOD++
 			$g_bReqCCFirst = (GUICtrlRead($g_hChkReqCCFirst) = $GUI_CHECKED)
 
@@ -262,6 +283,33 @@ Func ApplyConfig_MOD($TypeReadSave)
 
 			; Attack Log - Team AiO MOD++
 			$g_bColorfulAttackLog = (GUICtrlRead($g_hChkColorfulAttackLog) = $GUI_CHECKED)
+
+			; Stop For War - Team AiO MOD++
+			$g_bStopForWar = GUICtrlRead($g_hChkStopForWar)  = $GUI_CHECKED
+
+			$g_iStopTime = _GUICtrlComboBox_GetCurSel($g_hCmbStopTime)
+			$g_bStopBeforeBattle = _GUICtrlComboBox_GetCurSel($g_CmbStopBeforeBattle) = 0
+			$g_iReturnTime = _GUICtrlComboBox_GetCurSel($g_hCmbReturnTime)
+
+			$g_bTrainWarTroop = GUICtrlRead($g_hChkTrainWarTroop) = $GUI_CHECKED
+			$g_bUseQuickTrainWar = GUICtrlRead($g_hChkUseQuickTrainWar) = $GUI_CHECKED
+			$g_aChkArmyWar[0] = GUICtrlRead($g_ahChkArmyWar[0]) = $GUI_CHECKED
+			$g_aChkArmyWar[1] = GUICtrlRead($g_ahChkArmyWar[1]) = $GUI_CHECKED
+			$g_aChkArmyWar[2] = GUICtrlRead($g_ahChkArmyWar[2]) = $GUI_CHECKED
+			For $i = 0 To $eTroopCount - 1
+				$g_aiWarCompTroops[$i] = GUICtrlRead($g_ahTxtTrainWarTroopCount[$i])
+			Next
+			For $j = 0 To $eSpellCount - 1
+				$g_aiWarCompSpells[$j] = GUICtrlRead($g_ahTxtTrainWarSpellCount[$j])
+			Next
+
+			$g_bRequestCCForWar = GUICtrlRead($g_hChkRequestCCForWar) = $GUI_CHECKED
+			$g_sTxtRequestCCForWar = GUICtrlRead($g_hTxtRequestCCForWar)
+
+			; Request troops for defense - Team AiO MOD++
+			$g_bRequestTroopsEnableDefense = (GUICtrlRead($g_hChkRequestTroopsEnableDefense) = $GUI_CHECKED)
+			$g_sRequestTroopsTextDefense = GUICtrlRead($g_hTxtRequestCCDefense)
+			$g_iRequestDefenseEarly = GUICtrlRead($g_hTxtRequestDefenseEarly)
 
 	EndSwitch
 EndFunc   ;==>ApplyConfig_MOD

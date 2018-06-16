@@ -28,6 +28,19 @@
 	; $g_bChkCollect = (GUICtrlRead($g_hChkCollect) = $GUI_CHECKED)
 ; EndFunc   ;==>ChkCollect
 
+; Request troops for defense - Team AiO MOD++
+Func chkRequestDefense()
+	If GUICtrlRead($g_hChkRequestTroopsEnableDefense) = $GUI_CHECKED Then
+		For $i = $g_hTxtRequestCCDefense To $g_hTxtRequestDefenseEarly
+			GUICtrlSetState($i, $GUI_ENABLE)
+		Next
+	Else
+		For $i = $g_hTxtRequestCCDefense To $g_hTxtRequestDefenseEarly
+			GUICtrlSetState($i, $GUI_DISABLE)
+		Next
+	EndIf
+EndFunc   ;==>chkRequestDefense
+
 Func chkRequestCCHours()
 	Local $bWasRedraw = SetRedrawBotWindow(False, Default, Default, Default, "chkRequestCCHours")
 

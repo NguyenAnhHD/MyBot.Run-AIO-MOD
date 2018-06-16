@@ -707,6 +707,7 @@ Func runBot() ;Bot that runs everything in order
 			If $g_bRestart = True Then ContinueLoop
 			If _Sleep($DELAYRUNBOT3) Then Return
 			VillageReport()
+			CheckFarmSchedule()
 			If $g_bOutOfGold = True And (Number($g_aiCurrentLoot[$eLootGold]) >= Number($g_iTxtRestartGold)) Then ; check if enough gold to begin searching again
 				$g_bOutOfGold = False ; reset out of gold flag
 				SetLog("Switching back to normal after no gold to search ...", $COLOR_SUCCESS)
@@ -729,7 +730,7 @@ Func runBot() ;Bot that runs everything in order
 				If _Sleep($DELAYRUNBOT1) = False Then checkMainScreen(False)
 			EndIf
 
-			Local $aRndFuncList = ['Collect', 'CheckTombs', 'ReArm', 'CleanYard']
+			Local $aRndFuncList = ['LabCheck', 'Collect', 'CheckTombs', 'ReArm', 'CleanYard']
 			While 1
 				If $g_bRunState = False Then Return
 				If $g_bRestart = True Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
@@ -1181,6 +1182,10 @@ Func _RunFunction($action)
 			BoostKing()
 			BoostQueen()
 			BoostWarden()
+		Case "LabCheck"
+			Setlog("Checking Lab Status", $COLOR_INFO)
+			LabGuiDisplay()
+			_Sleep($DELAYRUNBOT3)
 		Case "RequestCC"
 			If $g_bChkClanHop Then Return ; ClanHop - Team AiO MOD++
 			If Not $g_bReqCCFirst Then ; Request CC Troops at first - Team AiO MOD++

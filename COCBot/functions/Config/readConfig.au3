@@ -413,6 +413,7 @@ Func ReadConfig_600_6()
 	IniReadS($g_bChkClanGamesMisc, $g_sProfileConfigPath, "other", "ChkClanGamesMisc", False, "Bool")
 
 	IniReadS($g_bChkClanGamesEnabled, $g_sProfileConfigPath, "other", "ChkClanGamesEnabled", False, "Bool")
+	IniReadS($g_bChkClanGamesOnly, $g_sProfileConfigPath, "other", "ChkClanGamesOnly", False, "Bool")
 	IniReadS($g_bChkClanGamesPurge, $g_sProfileConfigPath, "other", "ChkClanGamesPurge", False, "Bool")
 	IniReadS($g_bChkClanGamesStopBeforeReachAndPurge, $g_sProfileConfigPath, "other", "ChkClanGamesStopBeforeReachAndPurge", False, "Bool")
 	IniReadS($g_bChkClanGamesDebug, $g_sProfileConfigPath, "other", "ChkClanGamesDebug", False, "Bool")
@@ -504,6 +505,9 @@ Func ReadConfig_600_12()
 
 	$g_asTxtDonateTroop[$eTroopMiner] = StringReplace(IniRead($g_sProfileConfigPath, "donate", "txtDonateMiners", "miner|mine"), "|", @CRLF)
 	$g_asTxtBlacklistTroop[$eTroopMiner] = StringReplace(IniRead($g_sProfileConfigPath, "donate", "txtBlacklistMiners", "no miner|miner no|no mine|mine no"), "|", @CRLF)
+
+	$g_asTxtDonateTroop[$eTroopElectroDragon] = StringReplace(IniRead($g_sProfileConfigPath, "donate", "txtDonateElectroDragons", "electro dragon|electrodrag|edrag"), "|", @CRLF)
+	$g_asTxtBlacklistTroop[$eTroopElectroDragon] = StringReplace(IniRead($g_sProfileConfigPath, "donate", "txtBlacklistElectroDragons", "no electro dragon|electrodrag no|edrag no"), "|", @CRLF)
 
 	$g_asTxtDonateTroop[$eTroopMinion] = StringReplace(IniRead($g_sProfileConfigPath, "donate", "txtDonateMinions", "minions|minion"), "|", @CRLF)
 	$g_asTxtBlacklistTroop[$eTroopMinion] = StringReplace(IniRead($g_sProfileConfigPath, "donate", "txtBlacklistMinions", "no minion|minions no"), "|", @CRLF)
@@ -664,7 +668,7 @@ Func ReadConfig_600_17()
 	IniReadS($g_iUpgradeWallLootType, $g_sProfileConfigPath, "upgrade", "use-storage", 0, "int")
 	IniReadS($g_bUpgradeWallSaveBuilder, $g_sProfileConfigPath, "upgrade", "savebldr", False, "Bool")
 	IniReadS($g_iCmbUpgradeWallsLevel, $g_sProfileConfigPath, "upgrade", "walllvl", 6, "int")
-	For $i = 4 To 12
+	For $i = 4 To 13
 		IniReadS($g_aiWallsCurrentCount[$i], $g_sProfileConfigPath, "Walls", "Wall" & StringFormat("%02d", $i), 0, "int")
 	Next
 	IniReadS($g_iWallCost, $g_sProfileConfigPath, "upgrade", "WallCost", 0, "int")
@@ -1231,7 +1235,21 @@ Func ReadConfig_SwitchAccounts()
 		For $i = 1 To 8
 			$g_abAccountNo[$i - 1] = IniRead($sSwitchAccFile, "SwitchAccount", "AccountNo." & $i, "") = "1"
 			$g_asProfileName[$i - 1] = IniRead($sSwitchAccFile, "SwitchAccount", "ProfileName." & $i, "")
-			$g_abDonateOnly[$i - 1] = IniRead($sSwitchAccFile, "SwitchAccount", "DonateOnly." & $i, "0") = "1"
+			$g_abDonateOnly[$i - 1] = $g_abAccountNo[$i - 1] And IniRead($sSwitchAccFile, "SwitchAccount", "DonateOnly." & $i, "0") = "1"
+
+			;FarmSchedule
+			$g_abChkSetFarm[$i - 1] = IniRead($sSwitchAccFile, "FarmStrategy", "ChkSetFarm" & $i, "0") = "1"
+
+			$g_aiCmbAction1[$i - 1] = Int(IniRead($sSwitchAccFile, "FarmStrategy", "CmbAction1" & $i, 0))
+			$g_aiCmbCriteria1[$i - 1] = Int(IniRead($sSwitchAccFile, "FarmStrategy", "CmbCriteria1" & $i, 0))
+			$g_aiTxtResource1[$i - 1] = Int(IniRead($sSwitchAccFile, "FarmStrategy", "TxtResource1" & $i, 0))
+			$g_aiCmbTime1[$i - 1] = Int(IniRead($sSwitchAccFile, "FarmStrategy", "CmbTime1" & $i, -1))
+
+			$g_aiCmbAction2[$i - 1] = Int(IniRead($sSwitchAccFile, "FarmStrategy", "CmbAction2" & $i, 0))
+			$g_aiCmbCriteria2[$i - 1] = Int(IniRead($sSwitchAccFile, "FarmStrategy", "CmbCriteria2" & $i, 0))
+			$g_aiTxtResource2[$i - 1] = Int(IniRead($sSwitchAccFile, "FarmStrategy", "TxtResource2" & $i, 0))
+			$g_aiCmbTime2[$i - 1] = Int(IniRead($sSwitchAccFile, "FarmStrategy", "CmbTime2" & $i, -1))
+
 		Next
 	EndIf
 EndFunc   ;==>ReadConfig_SwitchAccounts

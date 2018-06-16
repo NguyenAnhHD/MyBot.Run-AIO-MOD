@@ -5,7 +5,7 @@
 ; Parameters ....: ---
 ; Return values .: ---
 ; Author ........: ProMac
-; Modified ......: 06/2017
+; Modified ......: 06/2017 , MHK2012(05/2018)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......: ---
@@ -116,6 +116,14 @@ Func TrainGTFO()
 	; Check Resources values
 	StartGainCost()
 
+	; Smart Train - Team AiO MOD++
+	If $g_bChkSmartTrain Then
+		SmartTrain()
+;~ 		ResetVariables("donated")
+		EndGainCost("Train")
+		Return
+	EndIf
+
 	; Is necessary to be Custom Train Troops to be accurate
 	If Not OpenArmyOverview(True, "TrainGTFO()") Then Return
 
@@ -198,8 +206,8 @@ Func DonateGTFO()
 
 	If _Sleep($DELAYRUNBOT3) Then Return
 
-	; Scroll Up
-	ScrollUp()
+;~ 	; Scroll Up
+;~ 	ScrollUp()
 
 	; +++++++++++++++++++++++++++++
 	; MAIN DONATE LOOP ON CLAN CHAT
@@ -210,9 +218,12 @@ Func DonateGTFO()
 		If Not $g_bRunState Then Return
 		If _Sleep($DELAYRUNBOT3) Then Return
 
-		If $y < 620 And $firstrun = False Then
+		If $y < 620 And Not $firstrun Then
 			$y += 30
 		Else
+			; Scroll Up
+			ScrollUp()
+
 			$y = 90
 		EndIf
 
@@ -237,23 +248,27 @@ Func DonateGTFO()
 				$y = $g_aiDonatePixel[1] + 30
 
 				; Open Donate Window
-				If _DonateWindow() = False Then ContinueLoop
+				If Not _DonateWindow() Then ContinueLoop
 
 				; Donate It : Troops & Spells [slot 2] is the Third slot from the left : [0 ,1 ,2 ,3 ,4 ]
-				If DonateIT(0) = True Then $_bReturnT = True ; Donated troops, lets Train it
-				If $g_OutOfTroops = True Then
-					Click(150, 705, 1)
+				If DonateIT(0) Then $_bReturnT = True ; Donated troops, lets Train it
+				If $g_OutOfTroops Then
+					ClickP($aAway, 1, 0, "0")
 					CloseClanChat()
 					Return
 				EndIf
-				If DonateIT(10) = True Then $_bReturnS = True ; Donated Spells , lets Train it
+				If DonateIT(10) Then $_bReturnS = True ; Donated Spells , lets Train it
 
 				; Close Donate Window - Return to Chat
-				Click(150, 705, 1)
+				ClickP($aAway, 1, 0, "1")
 			Else
 				; Doesn't exist Requests lets exits from this loop
-				Click(150, 705, 1)
-				If ScrollDown() Then $y = 200
+;~ 				ClickP($aAway, 1, 0)
+				If ScrollDown() Then
+					$y = 200
+				Else
+					$firstrun = True
+				EndIf
 				ExitLoop
 			EndIf
 
@@ -271,7 +286,7 @@ Func DonateGTFO()
 		WEnd
 
 		; A click just to mantain the 'Game active'
-		Click(150, 705, 1)
+;~ 		ClickP($aAway, 1, 0, "2")
 	WEnd
 
 	AutoItSetOption("MouseClickDelay", 10)
@@ -364,8 +379,9 @@ Func ScrollDown()
 		Click($Scroll[0], $Scroll[1], 1, 0, "#0172")
 		If _Sleep($DELAYDONATECC2) Then Return
 		Return True
+	Else
+		Return False
 	EndIf
-	Return False
 EndFunc   ;==>ScrollDown
 
 Func DonateIT($Slot)

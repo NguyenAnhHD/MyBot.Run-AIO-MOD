@@ -79,10 +79,6 @@ Global $g_iTxtMinSaveGTFO_Elixir = 200000, $g_iTxtMinSaveGTFO_DE = 2000, _
 ; Max logout time - Team AiO MOD++
 Global $g_bTrainLogoutMaxTime = False, $g_iTrainLogoutMaxTime = 4
 
-; ExtendedAttackBar - Team AiO MOD++
-Global $g_hChkExtendedAttackBarLB, $g_hChkExtendedAttackBarDB, $g_abChkExtendedAttackBar[2]
-Global $g_iTotalAttackSlot = 10, $g_bDraggedAttackBar = False ; flag if AttackBar is dragged or not
-
 ; Request CC Troops at first - Team AiO MOD++
 Global $g_bReqCCFirst = False
 
@@ -117,3 +113,19 @@ Global $g_bIsSearchTimeout = False, $g_iSearchTimeout = 10, $g_iTotalSearchTime 
 
 ; Stop on Low battery - Team AiO MOD++
 Global $g_bStopOnBatt = False, $g_iStopOnBatt = 10
+
+; Stop For War - Team AiO MOD++
+Global $g_bStopForWar
+Global $g_iStopTime, $g_bStopBeforeBattle, $g_iReturnTime
+Global $g_iStartTimerToRecheck, $g_iTimerToRecheck, $g_sCheckOrStop
+Global $g_bTrainWarTroop, $g_bUseQuickTrainWar, $g_aChkArmyWar[3], $g_aiWarCompTroops[$eTroopCount], $g_aiWarCompSpells[$eSpellCount]
+Global $g_bRequestCCForWar,	$g_sTxtRequestCCForWar
+Global $g_abStopForWar[8]
+Global $g_aiStartTimerToRecheck[8], $g_aiTimerToRecheck[8], $g_asCheckOrStop[8]
+
+; Slot11 - Team AiO MOD++
+Global $g_abChkExtendedAttackBar[2] = [True, True]
+Global $g_iTotalAttackSlot = 10, $g_bDraggedAttackBar = False ; flag if AttackBar is dragged or not
+
+; Request troops for defense - Team AiO MOD++
+Global $g_bRequestTroopsEnableDefense, $g_sRequestTroopsTextDefense, $g_iRequestDefenseEarly

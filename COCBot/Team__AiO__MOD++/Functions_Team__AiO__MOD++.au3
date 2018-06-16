@@ -51,11 +51,11 @@
 #include "functions\Bot GTFO\GTFO.au3"
 #include "functions\Bot GTFO\KickOut.au3"
 
-; ExtendedAttackBar - Team AiO MOD++ 
-#include "functions\Mod's\ExtendedAttackBarCheck.au3"
-
 ; Smart Train - Team AiO MOD++
 #include "functions\Smart Train\SmartTrain.au3"
 #include "functions\Smart Train\CheckQueue.au3"
 #include "functions\Smart Train\CheckTrainingTab.au3"
 #include "functions\Smart Train\CheckPreciseArmyCamp.au3"
+
+; Stop For War - Team AiO MOD++
+#include "functions\Mod's\CheckStopForWar.au3"

@@ -209,10 +209,19 @@ Func chkSwitchAcc()
 		For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
 			GUICtrlSetState($i, $GUI_ENABLE)
 		Next
+		For $i = 0 To 7
+			GUICtrlSetState($g_ahChkSetFarm[$i], $GUI_ENABLE)
+			_chkSetFarmSchedule($i)
+		Next
 	Else
 		releaseSwitchAccountMutex()
 		For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
 			GUICtrlSetState($i, $GUI_DISABLE)
+		Next
+		For $i = 0 To 7
+			For $j = $g_ahChkSetFarm[$i] To $g_ahCmbTime2[$i]
+				GUICtrlSetState($j, $GUI_DISABLE)
+			Next
 		Next
 	EndIf
 EndFunc   ;==>chkSwitchAcc
@@ -279,7 +288,15 @@ Func _cmbSwitchAcc($bReadSaveConfig = True)
 	For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
 		GUICtrlSetState($i, (($bEnable) ? $GUI_ENABLE : $GUI_DISABLE))
 	Next
+
 	cmbTotalAcc()
+
+	For $i = 0 To 7
+		For $j = $g_ahChkSetFarm[$i] To $g_ahCmbTime2[$i]
+			GUICtrlSetState($j, (($bEnable) ? $GUI_ENABLE : $GUI_DISABLE))
+		Next
+	Next
+
 	$s_bActive = False
 EndFunc   ;==>_cmbSwitchAcc
 
@@ -288,9 +305,16 @@ Func cmbTotalAcc()
 	For $i = 0 To 7
 		If $iCmbTotalAcc >= 0 And $i <= $iCmbTotalAcc Then
 			_GUI_Value_STATE("SHOW", $g_ahChkAccount[$i] & "#" & $g_ahCmbProfile[$i] & "#" & $g_ahChkDonate[$i])
+			For $j = $g_ahChkSetFarm[$i] To $g_ahCmbTime2[$i]
+				GUICtrlSetState($j, $GUI_SHOW)
+			Next
+			_chkSetFarmSchedule($i)
 		ElseIf $i > $iCmbTotalAcc Then
 			GUICtrlSetState($g_ahChkAccount[$i], $GUI_UNCHECKED)
 			_GUI_Value_STATE("HIDE", $g_ahChkAccount[$i] & "#" & $g_ahCmbProfile[$i] & "#" & $g_ahChkDonate[$i])
+			For $j = $g_ahChkSetFarm[$i] To $g_ahCmbTime2[$i]
+				GUICtrlSetState($j, $GUI_HIDE)
+			Next
 		EndIf
 		chkAccount($i)
 	Next
@@ -379,6 +403,78 @@ Func chkAccSwitchMode()
 		$g_bChkSharedPrefs = False
 	EndIf
 EndFunc   ;==>chkAccSwitchMode
+
+; ========== FarmSchedule ============
+Func chkSetFarmSchedule()
+	For $i = 0 To UBound($g_ahChkSetFarm) - 1
+		If @GUI_CtrlId = $g_ahChkSetFarm[$i] Then
+			Return _chkSetFarmSchedule($i)
+		EndIf
+	Next
+EndFunc   ;==>chkSetFarmSchedule
+
+Func _chkSetFarmSchedule($i)
+	If GUICtrlRead($g_ahChkSetFarm[$i]) = $GUI_CHECKED Then
+		_GUI_Value_STATE("ENABLE", $g_ahCmbAction1[$i] & "#" & $g_ahCmbAction2[$i] & "#" & $g_ahCmbCriteria1[$i] & "#" & $g_ahCmbCriteria2[$i])
+		_cmbCriteria1($i)
+		_cmbCriteria2($i)
+	Else
+		_GUI_Value_STATE("DISABLE", $g_ahCmbAction1[$i] & "#" & $g_ahCmbCriteria1[$i] & "#" & $g_ahTxtResource1[$i] & "#" & $g_ahCmbTime1[$i] & "#" & _
+				$g_ahCmbAction2[$i] & "#" & $g_ahCmbCriteria2[$i] & "#" & $g_ahTxtResource2[$i] & "#" & $g_ahCmbTime2[$i])
+	EndIf
+EndFunc   ;==>_chkSetFarmSchedule
+
+Func cmbCriteria1()
+	For $i = 0 To UBound($g_ahCmbCriteria1) - 1
+		If @GUI_CtrlId = $g_ahCmbCriteria1[$i] Then
+			Return _cmbCriteria1($i)
+		EndIf
+	Next
+EndFunc   ;==>cmbCriteria1
+
+Func _cmbCriteria1($i)
+	Local $aiDefaultValue[4] = ["9000000", "9000000", "180000", "5000"]
+	Local $aiDefaultLimit[4] = [9999999, 9999999, 199999, 9999]
+	Local $iCmbCriteria = _GUICtrlComboBox_GetCurSel($g_ahCmbCriteria1[$i])
+	Switch $iCmbCriteria
+		Case 0
+			_GUI_Value_STATE("DISABLE", $g_ahCmbTime1[$i] & "#" & $g_ahTxtResource1[$i])
+		Case 1 To 4
+			GUICtrlSetState($g_ahCmbTime1[$i], $GUI_HIDE)
+			GUICtrlSetState($g_ahTxtResource1[$i], $GUI_SHOW + $GUI_ENABLE)
+			If GUICtrlRead($g_ahTxtResource1[$i]) = "" Or GUICtrlRead($g_ahTxtResource1[$i]) > $aiDefaultLimit[$iCmbCriteria - 1] Then GUICtrlSetData($g_ahTxtResource1[$i], $aiDefaultValue[$iCmbCriteria - 1])
+			GUICtrlSetLimit($g_ahTxtResource1[$i], StringLen($aiDefaultValue[$iCmbCriteria - 1]))
+		Case 5
+			GUICtrlSetState($g_ahTxtResource1[$i], $GUI_HIDE)
+			GUICtrlSetState($g_ahCmbTime1[$i], $GUI_SHOW + $GUI_ENABLE)
+	EndSwitch
+EndFunc   ;==>_cmbCriteria1
+
+Func cmbCriteria2()
+	For $i = 0 To UBound($g_ahCmbCriteria2) - 1
+		If @GUI_CtrlId = $g_ahCmbCriteria2[$i] Then
+			Return _cmbCriteria2($i)
+		EndIf
+	Next
+EndFunc   ;==>cmbCriteria2
+
+Func _cmbCriteria2($i)
+	Local $aiDefaultValue[4] = ["1000000", "1000000", "020000", "3000"]
+	Local $aiDefaultLimit[4] = [9999999, 9999999, 199999, 9999]
+	Local $iCmbCriteria = _GUICtrlComboBox_GetCurSel($g_ahCmbCriteria2[$i])
+	Switch $iCmbCriteria
+		Case 0
+			_GUI_Value_STATE("DISABLE", $g_ahTxtResource2[$i] & "#" & $g_ahCmbTime2[$i])
+		Case 1 To 4
+			GUICtrlSetState($g_ahCmbTime2[$i], $GUI_HIDE)
+			GUICtrlSetState($g_ahTxtResource2[$i], $GUI_SHOW + $GUI_ENABLE)
+			If GUICtrlRead($g_ahTxtResource2[$i]) = "" Or GUICtrlRead($g_ahTxtResource2[$i]) > $aiDefaultLimit[$iCmbCriteria - 1] Then GUICtrlSetData($g_ahTxtResource2[$i], Number($aiDefaultValue[$iCmbCriteria - 1]))
+			GUICtrlSetLimit($g_ahTxtResource2[$i], StringLen($aiDefaultValue[$iCmbCriteria - 1]))
+		Case 5
+			GUICtrlSetState($g_ahTxtResource2[$i], $GUI_HIDE)
+			GUICtrlSetState($g_ahCmbTime2[$i], $GUI_SHOW + $GUI_ENABLE)
+	EndSwitch
+EndFunc   ;==>_cmbCriteria2
 
 ; #DEBUG FUNCTION# ==============================================================================================================
 

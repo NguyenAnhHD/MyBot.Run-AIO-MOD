@@ -320,6 +320,7 @@ Func ApplyConfig_600_6($TypeReadSave)
 			GUICtrlSetState($g_hChkClanGamesGround, $g_bChkClanGamesGround ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkClanGamesMisc, $g_bChkClanGamesMisc ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkClanGamesEnabled, $g_bChkClanGamesEnabled ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkClanGamesOnly, $g_bChkClanGamesOnly ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkClanGamesPurge, $g_bChkClanGamesPurge ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkClanGamesStopBeforeReachAndPurge, $g_bChkClanGamesStopBeforeReachAndPurge ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkClanGamesDebug, $g_bChkClanGamesDebug ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -367,6 +368,7 @@ Func ApplyConfig_600_6($TypeReadSave)
 			$g_bChkClanGamesGround = (GUICtrlRead($g_hChkClanGamesGround) = $GUI_CHECKED) ? 1 : 0
 			$g_bChkClanGamesMisc = (GUICtrlRead($g_hChkClanGamesMisc) = $GUI_CHECKED) ? 1 : 0
 			$g_bChkClanGamesEnabled = (GUICtrlRead($g_hChkClanGamesEnabled) = $GUI_CHECKED) ? 1 : 0
+			$g_bChkClanGamesOnly = (GUICtrlRead($g_hChkClanGamesOnly) = $GUI_CHECKED) ? 1 : 0
 			$g_bChkClanGamesPurge = (GUICtrlRead($g_hChkClanGamesPurge) = $GUI_CHECKED) ? 1 : 0
 			$g_bChkClanGamesStopBeforeReachAndPurge = (GUICtrlRead($g_hChkClanGamesStopBeforeReachAndPurge) = $GUI_CHECKED) ? 1 : 0
 			$g_bChkClanGamesDebug = (GUICtrlRead($g_hChkClanGamesDebug) = $GUI_CHECKED) ? 1 : 0
@@ -701,7 +703,7 @@ Func ApplyConfig_600_17($TypeReadSave)
 			EndSwitch
 			GUICtrlSetState($g_hChkSaveWallBldr, $g_bUpgradeWallSaveBuilder ? $GUI_CHECKED : $GUI_UNCHECKED)
 			_GUICtrlComboBox_SetCurSel($g_hCmbWalls, $g_iCmbUpgradeWallsLevel)
-			For $i = 4 To 12
+			For $i = 4 To 13
 				GUICtrlSetData($g_ahWallsCurrentCount[$i], $g_aiWallsCurrentCount[$i])
 			Next
 			cmbWalls()
@@ -719,7 +721,7 @@ Func ApplyConfig_600_17($TypeReadSave)
 			EndIf
 			$g_bUpgradeWallSaveBuilder = (GUICtrlRead($g_hChkSaveWallBldr) = $GUI_CHECKED)
 			$g_iCmbUpgradeWallsLevel = _GUICtrlComboBox_GetCurSel($g_hCmbWalls)
-			For $i = 4 To 12
+			For $i = 4 To 13
 				$g_aiWallsCurrentCount[$i] = Number(GUICtrlRead($g_ahWallsCurrentCount[$i]))
 			Next
 	EndSwitch
@@ -1972,6 +1974,21 @@ Func ApplyConfig_600_35_2($TypeReadSave)
 	; <><><><> Bot / Profile / Switch Account <><><><>
 	Switch $TypeReadSave
 		Case "Read"
+			;FarmSchedule
+			For $i = 0 To 7
+				GUICtrlSetState($g_ahChkSetFarm[$i], $g_abChkSetFarm[$i] = 1 ? $GUI_CHECKED : $GUI_UNCHECKED)
+
+				_GUICtrlComboBox_SetCurSel($g_ahCmbAction1[$i], $g_aiCmbAction1[$i])
+				_GUICtrlComboBox_SetCurSel($g_ahCmbCriteria1[$i], $g_aiCmbCriteria1[$i])
+				GUICtrlSetData($g_ahTxtResource1[$i], $g_aiTxtResource1[$i])
+				_GUICtrlComboBox_SetCurSel($g_ahCmbTime1[$i], $g_aiCmbTime1[$i])
+
+				_GUICtrlComboBox_SetCurSel($g_ahCmbAction2[$i], $g_aiCmbAction2[$i])
+				_GUICtrlComboBox_SetCurSel($g_ahCmbCriteria2[$i], $g_aiCmbCriteria2[$i])
+				GUICtrlSetData($g_ahTxtResource2[$i], $g_aiTxtResource2[$i])
+				_GUICtrlComboBox_SetCurSel($g_ahCmbTime2[$i], $g_aiCmbTime2[$i])
+			Next
+
 			_GUICtrlComboBox_SetCurSel($g_hCmbSwitchAcc, $g_iCmbSwitchAcc)
 			GUICtrlSetState($g_hChkSwitchAcc, $g_bChkSwitchAcc ? $GUI_CHECKED : $GUI_UNCHECKED)
 			If $g_bChkGooglePlay Then
@@ -2000,6 +2017,21 @@ Func ApplyConfig_600_35_2($TypeReadSave)
 			_GUICtrlComboBox_SetCurSel($g_hCmbTrainTimeToSkip, $g_iTrainTimeToSkip)
 			_cmbSwitchAcc(False)
 		Case "Save"
+			;FarmSchedule
+			For $i = 0 To 7
+				$g_abChkSetFarm[$i] = (GUICtrlRead($g_ahChkSetFarm[$i]) = $GUI_CHECKED)
+
+				$g_aiCmbAction1[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbAction1[$i])
+				$g_aiCmbCriteria1[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbCriteria1[$i])
+				$g_aiTxtResource1[$i] = GUICtrlRead($g_ahTxtResource1[$i])
+				$g_aiCmbTime1[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbTime1[$i])
+
+				$g_aiCmbAction2[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbAction2[$i])
+				$g_aiCmbCriteria2[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbCriteria2[$i])
+				$g_aiTxtResource2[$i] = GUICtrlRead($g_ahTxtResource2[$i])
+				$g_aiCmbTime2[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbTime2[$i])
+			Next
+
 			$g_iCmbSwitchAcc = _GUICtrlComboBox_GetCurSel($g_hCmbSwitchAcc)
 			$g_bChkSwitchAcc = (GUICtrlRead($g_hChkSwitchAcc) = $GUI_CHECKED)
 			$g_bChkGooglePlay = (GUICtrlRead($g_hRadSwitchGooglePlay) = $GUI_CHECKED)
