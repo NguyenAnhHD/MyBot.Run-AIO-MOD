@@ -14,7 +14,7 @@
 ; ===============================================================================================================================
 
 Global $g_hChkStopForWar = 0, $g_hCmbStopTime = 0, $g_CmbStopBeforeBattle = 0, $g_hCmbReturnTime = 0
-Global $g_hChkTrainWarTroop = 0, $g_hChkUseQuickTrainWar, $g_ahChkArmyWar[3], $g_hLblRemoveArmy, $g_ahTxtTrainWarTroopCount[20], $g_ahTxtTrainWarSpellCount[10]
+Global $g_hChkTrainWarTroop = 0, $g_hChkUseQuickTrainWar, $g_ahChkArmyWar[3], $g_hLblRemoveArmyWar, $g_ahTxtTrainWarTroopCount[20], $g_ahTxtTrainWarSpellCount[10]
 Global $g_hCalTotalWarTroops, $g_hLblTotalWarTroopsProgress, $g_hLblCountWarTroopsTotal
 Global $g_hCalTotalWarSpells, $g_hLblTotalWarSpellsProgress, $g_hLblCountWarSpellsTotal
 Global $g_hChkRequestCCForWar = 0, $g_hTxtRequestCCForWar = 0
@@ -62,7 +62,7 @@ Func CreateMiscWarPreparationSubTab()
 				If $i = 0 Then GUICtrlSetState(-1, $GUI_CHECKED)
 				GUICtrlSetOnEvent(-1, "chkQuickTrainComboWar")
 		Next
-		$g_hLblRemoveArmy = GUICtrlCreateLabel("Remove Army", $x + 305, $y + 1, -1, 15, $SS_LEFT)
+		$g_hLblRemoveArmyWar = GUICtrlCreateLabel("Remove Army", $x + 305, $y + 1, -1, 15, $SS_LEFT)
 		_GUICtrlCreateIcon($g_sLibIconPath, $eIcnResetButton, $x + 375, $y - 4, 24, 24)
 			GUICtrlSetOnEvent(-1, "RemovecampWar")
 
@@ -173,14 +173,14 @@ Func chkUseQTrainWar()
 	If GUICtrlRead($g_hChkUseQuickTrainWar) = $GUI_CHECKED Then
 		_GUI_Value_STATE("ENABLE", $g_ahChkArmyWar[0] & "#" & $g_ahChkArmyWar[1] & "#" & $g_ahChkArmyWar[2])
 		chkQuickTrainComboWar()
-		For $i = $g_hLblRemoveArmy To $g_hLblCountWarSpellsTotal
+		For $i = $g_hLblRemoveArmyWar To $g_hLblCountWarSpellsTotal
 			GUICtrlSetState($i, $GUI_DISABLE)
 		Next
 		GUICtrlSetBkColor($g_hLblCountWarTroopsTotal, $COLOR_MONEYGREEN)
 		GUICtrlSetBkColor($g_hLblCountWarSpellsTotal, $COLOR_MONEYGREEN)
 	Else
 		_GUI_Value_STATE("DISABLE", $g_ahChkArmyWar[0] & "#" & $g_ahChkArmyWar[1] & "#" & $g_ahChkArmyWar[2])
-		For $i = $g_hLblRemoveArmy To $g_hLblCountWarSpellsTotal
+		For $i = $g_hLblRemoveArmyWar To $g_hLblCountWarSpellsTotal
 			GUICtrlSetState($i, $GUI_ENABLE)
 		Next
 		lblTotalWarTroopCount()

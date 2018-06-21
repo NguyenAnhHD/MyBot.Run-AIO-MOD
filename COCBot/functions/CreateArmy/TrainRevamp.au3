@@ -443,12 +443,12 @@ Func RemoveCastleSpell($Slots)
 		Return False ; Exit function
 	EndIf
 
-	Click(Random(715, 825, 1), Random(507, 545, 1)) ; Click on Edit Army Button
+	Click(Random(719, 838, 1), Random(505, 545, 1)) ; Click on Edit Army Button
 	If Not $g_bRunState Then Return
 
 	If _Sleep(500) Then Return
 
-	Local $pos[2] = [575, 575], $pos2[2] = [645, 575]
+	Local $pos[2] = [515, 575], $pos2[2] = [588, 575]
 
 	If $Slots[0] > 0 Then
 		ClickRemoveTroop($pos, $Slots[0], $g_iTrainClickDelay) ; Click on Remove button as much as needed
@@ -468,7 +468,7 @@ Func RemoveCastleSpell($Slots)
 
 	If _Sleep(700) Then Return
 
-	Click(Random(720, 815, 1), Random(558, 589, 1)) ; Click on 'Okay' button to save changes
+	Click(Random(724, 827, 1), Random(556, 590, 1)) ; Click on 'Okay' button to save changes
 
 	If _Sleep(1200) Then Return
 
@@ -478,7 +478,7 @@ Func RemoveCastleSpell($Slots)
 		Return False ; Exit function
 	EndIf
 
-	Click(Random(445, 583, 1), Random(402, 455, 1)) ; Click on 'Okay' button to Save changes... Last button
+	Click(Random(443, 583, 1), Random(400, 457, 1)) ; Click on 'Okay' button to Save changes... Last button
 
 	SetLog("Clan Castle Spell Removed", $COLOR_SUCCESS)
 	If _Sleep(200) Then Return
@@ -1102,7 +1102,7 @@ Func RemoveExtraTroops($toRemove)
 			Return False ; Exit function
 		EndIf
 
-		Click(Random(715, 825, 1), Random(507, 545, 1)) ; Click on Edit Army Button
+		Click(Random(719, 838, 1), Random(505, 545, 1)) ; Click on Edit Army Button
 
 		; Loop through troops needed to get removed
 		$CounterToRemove = 0
@@ -1141,7 +1141,7 @@ Func RemoveExtraTroops($toRemove)
 
 		If _Sleep(700) Then Return
 		If Not $g_bRunState Then Return
-		Click(Random(720, 815, 1), Random(558, 589, 1)) ; Click on 'Okay' button to save changes
+		Click(Random(724, 827, 1), Random(556, 590, 1)) ; Click on 'Okay' button to save changes
 
 		If _Sleep(1200) Then Return
 
@@ -1151,7 +1151,7 @@ Func RemoveExtraTroops($toRemove)
 			Return False ; Exit function
 		EndIf
 
-		Click(Random(445, 585, 1), Random(402, 455, 1)) ; Click on 'Okay' button to Save changes... Last button
+		Click(Random(443, 583, 1), Random(400, 457, 1)) ; Click on 'Okay' button to Save changes... Last button
 
 		SetLog("All Extra troops removed", $COLOR_SUCCESS)
 		If _Sleep(200) Then Return
@@ -1743,9 +1743,13 @@ Func TrainArmyNumber($Army, $iMultiClick = 1)
 
 	For $Num = 0 To 2
 		If $Army[$Num] Then
+			Local $iClick = 2, $sLog = ""
+			If $Num = 2 Then $iClick = $iMultiClick
+			If $iClick > 2 Then $sLog = ", Multi-click x" & $iClick & " times"
+
 			If _ColorCheck(_GetPixelColor($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], True), Hex($a_TrainArmy[$Num][2], 6), $a_TrainArmy[$Num][3]) Then
-				Click($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], 1)
-				SetLog(" - Making the Army " & $Num + 1, $COLOR_INFO)
+				Click($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], $iClick)
+				SetLog(" - Making the Army " & $Num + 1 & $sLog, $COLOR_INFO)
 				If _Sleep(500) Then Return
 			Else
 				SetLog(" - Error Clicking On Army: " & $Num + 1 & "| Pixel was :" & _GetPixelColor($a_TrainArmy[$Num][0], $a_TrainArmy[$Num][1], True), $COLOR_ACTION)

@@ -12,7 +12,7 @@
 
 Func CheckCC($close = True)
 	Local $directory = @ScriptDir & "\imgxml\ArmyOverview\Troops"
-	Local $aToRemove[8] ; 6 slots for troop and 2 slots for spell
+	Local $aToRemove[7] ; 5 slots for troop and 2 slots for spell
 	Local $aPos[2] = [70, 575]
 	Local $bNeedRemoveCC = False
 	Local $Spell_Offset = 0, $Mid_Offset = 0
@@ -32,7 +32,7 @@ Func CheckCC($close = True)
 	; spell in middle: check gray background at 1st slot and blue color at mid slot
 	If _ColorCheck(_GetPixelColor(525, 508, True), Hex(0xCFCFC8, 6), 15) And _ColorCheck(_GetPixelColor(525 + 37, 508, True), Hex(0x4488C5, 6), 15) Then $Mid_Offset = 37
 
-	For $i = 0 To 5
+	For $i = 0 To 4
 		If Not $g_bChkCCTroops Then ExitLoop
 
 		If $g_bDebugSetlog Then SetDebugLog("SLOT : " & $i, $COLOR_DEBUG) ;Debug
@@ -62,22 +62,22 @@ Func CheckCC($close = True)
 		EndIf
 	Next
 
-	For $i = 6 To 7
+	For $i = 5 To 6
 		If Not $g_bChkCCSpells Then ExitLoop
 		$directory = $g_sImgArmyOverviewSpells
 
 		If $g_bDebugSetlog Then SetDebugLog("SLOT : " & $i, $COLOR_DEBUG) ;Debug
-		If $Mid_Offset = 37 And $i = 7 Then ExitLoop ; Slot 6 is the last
-		If _ColorCheck(_GetPixelColor(Round(84 + 72.8 * $i + $Mid_Offset, 0), 508, True), Hex(0xCFCFC8, 6), 15) Then
+		If $Mid_Offset = 37 And $i = 6 Then ExitLoop ; Slot 6 is the last
+		If _ColorCheck(_GetPixelColor(Round(102 + 72.8 * $i + $Mid_Offset, 0), 508, True), Hex(0xCFCFC8, 6), 15) Then
 			If $g_bDebugSetlog Then SetDebugLog("No CC spell, quit checking", $COLOR_DEBUG) ;Debug
 			ExitLoop ; Slot 6 has no spell
 		EndIf
 
 		; name of first file found: spell short name e.g. "LSpell"
-		Local $sSpellNameFound = QuickMIS("N1", $directory, Round(77 + 72.8 * $i + $Mid_Offset, 0), 517, Round(149 + 72.8 * $i + $Mid_Offset, 0), 557, True, $g_bDebugSetlog)
+		Local $sSpellNameFound = QuickMIS("N1", $directory, Round(95 + 72.8 * $i + $Mid_Offset, 0), 517, Round(167 + 72.8 * $i + $Mid_Offset, 0), 557, True, $g_bDebugSetlog)
 		If $sSpellNameFound = "none" Then Return
 
-		Local $iQty = Number(getBarracksNewTroopQuantity(Round(89 + 72.8 * $i + $Mid_Offset, 0), 498)) ; coc-newarmy
+		Local $iQty = Number(getBarracksNewTroopQuantity(Round(107 + 72.8 * $i + $Mid_Offset, 0), 498)) ; coc-newarmy
 		Local $eIndex = Eval("e" & $sSpellNameFound)
 		If $g_bDebugSetlog Then SetDebugLog("Found: " & $sSpellNameFound & " x" & $iQty, $COLOR_DEBUG) ;Debug
 
@@ -123,20 +123,20 @@ Func CheckCC($close = True)
 			If $close Then ClickP($aAway, 2, 0)
 			Return ; Exit function
 		EndIf
-		Click(Random(715, 825, 1), Random(507, 545, 1)) ; Click on Edit Army Button
+		Click(Random(719, 838, 1), Random(505, 545, 1)) ; Click on Edit Army Button
 		If _Sleep(500) Then Return
 
-		For $i = 0 To 7
+		For $i = 0 To 6
 			If $aToRemove[$i] > 0 Then
 				$aPos[0] = 74 * ($i + 1) - 4
-				If $i > 5 Then $aPos[0] += 54 + $Mid_Offset
+				If $i > 4 Then $aPos[0] += 54 + $Mid_Offset
 				ClickRemoveTroop($aPos, $aToRemove[$i], $g_iTrainClickDelay) ; Click on Remove button as much as needed
 			EndIf
 		Next
 
 		For $i = 0 To 6
 			If _ColorCheck(_GetPixelColor(806, 567, True), Hex(0xCEEF76, 6), 25) Then
-				Click(Random(720, 815, 1), Random(558, 589, 1)) ; Click on 'Okay' button to save changes
+				Click(Random(724, 827, 1), Random(556, 590, 1)) ; Click on 'Okay' button to save changes
 				ExitLoop
 			Else
 				If $i = 6 Then
@@ -150,7 +150,7 @@ Func CheckCC($close = True)
 
 		For $i = 0 To 6
 			If _ColorCheck(_GetPixelColor(508, 428, True), Hex(0xFFFFFF, 6), 30) Then
-				Click(Random(445, 583, 1), Random(402, 455, 1)) ; Click on 'Okay' button to Save changes... Last button
+				Click(Random(443, 583, 1), Random(400, 457, 1)) ; Click on 'Okay' button to Save changes... Last button
 				ExitLoop
 			Else
 				If $i = 6 Then

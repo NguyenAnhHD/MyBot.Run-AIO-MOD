@@ -141,7 +141,7 @@ Func ArmyHeroStatus($i)
 			Local $aResult = StringSplit($aKeys[0], "_", $STR_NOCOUNT)
 			$sResult = $aResult[0]
 			;setlog("$i , $sResult :"& $i  & ", " & $sResult )
-			
+
 			Select
 				Case $i = "King" Or $i = 0 Or $i = $eKing
 					Switch $sResult
@@ -161,7 +161,7 @@ Func ArmyHeroStatus($i)
 							GUICtrlSetState($g_hPicKingBlue, $GUI_HIDE)
 							GUICtrlSetState($g_hPicKingGreen, $GUI_SHOW)
 					EndSwitch
-					
+
 				Case $i = "Queen" Or $i = 1 Or $i = $eQueen
 					Switch $sResult
 						Case "heal" ; Blue
@@ -180,7 +180,7 @@ Func ArmyHeroStatus($i)
 							GUICtrlSetState($g_hPicQueenBlue, $GUI_HIDE)
 							GUICtrlSetState($g_hPicQueenGreen, $GUI_SHOW)
 					EndSwitch
-					
+
 				Case $i = "Warden" Or $i = 2 Or $i = $eWarden
 					Switch $sResult
 						Case "heal" ; Blue
@@ -197,7 +197,7 @@ Func ArmyHeroStatus($i)
 							GUICtrlSetState($g_hPicWardenGray, $GUI_HIDE)
 							GUICtrlSetState($g_hPicWardenRed, $GUI_HIDE)
 							GUICtrlSetState($g_hPicWardenBlue, $GUI_HIDE)
-							GUICtrlSetState($g_hPicWardenGreen, $GUI_SHOW)							
+							GUICtrlSetState($g_hPicWardenGreen, $GUI_SHOW)
 					EndSwitch
 			EndSelect
 			Return $sResult
@@ -216,7 +216,7 @@ Func ArmyHeroStatus($i)
 			GUICtrlSetState($g_hPicQueenGreen, $GUI_HIDE)
 			GUICtrlSetState($g_hPicQueenRed, $GUI_HIDE)
 			GUICtrlSetState($g_hPicQueenBlue, $GUI_HIDE)
-			GUICtrlSetState($g_hPicQueenGray, $GUI_SHOW)		
+			GUICtrlSetState($g_hPicQueenGray, $GUI_SHOW)
 			Return "none"
 		Case 2
 			GUICtrlSetState($g_hPicWardenGreen, $GUI_HIDE)
@@ -230,9 +230,13 @@ EndFunc   ;==>ArmyHeroStatus
 
 Func LabGuiDisplay() ; called from main loop to get an early status for indictors in bot bottom
 
+	Local Static $iLastTimeChecked[8] = [0, 0, 0, 0, 0, 0, 0, 0]
+	If $iLastTimeChecked[$g_iCurAccount] < @HOUR + 1 And Not $g_bSearchAttackNowEnable And $iLastTimeChecked[$g_iCurAccount] <> 0 Then Return
 	;CLOSE ARMY WINDOW
 	ClickP($aAway, 2, 0, "#0346") ;Click Away
 	If _Sleep(1500) Then Return ; Delay AFTER the click Away Prevents lots of coc restarts
+
+	Setlog("Checking Lab Status", $COLOR_INFO)
 
 	;=================Section 2 Lab Gui
 
@@ -251,8 +255,9 @@ Func LabGuiDisplay() ; called from main loop to get an early status for indictor
 			Return
 		EndIf
 	EndIf
+	If _Sleep(250) Then Return ; sometimes do not open lab for check
 	BuildingClickP($g_aiLaboratoryPos, "#0197") ;Click Laboratory
-	If _Sleep(1500) Then Return ; Wait for window to open
+	If _Sleep(1000) Then Return ; Wait for window to open
 	; Find Research Button
 
 	If QuickMIS("BC1", @ScriptDir & "\imgxml\Lab\Research", 200, 620, 700, 700) Then
@@ -290,6 +295,7 @@ Func LabGuiDisplay() ; called from main loop to get an early status for indictor
 		GUICtrlSetState($g_hPicLabRed, $GUI_SHOW)
 		;============================================
 		ClickP($aAway, 2, $DELAYLABORATORY4, "#0359")
+		$g_sLabUpgradeTime = ""
 		Return
 	Else
 		SetLog("Unable to determine Lab Status", $COLOR_INFO)
@@ -301,5 +307,8 @@ Func LabGuiDisplay() ; called from main loop to get an early status for indictor
 		;=============================================
 		Return
 	EndIf
+
+	$iLastTimeChecked[$g_iCurAccount] = @HOUR
+
 	; EndIf
 EndFunc   ;==>LabGuiDisplay

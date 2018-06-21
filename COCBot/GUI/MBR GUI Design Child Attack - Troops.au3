@@ -253,7 +253,7 @@ Func CreateTroopsSpellsSubTab()
 		$g_ahTxtTrainArmyTroopCount[$eTroopElectroDragon] = GUICtrlCreateInput("0", $x + 1, $y + 29, 30, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			_GUICtrlSetTip(-1, $sTxtSetPerc & " " & $sTroopName & " " & $sTxtSetPerc2)
 			GUICtrlSetState(-1, $GUI_HIDE)
-			GUICtrlSetLimit(-1, 3)
+			GUICtrlSetLimit(-1, 2)
 			GUICtrlSetOnEvent(-1, "TrainTroopCountEdit")
 
     $x += 38
@@ -268,7 +268,7 @@ Func CreateTroopsSpellsSubTab()
 		$g_ahTxtTrainArmyTroopCount[$eTroopMinion] = GUICtrlCreateInput("0", $x + 1, $y + 29, 30, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			_GUICtrlSetTip(-1, $sTxtSetPerc & " " & $sTroopName & " " & $sTxtSetPerc2)
 			GUICtrlSetState(-1, $GUI_HIDE)
-			GUICtrlSetLimit(-1, 2)
+			GUICtrlSetLimit(-1, 3)
 			GUICtrlSetOnEvent(-1, "TrainTroopCountEdit")
 
 	$x += 38

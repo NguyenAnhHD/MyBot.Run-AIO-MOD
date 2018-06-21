@@ -163,7 +163,7 @@ Func StopAndPrepareForWar($iSleepTime)
 			$g_bQuickTrainEnable = $g_bUseQuickTrainWar
 			$g_bQuickTrainArmy = $g_aChkArmyWar
 
-			Local $aiArmyCompTroopsEmpty[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+			Local $aiArmyCompTroopsEmpty[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 			Local $aiArmyCompSpellsEmpty[$eSpellCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 			$g_aiArmyCompTroops = $aiArmyCompTroopsEmpty
 			$g_aiArmyCompSpells = $aiArmyCompSpellsEmpty
@@ -310,9 +310,9 @@ Func RemoveCC()
 	EndIf
 
 	Local $sCCTroop, $aCCTroop, $sCCSpell, $aCCSpell
-	$sCCTroop = getOcrAndCapture("coc-ms", 302, 470, 60, 16, True, False, True) ; read CC troops 0/35
+	$sCCTroop = getOcrAndCapture("coc-ms", 289, 468, 60, 16, True, False, True) ; read CC troops 0/35
 	$aCCTroop = StringSplit($sCCTroop, "#", $STR_NOCOUNT) ; split the trained troop number from the total troop number
-	$sCCSpell = getOcrAndCapture("coc-ms", 530, 468, 35, 16, True, False, True) ; read CC Spells 0/2
+	$sCCSpell = getOcrAndCapture("coc-ms", 472, 467, 35, 16, True, False, True) ; read CC Spells 0/2
 	$aCCSpell = StringSplit($sCCSpell, "#", $STR_NOCOUNT) ; split the trained troop number from the total troop number
 
 	Local $aPos[2] = [40, 575]

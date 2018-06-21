@@ -1183,7 +1183,6 @@ Func _RunFunction($action)
 			BoostQueen()
 			BoostWarden()
 		Case "LabCheck"
-			Setlog("Checking Lab Status", $COLOR_INFO)
 			LabGuiDisplay()
 			_Sleep($DELAYRUNBOT3)
 		Case "RequestCC"

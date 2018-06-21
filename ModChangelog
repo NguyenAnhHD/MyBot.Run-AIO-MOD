@@ -3,7 +3,16 @@
             | | | _| / _ \| |\/| |    / _ \| | (_) |
             |_| |___/_/ \_\_|  |_|   /_/ \_\_|\___/
 
-                    Based on MyBot.run v7.5.2
+                    Based on MyBot.run v7.5.x
+
+	**V1.8.4**
+	- Fix not switch to account 5 or above
+	- Fix check troops/spells CC not work - June 2018
+	- Fix cost for Grand Warden
+	- Fix not find remove button CC Spells
+	- Fix Taskbar Error
+	- Fix Some Minor Error
+	- Update to MBR v7.5.3
 
 	**V1.8.3**
 	- Add Farm Schedule feature

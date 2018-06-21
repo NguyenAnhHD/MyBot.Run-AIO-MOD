@@ -113,8 +113,12 @@ Func MatchSlotsPerEdge($Num)
 			Else
 				Return 1
 			EndIf
-		Case 12 ;$eEDrag
-			Return 0
+		Case 12 ; $eEDrag
+			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then
+				Return 0
+			Else
+				Return 2
+			EndIf
 		Case 13 ;$eMini
 			Return 0
 		Case 14 ;$eHogs
