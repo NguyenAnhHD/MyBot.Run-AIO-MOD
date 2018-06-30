@@ -146,4 +146,9 @@ Func SaveConfig_MOD()
 	_Ini_Add("RequestDefense", "txtRequestDefense", $g_sRequestTroopsTextDefense)
 	_Ini_Add("RequestDefense", "RequestDefenseEarly", $g_iRequestDefenseEarly)
 
+	; Skip Request CC - Team AiO MOD++
+	_Ini_Add("donate", "SkipRequestCC", $g_bSkipRequestCC ? 1 : 0)
+	_Ini_Add("donate", "SkipRequestCC_Troop", $g_iSkipRequestCCTroop)
+	_Ini_Add("donate", "SkipRequestCC_Spell", $g_iSkipRequestCCSpell)
+
 EndFunc   ;==>SaveConfig_MOD

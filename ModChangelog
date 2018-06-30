@@ -5,6 +5,12 @@
 
                     Based on MyBot.run v7.5.x
 
+	**V1.8.5**
+	- Add Skip Request CC By Demen
+	- Fix coordinates and color for TrainRevamp - June 2018
+	- Fix Goblin XP Not Click On Reload Button
+	- Fix not find button for switch accounts SC_ID on MEmu version 2.8.0 or lower
+
 	**V1.8.4**
 	- Fix not switch to account 5 or above
 	- Fix check troops/spells CC not work - June 2018

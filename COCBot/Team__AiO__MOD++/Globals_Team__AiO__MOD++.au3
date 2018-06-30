@@ -128,4 +128,7 @@ Global $g_abChkExtendedAttackBar[2] = [True, True]
 Global $g_iTotalAttackSlot = 10, $g_bDraggedAttackBar = False ; flag if AttackBar is dragged or not
 
 ; Request troops for defense - Team AiO MOD++
-Global $g_bRequestTroopsEnableDefense, $g_sRequestTroopsTextDefense, $g_iRequestDefenseEarly
+Global $g_bRequestTroopsEnableDefense = False, $g_sRequestTroopsTextDefense = "", $g_iRequestDefenseEarly = 0
+
+; Skip Request CC - Team AiO MOD++
+Global $g_bSkipRequestCC = False, $g_iSkipRequestCCTroop = 40, $g_iSkipRequestCCSpell = 2

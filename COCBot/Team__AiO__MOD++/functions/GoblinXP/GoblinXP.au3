@@ -824,7 +824,14 @@ Func IsInGoblinPicnic($Retry = True, $maxRetry = 30, $timeBetweenEachRet = 300)
 	Local $result = ""
 	While $Found = False
 		If _Sleep($timeBetweenEachRet) Then Return False
-		If IsInAttackSuperXP() = False Then ContinueLoop
+		If Not IsInAttackSuperXP() Then
+			$Counter += 1
+			If $Counter = $maxRetry Then
+				$Found = False
+				ExitLoop
+			EndIf
+			ContinueLoop
+		EndIf
 
 		$result = multiMatchesPixelOnly($directory, 0, "FV", "FV", "", 0, 1000, 0, 0, 111, 31)
 		If $g_bDebugSX Then SetDebugLog("SX|IGP|$result=" & $result)

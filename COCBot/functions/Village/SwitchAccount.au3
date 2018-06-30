@@ -606,13 +606,13 @@ EndFunc   ;==>SwitchCOCAcc_ConnectedSCID
 
 Func SwitchCOCAcc_ConfirmSCID(ByRef $bResult)
 	For $i = 0 To 30 ; Checking LogOut & Confirm button continuously in 30sec
-		If QuickMIS("BC1", $g_sImgLogOutButton, 587, 268, 734, 334) Then ; Check Log Out button
+		If QuickMIS("BC1", $g_sImgLogOutButton, 620, 246, 693, 308) Then ; Check Log Out button
 			SetLog("   2. Click Log Out Supercell ID")
 			Click($g_iQuickMISX + 587, $g_iQuickMISY + 268, 2, 500, "Click Log Out SC_ID") ; Click LogOut button
 			If _Sleep(500) Then Return "Exit"
 
 			For $j = 0 To 20
-				If QuickMIS("BC1", $g_sImgConfirmButton, 370, 402, 636, 476) Then ; Check Confirm button
+				If QuickMIS("BC1", $g_sImgConfirmButton, 400, 414, 586, 455) Then ; Check Confirm button
 					SetLog("   3. Click Confirm Supercell ID")
 					Click($g_iQuickMISX + 370, $g_iQuickMISY + 402, 1, 0, "Click Confirm SC_ID") ; Click Confirm button
 					If _Sleep(500) Then Return "Exit"

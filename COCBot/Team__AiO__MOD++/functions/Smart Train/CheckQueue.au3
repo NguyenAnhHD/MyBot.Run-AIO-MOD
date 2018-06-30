@@ -85,7 +85,7 @@ Func CheckQueue(ByRef $eTrainMethod_0, $sText = "Troops")
 	EndIf
 
 	; Check block troop
-	Local $NewCampOCR = GetOCRCurrent(48, 160)
+	Local $NewCampOCR = GetOCRCurrent(43, 160)
 	If $NewCampOCR[0] < $NewCampOCR[1] + $iTotalQueue Then
 		SetLog("A big guy blocks our camp", $COLOR_ACTION)
 		ClearTrainingArmyCamp()

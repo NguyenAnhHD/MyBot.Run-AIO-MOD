@@ -140,7 +140,7 @@ Func RemoveWrongArmyCamp($toRemove)
 			Return ; quit SmartTrain
 		EndIf
 
-		Click(Random(715, 825, 1), Random(507, 545, 1)) ; Click on Edit Army Button
+		Click(Random(719, 838, 1), Random(505, 545, 1)) ; Click on Edit Army Button
 
 		; Loop through troops needed to get removed
 		Local $CounterToRemove = 0
@@ -175,7 +175,7 @@ Func RemoveWrongArmyCamp($toRemove)
 		EndIf
 
 		If _Sleep(700) Then Return
-		Click(Random(720, 815, 1), Random(558, 589, 1)) ; Click on 'Okay' button to save changes
+		Click(Random(724, 827, 1), Random(556, 590, 1)) ; Click on 'Okay' button to save changes
 
 		If _Sleep(1200) Then Return
 
@@ -185,7 +185,7 @@ Func RemoveWrongArmyCamp($toRemove)
 			Return ; quit SmartTrain
 		EndIf
 
-		Click(Random(445, 583, 1), Random(402, 455, 1)) ; Click on 'Okay' button to Save changes... Last button
+		Click(Random(443, 583, 1), Random(400, 457, 1)) ; Click on 'Okay' button to Save changes... Last button
 
 		SetLog("All wrong troops removed", $COLOR_SUCCESS)
 		If _Sleep(200) Then Return

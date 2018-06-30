@@ -127,7 +127,7 @@ Func TestMaxCamp()
 	Local $ToReturn = 0
 	If Not OpenTroopsTab(True, "TestMaxCamp()") Then Return
 	If _Sleep(250) Then Return
-	Local $ArmyCamp = GetOCRCurrent(48, 160)
+	Local $ArmyCamp = GetOCRCurrent(43, 160)
 	If UBound($ArmyCamp) = 3 Then
 		; [2] is the [0] - [1] | Or is empty or full
 		If $ArmyCamp[2] = 0 Or $ArmyCamp[0] = 0 Or ($ArmyCamp[0] = $ArmyCamp[2]) Then
@@ -398,7 +398,7 @@ Func IsFullClanCastleSpells($bReturnOnly = False)
 			If $g_bDebugSetlogTrain Then SetLog(" - Clans Castle button available? " & $g_bCanRequestCC)
 			; Let´s request Troops & Spells
 			If $g_bCanRequestCC Then
-				$rColCheckFullCCTroops = _ColorCheck(_GetPixelColor(24, 470, True), Hex(0x93C230, 6), 30)
+				$rColCheckFullCCTroops = _ColorCheck(_GetPixelColor(24, 470, True), Hex(0x87B820, 6), 30)
 				If $rColCheckFullCCTroops Then SetLog("Clan Castle Spell is empty, Requesting for...")
 				If Not $bReturnOnly Then
 					RequestCC(False, IIf($rColCheckFullCCTroops Or (Not $g_abSearchCastleTroopsWaitEnable[$DB] And Not $g_abSearchCastleTroopsWaitEnable[$LB]), IIf($g_abSearchCastleSpellsWaitEnable[$LB], IIf(String(GUICtrlRead($g_hCmbABWaitForCastleSpell)) = "Any", "", String(GUICtrlRead($g_hCmbABWaitForCastleSpell) & " Spell")), IIf($g_abSearchCastleSpellsWaitEnable[$DB], IIf(String(GUICtrlRead($g_hCmbDBWaitForCastleSpell)) = "Any", "", String(GUICtrlRead($g_hCmbDBWaitForCastleSpell) & " Spell")), "")), ""))
@@ -416,7 +416,7 @@ Func IsFullClanCastleSpells($bReturnOnly = False)
 
 		$g_bCanRequestCC = _ColorCheck(_GetPixelColor($aRequestTroopsAO[0], $aRequestTroopsAO[1] + 20, True), Hex($aRequestTroopsAO[3], 6), $aRequestTroopsAO[5]) And _ColorCheck(_GetPixelColor($aRequestTroopsAO[0], $aRequestTroopsAO[1], True), Hex($aRequestTroopsAO[4], 6), $aRequestTroopsAO[5])
 		If $g_bCanRequestCC Then
-			$rColCheckFullCCTroops = _ColorCheck(_GetPixelColor(24, 470, True), Hex(0x93C230, 6), 30)
+			$rColCheckFullCCTroops = _ColorCheck(_GetPixelColor(24, 470, True), Hex(0x87B820, 6), 30)
 			If $rColCheckFullCCTroops Then SetLog("Clan Castle Spell is empty, Requesting for...")
 			If Not $bReturnOnly Then
 				RequestCC(False, IIf($rColCheckFullCCTroops Or (Not $g_abSearchCastleTroopsWaitEnable[$DB] And Not $g_abSearchCastleTroopsWaitEnable[$LB]), IIf($g_abSearchCastleSpellsWaitEnable[$LB], IIf(String(GUICtrlRead($g_hCmbABWaitForCastleSpell)) = "Any", "", String(GUICtrlRead($g_hCmbABWaitForCastleSpell) & " Spell")), IIf($g_abSearchCastleSpellsWaitEnable[$DB], IIf(String(GUICtrlRead($g_hCmbDBWaitForCastleSpell)) = "Any", "", String(GUICtrlRead($g_hCmbDBWaitForCastleSpell) & " Spell")), "")), ""))
@@ -1481,7 +1481,7 @@ EndFunc   ;==>TestSpellsCoords
 
 Func LeftSpace($bReturnAll = False)
 	; Need to be in 'Train Tab'
-	Local $aRemainTrainSpace = GetOCRCurrent(48, 160)
+	Local $aRemainTrainSpace = GetOCRCurrent(43, 160)
 	If Not $g_bRunState Then Return
 
 	If Not $bReturnAll Then
@@ -1494,7 +1494,7 @@ EndFunc   ;==>LeftSpace
 Func IsArmyWindow($bSetLog = False, $iTabNumber = 0)
 
 	Local $i = 0
-	Local $_TabNumber[4][4] = [[114, 115, 0xF8F8F8, 5], [284, 115, 0xF8F8F8, 5], [505, 115, 0xF8F8F8, 5], [702, 115, 0xF8F8F8, 5]] ; Grey pixel on the tab name when is selected
+	Local $_TabNumber[4][4] = [[114, 115, 0xF8F8F8, 5], [284, 115, 0xF8F8F8, 5], [460, 115, 0xF8F8F8, 5], [702, 115, 0xF8F8F8, 5]] ; Grey pixel on the tab name when is selected
 	Local $CheckIT[4] = [$_TabNumber[$iTabNumber][0], $_TabNumber[$iTabNumber][1], $_TabNumber[$iTabNumber][2], $_TabNumber[$iTabNumber][3]]
 
 	Local $txt = ""
@@ -1680,9 +1680,9 @@ Func SearchArmy($sImageDir = "", $x = 0, $y = 0, $x1 = 0, $y1 = 0, $sArmyType = 
 			If StringInStr($aResult[$i][0], "Kingqueued") Then
 				$aResult[$i][3] = getRemainTHero(620, 414)
 			ElseIf StringInStr($aResult[$i][0], "Queenqueued") Then
-				$aResult[$i][3] = getRemainTHero(695, 414)
+				$aResult[$i][3] = getRemainTHero(693, 414)
 			ElseIf StringInStr($aResult[$i][0], "Wardenqueued") Then
-				$aResult[$i][3] = getRemainTHero(775, 414)
+				$aResult[$i][3] = getRemainTHero(768, 414)
 			Else
 				$aResult[$i][3] = 0
 			EndIf
@@ -1737,7 +1737,7 @@ EndFunc   ;==>ResetVariables
 
 Func TrainArmyNumber($Army, $iMultiClick = 1)
 
-	Local $a_TrainArmy[3][4] = [[784, 368, 0x6fb830, 10], [784, 485, 0x72bb2f, 10], [784, 602, 0x71ba2f, 10]]
+	Local $a_TrainArmy[3][4] = [[784, 368, 0x73BC2F, 10], [784, 486, 0x73BC2F, 10], [784, 602, 0x73BC2F, 10]]
 	SetLog("Using Quick Train Tab", $COLOR_INFO)
 	If Not $g_bRunState Then Return
 
@@ -1832,7 +1832,7 @@ Func MakingDonatedTroops()
 			If Not $g_bRunState Then Return
 			$Plural = 0
 			If $avDefaultTroopGroup[$i][4] > 0 Then
-				$RemainTrainSpace = GetOCRCurrent(48, 160)
+				$RemainTrainSpace = GetOCRCurrent(43, 160)
 				If $RemainTrainSpace[0] = $RemainTrainSpace[1] And Not $g_bChkSmartTrain Then ; army camps full
 					;Camps Full All Donate Counters should be zero!!!!
 					For $j = 0 To UBound($avDefaultTroopGroup, 1) - 1
@@ -1862,7 +1862,7 @@ Func MakingDonatedTroops()
 					If _Sleep(1000) Then Return ; Needed Delay, OCR was not picking up Troop Changes
 				Else
 					For $z = 0 To $RemainTrainSpace[2] - 1
-						$RemainTrainSpace = GetOCRCurrent(48, 160)
+						$RemainTrainSpace = GetOCRCurrent(43, 160)
 						If $RemainTrainSpace[0] = $RemainTrainSpace[1] Then ; army camps full
 							;Camps Full All Donate Counters should be zero!!!!
 							For $j = 0 To UBound($avDefaultTroopGroup, 1) - 1
@@ -1896,7 +1896,7 @@ Func MakingDonatedTroops()
 			EndIf
 		Next
 		;Top Off any remianing space with archers
-		$RemainTrainSpace = GetOCRCurrent(48, 160)
+		$RemainTrainSpace = GetOCRCurrent(43, 160)
 		If $RemainTrainSpace[0] < $RemainTrainSpace[1] Then ; army camps full
 			Local $howMuch = $RemainTrainSpace[2]
 			TrainIt($eTroopArcher, $howMuch, $g_iTrainClickDelay)
@@ -1929,7 +1929,7 @@ Func MakingDonatedTroops()
 		Next
 	EndIf
 	If _Sleep(1000) Then Return
-	$RemainTrainSpace = GetOCRCurrent(48, 160)
+	$RemainTrainSpace = GetOCRCurrent(43, 160)
 	SetLog(" - Current Capacity: " & $RemainTrainSpace[0] & "/" & ($RemainTrainSpace[1]))
 EndFunc   ;==>MakingDonatedTroops
 
@@ -1968,18 +1968,18 @@ EndFunc   ;==>GetOCRCurrent
 Func CheckIsFullQueuedAndNotFullArmy()
 
 	SetLog(" - Checking: FULL Queue and Not Full Army", $COLOR_INFO)
-	Local $CheckTroop[4] = [824, 243, 0x949522, 20] ; the green check symbol [bottom right] at slot 0 troop
+	Local $CheckTroop[4] = [824, 243, 0x94A522, 20] ; the green check symbol [bottom right] at slot 0 troop
 	If Not $g_bRunState Then Return
 
 	If Not OpenTroopsTab(True, "CheckIsFullQueuedAndNotFullArmy()") Then Return
 
-	Local $aArmyCamp = GetOCRCurrent(48, 160)
+	Local $aArmyCamp = GetOCRCurrent(43, 160)
 	If UBound($aArmyCamp) = 3 And $aArmyCamp[2] < 0 Then
 		If _ColorCheck(_GetPixelColor($CheckTroop[0], $CheckTroop[1], True), Hex($CheckTroop[2], 6), $CheckTroop[3]) Then
 			SetLog(" - Conditions met: FULL Queue and Not Full Army")
 			DeleteQueued("Troops")
 			If _Sleep(500) Then Return
-			$aArmyCamp = GetOCRCurrent(48, 160)
+			$aArmyCamp = GetOCRCurrent(43, 160)
 			Local $ArchToMake = $aArmyCamp[2]
 			If IsArmyWindow(False, $TrainTroopsTAB) Then TrainIt($eArch, $ArchToMake, $g_iTrainClickDelay) ; PureClick($TrainArch[0], $TrainArch[1], $ArchToMake, 500)
 			SetLog("Trained " & $ArchToMake & " archer(s)!")
@@ -1994,18 +1994,18 @@ Func CheckIsEmptyQueuedAndNotFullArmy()
 
 	SetLog(" - Checking: Empty Queue and Not Full Army", $COLOR_ACTION1)
 	Local $CheckTroop[4] = [825, 204, 0xCFCFC8, 15] ; the gray background at slot 0 troop
-	Local $CheckTroop1[4] = [390, 130, 0x78BE2B, 15] ; the Green Arrow on Troop Training tab
+	Local $CheckTroop1[4] = [309, 131, 0x79BE29, 15] ; the Green Arrow on Troop Training tab
 	If Not $g_bRunState Then Return
 
 	If Not OpenTroopsTab(True, "CheckIsEmptyQueuedAndNotFullArmy()") Then Return
 
-	Local $aArmyCamp = GetOCRCurrent(48, 160)
+	Local $aArmyCamp = GetOCRCurrent(43, 160)
 	If UBound($aArmyCamp) = 3 And $aArmyCamp[2] > 0 Then
 		If _ColorCheck(_GetPixelColor($CheckTroop[0], $CheckTroop[1], True), Hex($CheckTroop[2], 6), $CheckTroop[3]) Then
 			If Not _ColorCheck(_GetPixelColor($CheckTroop1[0], $CheckTroop1[1], True), Hex($CheckTroop1[2], 6), $CheckTroop1[3]) Then
 				SetLog(" - Conditions met: Empty Queue and Not Full Army")
 				If _Sleep(500) Then Return
-				$aArmyCamp = GetOCRCurrent(48, 160)
+				$aArmyCamp = GetOCRCurrent(43, 160)
 				Local $ArchToMake = $aArmyCamp[2]
 				If IsArmyWindow(False, $TrainTroopsTAB) Then TrainIt($eArch, $ArchToMake, $g_iTrainClickDelay) ;PureClick($TrainArch[0], $TrainArch[1], $ArchToMake, 500)
 				SetLog(" - Trained " & $ArchToMake & " archer(s)!")
@@ -2099,11 +2099,11 @@ Func CheckValuesCost($Troop = "Arch", $troopQuantity = 1, $DebugLogs = 0)
 	; Let??s UPDATE the current Elixir and Dark elixir each Troop train on 'Bottom train Window Page'
 	If _ColorCheck(_GetPixelColor(223, 594, True), Hex(0xE8E8E0, 6), 20) Then ; Gray background window color
 		; Village without Dark Elixir
-		$nElixirCurrent = getResourcesValueTrainPage(315, 594) ; ELIXIR
+		$nElixirCurrent = getResourcesValueTrainPage(307, 594) ; ELIXIR
 	Else
 		; Village with Elixir and Dark Elixir
-		$nElixirCurrent = getResourcesValueTrainPage(230, 594) ; ELIXIR
-		$nDarkCurrent = getResourcesValueTrainPage(382, 594) ; DARK ELIXIR
+		$nElixirCurrent = getResourcesValueTrainPage(232, 594) ; ELIXIR
+		$nDarkCurrent = getResourcesValueTrainPage(385, 594) ; DARK ELIXIR
 	EndIf
 
 	; 	DEBUG

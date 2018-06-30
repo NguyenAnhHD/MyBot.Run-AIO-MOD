@@ -115,9 +115,9 @@ Func GUIControlCheckCC()
 EndFunc   ;==>GUIControlCheckCC
 
 Func CreateGUICheckCC()
-	Local $x = 100, $y = 90, $sCmbList = ""
-	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "Group", "CC Troop && Spell expectation"), $x, $y, 325, 195)
-	$y += 25
+	Local $x = 100, $y = 125, $sCmbList = ""
+	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "Group", "CC Troop && Spell expectation"), $x, $y, 325, 175)
+	$y += 20
 	$x += 5
 
 	$g_hLblCastleCapacity = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "CastleCapacity", "Castle Capacity") & ": ", $x + 5, $y, -1, -1)
@@ -130,7 +130,7 @@ Func CreateGUICheckCC()
 		GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 		GUICtrlCreateLabel("Spells", $x + 235, $y, -1, -1)
 
-	$y += 30
+	$y += 25
 	$sCmbList = _ArrayToString($g_asTroopNames) & "|Any"
 		$g_ahPicCCSlot[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDonBlank, $x + 5, $y, 24, 24)
 		$g_ahCmbCCSlot[0] = GUICtrlCreateCombo("", $x + 35, $y, 85, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
@@ -168,12 +168,12 @@ Func CreateGUICheckCC()
 		$g_ahTxtCCSlot[4] = GUICtrlCreateInput("0", $x + 285, $y + 25, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
-	$y += 80
+	$y += 75
 	$g_hChkTroopsCC = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "TroopsCC", "Remove unwanted troops and spells in CC"), $x + 5, $y, -1, -1)
 		_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "TroopsCC_Info_01", "Checking troops/spells in CC. Remove any item other than the above expected."))
 		GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 
-	$g_hLblWarningTextCheckCC = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText", -1), $x + 21, $y + 25, 298, 30)
+	$g_hLblWarningTextCheckCC = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "WarningText", -1), $x + 21, $y + 20, 298, 30)
 
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc   ;==>CreateGUICheckCC
