@@ -1,0 +1,41 @@
+NOTE  |JUVELoon by JUVEn-Tino EXTERNAL EDGES Warden 14 Sec                 
+NOTE  |TH-11 T: 2 Lava, 30 Balls, 25 Minions 3 Rage, 2 Haste, 1 Clone in CC 3 Baby + 1 Ball, 1 Rage
+NOTE  |TH-12 T: 2 Lava, 30/34 Balls, 25 Minions, Wall 3 Rage, 2 Haste, 1 Clone in CC 4 Baby/2 Drag, 1 Rage
+	  |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|___________|
+SIDE  |0          |0          |0          |0          |0          |0          |10          |           |           |
+      |EAGLE      |INFERNO    |XBOW       |WIZTOWER   |MORTAR     |AIRDEFENSE |AIRSWEEPER |GEMBOX     |           |
+SIDEB |9         |5          |0          |0          |0          |0          |0          |0          |           |
+      |-------------------------------------------JUVELoon Start-----------------------------------------------|
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|BUILDING___|___________|
+MAKE  |A          |FRONT-LEFT|10         |0          |EXT-INT    |0          |5          |           |           |
+MAKE  |B          |FRONT-RIGHT|10         |0          |INT-EXT    |0          |5          |           |           |
+MAKE  |Z          |FRONT-RIGHT|10         |0          |EXT-INT    |0          |5          |           |           |
+MAKE  |K          |FRONT-LEFT|10         |0          |INT-EXT    |0          |5          |           |           |
+MAKE  |C          |FRONT-LEFT|10         |-6         |INT-EXT    |0          |5          |           |           |
+MAKE  |D          |FRONT-RIGHT|10         |-6         |INT-EXT    |0          |5          |           |           |
+MAKE  |E          |FRONT-LEFT|10         |-17        |INT-EXT    |0          |5          |           |           |
+MAKE  |F          |FRONT-RIGHT|10         |-16        |INT-EXT    |0          |5          |           |           |
+MAKE  |R          |BACK-RIGHT|10         |0          |INT-EXT    |0          |5          |           |           |
+MAKE  |J          |BACK-LEFT|10         |0          |INT-EXT    |0          |5          |           |           |
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|___________|
+DROP  |D          |1          |1          |RSpell     |50-100     |0          |200-250    |           |           |
+DROP  |C          |5          |1          |HaSpell    |50-100     |0          |150-170    |           |           |
+DROP  |D          |5          |1          |HaSpell    |50-100     |0          |150-200    |           |           |
+DROP  |A-Z        |6          |1          |Lava       |50-70      |27-50      |200-250    |           |           |
+DROP  |A          |3,4,5,6,6,7,8,9,10|9          |Ball       |50-70      |27-50      |15-20      |           |           |
+DROP  |B          |1,2,3,4,5,5,6,7|8         |Ball       |50-70      |27-50      |15-20      |           |           |
+DROP  |Z          |2,3,4,5,6,7,8,10|8          |Ball       |55-70      |27-50      |15-20      |           |           |
+DROP  |K          |1,2,3,4,5,6,7,8,9|9          |Ball       |55-70      |27-50      |15-20      |           |           |
+DROP  |A          |10         |1          |Castle     |0          |0          |150-170    |           |           |
+DROP  |A          |10         |1          |Warden     |70-100     |           |200-250    |           |           |
+DROP  |E          |5          |1          |RSpell     |50-100     |0          |190-200    |           |           |
+DROP  |E          |1          |1          |RSpell     |50-100     |0          |190-200    |           |           |
+DROP  |E          |1          |1          |CSpell     |50-100     |0          |190-200    |           |           |
+DROP  |F          |5          |1          |RSpell     |50-100     |0          |0          |           |           |
+DROP  |B          |1,2,2,3,4,5,6,6,7,8,9,9,10|13          |Mini       |50-70      |27-50      |90-100     |           |           |
+DROP  |A          |1,2,3,3,4,5,6,7,8,9,9,10|12          |Mini       |50-70      |27-50      |15-20      |           |           |
+WAIT  |1000-2000  |           |           |           |           |           |           |           |           |
+DROP  |R          |5          |1          |King       |0          |0          |400-500    |           |           |
+DROP  |J          |5          |1          |Queen      |0          |0          |500-700    |           |           |
+DROP  |A-B        |1-8        |1          |REMAIN     |50-70      |100        |50-100     |           |           |
+      |--------------------------------------------JUVELoon End------------------------------------------------|

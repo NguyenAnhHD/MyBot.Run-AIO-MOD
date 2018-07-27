@@ -43,7 +43,7 @@ Func ReferenceFunctions()
 	RedrawBotWindowNow()
 	_GUICtrlListView_SetItemHeightByFont(0, 0)
 	_GUICtrlListView_GetHeightToFitRows(0, 0)
-	Barch()
+	;Barch()
 	MilkingDebug()
 	CheckMilkingBaseTest()
 	SortRedline(0, 0, 0)
@@ -535,6 +535,7 @@ Func ReferenceGlobals()
 	$a1 = $ePekk
 	$a1 = $eBabyD
 	$a1 = $eMine
+	$a1 = $eEDrag
 
 	$a1 = $eMini
 	$a1 = $eHogs
@@ -593,5 +594,7 @@ Func ReferenceGlobals()
 
 	; fix stripper bugs
 	$a1 = $aLoginWithSupercellID
+
+	$a1 = $aiCloseDefaultPOS
 
 EndFunc   ;==>ReferenceGlobals

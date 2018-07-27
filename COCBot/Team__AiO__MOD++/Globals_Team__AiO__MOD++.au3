@@ -83,9 +83,9 @@ Global $g_bTrainLogoutMaxTime = False, $g_iTrainLogoutMaxTime = 4
 Global $g_bReqCCFirst = False
 
 ; CheckCC Troops - Team AiO MOD++
-Global $g_aiCCTroops[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_aiCCTroops[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_aiCCSpells[$eSpellCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-Global $g_aiCCTroopsExpected[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_aiCCTroopsExpected[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_aiCCSpellsExpected[$eSpellCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_bChkCC = False, $g_bChkCCTroops = False, $g_bChkCCSpells = False
 Global $g_aiCmbCCSlot[5], $g_aiTxtCCSlot[5]
@@ -115,20 +115,18 @@ Global $g_bIsSearchTimeout = False, $g_iSearchTimeout = 10, $g_iTotalSearchTime 
 Global $g_bStopOnBatt = False, $g_iStopOnBatt = 10
 
 ; Stop For War - Team AiO MOD++
-Global $g_bStopForWar
-Global $g_iStopTime, $g_bStopBeforeBattle, $g_iReturnTime
-Global $g_iStartTimerToRecheck, $g_iTimerToRecheck, $g_sCheckOrStop
-Global $g_bTrainWarTroop, $g_bUseQuickTrainWar, $g_aChkArmyWar[3], $g_aiWarCompTroops[$eTroopCount], $g_aiWarCompSpells[$eSpellCount]
-Global $g_bRequestCCForWar,	$g_sTxtRequestCCForWar
-Global $g_abStopForWar[8]
-Global $g_aiStartTimerToRecheck[8], $g_aiTimerToRecheck[8], $g_asCheckOrStop[8]
+Global $g_bStopForWar = False
+Global $g_iStopTime, $g_iReturnTime
+Global $g_bTrainWarTroop = False, $g_bUseQuickTrainWar = False, $g_aChkArmyWar[3] = [True, False, False], $g_aiWarCompTroops[$eTroopCount], $g_aiWarCompSpells[$eSpellCount]
+Global $g_bRequestCCForWar = False, $g_sTxtRequestCCForWar
 
 ; Slot11 - Team AiO MOD++
-Global $g_abChkExtendedAttackBar[2] = [True, True]
+Global $g_abChkExtendedAttackBar[2] = [False, False]
 Global $g_iTotalAttackSlot = 10, $g_bDraggedAttackBar = False ; flag if AttackBar is dragged or not
 
 ; Request troops for defense - Team AiO MOD++
 Global $g_bRequestTroopsEnableDefense = False, $g_sRequestTroopsTextDefense = "", $g_iRequestDefenseEarly = 0
 
-; Skip Request CC - Team AiO MOD++
-Global $g_bSkipRequestCC = False, $g_iSkipRequestCCTroop = 40, $g_iSkipRequestCCSpell = 2
+; Builder Status - Team AiO MOD++
+Global $g_sNextBuilderReadyTime = ""
+Global $g_asNextBuilderReadyTime[8] = ["", "", "", "", "", "", "", ""]

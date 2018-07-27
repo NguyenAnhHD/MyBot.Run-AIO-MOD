@@ -123,7 +123,7 @@ Func WaitForClouds()
 				$bEnabledGUI = True
 			EndIf
 		EndIf
-
+		If Not $g_bRunState Then ExitLoop
 		ForceCaptureRegion() ; ensure screenshots are not cached
 	WEnd
 

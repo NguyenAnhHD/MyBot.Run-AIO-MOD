@@ -27,6 +27,9 @@ Global $g_hPicDBLightSpell = 0, $g_hPicDBHealSpell = 0, $g_hPicDBRageSpell = 0, 
 Global $g_hChkTHSnipeBeforeDBEnable = 0, $g_hTxtTHSnipeBeforeDBTiles = 0, $g_hCmbTHSnipeBeforeDBScript = 0
 Global $g_hLblTHSnipeBeforeDBTiles = 0
 
+; Slot11 - Team AiO MOD++
+Global $g_hChkExtendedAttackBarDB = 0
+
 Func CreateAttackSearchDeadBaseAttack()
 	Local $sTxtTip = ""
 	Local $x = 25, $y = 40
@@ -162,7 +165,7 @@ Func CreateAttackSearchDeadBaseAttack()
 		GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 	Local $x = 10, $y = 268
-		GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Group_02", "TH Snipe"), $x - 5, $y - 20, 145, 84,$SS_CENTER)
+		GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Group_02", "TH Snipe"), $x - 5, $y - 20, 145, 84, $SS_CENTER)
 			$g_hChkTHSnipeBeforeDBEnable = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "ChkTHSnipeBeforeEnable", "Snipe TH External first"), $x, $y - 5, -1, -1)
 				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "ChkTHSnipeBeforeEnable_Info_01", "If TH is external start with a TH Snipe"))
 				GUICtrlSetOnEvent(-1, "chkTHSnipeBeforeDBEnable")
@@ -186,6 +189,14 @@ Func CreateAttackSearchDeadBaseAttack()
 				;GUICtrlSetOnEvent(-1, "cmbAttackTHType")
 		LoadDBSnipeAttacks()
 		_GUICtrlComboBox_SetCurSel($g_hCmbTHSnipeBeforeDBScript, _GUICtrlComboBox_FindStringExact($g_hCmbTHSnipeBeforeDBScript, "Bam"))
+		GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+	; Slot11 - Team AiO MOD++
+	Local $x = 10, $y = 352
+		GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Group_04", "Extended Attack troop bar"), $x - 5, $y - 20, 145, 40, $SS_CENTER)
+			$g_hChkExtendedAttackBarDB = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "ChkExtendedAttackBar", "Use troops at slot 11+"), $x, $y - 5, -1, -1)
+				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "ChkExtendedAttackBar_Info_01", "Drag the attack troop bar for more troops, spells and CC spells"))
+				GUICtrlSetState(-1, $GUI_DISABLE)
 		GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 EndFunc   ;==>CreateAttackSearchDeadBaseAttack

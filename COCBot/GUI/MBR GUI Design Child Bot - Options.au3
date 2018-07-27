@@ -222,7 +222,7 @@ Func CreateBotOptions()
 	$y += 19
 		$g_hChkStopOnBatt = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkStopOnBatt", "Stop IF Battery below"), $x-10, $y, -1, -1)
 			_GUICtrlSetTip(-1,GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkStopOnBatt_Info_01", "Will stop bot and emulator if battery status below % value"))
-			GUICtrlSetOnEvent(-1, "ChkStopOnBatt")
+			GUICtrlSetOnEvent(-1, "chkStopOnBatt")
 		$g_hTxtStopOnBatt = GUICtrlCreateInput("15", $x + 132, $y + 2, 30, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 		$g_hLblStopOnBatt = GUICtrlCreateLabel("%", $x + 166, $y + 4, -1, -1)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)

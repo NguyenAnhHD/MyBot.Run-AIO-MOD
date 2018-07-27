@@ -44,6 +44,7 @@ Func Initiate()
 
 		$g_bFirstStart = True
 		$g_bInitiateSwitchAcc = True
+		$g_iFirstTimeLab = 0
 
 		If $g_bNotifyDeleteAllPushesOnStart Then _DeletePush()
 
@@ -190,46 +191,11 @@ EndFunc   ;==>btnSearchMode
 
 Func btnPause($bRunNow = True)
 	TogglePause()
-	; Enable/Disable GUI while botting - Team AiO MOD++
-	GUICtrlSetState($g_hBtnDisableGUI, $GUI_HIDE)
-	GUICtrlSetState($g_hBtnEnableGUI, $GUI_SHOW)
-	; Stop on Low battery - Team AiO MOD++
-	GUICtrlSetState($g_hLblBatteryAC, $GUI_HIDE)
-	GUICtrlSetState($g_hLblBatteryStatus, $GUI_HIDE)
 EndFunc   ;==>btnPause
 
 Func btnResume()
 	TogglePause()
-	; Enable/Disable GUI while botting - Team AiO MOD++
-	GUICtrlSetState($g_hBtnDisableGUI, $GUI_HIDE)
-	GUICtrlSetState($g_hBtnEnableGUI, $GUI_HIDE)
-	; Stop on Low battery - Team AiO MOD++
-	GUICtrlSetState($g_hLblBatteryAC, $GUI_SHOW)
-	GUICtrlSetState($g_hLblBatteryStatus, $GUI_SHOW)
 EndFunc   ;==>btnResume
-
-; Enable/Disable GUI while botting - Team AiO MOD++
-Func btnEnableGUI()
-	GUICtrlSetState($g_hBtnEnableGUI, $GUI_HIDE)
-	GUICtrlSetState($g_hBtnDisableGUI, $GUI_SHOW)
-	GUICtrlSetState($g_hBtnResume, $GUI_DISABLE)
-	AndroidShieldForceDown(True)
-	EnableGuiControls() ; enable emulator menu controls
-	SetLog("Enabled bot controls as you wished", $COLOR_SUCCESS)
-EndFunc   ;==>btnEnableGUI
-
-Func btnDisableGUI()
-	GUICtrlSetState($g_hBtnDisableGUI, $GUI_HIDE)
-	GUICtrlSetState($g_hBtnEnableGUI, $GUI_SHOW)
-	GUICtrlSetState($g_hBtnResume, $GUI_ENABLE)
-	SetLog("Save config and disable bot controls manually", $COLOR_SUCCESS)
-	AndroidShieldForceDown(False)
-	SaveConfig()
-	readConfig()
-	applyConfig()
-	DisableGuiControls()
-EndFunc   ;==>btnDisableGUI
-; Enable/Disable GUI while botting - Team AiO MOD++
 
 Func btnAttackNowDB()
 	If $g_bRunState Then

@@ -16,92 +16,115 @@
 
 Func CheckStopForWar()
 
-	If ProfileSwitchAccountEnabled() Then CheckStopForWarAllAccounts()
+	Local $asResetTimer = ["", "", "", "", "", "", "", ""], $abResetBoolean[8] = [False, False, False, False, False, False, False, False]
+	Static $sTimeToRecheck = "", $bTimeToStop = False
+	Static $asTimeToRecheck[8] = ["", "", "", "", "", "", "", ""], $abTimeToStop[8] = [False, False, False, False, False, False, False, False]
+	Static $abStopForWar[8] = [False, False, False, False, False, False, False, False]
+	Static $abTrainWarTroop[8] = [False, False, False, False, False, False, False, False]
+
+	If $g_bFirstStart Then ; reset statics
+		$sTimeToRecheck = ""
+		$bTimeToStop = False
+	EndIf
+
+	If ProfileSwitchAccountEnabled() Then
+		If $g_bFirstStart Then ; reset statics all accounts
+			$asTimeToRecheck = $asResetTimer
+			$abTimeToStop = $abResetBoolean
+			$abStopForWar = $abResetBoolean
+			$abTrainWarTroop = $abResetBoolean
+		EndIf
+
+		; Load Timer of Current Account
+		$sTimeToRecheck = $asTimeToRecheck[$g_iCurAccount]
+		$bTimeToStop = $abTimeToStop[$g_iCurAccount]
+
+		; Circulate all accounts to turn Idle if reaching TimeToStop and Not need to train war troop
+		$abStopForWar[$g_iCurAccount] = $g_bStopForWar
+		$abTrainWarTroop[$g_iCurAccount] = $g_bTrainWarTroop
+		For $i = 0 To $g_iTotalAcc
+			If $i = $g_iCurAccount Or Not $abStopForWar[$i] Or Not $abTimeToStop[$i] Or $abTrainWarTroop[$i] Then ContinueLoop ; bypass Current account Or Feature disable Or Not yet time to stop Or Need train war troop
+			If _DateIsValid($asTimeToRecheck[$i]) Then
+				If _DateDiff("n", _NowCalc(), $asTimeToRecheck[$i]) <= 0 Then
+					SetLog("Account [" & $i + 1 & "] should stop for war now.", $COLOR_INFO)
+					If GUICtrlRead($g_ahChkAccount[$i]) = $GUI_CHECKED Then
+						GUICtrlSetState($g_ahChkAccount[$i], $GUI_UNCHECKED)
+						chkAccount($i)
+						SaveConfig_600_35_2() ; Save config profile after changing botting type
+						ReadConfig_600_35_2() ; Update variables
+						UpdateMultiStats()
+						SetLog("Acc [" & $i + 1 & "] turned OFF")
+						SetSwitchAccLog("   Acc. " & $i + 1 & " now Idle for war", $COLOR_ACTION)
+					EndIf
+				EndIf
+			EndIf
+		Next
+	EndIf
 
 	If Not $g_bStopForWar Then Return
 
-	Local $bCurrentWar = False, $aResult[3], $bStopAction = False
-
-	If ProfileSwitchAccountEnabled() Then ; Load Timer of Current Account
-		$g_iStartTimerToRecheck = $g_aiStartTimerToRecheck[$g_iCurAccount]
-		$g_iTimerToRecheck = $g_aiTimerToRecheck[$g_iCurAccount]
-		$g_sCheckOrStop = $g_asCheckOrStop[$g_iCurAccount]
+	If _DateIsValid($sTimeToRecheck) Then
+		If _DateDiff("n", _NowCalc(), $sTimeToRecheck) > 0 Then Return
+		If $bTimeToStop Then SetLog("Should be time to stop for war now. Let's have a look", $COLOR_INFO)
 	EndIf
 
-	If $g_bFirstStart Then $g_iStartTimerToRecheck = 0
-
-	If $g_iStartTimerToRecheck <> 0 Then
-		Local $iCheckTimer = TimerDiff($g_iStartTimerToRecheck)
-		If $iCheckTimer < $g_iTimerToRecheck * 60 * 1000 Then Return
-		If $g_sCheckOrStop = "Time to stop" Then SetLog("Should be time to stop for war now. Let's have a look", $COLOR_INFO)
-	EndIf
-
-	$bCurrentWar = CheckWarTime($aResult)
-	If @error Then Return
-	Local $iBattleStartTime = $aResult[0]
-	Local $iBattleEndTime = $aResult[1]
-	Local $bInWar = $aResult[2]
+	Local $bCurrentWar = False, $sBattleEndTime = "", $bInWar, $iSleepTime = -1
+	$bCurrentWar = CheckWarTime($sBattleEndTime, $bInWar)
+	If @error Or Not _DateIsValid($sBattleEndTime) Then Return
 
 	If Not $bCurrentWar Then
-		$g_iStartTimerToRecheck = TimerInit()
-		$g_iTimerToRecheck = 6 * 60 ; 360 minutes = 6 hours
-		$g_sCheckOrStop = "Time to re-check"
+		$sTimeToRecheck = _DateAdd("h", 6, _NowCalc())
 		SetLog("Will come back to check in 6 hours", $COLOR_INFO)
-
-		If ProfileSwitchAccountEnabled() Then SaveTimerCurrentAccount()
-		Return
 	Else
 		If Not $bInWar Then
-			$g_iStartTimerToRecheck = TimerInit()
-			$g_iTimerToRecheck = $iBattleStartTime >= 0 ? $iBattleStartTime + 24 * 60 : $iBattleEndTime
-			If $g_iTimerToRecheck > 0 Then
-				SetLog("Will come back to check after current war finish in " & Int($g_iTimerToRecheck / 60) & "h " & Mod($g_iTimerToRecheck, 60) & "m", $COLOR_INFO)
-				$g_sCheckOrStop = "Time to re-check"
-			Else
-				$g_iStartTimerToRecheck = 0 ; remove timer
-			EndIf
-
-			If ProfileSwitchAccountEnabled() Then SaveTimerCurrentAccount()
-			Return
+			$sTimeToRecheck = $sBattleEndTime
+			SetLog("Will come back to check after current war finish: " & $sTimeToRecheck, $COLOR_INFO)
 		Else
-			Local $iBattleTime = $iBattleStartTime >= 0 ? $iBattleStartTime : 24 * 60 - $iBattleEndTime ; check battle start time
-			If $g_bDebugSetlog Then SetDebugLog("$iBattleTime: " & $iBattleTime & " minutes")
 
-			$g_iTimerToRecheck = $iBattleTime + $g_bStopBeforeBattle ? (-$g_iStopTime * 60) : $g_iStopTime * 60
-			If $g_bDebugSetlog Then SetDebugLog("$g_iTimerToRecheck: " & $g_iTimerToRecheck & " minutes")
-			If $g_iTimerToRecheck > 0 Then
-				$g_iStartTimerToRecheck = TimerInit()
-				SetLog("Will stop for war preparation in " & Int($g_iTimerToRecheck / 60) & "h " & Mod($g_iTimerToRecheck, 60) & "m", $COLOR_INFO)
-				$g_sCheckOrStop = "Time to stop"
+			Local $iBattleEndTime = _DateDiff("h", _NowCalc(), $sBattleEndTime) ; in hours
+			If $g_bDebugSetlog Then SetDebugLog("$iBattleEndTime: " & Round($iBattleEndTime, 2) & " hours")
+
+			Local $iTimerToStop = $iBattleEndTime - 24 + Number($g_iStopTime)
+			If $g_bDebugSetlog Then SetDebugLog("$iTimerToStop: " & Round($iTimerToStop, 2) & " hours")
+
+			If $iTimerToStop > 0 Then
+				$sTimeToRecheck = _DateAdd("h", $iTimerToStop, _NowCalc())
+				SetLog("Will stop for war preparation in " & Int($iTimerToStop) & "h " & Mod($iTimerToStop * 60, 60) & "m", $COLOR_INFO)
+				$bTimeToStop = True
 			Else
-				$g_iStartTimerToRecheck = 0 ; remove timer
-				$g_sCheckOrStop = ""
+				$sTimeToRecheck = "" ; remove timer
+				$bTimeToStop = False
 
-				$iBattleTime = $iBattleEndTime >= 0 ? $iBattleEndTime : $iBattleStartTime + 24 * 60 ; check battle end time
-				Local $iSleepTime = $iBattleTime - $g_iReturnTime * 60
-
-				If $iSleepTime >= 60 Then
-					SetLog("Stop and prepare for war now", $COLOR_INFO)
-					$bStopAction = True
-				Else
+				$iSleepTime = $iBattleEndTime - $g_iReturnTime
+				If $iSleepTime < 1 Then
 					SetLog("It's time to stop for war. But stop time window is too tight, just skip and continue", $COLOR_INFO)
 					SetLog("Will come back to check in 6 hours", $COLOR_INFO)
-					$g_iStartTimerToRecheck = TimerInit()
-					$g_iTimerToRecheck = 6 * 60 ; 360 minutes = 6 hours
-					$g_sCheckOrStop = "Time to re-check"
+					$sTimeToRecheck = _DateAdd("h", 6, _NowCalc())
 				EndIf
 			EndIf
-			If ProfileSwitchAccountEnabled() Then SaveTimerCurrentAccount()
-			If $bStopAction Then StopAndPrepareForWar($iSleepTime) ; quit function here
 		EndIf
+	EndIf
+
+	If ProfileSwitchAccountEnabled() Then  ; Save Timer of Current Account
+		$asTimeToRecheck[$g_iCurAccount] = $sTimeToRecheck
+		$abTimeToStop[$g_iCurAccount] = $bTimeToStop
+	EndIf
+
+	If $iSleepTime >= 1 Then
+		SetLog("Stop and prepare for war now", $COLOR_INFO)
+		StopAndPrepareForWar($iSleepTime) ; quit function here
 	EndIf
 
 EndFunc   ;==>CheckStopForWar
 
-Func CheckWarTime(ByRef $aResult) ; return Success + $aResult[3] = [ $iBattleStartTime, $iBattleEndTime, $bInWar] OR Failure
+Func WarMenu()
+	Local $Result = _ColorCheck(_GetPixelColor(826, 34, True), "FFFFFF", 20)
+	Return $Result
+EndFunc   ;==>WarMenu
 
-	$aResult[0] = -1
-	$aResult[1] = -1 ; reset time (minutes)
+Func CheckWarTime(ByRef $sResult, ByRef $bResult) ; return [Success + $sResult = $sBattleEndTime, $bResult = $bInWar] OR Failure
+
+	$sResult = ""
 	Local $directory = @ScriptDir & "\imgxml\WarPage"
 	Local $bBattleDay_InWar = False, $sWarDay, $sTime
 
@@ -112,14 +135,15 @@ Func CheckWarTime(ByRef $aResult) ; return Success + $aResult[3] = [ $iBattleSta
 		If _Sleep(1000) Then Return
 	EndIf
 
-	If IsWarMenu() Then
+	If WarMenu() Then
 		If $bBattleDay_InWar Then
 			$sWarDay = "Battle"
-			$aResult[2] = True
+			$bResult = True
 		Else
 			$sWarDay = QuickMIS("N1", $directory, 360, 85, 360 + 145, 85 + 28, True) ; Prepare or Battle
-			$aResult[2] = QuickMIS("BC1", $directory, 795, 555, 795 + 20, 555 + 60, True) ; $bInWar
-			If $g_bDebugSetlog Then SetDebugLog("$sResult QuickMIS N1/BC1: " & $sWarDay & "/ " & $aResult[2])
+			$bResult = QuickMIS("BC1", $directory, 795, 555, 795 + 20, 555 + 60, True) ; $bInWar
+			If $g_bDebugSetlog Then SetDebugLog("$sResult QuickMIS N1/BC1: " & $sWarDay & "/ " & $bResult)
+			If $sWarDay = "none" Then Return SetError(1, 0, "Error reading war day")
 		EndIf
 
 		If Not StringInStr($sWarDay, "Battle") And Not StringInStr($sWarDay, "Preparation") Then
@@ -130,19 +154,22 @@ Func CheckWarTime(ByRef $aResult) ; return Success + $aResult[3] = [ $iBattleSta
 		Else
 			$sTime = QuickMIS("OCR", $directory, 396, 65, 396 + 70, 70 + 20, True)
 			If $g_bDebugSetlog Then SetDebugLog("$sResult QuickMIS OCR: " & ($bBattleDay_InWar ? $sWarDay & ", " : "") & $sTime)
+			If $sTime = "none" Then Return SetError(1, 0, "Error reading war time")
 
 			Local $iConvertedTime = ConvertOCRTime("War", $sTime, False)
+			If $iConvertedTime = 0 Then Return SetError(1, 0, "Error converting war time")
+
 			If StringInStr($sWarDay, "Preparation") Then
-				$aResult[0] = $iConvertedTime ; $iBattleStartTime
 				SetLog("Clan war is now in preparation. Battle will start in " & $sTime, $COLOR_INFO)
+				$sResult = _DateAdd("n", $iConvertedTime + 24 * 60, _NowCalc()) ; $iBattleFinishTime
 			ElseIf StringInStr($sWarDay, "Battle") Then
-				$aResult[1] = $iConvertedTime ; $iBattleEndTime
 				SetLog("Clan war is now in battle day. Battle will finish in " & $sTime, $COLOR_INFO)
+				$sResult = _DateAdd("n", $iConvertedTime, _NowCalc()) ; $iBattleFinishTime
 			EndIf
 
-			If _Max($aResult[0], $aResult[1]) < 0 Then Return False
+			If Not _DateIsValid($sResult) Then Return SetError(1, 0, "Error converting battle finish time")
 
-			SetLog("You are " & ($aResult[2] ? "" : "not ") & "in war", $COLOR_INFO)
+			SetLog("You are " & ($bResult ? "" : "not ") & "in war", $COLOR_INFO)
 
 			Click(70, 680, 1, 500, "#0000") ; return home
 			Return True
@@ -312,7 +339,7 @@ Func RemoveCC()
 	Local $sCCTroop, $aCCTroop, $sCCSpell, $aCCSpell
 	$sCCTroop = getOcrAndCapture("coc-ms", 289, 468, 60, 16, True, False, True) ; read CC troops 0/35
 	$aCCTroop = StringSplit($sCCTroop, "#", $STR_NOCOUNT) ; split the trained troop number from the total troop number
-	$sCCSpell = getOcrAndCapture("coc-ms", 472, 467, 35, 16, True, False, True) ; read CC Spells 0/2
+	$sCCSpell = getOcrAndCapture("coc-ms", 473, 467, 35, 16, True, False, True) ; read CC Spells 0/2
 	$aCCSpell = StringSplit($sCCSpell, "#", $STR_NOCOUNT) ; split the trained troop number from the total troop number
 
 	Local $aPos[2] = [40, 575]
@@ -321,7 +348,7 @@ Func RemoveCC()
 	If IsArray($aCCSpell) Then $bHasCCTroopOrSpell = Number($aCCSpell[0]) > 1
 
 	If $bHasCCTroopOrSpell Then
-		Click(Random(715, 825, 1), Random(507, 545, 1)) ; Click on Edit Army Button
+		Click(Random(719, 838, 1), Random(505, 545, 1)) ; Click on Edit Army Button
 		If _Sleep(500) Then Return
 		For $i = 0 To 6
 			If _ColorCheck(_GetPixelColor(Round(30 + 72.8 * $i, 0), 508, True), Hex(0xCFCFC8, 6), 15) Then
@@ -338,7 +365,7 @@ Func RemoveCC()
 
 		For $i = 0 To 10
 			If _ColorCheck(_GetPixelColor(806, 567, True), Hex(0xCEEF76, 6), 25) Then
-				Click(Random(720, 815, 1), Random(558, 589, 1)) ; Click on 'Okay' button to save changes
+				Click(Random(724, 827, 1), Random(556, 590, 1)) ; Click on 'Okay' button to save changes
 				ExitLoop
 			Else
 				If $i = 10 Then
@@ -352,7 +379,7 @@ Func RemoveCC()
 
 		For $i = 0 To 10
 			If _ColorCheck(_GetPixelColor(508, 428, True), Hex(0xFFFFFF, 6), 30) Then
-				Click(Random(445, 583, 1), Random(402, 455, 1)) ; Click on 'Okay' button to Save changes... Last button
+				Click(Random(443, 583, 1), Random(400, 457, 1)) ; Click on 'Okay' button to Save changes... Last button
 				ExitLoop
 			Else
 				If $i = 10 Then
@@ -372,33 +399,3 @@ Func RemoveCC()
 	ClickP($aAway, 2, 0)
 	If _Sleep(300) Then Return
 EndFunc   ;==>RemoveCC
-
-Func SaveTimerCurrentAccount()
-	$g_aiStartTimerToRecheck[$g_iCurAccount] = $g_iStartTimerToRecheck
-	$g_aiTimerToRecheck[$g_iCurAccount] = $g_iTimerToRecheck
-	$g_asCheckOrStop[$g_iCurAccount] = $g_sCheckOrStop
-EndFunc   ;==>SaveTimerCurrentAccount
-
-Func CheckStopForWarAllAccounts()
-
-	$g_abStopForWar[$g_iCurAccount] = $g_bStopForWar
-
-	For $i = 0 To $g_iTotalAcc
-		If $i = $g_iCurAccount Or Not $g_abStopForWar[$i] Then ContinueLoop ; not check current account
-		If $g_aiStartTimerToRecheck[$i] <> 0 Then
-			Local $iCheckTimer = TimerDiff($g_aiStartTimerToRecheck[$i])
-			If $iCheckTimer >= $g_aiTimerToRecheck[$i] * 60 * 1000 And $g_asCheckOrStop[$i] = "Time to stop" Then
-				SetLog("Account [" & $i + 1 & "] should stop for war now.", $COLOR_INFO)
-				If GUICtrlRead($g_ahChkAccount[$i]) = $GUI_CHECKED Then
-					GUICtrlSetState($g_ahChkAccount[$i], $GUI_UNCHECKED)
-					chkAccount($i)
-					SaveConfig_600_35_2() ; Save config profile after changing botting type
-					ReadConfig_600_35_2() ; Update variables
-					UpdateMultiStats()
-					SetLog("Acc [" & $i + 1 & "] turned OFF")
-					SetSwitchAccLog("   Acc. " & $i + 1 & " now Idle for war", $COLOR_ACTION)
-				EndIf
-			EndIf
-		EndIf
-	Next
-EndFunc   ;==>CheckStopForWarAllAccounts

@@ -90,6 +90,10 @@ Func ReadConfig_MOD()
 	IniReadS($g_bTrainLogoutMaxTime, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTime", $g_bTrainLogoutMaxTime, "Bool")
 	IniReadS($g_iTrainLogoutMaxTime, $g_sProfileConfigPath, "TrainLogout", "TrainLogoutMaxTimeTXT", $g_iTrainLogoutMaxTime, "int")
 
+	; Slot11 - Team AiO MOD++
+	IniReadS($g_abChkExtendedAttackBar[$DB], $g_sProfileConfigPath, "attack", "ExtendedAttackBarDB", False, "Bool")
+	IniReadS($g_abChkExtendedAttackBar[$LB], $g_sProfileConfigPath, "attack", "ExtendedAttackBarLB", False, "Bool")
+
 	; Request CC Troops at first - Team AiO MOD++
 	IniReadS($g_bReqCCFirst, $g_sProfileConfigPath, "planned", "ReqCCFirst", $g_bReqCCFirst, "Bool")
 
@@ -142,7 +146,7 @@ Func ReadConfig_MOD()
 
 	; Stop on Low battery - Team AiO MOD++
 	IniReadS($g_bStopOnBatt, $g_sProfileConfigPath, "other", "ChkStopOnBatt", $g_bStopOnBatt, "Bool")
-	IniReadS($g_iSearchTimeout, $g_sProfileConfigPath, "other", "StopOnBatt", $g_iStopOnBatt, "int")
+	IniReadS($g_iStopOnBatt, $g_sProfileConfigPath, "other", "StopOnBatt", $g_iStopOnBatt, "int")
 
 	; Attack Log - Team AiO MOD++
 	IniReadS($g_bColorfulAttackLog, $g_sProfileConfigPath, "attack", "ColorfulAttackLog", False, "Bool")
@@ -150,7 +154,6 @@ Func ReadConfig_MOD()
 	; Stop For War - Team AiO MOD++
 	IniReadS($g_bStopForWar, $g_sProfileConfigPath, "war preparation", "Enable", False, "Bool")
 	IniReadS($g_iStopTime, $g_sProfileConfigPath, "war preparation", "Stop Time", 0, "Int")
-	IniReadS($g_bStopBeforeBattle, $g_sProfileConfigPath, "war preparation", "Stop Before", True, "Bool")
 	IniReadS($g_iReturnTime, $g_sProfileConfigPath, "war preparation", "Return Time", 0, "Int")
 	IniReadS($g_bTrainWarTroop, $g_sProfileConfigPath, "war preparation", "Train War Troop", False, "Bool")
 	IniReadS($g_bUseQuickTrainWar, $g_sProfileConfigPath, "war preparation", "QuickTrain War Troop", False, "Bool")
@@ -172,10 +175,5 @@ Func ReadConfig_MOD()
 	$g_bRequestTroopsEnableDefense = (IniRead($g_sProfileConfigPath, "RequestDefense", "RequestDefenseEnable", "0") = "1")
 	$g_sRequestTroopsTextDefense = IniRead($g_sProfileConfigPath, "RequestDefense", "txtRequestDefense", "")
 	$g_iRequestDefenseEarly = Int(IniRead($g_sProfileConfigPath, "RequestDefense", "RequestDefenseEarly", "0"))
-
-	; Skip Request CC - Team AiO MOD++
-	$g_bSkipRequestCC = (IniRead($g_sProfileConfigPath, "donate", "SkipRequestCC", "0") = "1")
-	$g_iSkipRequestCCTroop = Int(IniRead($g_sProfileConfigPath, "donate", "SkipRequestCC_Troop", "40"))
-	$g_iSkipRequestCCSpell = Int(IniRead($g_sProfileConfigPath, "donate", "SkipRequestCC_Spell", "2"))
 
 EndFunc   ;==>ReadConfig_MOD

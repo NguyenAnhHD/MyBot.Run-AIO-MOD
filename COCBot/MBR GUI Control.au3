@@ -308,11 +308,12 @@ Func GUIControl_WM_MOUSE($hWin, $iMsg, $wParam, $lParam)
 	$g_bTogglePauseAllowed = False
 	Local $hWinMouse = $g_hFrmBotEmbeddedMouse
 	If $g_hFrmBotEmbeddedMouse = 0 Then $hWinMouse = (($g_iAndroidEmbedMode = 0) ? $g_hFrmBotEmbeddedShield : $g_hFrmBot)
-	If $g_iDebugWindowMessages > 1 Then SetDebugLog("GUIControl_WM_MOUSE: $hWin=" & $hWin & ",$iMsg=" & $iMsg & ",$wParam=" & $wParam & ",$lParam=" & $lParam & ",$hWinMouse=" & $hWinMouse, Default, True)
+	If $g_iDebugWindowMessages > 1 Then SetDebugLog("GUIControl_WM_MOUSE Received message: $hWin=" & $hWin & ",$iMsg=" & $iMsg & ",$wParam=" & $wParam & ",$lParam=" & $lParam & ",$hWinMouse=" & $hWinMouse, Default, True)
 	CheckBotZOrder()
 	; always ensure
 	If $hWin <> $hWinMouse Or $g_bAndroidEmbedded = False Or $g_avAndroidShieldStatus[0] = True Then
 		; wrong window of shield is up: block mouse
+		If $g_iDebugWindowMessages > 1 Then SetDebugLog("GUIControl_WM_MOUSE block message: $hWin=" & $hWin & ",$iMsg=" & $iMsg & ",$wParam=" & $wParam & ",$lParam=" & $lParam & ",$hWinMouse=" & $hWinMouse, Default, True)
 		If $g_avAndroidShieldStatus[0] = True And $iMsg = $WM_LBUTTONDOWN And $hWin <> $g_hFrmBotButtons Then BotMoveRequest() ; move window
 		$g_bTogglePauseAllowed = $wasAllowed
 		SetCriticalMessageProcessing($wasCritical)
@@ -366,13 +367,17 @@ Func GUIControl_WM_MOUSE($hWin, $iMsg, $wParam, $lParam)
 		SetCriticalMessageProcessing($wasCritical)
 		Return $GUI_RUNDEFMSG
 	EndIf
-	Local $hCtrlTarget = $g_aiAndroidEmbeddedCtrlTarget[0]
 	If $iMsg <> $WM_MOUSEMOVE Or $g_iAndroidEmbedMode <> 0 Then
 		; not all message got thru here, so disabled
 		;$x += $g_aiMouseOffset[0]
 		;$y += $g_aiMouseOffset[1]
 		$lParam = $y * 0x10000 + $x
-		Local $Result = _WinAPI_PostMessage($hCtrlTarget, $iMsg, $wParam, $lParam)
+		;Nox 6.2.0.0 docked clicks didn't work anymore, so copied window handle code from _ControlClick function
+		Local $useHWnD = $g_iAndroidControlClickWindow = 1 And $g_bAndroidEmbedded = False
+		Local $hCtrlTarget = (($useHWnD) ? ($g_hAndroidWindow) : ($g_hAndroidControl))
+		;Local $hCtrlTarget = $g_aiAndroidEmbeddedCtrlTarget[0]
+		;Local $Result = _WinAPI_PostMessage($hCtrlTarget, $iMsg, $wParam, $lParam)
+		Local $Result = _SendMessage($hCtrlTarget, $iMsg, $wParam, $lParam)
 	EndIf
 	;Local $Result = _SendMessage($hCtrlTarget, $iMsg, $wParam, $lParam)
 	;#ce
@@ -621,6 +626,11 @@ Func GUIControl_WM_MOVE($hWind, $iMsg, $wParam, $lParam)
 			Return $GUI_RUNDEFMSG
 		EndIf
 
+		If $g_bAndroidEmbedded And $g_bAndroidEmbeddedWindowZeroPosition Then
+			; tell Android Window new bot position, this is currently only required for Nox 6.2.0.0 to fix user clicks when docked
+			_SendMessage($g_hAndroidWindow, $iMsg, $wParam, $lParam)
+		EndIf
+
 		; update bot pos variables
 		Local $g_iFrmBotPos = WinGetPos($g_hFrmBot)
 		If $g_bAndroidEmbedded = False Then
@@ -806,6 +816,19 @@ Func BotToFront($hHWndAfter = $HWND_TOPMOST)
 EndFunc   ;==>BotToFront
 
 Func CheckBotZOrder($bCheckOnly = False, $bForceZOrder = False)
+	If $g_bAndroidEmbedded And $g_iAndroidEmbedMode = 0 Then
+		Local $hCtrlTarget = $g_aiAndroidEmbeddedCtrlTarget[0]
+		Local $targetIsHWnD = $hCtrlTarget = $g_hAndroidWindow
+		If Not $targetIsHWnD Then
+			Local $bCheck = ($bForceZOrder Or _WinAPI_GetWindow($hCtrlTarget, $GW_HWNDNEXT) <>  $g_hAndroidWindow)
+			If $bCheckOnly Then Return $bCheck
+			If $bCheck Then
+				SetDebugLog("CheckBotZOrder: Ajust docked Android Window")
+				WinMove2($g_hAndroidWindow, "", -1, -1, -1, -1, $hCtrlTarget, 0, False) ; place URL Small Window after (behind) bot
+			EndIf
+			Return $bCheck
+		EndIf
+	EndIf
 	If $g_iAndroidEmbedMode = 1 And $g_bBotDockedShrinked Then
 		; check if order is (front to bottom): URL -> buttons -> graphics -> shield -> bot, to URL is top...
 		Local $hWinBehindButtons = ($g_hFrmBotEmbeddedGraphics ? $g_hFrmBotEmbeddedGraphics : ($g_hFrmBotEmbeddedShield ? $g_hFrmBotEmbeddedShield : $g_hFrmBot))
@@ -1607,8 +1630,11 @@ Func SetTime($bForceUpdate = False)
 		_TicksToTime(Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed), $hour, $min, $sec)
 		GUICtrlSetData($g_hLblResultRuntimeNow, StringFormat("%02i:%02i:%02i", $hour, $min, $sec))
 	EndIf
+
+	; Return
+
 	Local Static $DisplayLoop = 0
-	If $DisplayLoop >= 3 Then ; Conserve Clock Cycles on Updating times
+	If $DisplayLoop >= 30 Then ; Conserve Clock Cycles on Updating times
 		$DisplayLoop = 0
 		If ProfileSwitchAccountEnabled() Then
 			If GUICtrlRead($g_hGUI_STATS_TAB, 1) = $g_hGUI_STATS_TAB_ITEM5 Then
@@ -1640,6 +1666,45 @@ Func SetTime($bForceUpdate = False)
 		EndIf
 	EndIf
 	$DisplayLoop += 1
+	; Builder Status - Team AiO MOD++
+    Local $sBuilderTime = ""
+	If _DateIsValid($g_sNextBuilderReadyTime) Then
+		_TicksToDay(Int(_DateDiff("s", _NowCalc(), $g_sNextBuilderReadyTime) * 1000), $day, $hour, $min, $sec)
+		$sBuilderTime = $day > 0 ? StringFormat("%id %ih", $day, $hour) : ($hour > 0 ? StringFormat("%ih %i'", $hour, $min) : StringFormat("%im %i""", $min, $sec))
+	EndIf
+
+	Local $asTime[8] = ["", "", "", "", "", "", "", ""]
+	If ProfileSwitchAccountEnabled() Then
+		For $i = 0 To $g_iTotalAcc
+			If _DateIsValid($g_asNextBuilderReadyTime[$i]) Then
+				_TicksToDay(Int(_DateDiff("s", _NowCalc(), $g_asNextBuilderReadyTime[$i]) * 1000), $day, $hour, $min, $sec)
+				$asTime[$i] = $day > 0 ? StringFormat("%id%ih", $day, $hour) : ($hour > 0 ? StringFormat("%ih%i'", $hour, $min) : StringFormat("%im%i""", $min, $sec))
+			EndIf
+		Next
+	EndIf
+
+    Local Static $DisplayLoop2 = 0, $bCurrentDisplayStatus = True
+    If $DisplayLoop2 > 5 Then
+		If $bCurrentDisplayStatus Then
+			If $sBuilderTime <> "" Then GUICtrlSetData($g_hLblResultBuilderNow, $sBuilderTime)
+			If GUICtrlRead($g_hGUI_STATS_TAB, 1) = $g_hGUI_STATS_TAB_ITEM5 Then
+				For $i = 0 To $g_iTotalAcc ; Update builder time for all Accounts
+					If $asTime[$i] <> "" Then GUICtrlSetData($g_ahLblResultBuilderNowAcc[$i], $asTime[$i])
+				Next
+			EndIf
+			$bCurrentDisplayStatus = False
+		Else
+			If $sBuilderTime <> "" Then GUICtrlSetData($g_hLblResultBuilderNow, $g_iFreeBuilderCount & "/" & $g_iTotalBuilderCount)
+			If GUICtrlRead($g_hGUI_STATS_TAB, 1) = $g_hGUI_STATS_TAB_ITEM5 Then
+				For $i = 0 To $g_iTotalAcc
+					If $asTime[$i] <> "" Then GUICtrlSetData($g_ahLblResultBuilderNowAcc[$i], $g_aiFreeBuilderCountAcc[$i] & "/" & $g_aiTotalBuilderCountAcc[$i])
+				Next
+			EndIf
+			$bCurrentDisplayStatus = True
+		EndIf
+		$DisplayLoop2 = 0
+    EndIf
+	$DisplayLoop2 += 1
 EndFunc   ;==>SetTime
 
 Func tabMain()

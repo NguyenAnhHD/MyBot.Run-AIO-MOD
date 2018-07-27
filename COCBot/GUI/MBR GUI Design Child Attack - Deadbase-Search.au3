@@ -189,7 +189,8 @@ Func CreateAttackSearchDeadBaseSearch()
 			GUICtrlSetOnEvent(-1, "cmbDBWaitForCCSpell")
 		$g_hTxtDBWaitForCastleSpell = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "TxtWaitForCastleSpell", "And"), $x + 80, $y + 53, -1, -1)
 		$g_hCmbDBWaitForCastleSpell2 = GUICtrlCreateCombo(GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "CmbWaitForCastleSpell", -1), $x + 110, $y + 50, 70, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-			GUICtrlSetData(-1, $sTxtPoisonSpells & "|" & _
+			GUICtrlSetData(-1, $sTxtFreezeSpells & "|" & _
+							   $sTxtPoisonSpells & "|" & _
 							   $sTxtEarthquakeSpells & "|" & _
 							   $sTxtHasteSpells & "|" & _
 							   $sTxtSkeletonSpells)

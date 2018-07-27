@@ -42,7 +42,7 @@ Func _AutoUpgrade()
 
 		ClickP($aAway, 1, 0, "#0000") ;Click Away
 		randomSleep($DELAYAUTOUPGRADEBUILDING1)
-		VillageReport()
+		VillageReport(True, False)
 
 		If $g_iFreeBuilderCount < 1 Then
 			SetLog("No builder available... Skipping Auto Upgrade...", $COLOR_WARNING)

@@ -115,17 +115,17 @@ Func GUIControlCheckCC()
 EndFunc   ;==>GUIControlCheckCC
 
 Func CreateGUICheckCC()
-	Local $x = 100, $y = 125, $sCmbList = ""
+	Local $x = 100, $y = 130, $sCmbList = ""
 	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "Group", "CC Troop && Spell expectation"), $x, $y, 325, 175)
 	$y += 20
 	$x += 5
 
 	$g_hLblCastleCapacity = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - CheckTroopsCC", "CastleCapacity", "Castle Capacity") & ": ", $x + 5, $y, -1, -1)
-	$g_hCmbCastleCapacityT = GUICtrlCreateCombo("", $x + 85, $y - 2, 35, 25)
-		GUICtrlSetData(-1, "10|15|20|25|30|35", "35")
+	$g_hCmbCastleCapacityT = GUICtrlCreateCombo("", $x + 85, $y - 2, 40, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+		GUICtrlSetData(-1, "10|15|20|25|30|35|40", "40")
 		GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
-		GUICtrlCreateLabel("Troops", $x + 125, $y, -1, -1)
-	$g_hCmbCastleCapacityS = GUICtrlCreateCombo("", $x + 195, $y - 2, 35, 25)
+		GUICtrlCreateLabel("Troops", $x + 130, $y, -1, -1)
+	$g_hCmbCastleCapacityS = GUICtrlCreateCombo("", $x + 195, $y - 2, 35, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 		GUICtrlSetData(-1, "1|2", "2")
 		GUICtrlSetOnEvent(-1, "GUIControlCheckCC")
 		GUICtrlCreateLabel("Spells", $x + 235, $y, -1, -1)

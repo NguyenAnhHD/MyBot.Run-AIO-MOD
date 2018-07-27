@@ -26,7 +26,7 @@ Func TestImglocTroopBar()
 	$g_bRunState = False
 EndFunc   ;==>TestImglocTroopBar
 
-Func AttackBarCheck($Remaining = False)
+Func AttackBarCheck($Remaining = False, $pMatchMode = $DB)
 
 	Local $x = 0, $y = 659, $x1 = 853, $y1 = 698
 	Static Local $CheckSlot12 = False
@@ -89,23 +89,25 @@ Func AttackBarCheck($Remaining = False)
 				$aResult[$i + $iResultAddDup][2] = Number($aCoordArray[0][1])
 				;;;;;;;; If exist Castle Spell ;;;;;;;
 				Local $iMultipleCoords = UBound($aCoords)
+				; Check if exist a double Castle Spells but with different levels
 				If $iMultipleCoords > 1 And StringInStr($aResult[$i + $iResultAddDup][0], "Spell") <> 0 Then
 					If $g_bDebugSetlog Then SetDebugLog($aResult[$i + $iResultAddDup][0] & " detected " & $iMultipleCoords & " times!")
-
-					Local $aCoordsSplit2 = $aCoords[1]
-					If UBound($aCoordsSplit2) = 2 Then
-						; add slot
-						$iResultAddDup += 1
-						ReDim $aResult[UBound($aKeys) + $iResultAddDup][6]
-						$aResult[$i + $iResultAddDup][0] = $aResult[$i + $iResultAddDup - 1][0] ; same objectname
-						$aResult[$i + $iResultAddDup][1] = $aCoordsSplit2[0]
-						$aResult[$i + $iResultAddDup][2] = $aCoordsSplit2[1]
-						If $g_bDebugSetlog Then SetDebugLog($aResult[$i + $iResultAddDup][0] & " | $aCoordArray: " & $aResult[$i + $iResultAddDup][1] & "-" & $aResult[$i + $iResultAddDup][2])
-					Else
-						; don't invalidate anything
-						;$aCoordArray[0][0] = -1
-						;$aCoordArray[0][1] = -1
-					EndIf
+					For $j = 0 To $iMultipleCoords - 1
+						Local $aCoordsSplit2 = $aCoords[$j]
+						If UBound($aCoordsSplit2) = 2 Then
+							; add slot
+							$iResultAddDup += 1
+							ReDim $aResult[UBound($aKeys) + $iResultAddDup][6]
+							$aResult[$i + $iResultAddDup][0] = $aResult[$i + $iResultAddDup - 1][0] ; same objectname
+							$aResult[$i + $iResultAddDup][1] = $aCoordsSplit2[0]
+							$aResult[$i + $iResultAddDup][2] = $aCoordsSplit2[1]
+							If $g_bDebugSetlog Then SetDebugLog($aResult[$i + $iResultAddDup][0] & " | $aCoordArray: " & $aResult[$i + $iResultAddDup][1] & "-" & $aResult[$i + $iResultAddDup][2])
+						Else
+							; don't invalidate anything
+							;$aCoordArray[0][0] = -1
+							;$aCoordArray[0][1] = -1
+						EndIf
+					Next
 				EndIf
 			Next
 
@@ -146,7 +148,7 @@ Func AttackBarCheck($Remaining = False)
 						Else
 							; In case of Spells + Heroes
 							; June 2018 Update
-							If StringInStr($aResult[$i][0], "Spell") <> 0 And $CheckSlotwHero = True then
+							If StringInStr($aResult[$i][0], "Spell") <> 0 And $CheckSlotwHero = True Then
 								$Slottemp[0] = $Slottemp[0] + 13
 								$iSlotCompensation = -6
 							EndIf
@@ -174,7 +176,7 @@ Func AttackBarCheck($Remaining = False)
 						$aResult[$i][3] = -1
 						$aResult[$i][4] = -1
 					EndIf
-					If $aResult[$i][4] <= 10 Then ; Slot11 - Team AiO MOD++
+					If $aResult[$i][4] <= 10 Or Not $g_abChkExtendedAttackBar[$g_iMatchMode] Then ; Slot11 - Team AiO MOD++
 						$strinToReturn &= "|" & TroopIndexLookup($aResult[$i][0]) & "#" & $aResult[$i][4] & "#" & $aResult[$i][3]
 					EndIf
 				EndIf
@@ -206,16 +208,18 @@ Func AttackBarCheck($Remaining = False)
 	EndIf
 
 	; Drag & checking Slot11 - Team AiO MOD++
-	If $g_iMatchMode <= $LB Then
+	If $pMatchMode <= $LB Then
 		If $g_abChkExtendedAttackBar[$g_iMatchMode] And $CheckSlot12 And IsArray($aResult) Then
-			SetDebuglog("$strinToReturn 1st page = " & $strinToReturn)
-			Local $sLastTroop1stPage = $aResult[UBound($aResult) - 1][0]
+			If $g_bDebugSetlog Then SetDebugLog("$strinToReturn 1st page = " & $strinToReturn)
+			Local $aLastTroop1stPage[2]
+			$aLastTroop1stPage[0] = $aResult[UBound($aResult) - 1][0] ; Name of troop at last slot 1st page
+			$aLastTroop1stPage[1] = UBound(_ArrayFindAll($aResult, $aLastTroop1stPage[0])) ; Number of slots this troop appears in 1st page
+			If $g_bDebugSetlog Then SetDebugLog("$sLastTroop1stPage = " & $aLastTroop1stPage[0] & ", appears: " & $aLastTroop1stPage[1])
 			DragAttackBar()
-			$strinToReturn &= ExtendedAttackBarCheck($sLastTroop1stPage, $Remaining)
+			$strinToReturn &= ExtendedAttackBarCheck($aLastTroop1stPage, $Remaining)
 			If Not $Remaining Then DragAttackBar($g_iTotalAttackSlot, True) ; return drag
 		EndIf
 	EndIf
-	; Drag & checking Slot11 - Team AiO MOD++
 
 	$strinToReturn = StringTrimLeft($strinToReturn, 1)
 
@@ -239,7 +243,7 @@ Func SlotAttack($PosX, $CheckSlot12, $CheckSlotwHero)
 			ElseIf $CheckSlotwHero = False Then
 				$Slottemp[0] += 10
 			EndIf
-			If $g_bDebugSetlog Then SetDebugLog("Slot: " & $i & " | $x > " & 25 + ($i * 73) & " and $x < " & 98 + ($i * 73))
+			If $g_bDebugSetlog Then SetDebugLog("Slot: " & $i & " | $x > " & 32 + ($i * 73) & " and $x < " & 105 + ($i * 73))
 			If $g_bDebugSetlog Then SetDebugLog("Slot: " & $i & " | $PosX: " & $PosX & " |  OCR x position: " & $Slottemp[0] & " | OCR Slot: " & $Slottemp[1])
 			Return $Slottemp
 		EndIf
@@ -250,8 +254,8 @@ Func SlotAttack($PosX, $CheckSlot12, $CheckSlotwHero)
 
 EndFunc   ;==>SlotAttack
 
-;;;;; Slot11 - Demen ;;;;;;;
-Func ExtendedAttackBarCheck($sLastTroop1stPage, $Remaining)
+; Slot11 - Team AiO MOD++
+Func ExtendedAttackBarCheck($aLastTroop1stPage, $Remaining)
 
 	Local $x = 0, $y = 659, $x1 = 853, $y1 = 698
 	Static $CheckSlotwHero2 = False
@@ -303,21 +307,22 @@ Func ExtendedAttackBarCheck($sLastTroop1stPage, $Remaining)
 				Local $iMultipleCoords = UBound($aCoords)
 				If $iMultipleCoords > 1 And StringInStr($aResult[$i + $iResultAddDup][0], "Spell") <> 0 Then
 					If $g_bDebugSetlog Then SetDebugLog($aResult[$i + $iResultAddDup][0] & " detected " & $iMultipleCoords & " times!")
-
-					Local $aCoordsSplit2 = $aCoords[1]
-					If UBound($aCoordsSplit2) = 2 Then
-						; add slot
-						$iResultAddDup += 1
-						ReDim $aResult[UBound($aKeys) + $iResultAddDup][6]
-						$aResult[$i + $iResultAddDup][0] = $aResult[$i + $iResultAddDup - 1][0] ; same objectname
-						$aResult[$i + $iResultAddDup][1] = $aCoordsSplit2[0]
-						$aResult[$i + $iResultAddDup][2] = $aCoordsSplit2[1]
-						If $g_bDebugSetlog Then SetDebugLog($aResult[$i + $iResultAddDup][0] & " | $aCoordArray: " & $aResult[$i + $iResultAddDup][1] & "-" & $aResult[$i + $iResultAddDup][2])
-					Else
-						; don't invalidate anything
-						;$aCoordArray[0][0] = -1
-						;$aCoordArray[0][1] = -1
-					EndIf
+					For $j = 1 To $iMultipleCoords - 1
+						Local $aCoordsSplit2 = $aCoords[1]
+						If UBound($aCoordsSplit2) = 2 Then
+							; add slot
+							$iResultAddDup += 1
+							ReDim $aResult[UBound($aKeys) + $iResultAddDup][6]
+							$aResult[$i + $iResultAddDup][0] = $aResult[$i + $iResultAddDup - 1][0] ; same objectname
+							$aResult[$i + $iResultAddDup][1] = $aCoordsSplit2[0]
+							$aResult[$i + $iResultAddDup][2] = $aCoordsSplit2[1]
+							If $g_bDebugSetlog Then SetDebugLog($aResult[$i + $iResultAddDup][0] & " | $aCoordArray: " & $aResult[$i + $iResultAddDup][1] & "-" & $aResult[$i + $iResultAddDup][2])
+						Else
+							; don't invalidate anything
+							;$aCoordArray[0][0] = -1
+							;$aCoordArray[0][1] = -1
+						EndIf
+					Next
 				EndIf
 			Next
 
@@ -330,9 +335,10 @@ Func ExtendedAttackBarCheck($sLastTroop1stPage, $Remaining)
 			Next
 
 			Local $iSlotExtended = 0
-			Static $iFirstExtendedSlot = 0	; Location of 1st extended troop after drag
-			If Not $Remaining Then $iFirstExtendedSlot = 0 ; Reset value for 1st time detecting troop bar
+			Static $iFirstExtendedSlot = -1	; Location of 1st extended troop after drag
+			If Not $Remaining Then $iFirstExtendedSlot = -1 ; Reset value for 1st time detecting troop bar
 
+			Local $iFoundLastTroop1stPage
 			Local $bStart2ndPage = False
 			For $i = 0 To UBound($aResult) - 1
 				Local $Slottemp
@@ -341,16 +347,17 @@ Func ExtendedAttackBarCheck($sLastTroop1stPage, $Remaining)
 					SetDebugLog("Detection : " & $aResult[$i][0] & "|x" & $aResult[$i][1] & "|y" & $aResult[$i][2], $COLOR_DEBUG) ;Debug
 
 					; Finding where to start the 2nd page
-					If $aResult[$i][0] = $sLastTroop1stPage Then
-						SetDebugLog("Found $sLastTroop1stPage: " & $aResult[$i][0])
-						$bStart2ndPage = True
+					If $aResult[$i][0] = $aLastTroop1stPage[0] And Not $bStart2ndPage Then
+						$iFoundLastTroop1stPage += 1
+						SetDebugLog("Found $aLastTroop1stPage[0]: " & $aResult[$i][0] & " x" & $iFoundLastTroop1stPage)
+						If $iFoundLastTroop1stPage >= $aLastTroop1stPage[1] Then $bStart2ndPage = True
 						ContinueLoop
 					EndIf
 					If Not $bStart2ndPage Then ContinueLoop
 
 					$Slottemp = SlotAttack(Number($aResult[$i][1]), False, False)
 					$Slottemp[0] += 18
-					If $iFirstExtendedSlot = 0 Then $iFirstExtendedSlot = $Slottemp[1]	; flag only once
+					If $iFirstExtendedSlot = -1 Then $iFirstExtendedSlot = $Slottemp[1]	; flag only once
 					$iSlotExtended = $Slottemp[1] - $iFirstExtendedSlot + 1
 
 					If $CheckSlotwHero2 And StringInStr($aResult[$i][0], "Spell") = 0 Then $Slottemp[0] -= 14
@@ -361,8 +368,11 @@ Func ExtendedAttackBarCheck($sLastTroop1stPage, $Remaining)
 						If $aResult[$i][0] = "Castle" Or $aResult[$i][0] = "King" Or $aResult[$i][0] = "Queen" Or $aResult[$i][0] = "Warden" Then
 							$aResult[$i][3] = 1
 						Else
-							$aResult[$i][3] = Number(getTroopCountBig(Number($Slottemp[0]), 636)) ; For Bigg Numbers , when the troops is selected
-							If $aResult[$i][3] = "" Or $aResult[$i][3] = 0 Then $aResult[$i][3] = Number(getTroopCountSmall(Number($Slottemp[0]), 641)) ; For small Numbers
+							$aResult[$i][3] = Number(getTroopCountSmall(Number($Slottemp[0]), 640)) ; For small Numbers
+							If $aResult[$i][3] = "" Or $aResult[$i][3] = 0 Then
+								$aResult[$i][3] = Number(getTroopCountBig(Number($Slottemp[0]), 635)) ; For Bigg Numbers , when the troops is selected
+								If $aResult[$i][3] = 0 And $i = UBound($aResult) - 1 And StringInStr($aResult[$i][0], "Spell") <> 0 Then $aResult[$i][3] = 1 ; sorry we have to force you (case last CC Spell with 1 quantity)
+							EndIf
 						EndIf
 						$aResult[$i][4] = ($Slottemp[1] + 11) - $iFirstExtendedSlot
 					Else

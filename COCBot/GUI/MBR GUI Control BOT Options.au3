@@ -209,6 +209,9 @@ Func chkSwitchAcc()
 		For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
 			GUICtrlSetState($i, $GUI_ENABLE)
 		Next
+		GUICtrlSetState($g_hChkOnlySCIDAccounts, $GUI_UNCHECKED)
+		GUICtrlSetState($g_hChkOnlySCIDAccounts, $GUI_DISABLE)
+		OnlySCIDAccounts()
 		For $i = 0 To 7
 			GUICtrlSetState($g_ahChkSetFarm[$i], $GUI_ENABLE)
 			_chkSetFarmSchedule($i)
@@ -218,6 +221,8 @@ Func chkSwitchAcc()
 		For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
 			GUICtrlSetState($i, $GUI_DISABLE)
 		Next
+		GUICtrlSetState($g_hChkOnlySCIDAccounts, $GUI_ENABLE)
+		OnlySCIDAccounts()
 		For $i = 0 To 7
 			For $j = $g_ahChkSetFarm[$i] To $g_ahCmbTime2[$i]
 				GUICtrlSetState($j, $GUI_DISABLE)
@@ -433,8 +438,8 @@ Func cmbCriteria1()
 EndFunc   ;==>cmbCriteria1
 
 Func _cmbCriteria1($i)
-	Local $aiDefaultValue[4] = ["9000000", "9000000", "180000", "5000"]
-	Local $aiDefaultLimit[4] = [9999999, 9999999, 199999, 9999]
+	Local $aiDefaultValue[4] = ["12000000", "12000000", "240000", "6000"]
+	Local $aiDefaultLimit[4] = [99999999, 99999999, 299999, 9999]
 	Local $iCmbCriteria = _GUICtrlComboBox_GetCurSel($g_ahCmbCriteria1[$i])
 	Switch $iCmbCriteria
 		Case 0
@@ -617,7 +622,7 @@ Func btnTestDonateCC()
 	SetLog("Detecting Troops...")
 	DetectSlotTroop($eBowl)
 	SetLog("Detecting Spells...")
-	DetectSlotTroop($eSkSpell)
+	DetectSlotSpell($eSkSpell)
 	SetLog(_PadStringCenter(" Test DonateCC end ", 54, "="), $COLOR_INFO)
 	ShellExecute($g_sProfileTempDebugPath & "donateCC_")
 
@@ -697,7 +702,7 @@ EndFunc   ;==>btnTestAttackBar
 
 
 Func btnTestClickDrag()
-	Local $sUserInputCoor = InputBox("Coordinators", "x1,y1,x2,y2", "650,473,323,473")
+	Local $sUserInputCoor = InputBox("Coordinators", "x1,y1,x2,y2", "650,469,290,469")
 	Local $asCoor = StringSplit($sUserInputCoor, ",")
 
 	If @error Or $asCoor[0] <> 4 Then
@@ -714,7 +719,7 @@ Func btnTestClickDrag()
 	_Sleep(3000, True, False)
 
 	SetLog("Save the image...", $COLOR_DEBUG)
-	DebugImageSave("TestClickDrag")
+	DebugImageSave("TestClickDrag", Default, Default, Default, "_" & $asCoor[1] & "x." & $asCoor[2] & "y." & $asCoor[3] & "x." & $asCoor[4] & "y_")
 
 	SetLog("Sleep 1 seconds...", $COLOR_DEBUG)
 	_Sleep(1000, True, False)

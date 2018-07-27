@@ -46,16 +46,25 @@ Func chkRequestCCHours()
 
 	If GUICtrlRead($g_hChkRequestTroopsEnable) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hTxtRequestCC, $GUI_SHOW + $GUI_ENABLE)
-		For $i = $g_hChkReqCCFirst To $g_hLblRequestCCHoursPM ; Request CC Troops at first - Team AiO MOD++
+		For $i = $g_hChkReqCCFirst To $g_hLblRequestCCHoursPM
 			GUICtrlSetState($i, $GUI_ENABLE)
 		Next
-		chkSkipRequestCC()
+		If GUICtrlRead($g_hChkRequestType_Troops) = $GUI_CHECKED Then
+			GUICtrlSetState($g_hTxtRequestCountCCTroop, $GUI_ENABLE)
+		Else
+			GUICtrlSetState($g_hTxtRequestCountCCTroop, $GUI_DISABLE)
+		EndIf
+		If GUICtrlRead($g_hChkRequestType_Spells) = $GUI_CHECKED Then
+			GUICtrlSetState($g_hTxtRequestCountCCSpell, $GUI_ENABLE)
+		Else
+			GUICtrlSetState($g_hTxtRequestCountCCSpell, $GUI_DISABLE)
+		EndIf
 	Else
 		GUICtrlSetState($g_hTxtRequestCC, $GUI_SHOW + $GUI_DISABLE)
 		 ; CheckCC Troops - Team AiO MOD++
 		GUICtrlSetState($g_hChkTroopsCC, $GUI_UNCHECKED)
 		GUIControlCheckCC()
-		For $i = $g_hChkReqCCFirst To $g_hLblRequestCCHoursPM ; Request CC Troops at first - Team AiO MOD++
+		For $i = $g_hChkReqCCFirst To $g_hLblRequestCCHoursPM
 			GUICtrlSetState($i, $GUI_DISABLE)
 		Next
 	EndIf
@@ -68,28 +77,18 @@ Func chkReqCCFirst()
 	$g_bReqCCFirst = (GUICtrlRead($g_hChkReqCCFirst) = $GUI_CHECKED)
 EndFunc   ;==>chkReqCCFirst
 
-; Skip request CC - Team AiO MOD++
-Func chkSkipRequestCC()
-	If GUICtrlRead($g_hChkSkipRequestCC) = $GUI_CHECKED Then
-		For $i = $g_hTxtSkipRequestCCTroop To $g_hTxtSkipRequestCCSpell
-			GUICtrlSetState($i, $GUI_ENABLE)
-		Next
-		If GUICtrlRead($g_hTxtSkipRequestCCTroop) <= 0 Then
-			GUICtrlSetState($g_hLblSkipRequestCCTroop, $GUI_DISABLE)
-		Else
-			GUICtrlSetState($g_hLblSkipRequestCCTroop, $GUI_ENABLE)
-		EndIf
-		If GUICtrlRead($g_hTxtSkipRequestCCSpell) <= 0 Then
-			GUICtrlSetState($g_hLblSkipRequestCCSpell, $GUI_DISABLE)
-		Else
-			GUICtrlSetState($g_hLblSkipRequestCCSpell, $GUI_ENABLE)
-		EndIf
+Func chkRequestCountCC()
+	If GUICtrlRead($g_hChkRequestType_Troops) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hTxtRequestCountCCTroop, $GUI_ENABLE)
 	Else
-		For $i = $g_hTxtSkipRequestCCTroop To $g_hTxtSkipRequestCCSpell
-			GUICtrlSetState($i, $GUI_DISABLE)
-		Next
+		GUICtrlSetState($g_hTxtRequestCountCCTroop, $GUI_DISABLE)
 	EndIf
-EndFunc   ;==>chkSkipRequestCC
+	If GUICtrlRead($g_hChkRequestType_Spells) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hTxtRequestCountCCSpell, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hTxtRequestCountCCSpell, $GUI_DISABLE)
+	EndIf
+EndFunc   ;==>chkRequestCountCC
 
 Func chkRequestCCHoursE1()
 	If GUICtrlRead($g_hChkRequestCCHoursE1) = $GUI_CHECKED And GUICtrlRead($g_ahChkRequestCCHours[0]) = $GUI_CHECKED Then

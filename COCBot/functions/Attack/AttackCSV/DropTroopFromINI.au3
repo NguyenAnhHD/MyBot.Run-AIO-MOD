@@ -78,7 +78,7 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 	Local $bHeroDrop = ($iTroopIndex = $eWarden ? True : False) ;set flag TRUE if Warden was dropped
 
 	;search slot where is the troop...
-	Local $troopPosition = -1, $troopSlotConst = -1 ; $troopSlotConst = xx/22 (the unique slot number of troop) - Slot11 - Demen_S11_#9003
+	Local $troopPosition = -1, $troopSlotConst = -1 ; $troopSlotConst = xx/22 (the unique slot number of troop) - Slot11 - Team AiO MOD++
 	For $i = 0 To UBound($g_avAttackTroops) - 1
 		If $g_avAttackTroops[$i][0] = $iTroopIndex And $g_avAttackTroops[$i][1] > 0 Then
 			debugAttackCSV("Found troop position " & $i & ". " & $troopName & " x" & $g_avAttackTroops[$i][1])
@@ -185,6 +185,8 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 					$delayDrop = $delayDropMin
 				EndIf
 				debugAttackCSV(">> delay change drop point: " & $delayDrop)
+				$delayDrop = Int($delayDrop / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
+				debugAttackCSV(">> delay change drop point: " & $delayDrop & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
 			EndIf
 
 			For $j = 1 To $numbersOfVectors

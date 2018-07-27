@@ -55,18 +55,25 @@ Func cmbDBAlgorithm()
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_MILKING)
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_UNCHECKED)	; Slot11 - Team AiO MOD++
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_DISABLE)	; Slot11 - Team AiO MOD++
 			Case $iCmbValue = 1 ; Scripted Attack
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_MILKING)
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_ENABLE)	; Slot11 - Team AiO MOD++
 			Case $iCmbValue = 2 ; Milking Attack
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_DEADBASE_ATTACK_MILKING)
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_UNCHECKED)	; Slot11 - Team AiO MOD++
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_DISABLE)	; Slot11 - Team AiO MOD++
 			Case Else
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_MILKING)
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_UNCHECKED)	; Slot11 - Team AiO MOD++
+				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_DISABLE)	; Slot11 - Team AiO MOD++
 		EndSelect
 	EndIf
 EndFunc   ;==>cmbDBAlgorithm
@@ -80,12 +87,17 @@ Func cmbABAlgorithm()
 			Case $iCmbValue = 0 ; Standard Attack
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_ACTIVEBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED)
+				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_UNCHECKED)	; Slot11 - Team AiO MOD++
+				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_DISABLE)	; Slot11 - Team AiO MOD++
 			Case $iCmbValue = 1 ; Scripted Attack
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_STANDARD)
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED)
+				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_ENABLE)	; Slot11 - Team AiO MOD++
 			Case Else
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED)
+				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_UNCHECKED)	; Slot11 - Team AiO MOD++
+				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_DISABLE)	; Slot11 - Team AiO MOD++
 		EndSelect
 	EndIf
 EndFunc   ;==>cmbABAlgorithm
@@ -589,13 +601,13 @@ Func sldVSDelay()
 	Else
 		GUICtrlSetData($g_hLblTextMaxVSDelay, GetTranslatedFileIni("MBR Global GUI Design", "seconds", "seconds"))
 	EndIf
- EndFunc   ;==>sldVSDelay
- 
- Func dbCheck()
+EndFunc   ;==>sldVSDelay
+
+Func dbCheck()
 	$g_abAttackTypeEnable[$DB] = (GUICtrlRead($g_hChkDeadbase) = $GUI_CHECKED)
 
 	If IsBotLaunched() Then _GUICtrlTab_SetCurFocus($g_hGUI_SEARCH_TAB, 0) ; activate deadbase tab
-	If BitAND(GUICtrlRead($g_hChkDBActivateSearches), GUICtrlRead($g_hChkDBActivateTropies), GUICtrlRead($g_hChkDBActivateCamps), GUICtrlRead($g_hChkDBSpellsWait)) = $GUI_UNCHECKED Then
+	If BitAND(GUICtrlRead($g_hChkDBActivateSearches), GUICtrlRead($g_hChkDBActivateTropies), GUICtrlRead($g_hChkDBActivateCamps), GUICtrlRead($g_hChkDBSpellsWait), GUICtrlRead($g_hChkExtendedAttackBarDB)) = $GUI_UNCHECKED Then
 		GUICtrlSetState($g_hChkDBActivateSearches, $GUI_CHECKED)
 		chkDBActivateSearches() ; this includes a call to dbCheckall() -> tabSEARCH()
 	Else
@@ -607,7 +619,7 @@ Func abCheck()
 	$g_abAttackTypeEnable[$LB] = (GUICtrlRead($g_hChkActivebase) = $GUI_CHECKED)
 
 	If IsBotLaunched() Then _GUICtrlTab_SetCurFocus($g_hGUI_SEARCH_TAB, 1)
-	If BitAND(GUICtrlRead($g_hChkABActivateSearches), GUICtrlRead($g_hChkABActivateTropies), GUICtrlRead($g_hChkABActivateCamps), GUICtrlRead($g_hChkABSpellsWait)) = $GUI_UNCHECKED Then
+	If BitAND(GUICtrlRead($g_hChkABActivateSearches), GUICtrlRead($g_hChkABActivateTropies), GUICtrlRead($g_hChkABActivateCamps), GUICtrlRead($g_hChkABSpellsWait), GUICtrlRead($g_hChkExtendedAttackBarLB)) = $GUI_UNCHECKED Then
 		GUICtrlSetState($g_hChkABActivateSearches, $GUI_CHECKED)
 		chkABActivateSearches() ; this includes a call to abCheckall() -> tabSEARCH()
 	Else

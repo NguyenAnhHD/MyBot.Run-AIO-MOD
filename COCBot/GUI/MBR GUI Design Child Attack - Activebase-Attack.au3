@@ -27,6 +27,9 @@ Global $g_hPicABLightSpell = 0, $g_hPicABHealSpell = 0, $g_hPicABRageSpell = 0, 
 Global $g_hChkTHSnipeBeforeLBEnable = 0, $g_hTxtTHSnipeBeforeLBTiles = 0, $g_hCmbTHSnipeBeforeLBScript = 0
 Global $g_hLblTHSnipeBeforeLBTiles = 0
 
+; Slot11 - Team AiO MOD++
+Global $g_hChkExtendedAttackBarLB = 0
+
 Func CreateAttackSearchActiveBaseAttack()
 	Local $sTxtTip = ""
 	Local $x = 25, $y = 40
@@ -161,7 +164,7 @@ Func CreateAttackSearchActiveBaseAttack()
 		GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 	Local $x = 10, $y = 268
-		GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Group_02", -1), $x - 5, $y - 20, 145, 84,$SS_CENTER)
+		GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Group_02", -1), $x - 5, $y - 20, 145, 84, $SS_CENTER)
 			$g_hChkTHSnipeBeforeLBEnable = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "ChkTHSnipeBeforeEnable", -1), $x, $y - 5, -1, -1)
 				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "ChkTHSnipeBeforeEnable_Info_01", -1))
 				GUICtrlSetOnEvent(-1, "chkTHSnipeBeforeLBEnable")
@@ -185,6 +188,14 @@ Func CreateAttackSearchActiveBaseAttack()
 				GUICtrlSetState(-1, $GUI_DISABLE)
 		LoadABSnipeAttacks()
 		_GUICtrlComboBox_SetCurSel($g_hCmbTHSnipeBeforeLBScript, _GUICtrlComboBox_FindStringExact($g_hCmbTHSnipeBeforeLBScript, "Bam"))
+		GUICtrlCreateGroup("", -99, -99, 1, 1)
+
+	; Slot11 - Team AiO MOD++
+	Local $x = 10, $y = 352
+		GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "Group_04", -1), $x - 5, $y - 20, 145, 40, $SS_CENTER)
+			$g_hChkExtendedAttackBarLB = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "ChkExtendedAttackBar", -1), $x, $y - 5, -1, -1)
+				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack", "ChkExtendedAttackBar_Info_01", -1))
+				GUICtrlSetState(-1, $GUI_DISABLE)
 		GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 EndFunc   ;==>CreateAttackSearchActiveBaseAttack

@@ -78,7 +78,7 @@ Global $hTimeoutAutoClose = 0 ; Timer Handle for $iTimeoutAutoClose
 Global $g_iMainLoopSleep = 50 ;
 ;Global $g_bBotLaunchOption_NoBotSlot = True
 
-Global $g_sBotTitle = "My Bot Mini " & $g_sBotVersion & " - " & " AiO++ MOD " & $g_sModversion & " -" ;~ Don't use any non file name supported characters like \ / : * ? " < > |
+Global $g_sBotTitle = "My Bot Mini " & $g_sBotVersion & " - " & " AiO++ MOD " & $g_sModVersion & " -" ;~ Don't use any non file name supported characters like \ / : * ? " < > |
 Global $g_hFrmBot = 0
 Global $g_hFrmBotBackend = 0
 Global $g_bBotLaunched = False
@@ -1046,7 +1046,6 @@ Func BotStopped()
 	;GUICtrlSetState($g_hBtnAttackNowTS, $GUI_HIDE)
 	;GUICtrlSetState($g_hPicTwoArrowShield, $GUI_SHOW)
 	;GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
-	;GUICtrlSetState($g_hLblMod, $GUI_SHOW)
 
 	; update try items
 	TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Start", "Start bot"))

@@ -5,6 +5,17 @@
 
                     Based on MyBot.run v7.5.x
 
+	**V1.8.6**
+	- Add Grab healed heroes feature
+	- Add Builder time status
+	- Fix Slot11+ (DropTrophy attack & Multiple CC Spells)
+	- Fix Restart Search if cloud time not work
+	- Fix click button for Switch accounts Supercell ID
+	- Improve Stop for War feature
+	- Improve some GUI - June Update
+	- Update to MBR v7.5.4
+	- Update Some language
+
 	**V1.8.5**
 	- Add Skip Request CC By Demen
 	- Fix coordinates and color for TrainRevamp - June 2018
@@ -67,4 +78,3 @@
 	- Add Drop Trophy with a Balloon
 	- Add Stop on Low battery
 	- Add Colorful Attack Log
-	- Add Enable/Disable GUI while botting

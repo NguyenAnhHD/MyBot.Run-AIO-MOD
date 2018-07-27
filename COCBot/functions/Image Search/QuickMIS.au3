@@ -13,8 +13,8 @@
 ; Example .......: ---
 ;================================================================================================================================
 
-Func QuickMIS($ValueReturned, $directory, $Left = 0, $Top = 0, $Right = $g_iGAME_WIDTH, $Bottom = $g_iGAME_HEIGHT, $bNeedCapture = True, $Debug = False)
-	If ($ValueReturned <> "BC1") And ($ValueReturned <> "CX") And ($ValueReturned <> "N1") And ($ValueReturned <> "NX") And ($ValueReturned <> "Q1") And ($ValueReturned <> "QX") Then
+Func QuickMIS($ValueReturned, $directory, $Left = 0, $Top = 0, $Right = $g_iGAME_WIDTH, $Bottom = $g_iGAME_HEIGHT, $bNeedCapture = True, $Debug = False, $OcrDecode = 3, $OcrSpace = 12)
+	If ($ValueReturned <> "BC1") And ($ValueReturned <> "CX") And ($ValueReturned <> "N1") And ($ValueReturned <> "NX") And ($ValueReturned <> "Q1") And ($ValueReturned <> "QX") And ($ValueReturned <> "OCR") Then
 		SetLog("Bad parameters during QuickMIS call for MultiSearch...", $COLOR_RED)
 		Return
 	EndIf
@@ -43,6 +43,8 @@ Func QuickMIS($ValueReturned, $directory, $Left = 0, $Top = 0, $Right = $g_iGAME
 					Return 0
 				Case "QX"
 					Return 0
+				Case "OCR"
+					Return "none"
 			EndSwitch
 
 		ElseIf StringInStr($Res[0], "-1") <> 0 Then
@@ -122,6 +124,39 @@ Func QuickMIS($ValueReturned, $directory, $Left = 0, $Top = 0, $Right = $g_iGAME
 					Local $MultiImageSearchResult = StringSplit($Res[0], "|", $STR_NOCOUNT)
 					Return UBound($MultiImageSearchResult)
 
+				Case "OCR" ; Names of all files found, put together as a string in accordance with their coordinates left - right
+
+					Local $sOCRString = ""
+					Local $aResults[1][2] = [[-1, ""]] ; X_Coord & Name
+
+					Local $KeyValue = StringSplit($Res[0], "|", $STR_NOCOUNT)
+					For $i = 0 To UBound($KeyValue) - 1
+						Local $DLLRes = DllCallMyBot("GetProperty", "str", $KeyValue[$i], "str", "objectpoints")
+						Local $Name = RetrieveImglocProperty($KeyValue[$i], "objectname")
+
+						Local $aCoords = StringSplit($DLLRes[0], "|", $STR_NOCOUNT)
+
+						For $j = 0 To UBound($aCoords) - 1 ; In case found 1 char multiple times, $j > 0
+							Local $aXY = StringSplit($aCoords[$j], ",", $STR_NOCOUNT)
+							ReDim $aResults[UBound($aResults) + 1][2]
+							$aResults[UBound($aResults) - 2][0] = Number($aXY[0])
+							$aResults[UBound($aResults) - 2][1] = $Name
+						Next
+					Next
+
+					_ArrayDelete($aResults, UBound($aResults) - 1)
+					_ArraySort($aResults)
+
+					For $i = 0 To UBound($aResults) - 1
+						If $g_bDebugSetlog Then SetDebugLog($i & ". $Name = " & $aResults[$i][1] & ", Coord = " & $aResults[$i][0])
+						If $i >= 1 Then
+							If $aResults[$i][1] = $aResults[$i - 1][1] And Abs($aResults[$i][0] - $aResults[$i - 1][0]) <= $OcrDecode Then ContinueLoop
+							If Abs($aResults[$i][0] - $aResults[$i - 1][0]) > $OcrSpace Then $sOCRString &= " "
+						EndIf
+						$sOCRString &= $aResults[$i][1]
+					Next
+					If $g_bDebugSetlog Then SetDebugLog("QuickMIS " & $ValueReturned & ", $sOCRString: " & $sOCRString)
+					Return $sOCRString
 			EndSwitch
 		EndIf
 	EndIf

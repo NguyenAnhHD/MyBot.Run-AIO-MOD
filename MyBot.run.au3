@@ -68,7 +68,7 @@ InitializeBot()
 MainLoop(CheckPrerequisites())
 
 Func UpdateBotTitle()
-	Local $sTitle = "My Bot " & $g_sBotVersion & " - " & " AiO++ MOD " & $g_sModversion & " -"
+	Local $sTitle = "My Bot " & $g_sBotVersion & " - " & " AiO++ MOD " & $g_sModVersion & " -"
 	Local $sConsoleTitle ; Console title has also Android Emulator Name
 	If $g_sBotTitle = "" Then
 		$g_sBotTitle = $sTitle
@@ -596,6 +596,9 @@ Func FinalInitialization(Const $sAI)
 
 	UpdateMainGUI()
 
+	; temporary solution for the most recent MEmu versions
+	CheckClickAdbNewVersions()
+
 EndFunc   ;==>FinalInitialization
 
 ; #FUNCTION# ====================================================================================================================
@@ -703,11 +706,13 @@ Func runBot() ;Bot that runs everything in order
 		If $g_bIsClientSyncError = False And $g_bIsSearchLimit = False And ($g_bQuickAttack = False) Then
 			If BotCommand() Then btnStop()
 			If _Sleep($DELAYRUNBOT2) Then Return
+
 			checkMainScreen(False)
 			If $g_bRestart = True Then ContinueLoop
 			If _Sleep($DELAYRUNBOT3) Then Return
 			VillageReport()
 			CheckFarmSchedule()
+			CheckStopForWar()
 			If $g_bOutOfGold = True And (Number($g_aiCurrentLoot[$eLootGold]) >= Number($g_iTxtRestartGold)) Then ; check if enough gold to begin searching again
 				$g_bOutOfGold = False ; reset out of gold flag
 				SetLog("Switching back to normal after no gold to search ...", $COLOR_SUCCESS)
@@ -745,6 +750,9 @@ Func runBot() ;Bot that runs everything in order
 				EndIf
 				If $g_bRestart = True Then ContinueLoop 2 ; must be level 2 due to loop-in-loop
 			WEnd
+
+			If ($g_iCommandStop = 0 Or $g_iCommandStop = 3) And ProfileSwitchAccountEnabled() And Not $g_abDonateOnly[$g_iCurAccount] Then checkSwitchAcc()
+
 			AddIdleTime()
 			If $g_bRunState = False Then Return
 			If $g_bRestart = True Then ContinueLoop
@@ -939,9 +947,9 @@ Func _Idle() ;Sequence that runs until Full Army
 				If $g_bRestart = True Then ExitLoop
 				If _Sleep($DELAYIDLE1) Then ExitLoop
 				checkMainScreen(False)
+				$g_iActualTrainSkip = $g_iActualTrainSkip + 1
 			Else
 				Setlog("Humanize bot, prevent to delete and recreate troops " & $g_iActualTrainSkip + 1 & "/" & $g_iMaxTrainSkip, $color_blue)
-				$g_iActualTrainSkip = $g_iActualTrainSkip + 1
 				If $g_iActualTrainSkip >= $g_iMaxTrainSkip Then
 					$g_iActualTrainSkip = 0
 				EndIf
@@ -957,8 +965,8 @@ Func _Idle() ;Sequence that runs until Full Army
 					If $g_bRestart = True Then ExitLoop
 					If _Sleep($DELAYIDLE1) Then ExitLoop
 					checkMainScreen(False)
-				Else
 					$g_iActualTrainSkip = $g_iActualTrainSkip + 1
+				Else
 					If $g_iActualTrainSkip >= $g_iMaxTrainSkip Then
 						$g_iActualTrainSkip = 0
 					EndIf

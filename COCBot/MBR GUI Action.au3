@@ -202,20 +202,13 @@ Func BotStop()
 	GUICtrlSetState($g_hBtnSearchMode, $GUI_SHOW)
 	;GUICtrlSetState($g_hBtnMakeScreenshot, $GUI_ENABLE)
 
-	; Enable/Disable GUI while botting - Team AiO MOD++
-	GUICtrlSetState($g_hBtnEnableGUI, $GUI_HIDE)
-	GUICtrlSetState($g_hBtnDisableGUI, $GUI_HIDE)
-
 	; hide attack buttons if show
 	GUICtrlSetState($g_hBtnAttackNowDB, $GUI_HIDE)
 	GUICtrlSetState($g_hBtnAttackNowLB, $GUI_HIDE)
 	GUICtrlSetState($g_hBtnAttackNowTS, $GUI_HIDE)
-;~ 	GUICtrlSetState($g_hPicTwoArrowShield, $GUI_SHOW)
-;~ 	GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
-;~ 	GUICtrlSetState($g_hLblMod, $GUI_SHOW)
-	For $i = $g_hlblKing To $g_hPicLabRed
-		GUICtrlSetState($i, $GUI_SHOW)
-	Next
+	HideShields(False)
+	;GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
+	$g_bBtnAttackNowPressed = False
 
 	; update try items
 	TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Start", "Start bot"))

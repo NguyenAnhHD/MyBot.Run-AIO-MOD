@@ -30,6 +30,9 @@ Func VillageReport($bBypass = False, $bSuppressLog = False)
 	getBuilderCount($bSuppressLog) ; update builder data
 	If _Sleep($DELAYRESPOND) Then Return
 
+	; Builder Status - Team AiO MOD++
+	If Not $bBypass Then getBuilderTime()
+
 	$g_aiCurrentLoot[$eLootTrophy] = getTrophyMainScreen($aTrophies[0], $aTrophies[1])
 	If Not $bSuppressLog Then SetLog(" [T]: " & _NumberFormat($g_aiCurrentLoot[$eLootTrophy]), $COLOR_SUCCESS)
 
@@ -67,3 +70,93 @@ Func VillageReport($bBypass = False, $bSuppressLog = False)
 	WEnd
 
 EndFunc   ;==>VillageReport
+
+; Builder Status - Team AiO MOD++
+Func getBuilderTime()
+	Local $iBuilderTime = -1
+	Static $sBuilderTimeLastCheck = ""
+	Static $asBuilderTimeLastCheck[8] = ["", "", "", "", "", "", "", ""]
+
+	If ProfileSwitchAccountEnabled() Then
+		$g_sNextBuilderReadyTime = $g_asNextBuilderReadyTime[$g_iCurAccount]
+		$sBuilderTimeLastCheck = $asBuilderTimeLastCheck[$g_iCurAccount]
+	EndIf
+
+	If _DateIsValid($sBuilderTimeLastCheck) And _DateIsValid($g_sNextBuilderReadyTime) And Not $g_bFirstStart Then
+		Local $iTimeFromLastCheck = Int(_DateDiff('n', $sBuilderTimeLastCheck, _NowCalc())) ; elapse time in minutes
+		Local $iTimeTillNextBuilderReady = Int(_DateDiff('n', _NowCalc(), $g_sNextBuilderReadyTime)) ; builder time in minutes
+
+		SetDebugLog("Next Builder will be ready in " & $iTimeTillNextBuilderReady & "m, (" & $g_sNextBuilderReadyTime & ")")
+		SetDebugLog("It has been " & $iTimeFromLastCheck & "m since last check (" & $sBuilderTimeLastCheck & ")")
+
+		If $iTimeFromLastCheck <= 6 * 60 And $iTimeTillNextBuilderReady > 0 Then
+			SetDebugLog("Next time to check: " & _Min(360 - Number($iTimeFromLastCheck), Number($iTimeTillNextBuilderReady)) & "m")
+			Return
+		EndIf
+	EndIf
+
+	If $g_iFreeBuilderCount >= $g_iTotalBuilderCount Then Return
+
+	SetLog("Getting builder time")
+
+	If IsMainPage() Then Click(293, 32) ; click builder's nose for poping out information
+	If _Sleep(1000) Then Return
+
+	Local $sBuilderTime = QuickMIS("OCR", @ScriptDir & "\imgxml\BuilderTime", 335, 102, 335 + 124, 102 + 14, True)
+	If $sBuilderTime <> "none" Then
+		$iBuilderTime = ConvertOCRLongTime("Builder Time", $sBuilderTime, False)
+		SetDebugLog("$sResult QuickMIS OCR: " & $sBuilderTime & " (" & Round($iBuilderTime,2) & " minutes)")
+	EndIf
+
+	If $iBuilderTime > 0 Then
+		$g_sNextBuilderReadyTime = _DateAdd("n", $iBuilderTime, _NowCalc())
+		$sBuilderTimeLastCheck = _NowCalc()
+	Else
+		$g_sNextBuilderReadyTime = ""
+		$sBuilderTimeLastCheck = ""
+	EndIf
+
+	If ProfileSwitchAccountEnabled() Then
+		$g_asNextBuilderReadyTime[$g_iCurAccount] = $g_sNextBuilderReadyTime
+		$asBuilderTimeLastCheck[$g_iCurAccount] = $sBuilderTimeLastCheck
+	EndIf
+
+	ClickP($aAway, 2, 0, "#0000") ;Click Away
+EndFunc   ;==>getBuilderTime
+
+Func ConvertOCRLongTime($WhereRead, $ToConvert, $bSetLog = True) ; Convert longer time with days - hours - minutes - seconds
+
+	Local $iRemainTimer = 0, $aResult, $iDay = 0, $iHour = 0, $iMinute = 0, $iSecond = 0
+
+	If $ToConvert <> "" Then
+		If StringInStr($ToConvert, "d") > 1 Then
+			$aResult = StringSplit($ToConvert, "d", $STR_NOCOUNT)
+			; $aResult[0] will be the Day and the $aResult[1] will be the rest
+			$iDay = Number($aResult[0])
+			$ToConvert = $aResult[1]
+		EndIf
+		If StringInStr($ToConvert, "h") > 1 Then
+			$aResult = StringSplit($ToConvert, "h", $STR_NOCOUNT)
+			$iHour = Number($aResult[0])
+			$ToConvert = $aResult[1]
+		EndIf
+		If StringInStr($ToConvert, "m") > 1 Then
+			$aResult = StringSplit($ToConvert, "m", $STR_NOCOUNT)
+			$iMinute = Number($aResult[0])
+			$ToConvert = $aResult[1]
+		EndIf
+		If StringInStr($ToConvert, "s") > 1 Then
+			$aResult = StringSplit($ToConvert, "s", $STR_NOCOUNT)
+			$iSecond = Number($aResult[0])
+		EndIf
+
+		$iRemainTimer = Round($iDay * 24 * 60 + $iHour * 60 + $iMinute + $iSecond / 60, 2)
+		If $iRemainTimer = 0 And $g_bDebugSetlog Then SetLog($WhereRead & ": Bad OCR string", $COLOR_ERROR)
+
+		If $bSetLog Then SetLog($WhereRead & " time: " & StringFormat("%.2f", $iRemainTimer) & " min", $COLOR_INFO)
+
+	Else
+		If $g_bDebugSetlog Then SetLog("Can not read remaining time for " & $WhereRead, $COLOR_ERROR)
+	EndIf
+	Return $iRemainTimer
+EndFunc   ;==>ConvertOCRLongTime

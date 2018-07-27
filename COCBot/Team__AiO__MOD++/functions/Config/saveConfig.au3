@@ -85,6 +85,10 @@ Func SaveConfig_MOD()
 	_Ini_Add("TrainLogout", "TrainLogoutMaxTime", $g_bTrainLogoutMaxTime)
 	_Ini_Add("TrainLogout", "TrainLogoutMaxTimeTXT", $g_iTrainLogoutMaxTime)
 
+	; Slot11 - Team AiO MOD++
+	_Ini_Add("attack", "ExtendedAttackBarDB", $g_abChkExtendedAttackBar[$DB] ? 1 : 0)
+	_Ini_Add("attack", "ExtendedAttackBarLB", $g_abChkExtendedAttackBar[$LB] ? 1 : 0)
+
 	; Request CC Troops at first - Team AiO MOD++
 	_Ini_Add("planned", "ReqCCFirst", $g_bReqCCFirst)
 
@@ -123,7 +127,6 @@ Func SaveConfig_MOD()
 	; Stop For War - Team AiO MOD++
 	_Ini_Add("war preparation", "Enable", $g_bStopForWar ? 1 : 0)
 	_Ini_Add("war preparation", "Stop Time", $g_iStopTime)
-	_Ini_Add("war preparation", "Stop Before", $g_bStopBeforeBattle ? 1 : 0)
 	_Ini_Add("war preparation", "Return Time", $g_iReturnTime)
 	_Ini_Add("war preparation", "Train War Troop", $g_bTrainWarTroop ? 1 : 0)
 	_Ini_Add("war preparation", "QuickTrain War Troop", $g_bUseQuickTrainWar ? 1 : 0)
@@ -145,10 +148,5 @@ Func SaveConfig_MOD()
 	_Ini_Add("RequestDefense", "RequestDefenseEnable", $g_bRequestTroopsEnableDefense ? 1 : 0)
 	_Ini_Add("RequestDefense", "txtRequestDefense", $g_sRequestTroopsTextDefense)
 	_Ini_Add("RequestDefense", "RequestDefenseEarly", $g_iRequestDefenseEarly)
-
-	; Skip Request CC - Team AiO MOD++
-	_Ini_Add("donate", "SkipRequestCC", $g_bSkipRequestCC ? 1 : 0)
-	_Ini_Add("donate", "SkipRequestCC_Troop", $g_iSkipRequestCCTroop)
-	_Ini_Add("donate", "SkipRequestCC_Spell", $g_iSkipRequestCCSpell)
 
 EndFunc   ;==>SaveConfig_MOD

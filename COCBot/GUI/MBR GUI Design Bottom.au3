@@ -16,7 +16,7 @@
 
 Global $g_hBtnStart = 0, $g_hBtnStop = 0, $g_hBtnPause = 0, $g_hBtnResume = 0, $g_hBtnSearchMode = 0, $g_hBtnMakeScreenshot = 0, $g_hBtnHide = 0, $g_hBtnEmbed = 0, _
 	   $g_hChkBackgroundMode = 0, $g_hLblDonate = 0, $g_hBtnAttackNowDB = 0, $g_hBtnAttackNowLB = 0, $g_hBtnAttackNowTS = 0
-Global $g_hPicTwoArrowShield = 0, $g_hLblVersion = 0, $g_hLblMod = 0, $g_hPicArrowLeft = 0, $g_hPicArrowRight = 0
+Global $g_hPicTwoArrowShield = 0, $g_hLblVersion = 0, $g_hPicArrowLeft = 0, $g_hPicArrowRight = 0
 Global $g_hGrpVillage = 0
 Global $g_hLblResultGoldNow = 0, $g_hLblResultGoldHourNow = 0, $g_hPicResultGoldNow = 0, $g_hPicResultGoldTemp = 0
 Global $g_hLblResultElixirNow = 0, $g_hLblResultElixirHourNow = 0, $g_hPicResultElixirNow = 0, $g_hPicResultElixirTemp = 0
@@ -30,12 +30,6 @@ Global $g_hlblKing = 0, $g_hPicKingGray = 0, $g_hPicKingBlue = 0, $g_hPicKingRed
 Global $g_hlblQueen = 0, $g_hPicQueenGray = 0, $g_hPicQueenBlue = 0, $g_hPicQueenRed = 0, $g_hPicQueenGreen = 0
 Global $g_hlblWarden = 0, $g_hPicWardenGray = 0, $g_hPicWardenBlue = 0, $g_hPicWardenRed = 0, $g_hPicWardenGreen = 0
 Global $g_hlblLab = 0, $g_hPicLabGray = 0, $g_hPicLabRed = 0, $g_hPicLabGreen = 0
-
-; Enable/Disable GUI while botting - Team AiO MOD++
-Global $g_hBtnEnableGUI = 0, $g_hBtnDisableGUI = 0
-
-; Stop on Low battery - Team AiO MOD++
-Global $g_hLblBatteryAC = 0, $g_hLblBatteryStatus = 0
 
 Func CreateBottomPanel()
 	Local $sTxtTip = ""
@@ -89,54 +83,24 @@ Func CreateBottomPanel()
 			If $g_bGuiRemote Then GUICtrlSetState(-1, $GUI_DISABLE)
 			GUICtrlSetOnEvent(-1, "chkBackground")
 			GUICtrlSetState(-1, (($g_bAndroidAdbScreencap = True) ? ($GUI_CHECKED) : ($GUI_UNCHECKED)))
+		$g_hLblVersion = GUICtrlCreateLabel("AiO++ " & $g_sModVersion, $x + 102, $y + 77, -1, 17, $SS_CENTER)
+			GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Arial", $CLEARTYPE_QUALITY)
+			GUICtrlSetColor(-1, $COLOR_TEAL)
 		$g_hBtnAttackNowDB = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnAttackNowDB", "DB Attack!"), $x + 190, $y - 4, 60, -1)
 			GUICtrlSetState(-1, $GUI_HIDE)
 		$g_hBtnAttackNowLB = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnAttackNowLB", "LB Attack!"), $x + 190, $y + 23, 60, -1)
 			GUICtrlSetState(-1, $GUI_HIDE)
 		$g_hBtnAttackNowTS = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnAttackNowTS", "TH Snipe!"), $x + 190, $y + 50, 60, -1)
 			GUICtrlSetState(-1, $GUI_HIDE)
-
-		; Stop on Low battery - Team AiO MOD++
-		$g_hLblBatteryAC = GUICtrlCreateLabel("", $x + 102, $y + 75, 50, 15)
-		$g_hLblBatteryStatus = GUICtrlCreateLabel("", $x + 154, $y + 75, 30, 15)
-
-		$g_hLblDonate = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate", "Support the development"), $x + 270, $y + 80, 165, 24, $SS_RIGHT)
+		$g_hLblDonate = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate", "Support the Development"), $x + 293, $y + 80, 142, 24, $SS_RIGHT)
 			GUICtrlSetCursor(-1, 0) ; https://www.autoitscript.com/autoit3/docs/functions/MouseGetCursor.htm
 			GUICtrlSetFont(-1, 8.5, $FW_BOLD) ;, $GUI_FONTITALIC + $GUI_FONTUNDER)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate_Info_01", "Paypal Donate?"))
-
-		; Enable/Disable GUI while botting - Team AiO MOD++
-	    $g_hBtnEnableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI", "Enable GUI"), $x + 100, $y + 72, 80, 22)
-		    _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_01", "Enable GUI control while botting") & @CRLF & _
-			 				  GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_02", "Warning: USE THIS WITH CAUTION!") & @CRLF & _
-			 				  GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_03", "This function may create errors that require bot/PC restart") & @CRLF & _
-			 				  GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_04", "Better to stop the Bot completely if you need to change the setting"))
-		    GUICtrlSetOnEvent(-1, "btnEnableGUI")
-		    GUICtrlSetState(-1, $GUI_HIDE)
-	    $g_hBtnDisableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnDisableGUI", "Disable GUI"), $x + 100, $y + 72, 80, 22)
-		    _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnDisableGUI_Info_01", "Disable GUI control to continue botting"))
-		    GUICtrlSetOnEvent(-1, "btnDisableGUI")
-		    GUICtrlSetState(-1, $GUI_HIDE)
-
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 	If $g_bAndroidAdbScreencap Then chkBackground() ; update background mode GUI
 
-	;$g_hPicTwoArrowShield = _GUICtrlCreateIcon($g_sLibIconPath, $eIcn2Arrow, $x + 197, $y + 10, 48, 48)
-	;$g_hLblVersion = GUICtrlCreateLabel($g_sModversion, 200, $y + 66, 60, 17, $SS_CENTER)
-		;GUICtrlSetColor(-1, 0X008080)
-		;GUICtrlSetFont(-1, 8)
-    ;$g_hLblMod = GUICtrlCreateLabel("AiO++ MOD", 195, $y + 82, 70, 17, $SS_CENTER)
-        ;GUICtrlSetColor(-1, 0x008080)
-        ;GUICtrlSetFont(-1, 8.5)
-
-	;$g_hPicArrowLeft = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnArrowLeft, $x + 249, $y + 30, 16, 16)
-		;$sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpVillage_Info_01", "Switch between village info and stats")
-		;_GUICtrlSetTip(-1, $sTxtTip)
-	;$g_hPicArrowRight = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnArrowRight, $x + 247 + 198, $y + 30, 16, 16)
-		;_GUICtrlSetTip(-1, $sTxtTip)
-
-	$g_hPicArrowLeft = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnArrowLeft, $x + 269, $y + 30, 16, 16)
+    $g_hPicArrowLeft = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnArrowLeft, $x + 269, $y + 30, 16, 16)
 	  $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpVillage_Info_01", "Switch between village info and stats")
 	  _GUICtrlSetTip(-1, $sTxtTip)
     $g_hPicArrowRight = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnArrowRight, $x + 247 + 198, $y + 30, 16, 16)
@@ -147,7 +111,7 @@ Func CreateBottomPanel()
 ;New section for royal and lab status
 	Local $x = 202, $y = $y_bottom + 5
 		$sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom","GrpStatus_Info_01", "Gray - Not Read, Green - Ready to Use, Blue - Healing, Red - Upgrading")
-		$g_hlblKing = GUICtrlCreateLabel("King", $x, $y, 50, 16, $SS_LEFT)
+		$g_hlblKing = GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design Names Troops", "King", "King"), $x, $y, 50, 16, $SS_LEFT)
 			;GUICtrlSetBkColor(-1, 0xE1E1E1)
 			_GUICtrlSetTip(-1, $sTxtTip)
 		$g_hPicKingGray = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGrayShield, $x + 53, $y, 16, 16)
@@ -163,7 +127,7 @@ Func CreateBottomPanel()
 			GUICtrlSetState(-1, $GUI_HIDE)
 
 	$y += 25
-		$g_hlblQueen = GUICtrlCreateLabel("Queen", $x, $y, 50, 16, $SS_LEFT)
+		$g_hlblQueen = GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design Names Troops", "Queen", "Queen"), $x, $y, 50, 16, $SS_LEFT)
 	  		_GUICtrlSetTip(-1, $sTxtTip)
 			;GUICtrlSetBkColor(-1, 0xE1E1E1)
 		$g_hPicQueenGray = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGrayShield, $x + 53, $y, 16, 16 )
@@ -180,7 +144,7 @@ Func CreateBottomPanel()
 
 
 	$y += 25
-		$g_hlblWarden = GUICtrlCreateLabel("Warden", $x, $y, 50, 16, $SS_LEFT)
+		$g_hlblWarden = GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design Names Troops", "Warden", "Warden"), $x, $y, 50, 16, $SS_LEFT)
 	  		_GUICtrlSetTip(-1, $sTxtTip)
 			;GUICtrlSetBkColor(-1, 0xE1E1E1)
 		$g_hPicWardenGray = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGrayShield, $x + 53 , $y, 16, 16 )
@@ -197,7 +161,7 @@ Func CreateBottomPanel()
 
 	$y += 25
 		$sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom","GrpStatus_Info_02", "Green - Lab is Running, Red - Lab Has Stopped")
-		$g_hlblLab = GUICtrlCreateLabel("Lab", $x, $y, 50, 16, $SS_LEFT)
+		$g_hlblLab = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Bottom", "Lab", "Lab"), $x, $y, 50, 16, $SS_LEFT)
 	  		_GUICtrlSetTip(-1, $sTxtTip)
 			;GUICtrlSetBkColor(-1, 0xE1E1E1)
 		$g_hPicLabGray = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGrayShield, $x + 53 , $y, 16, 16 )
@@ -227,7 +191,7 @@ Func CreateBottomPanel()
 	   $g_hPicResultElixirTemp = GUICtrlCreateIcon ($g_sLibIconPath, $eIcnElixir, $x + 15, $y + 20, 16, 16)
 
 	   $g_hLblResultDENow = GUICtrlCreateLabel("", $x + 10, $y + 42, 60, 15, $SS_RIGHT)
-	   $g_hLblResultDEHourNow = GUICtrlCreateLabel("", $x, $y + 42, 60, 15, $SS_RIGHT)
+	   $g_hLblResultDEHourNow = GUICtrlCreateLabel("", $x + 10, $y + 42, 60, 15, $SS_RIGHT)
 		   GUICtrlSetState(-1, $GUI_HIDE)
 	   $g_hPicResultDENow = GUICtrlCreateIcon ($g_sLibIconPath, $eIcnDark, $x + 71, $y + 40, 16, 16)
 		   GUICtrlSetState(-1, $GUI_HIDE)

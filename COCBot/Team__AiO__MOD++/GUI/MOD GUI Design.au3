@@ -29,7 +29,7 @@ Global $g_hGUI_MOD_TAB = 0, $g_hGUI_MOD_TAB_ITEM1 = 0, $g_hGUI_MOD_TAB_ITEM2 = 0
 ; CheckCC Troops
 #include "MOD GUI Design - CheckTroopsCC.au3"
 
-; War Preparation
+; Stop For War
 #include "MOD GUI Design - WarPreparation.au3"
 
 Func CreateMODTab()
@@ -45,7 +45,7 @@ Func CreateMODTab()
 		$g_hGUI_MOD_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_03", "Goblin XP"))
 			GoblinXPGUI()
 		$g_hGUI_MOD_TAB_ITEM4 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06_STab_04", "War Preparation"))
-			CreateMiscWarPreparationSubTab()
+			WarPreparationGUI()
 
 	GUICtrlCreateTabItem("")
 EndFunc   ;==>CreateMODTab

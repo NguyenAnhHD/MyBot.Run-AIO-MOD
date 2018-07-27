@@ -20,6 +20,7 @@ Global $g_hSldVSDelay = 0, $g_hSldMaxVSDelay = 0
 Global $g_hChkAttackNow = 0, $g_hCmbAttackNowDelay = 0, $g_hChkRestartSearchLimit = 0, $g_hTxtRestartSearchlimit = 0, $g_hChkAlertSearch = 0
 
 Global $g_hLblVSDelay = 0, $g_hLblTextVSDelay = 0, $g_hLblMaxVSDelay = 0, $g_hLblTextMaxVSDelay = 0, $g_hLblAttackNow = 0, $g_hLblAttackNowSec = 0
+Global $g_hChkRestartSearchPickupHero = 0
 
 ; Restart Search Legend league - Team AiO MOD++
 Global $g_hChkSearchTimeout = 0, $g_hLblSearchTimeout = 0, $g_hTxtSearchTimeout = 0, $g_hLblSearchTimeoutminutes = 0
@@ -140,7 +141,7 @@ Func CreateAttackSearchOptionsSearch()
 
 	$x = 253
 	$y = 45
-	GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "Group_03", "Search Options"), $x - 20, $y - 20, 189, 205)
+	GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "Group_03", "Search Options"), $x - 20, $y - 20, 189, 215)
 	$x -= 5
 		$g_hChkAttackNow = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkAttackNow", "Attack Now! option."), $x - 5, $y - 4, -1, -1)
 			$sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkAttackNow_Info_01", "Check this if you want the option to have an 'Attack Now!' button next to") & @CRLF & _
@@ -161,7 +162,7 @@ Func CreateAttackSearchOptionsSearch()
 			GUICtrlSetState(-1, $GUI_DISABLE)
 
 	$y += 49
-		$g_hChkRestartSearchLimit = GUICtrlCreateCheckbox( GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkRestartSearchLimit", "Restart every") & ":", $x - 5, $y - 8, -1, -1)
+		$g_hChkRestartSearchLimit = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkRestartSearchLimit", "Restart every") & ":", $x - 5, $y - 8, -1, -1)
 			$sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkRestartSearchLimit_Info_01", "Return To Base after x searches and restart to search enemy villages.")
 			_GUICtrlSetTip(-1, $sTxtTip)
 			GUICtrlSetState(-1, $GUI_CHECKED)
@@ -173,12 +174,16 @@ Func CreateAttackSearchOptionsSearch()
 		GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "search(es).", -1), $x + 47, $y + 17, -1, -1)
 
 	$y += 45
+		$g_hChkRestartSearchPickupHero = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkRestartSearchPickupHero", "Restart to pickup healed hero"), $x - 5, $y, -1, -1)
+			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkRestartSearchPickupHero_Info_01", "Return to base when a hero is healed and ready to join the attack"))
+
+	$y += 25
 		$g_hChkAlertSearch = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkAlertSearch", "Alert me when Village found"), $x - 5, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkAlertSearch_Info_01", "Check this if you want an Audio alarm & a Balloon Tip when a Base to attack is found."))
 			GUICtrlSetState(-1, $GUI_CHECKED)
 
 	; Restart Search Legend league - Team AiO MOD++
-	$y += 40
+	$y += 32
 		$g_hChkSearchTimeout = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkSearchTimeout", "Restart search IF Cloud Time"), $x - 5, $y - 8, -1, -1)
 			_GUICtrlSetTip(-1,GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkSearchTimeout_Info_01", "Will Return to home and restart search if clouding time is > xx minutes"))
 			GUICtrlSetOnEvent(-1, "chkSearchTimeout")

@@ -536,7 +536,7 @@ EndFunc   ;==>chkABWaitForCCSpell
 
 Func cmbDBWaitForCCSpell()
 	Local $iSpellSelection = _GUICtrlComboBox_GetCurSel($g_hCmbDBWaitForCastleSpell)
-	If $iSpellSelection > 0 And  $iSpellSelection < 6 Then
+	If $iSpellSelection > 0 And  $iSpellSelection < 5 Then
 		GUICtrlSetState($g_hCmbDBWaitForCastleSpell2, $GUI_DISABLE)
 		GUICtrlSetState($g_hTxtDBWaitForCastleSpell, $GUI_DISABLE)
 	Else
@@ -547,7 +547,7 @@ EndFunc   ;==>cmbDBWaitForCCSpell
 
 Func cmbABWaitForCCSpell()
 	Local $iSpellSelection = _GUICtrlComboBox_GetCurSel($g_hCmbABWaitForCastleSpell)
-	If $iSpellSelection > 0 And  $iSpellSelection < 6 Then
+	If $iSpellSelection > 0 And  $iSpellSelection < 5 Then
 		GUICtrlSetState($g_hCmbABWaitForCastleSpell2, $GUI_DISABLE)
 		GUICtrlSetState($g_hTxtABWaitForCastleSpell, $GUI_DISABLE)
 	Else
