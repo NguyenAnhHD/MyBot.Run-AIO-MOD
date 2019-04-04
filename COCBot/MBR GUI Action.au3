@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: cosote (2016)
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -15,10 +15,26 @@
 
 Func BotStart($bAutostartDelay = 0)
 	FuncEnter(BotStart)
+
+	If Not $g_bSearchMode Then
+		If $g_hLogFile = 0 Then CreateLogFile() ; only create new log file when doesn't exist yet
+		CreateAttackLogFile()
+		If $g_iFirstRun = -1 Then $g_iFirstRun = 1
+	EndIf
+	SetLogCentered(" BOT LOG ", Default, Default, True)
+
+	If Not ForumAuthentication() Then
+		; not authenticated exit now, but restore controls first
+		EnableControls($g_hFrmBotBottom, Default, $g_aFrmBotBottomCtrlState)
+		SetRedrawBotWindow(True, Default, Default, Default, "BotStart")
+		Return FuncReturn()
+	EndIf
+
 	ResumeAndroid()
 	CleanSecureFiles()
 	CalCostCamp()
 	CalCostSpell()
+	CalCostSiege()
 
 	$g_bRunState = True
 	$g_bTogglePauseAllowed = True
@@ -34,25 +50,14 @@ Func BotStart($bAutostartDelay = 0)
 	$g_bMeetCondStop = False
 	$g_bIsClientSyncError = False
 	$g_bDisableBreakCheck = False ; reset flag to check for early warning message when bot start/restart in case user stopped in middle
-	$g_bDisableDropTrophy = False ; Reset Disabled Drop Trophy because the user has no Tier 1 or 2 Troops
-
-	If Not $g_bSearchMode Then
-		If $g_hLogFile = 0 Then CreateLogFile() ; only create new log file when doesn't exist yet
-		CreateAttackLogFile()
-		If $g_iFirstRun = -1 Then $g_iFirstRun = 1
-	EndIf
-	SetLogCentered(" BOT LOG ", Default, Default, True)
 
 	SaveConfig()
 	readConfig()
 	applyConfig(False) ; bot window redraw stays disabled!
+	CreaTableDB()
 
 	; Initial ObjEvents for the Autoit objects errors
 	__ObjEventIni()
-
-	;Reset Telegram message
-	NotifyGetLastMessageFromTelegram()
-	$g_iTGLastRemote = $g_sTGLast_UID
 
 	If BitAND($g_iAndroidSupportFeature, 1 + 2) = 0 And $g_bChkBackgroundMode = True Then
 		GUICtrlSetState($g_hChkBackgroundMode, $GUI_UNCHECKED)
@@ -120,21 +125,23 @@ Func BotStart($bAutostartDelay = 0)
 		If $hWndActive = $g_hAndroidWindow And ($g_bAndroidBackgroundLaunched = True Or AndroidControlAvailable())  Then ; Really?
 
 			; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
-			If $g_iChkAutoDock Then
+			If $g_bChkAutoDock Then
 				If Not $g_bAndroidEmbedded Then
-					SetLog("Bot Auto Dock to Emulator", $COLOR_INFO)
+					SetLog("Auto use Dock Android Window", $COLOR_INFO)
 					btnEmbed()
 				EndIf
-			ElseIf $g_iChkAutoHideEmulator Then
+				If _Sleep($DELAYRUNBOT5) Then Return
+			ElseIf $g_bChkAutoHideEmulator Then
 				If Not $g_bIsHidden Then
-					SetLog("Bot Auto Hide Emulator", $COLOR_INFO)
+					SetLog("Auto hidden the Emulator", $COLOR_INFO)
 					btnHide()
 					$g_bIsHidden = True
 				EndIf
+				If _Sleep($DELAYRUNBOT5) Then Return
 			EndIf
 
-			If $g_iChkAutoMinimizeBot Then
-				SetLog("Bot Auto Minimize Bot", $COLOR_INFO)
+			If $g_bChkAutoMinimizeBot Then
+				SetLog("Auto Minimize the Bot", $COLOR_INFO)
 				If $g_bUpdatingWhenMinimized Then
 					If $g_bHideWhenMinimized Then
 						WinMove2($g_hFrmBot, "", -32000, -32000, -1, -1, 0, $SWP_HIDEWINDOW, False)
@@ -150,6 +157,7 @@ Func BotStart($bAutostartDelay = 0)
 					EndIf
 					WinSetState($g_hFrmBot, "", @SW_MINIMIZE)
 				EndIf
+				If _Sleep($DELAYRUNBOT5) Then Return
 			EndIf
 
 			Initiate() ; Initiate and run bot
@@ -187,7 +195,9 @@ Func BotStop()
 
 	;DistributorsUpdateGUI()
 	AndroidBotStopEvent() ; signal android that bot is now stopping
-	AndroidAdbTerminateShellInstance() ; terminate shell instance
+	If $g_bTerminateAdbShellOnStop Then
+		AndroidAdbTerminateShellInstance() ; terminate shell instance
+	EndIf
 	AndroidShield("btnStop", Default)
 
 	EnableControls($g_hFrmBotBottom, Default, $g_aFrmBotBottomCtrlState)
@@ -202,13 +212,17 @@ Func BotStop()
 	GUICtrlSetState($g_hBtnSearchMode, $GUI_SHOW)
 	;GUICtrlSetState($g_hBtnMakeScreenshot, $GUI_ENABLE)
 
+	; Enable/Disable GUI while botting - Team AiO MOD++
+	GUICtrlSetState($g_hBtnEnableGUI, $GUI_HIDE)
+	GUICtrlSetState($g_hBtnDisableGUI, $GUI_HIDE)
+
 	; hide attack buttons if show
 	GUICtrlSetState($g_hBtnAttackNowDB, $GUI_HIDE)
 	GUICtrlSetState($g_hBtnAttackNowLB, $GUI_HIDE)
 	GUICtrlSetState($g_hBtnAttackNowTS, $GUI_HIDE)
-	HideShields(False)
-	;GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
-	$g_bBtnAttackNowPressed = False
+	GUICtrlSetState($g_hPicTwoArrowShield, $GUI_SHOW)
+	GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
+	GUICtrlSetState($g_hLblMod, $GUI_SHOW)
 
 	; update try items
 	TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Start", "Start bot"))
@@ -217,6 +231,7 @@ Func BotStop()
 	SetLogCentered(" Bot Stop ", Default, $COLOR_ACTION)
 	If Not $g_bSearchMode Then
 		If Not $g_bBotPaused Then $g_iTimePassed += Int(__TimerDiff($g_hTimerSinceStarted))
+		If ProfileSwitchAccountEnabled() And Not $g_bBotPaused Then $g_aiRunTime[$g_iCurAccount] += Int(__TimerDiff($g_ahTimerSinceSwitched[$g_iCurAccount]))
 		;AdlibUnRegister("SetTime")
 		$g_bRestart = True
 

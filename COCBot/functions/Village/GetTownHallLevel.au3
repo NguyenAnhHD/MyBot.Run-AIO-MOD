@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: KNowJack (July 2015)
 ; Modified ......: Sardo 2015-08
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -31,7 +31,7 @@ Func GetTownHallLevel($bFirstTime = False)
 	If $g_bDebugImageSave Then DebugImageSave("GetTHLevelView")
 
 	$g_iTownHallLevel = 0 ; Reset Townhall level
-	$aTHInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY)
+	$aTHInfo = BuildingInfo(242, 491 + $g_iBottomOffsetY)
 	If $g_bDebugSetlog Then SetDebugLog("$aTHInfo[0]=" & $aTHInfo[0] & ", $aTHInfo[1]=" & $aTHInfo[1] & ", $aTHInfo[2]=" & $aTHInfo[2], $COLOR_DEBUG)
 	If $aTHInfo[0] > 1 Then
 		If StringInStr($aTHInfo[1], "Town") = 0 Then
@@ -41,6 +41,16 @@ Func GetTownHallLevel($bFirstTime = False)
 		If $aTHInfo[2] <> "" Then
 			$g_iTownHallLevel = $aTHInfo[2] ; grab building level from building info array
 			SetLog("Your Town Hall Level read as: " & $g_iTownHallLevel, $COLOR_SUCCESS)
+			chkUpgradeKing()
+			chkUpgradeQueen()
+			chkUpgradeWarden()
+			cmbHeroReservedBuilder()
+			chkDBKingWait()
+			chkDBQueenWait()
+			chkDBWardenWait()
+			chkABKingWait()
+			chkABQueenWait()
+			chkABWardenWait()
 			saveConfig()
 		Else
 			SetLog("Your Town Hall Level was not found! Please Manually Locate", $COLOR_INFO)

@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Sardo (2016)
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -14,81 +14,100 @@
 ; ===============================================================================================================================
 #include-once
 
-; Func chkTrap()
-	; If GUICtrlRead($g_hChkTrap) = $GUI_CHECKED Then
-		; $g_bChkTrap = True
-		; ;GUICtrlSetState($btnLocateTownHall, $GUI_SHOW)
-	; Else
-		; $g_bChkTrap = False
-		; ;GUICtrlSetState($btnLocateTownHall, $GUI_HIDE)
-	; EndIf
-; EndFunc   ;==>chkTrap
-
-; Func ChkCollect()
-	; $g_bChkCollect = (GUICtrlRead($g_hChkCollect) = $GUI_CHECKED)
-; EndFunc   ;==>ChkCollect
-
-; Request troops for defense - Team AiO MOD++
-Func chkRequestDefense()
-	If GUICtrlRead($g_hChkRequestTroopsEnableDefense) = $GUI_CHECKED Then
-		For $i = $g_hTxtRequestCCDefense To $g_hTxtRequestDefenseEarly
-			GUICtrlSetState($i, $GUI_ENABLE)
-		Next
-	Else
-		For $i = $g_hTxtRequestCCDefense To $g_hTxtRequestDefenseEarly
-			GUICtrlSetState($i, $GUI_DISABLE)
-		Next
-	EndIf
-EndFunc   ;==>chkRequestDefense
-
 Func chkRequestCCHours()
 	Local $bWasRedraw = SetRedrawBotWindow(False, Default, Default, Default, "chkRequestCCHours")
 
 	If GUICtrlRead($g_hChkRequestTroopsEnable) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hTxtRequestCC, $GUI_SHOW + $GUI_ENABLE)
-		For $i = $g_hChkReqCCFirst To $g_hLblRequestCCHoursPM
+		For $i = $g_hLblRequestType To $g_ahCmbClanCastleSiege[1]
 			GUICtrlSetState($i, $GUI_ENABLE)
 		Next
-		If GUICtrlRead($g_hChkRequestType_Troops) = $GUI_CHECKED Then
-			GUICtrlSetState($g_hTxtRequestCountCCTroop, $GUI_ENABLE)
-		Else
-			GUICtrlSetState($g_hTxtRequestCountCCTroop, $GUI_DISABLE)
-		EndIf
-		If GUICtrlRead($g_hChkRequestType_Spells) = $GUI_CHECKED Then
-			GUICtrlSetState($g_hTxtRequestCountCCSpell, $GUI_ENABLE)
-		Else
-			GUICtrlSetState($g_hTxtRequestCountCCSpell, $GUI_DISABLE)
-		EndIf
+		GUIToggle_RequestOnlyDuringHours(True)
+		chkRequestCountCC()
 	Else
 		GUICtrlSetState($g_hTxtRequestCC, $GUI_SHOW + $GUI_DISABLE)
-		 ; CheckCC Troops - Team AiO MOD++
-		GUICtrlSetState($g_hChkTroopsCC, $GUI_UNCHECKED)
-		GUIControlCheckCC()
-		For $i = $g_hChkReqCCFirst To $g_hLblRequestCCHoursPM
+		For $i = $g_hLblRequestType To $g_ahCmbClanCastleSiege[1]
 			GUICtrlSetState($i, $GUI_DISABLE)
 		Next
+		If GUICtrlRead($g_hChkRequestCCDefense) = $GUI_UNCHECKED Then GUIToggle_RequestOnlyDuringHours(False)
 	EndIf
 
 	SetRedrawBotWindowControls($bWasRedraw, $g_hGrpRequestCC, "chkRequestCCHours")
 EndFunc   ;==>chkRequestCCHours
 
-; Request CC Troops at first - Team AiO MOD++
-Func chkReqCCFirst()
-	$g_bReqCCFirst = (GUICtrlRead($g_hChkReqCCFirst) = $GUI_CHECKED)
-EndFunc   ;==>chkReqCCFirst
-
 Func chkRequestCountCC()
 	If GUICtrlRead($g_hChkRequestType_Troops) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hTxtRequestCountCCTroop, $GUI_ENABLE)
+		For $i = $g_ahTxtClanCastleTroop[0] To $g_ahCmbClanCastleTroop[2]
+			GUICtrlSetState($i, $GUI_ENABLE)
+		Next
+		CmbClanCastleTroop()
 	Else
 		GUICtrlSetState($g_hTxtRequestCountCCTroop, $GUI_DISABLE)
+		For $i = $g_ahTxtClanCastleTroop[0] To $g_ahCmbClanCastleTroop[2]
+			GUICtrlSetState($i, $GUI_DISABLE)
+		Next
 	EndIf
 	If GUICtrlRead($g_hChkRequestType_Spells) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hTxtRequestCountCCSpell, $GUI_ENABLE)
+		GUICtrlSetState($g_ahCmbClanCastleSpell[0], $GUI_ENABLE)
+		GUICtrlSetState($g_ahCmbClanCastleSpell[1], $GUI_ENABLE)
+		GUICtrlSetState($g_ahCmbClanCastleSpell[2], $GUI_ENABLE)
+		CmbClanCastleSpell()
 	Else
 		GUICtrlSetState($g_hTxtRequestCountCCSpell, $GUI_DISABLE)
+		GUICtrlSetState($g_ahCmbClanCastleSpell[0], $GUI_DISABLE)
+		GUICtrlSetState($g_ahCmbClanCastleSpell[1], $GUI_DISABLE)
+		GUICtrlSetState($g_ahCmbClanCastleSpell[2], $GUI_DISABLE)
+	EndIf
+	If GUICtrlRead($g_hChkRequestType_Siege) = $GUI_CHECKED Then
+		GUICtrlSetState($g_ahCmbClanCastleSiege[0], $GUI_ENABLE)
+		GUICtrlSetState($g_ahCmbClanCastleSiege[1], $GUI_ENABLE)
+		CmbClanCastleSiege()
+	Else
+		GUICtrlSetState($g_ahCmbClanCastleSiege[0], $GUI_DISABLE)
+		GUICtrlSetState($g_ahCmbClanCastleSiege[1], $GUI_DISABLE)
 	EndIf
 EndFunc   ;==>chkRequestCountCC
+
+Func CmbClanCastleTroop()
+	For $i = 0 To UBound($g_ahCmbClanCastleTroop) - 1
+		If _GUICtrlComboBox_GetCurSel($g_ahCmbClanCastleTroop[$i]) < $eTroopCount Then
+			GUICtrlSetState($g_ahTxtClanCastleTroop[$i], $GUI_ENABLE)
+		Else
+			GUICtrlSetState($g_ahTxtClanCastleTroop[$i], $GUI_DISABLE)
+		EndIf
+		Local $g_aiCmbClanCastleTroop = _GUICtrlComboBox_GetCurSel($g_ahCmbClanCastleTroop[$i])
+		_GUICtrlSetImage($g_ahImgClanCastleTroop[$i], $g_sLibIconPath, $g_aiCCTroopsIcon[$g_aiCmbClanCastleTroop])
+	Next
+EndFunc   ;==>CmbClanCastleTroop
+
+Func CmbClanCastleSpell()
+	For $i = 0 To UBound($g_ahCmbClanCastleSpell) - 1
+		If _GUICtrlComboBox_GetCurSel($g_ahCmbClanCastleSpell[$i]) = $eCSpell - $eLSpell Then _GUICtrlComboBox_SetCurSel($g_ahCmbClanCastleSpell[$i], $eSpellCount)
+		Local $g_aiCmbClanCastleSpell = _GUICtrlComboBox_GetCurSel($g_ahCmbClanCastleSpell[$i])
+		_GUICtrlSetImage($g_ahImgClanCastleSpell[$i], $g_sLibIconPath, $g_aiCCSpellsIcon[$g_aiCmbClanCastleSpell])
+	Next
+EndFunc   ;==>CmbClanCastleSpell
+
+Func CmbClanCastleSiege()
+	For $i = 0 To UBound($g_ahCmbClanCastleSiege) - 1
+		Local $g_aiCmbClanCastleSiege = _GUICtrlComboBox_GetCurSel($g_ahCmbClanCastleSiege[$i])
+		_GUICtrlSetImage($g_ahImgClanCastleSiege[$i], $g_sLibIconPath, $g_aiCCSiegesIcon[$g_aiCmbClanCastleSiege])
+	Next
+EndFunc   ;==>CmbClanCastleSpell
+
+Func GUIToggle_RequestOnlyDuringHours($Enable = True)
+	If $Enable Then
+		For $i = $g_hLblOnlyDuringHours To $g_hLblRequestCCHoursPM
+			GUICtrlSetState($i, $GUI_ENABLE)
+		Next
+	Else
+		For $i = $g_hLblOnlyDuringHours To $g_hLblRequestCCHoursPM
+			GUICtrlSetState($i, $GUI_DISABLE)
+		Next
+	EndIf
+EndFunc   ;==>GUIToggle_RequestOnlyDuringHours
 
 Func chkRequestCCHoursE1()
 	If GUICtrlRead($g_hChkRequestCCHoursE1) = $GUI_CHECKED And GUICtrlRead($g_ahChkRequestCCHours[0]) = $GUI_CHECKED Then

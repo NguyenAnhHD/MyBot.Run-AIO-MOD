@@ -6,7 +6,7 @@
 ; Return values .:
 ; Author ........: Didipe (2015)
 ; Modified ......: Hervidero (2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -16,6 +16,7 @@
 Func MBRFunc($Start = True)
 	Switch $Start
 		Case True
+			RemoveZoneIdentifiers()
 			$g_hLibMyBot = DllOpen($g_sLibMyBotPath)
 			If $g_hLibMyBot = -1 Then
 				SetLog($g_sMBRLib & " not found.", $COLOR_ERROR)
@@ -56,26 +57,42 @@ Func DllCallMyBot($sFunc, $sType1 = Default, $vParam1 = Default, $sType2 = Defau
 		, $sType6 = Default, $vParam6 = Default, $sType7 = Default, $vParam7 = Default, $sType8 = Default, $vParam8 = Default, $sType9 = Default, $vParam9 = Default, $sType10 = Default, $vParam10 = Default)
 	$g_bLibMyBotActive = True
 	Local $aResult
-	If $g_bCloudsActive = False And ((BitAND($g_iAndroidSuspendModeFlags, 1) > 0 And ($g_bAttackActive Or $g_bVillageSearchActive)) Or BitAND($g_iAndroidSuspendModeFlags, 2) > 0) Then ; $g_bVillageSearchActive disabled as it would significantly increase re-connection error during search
-		Local $sFileOrFolder = Default
-		Switch $sFunc
-			Case "SearchMultipleTilesBetweenLevels", "FindTile", "SearchTile", "SearchMultipleTilesLevel", "SearchMultipleTiles", "RecheckTile", "DoOCR"
-				If StringLeft($vParam2, 1) <> "-" Then
-					$sFileOrFolder = $vParam2
-					$vParam2 = "-" & _Base64Encode(StringToBinary($vParam2, 4), 1024) ; support umlauts using Base64 UTF-8
-				EndIf
-		EndSwitch
-		If $g_bDebugBetaVersion And $sFileOrFolder <> Default And StringInStr($sFileOrFolder, "\") And FileExists($sFileOrFolder) = 0 Then SetLog("Cannot access path: " & $sFileOrFolder, $COLOR_ERROR)
-		; suspend Android now
-		Local $bWasSuspended = SuspendAndroid()
-		$aResult = _DllCallMyBot($sFunc, $sType1, $vParam1, $sType2, $vParam2, $sType3, $vParam3, $sType4, $vParam4, $sType5, $vParam5, $sType6, $vParam6, $sType7, $vParam7, $sType8, $vParam8, $sType9, $vParam9, $sType10, $vParam10)
-		; resume Android again (if it was not already suspended)
-		SuspendAndroid($bWasSuspended)
-	Else
-		$aResult = _DllCallMyBot($sFunc, $sType1, $vParam1, $sType2, $vParam2, $sType3, $vParam3, $sType4, $vParam4, $sType5, $vParam5, $sType6, $vParam6, $sType7, $vParam7, $sType8, $vParam8, $sType9, $vParam9, $sType10, $vParam10)
-	EndIf
+	Local $sFileOrFolder = Default
+	Switch $sFunc
+		Case "SearchMultipleTilesBetweenLevels", "FindTile", "SearchTile", "SearchMultipleTilesLevel", "SearchMultipleTiles", "RecheckTile", "DoOCR"
+			If StringLeft($vParam2, 1) <> "-" Then
+				$sFileOrFolder = $vParam2
+				$vParam2 = "-" & _Base64Encode(StringToBinary($vParam2, 4), 1024) ; support umlauts using Base64 UTF-8
+			EndIf
+	EndSwitch
+	If $g_bDebugBetaVersion And $sFileOrFolder <> Default And StringInStr($sFileOrFolder, "\") And FileExists($sFileOrFolder) = 0 Then SetLog("Cannot access path: " & $sFileOrFolder, $COLOR_ERROR)
+	; suspend Android now
+	Local $bWasSuspended = SuspendAndroid()
+	$aResult = _DllCallMyBot($sFunc, $sType1, $vParam1, $sType2, $vParam2, $sType3, $vParam3, $sType4, $vParam4, $sType5, $vParam5, $sType6, $vParam6, $sType7, $vParam7, $sType8, $vParam8, $sType9, $vParam9, $sType10, $vParam10)
+	Local $error = @error
+	Local $i = 1
+	While Not $error And $aResult[0] = "<GetAsyncResult>"
+		; when receiving "<GetAsyncResult>", dll waited already 100ms, and android should be resumed after 500ms for 100ms
+		If Mod($i + 5, 10) = 0 Then
+			SetDebugLog("Waiting for DLL async function " & $sFunc & " ...")
+			ResumeAndroid()
+		EndIf
+		$i += 1
+		If _Sleep(100) Then
+			ResumeAndroid()
+			$aResult[0] = ""
+			$g_bLibMyBotActive = False
+			Return SetError(0, 0, $aResult)
+		EndIf
+		SuspendAndroid()
+		$aResult = _DllCallMyBot("GetAsyncResult")
+		$error = @error
+	WEnd
+
+	; resume Android again (if it was not already suspended)
+	SuspendAndroid($bWasSuspended)
 	$g_bLibMyBotActive = False
-	Return $aResult
+	Return SetError($error, @extended, $aResult)
 EndFunc   ;==>DllCallMyBot
 
 Func debugMBRFunctions($iDebugSearchArea = 0, $iDebugRedArea = 0, $iDebugOcr = 0)
@@ -98,7 +115,7 @@ EndFunc   ;==>debugMBRFunctions
 Func setAndroidPID($pid = GetAndroidPid())
 	If $g_hLibMyBot = -1 Then Return ; Bot didn't finish launch yet
 	SetDebugLog("setAndroidPID: $pid=" & $pid)
-	Local $result = DllCall($g_hLibMyBot, "str", "setAndroidPID", "int", $pid)
+	Local $result = DllCall($g_hLibMyBot, "str", "setAndroidPID", "int", $pid, "str", $g_sBotVersion, "str", $g_sAndroidEmulator, "str", $g_sAndroidVersion, "str", $g_sAndroidInstance)
 	If @error Then
 		_logErrorDLLCall($g_sLibMyBotPath & ", setAndroidPID:", @error)
 		Return SetError(@error)
@@ -136,6 +153,49 @@ Func SetBotGuiPID($pid = $g_iGuiPID)
 		SetDebugLog($g_sMBRLib & " not found.", $COLOR_ERROR)
 	EndIf
 EndFunc   ;==>SetBotGuiPID
+
+Func CheckForumAuthentication()
+	If $g_hLibMyBot = -1 Then Return False ; Bot didn't finish launch yet
+	Local $result = DllCall($g_hLibMyBot, "boolean", "CheckForumAuthentication")
+	If @error Then
+		_logErrorDLLCall($g_sLibMyBotPath & ", CheckForumAuthentication:", @error)
+		Return SetError(@error)
+	EndIf
+	;dll return 0 on success, -1 on error
+	Local $bAuthenticated = False
+	If IsArray($result) Then
+		If $result[0] Then
+			SetLog(GetTranslatedFileIni("MBR Authentication", "BotIsAuthenticated", "MyBot.run is authenticated"), $COLOR_SUCCESS)
+			$bAuthenticated = True
+		Else
+			SetLog(GetTranslatedFileIni("MBR Authentication", "BotIsNotAuthenticated", "Error authenticating Mybot.run"), $COLOR_ERROR)
+		EndIf
+	Else
+		SetDebugLog($g_sMBRLib & " not found.", $COLOR_ERROR)
+	EndIf
+	Return $bAuthenticated
+EndFunc   ;==>CheckForumAuthentication
+
+Func ForumLogin($sUsername, $sPassword)
+	If $g_hLibMyBot = -1 Then Return False ; Bot didn't finish launch yet
+	Local $result = DllCall($g_hLibMyBot, "str", "ForumLogin", "str", _Base64Encode(StringToBinary($sUsername, 4), 1024), "str", _Base64Encode(StringToBinary($sPassword, 4), 1024))
+	If @error Then
+		_logErrorDLLCall($g_sLibMyBotPath & ", ForumLogin:", @error)
+		Return SetError(@error)
+	EndIf
+	;dll return 0 on success, -1 on error
+	If IsArray($result) Then
+		If StringInStr($result[0], '"access_token"') > 0 Then
+			SetDebugLog("Forum login successful, message length: " & StringLen($result[0]))
+			Return $result[0]
+		Else
+			SetDebugLog("Forum login failed, message: " & $result[0])
+			Return $result[0]
+		EndIf
+	Else
+		SetDebugLog($g_sMBRLib & " not found.", $COLOR_ERROR)
+	EndIf
+EndFunc   ;==>ForumLogin
 
 Func setVillageOffset($x, $y, $z)
 	DllCall($g_hLibMyBot, "str", "setVillageOffset", "int", $x, "int", $y, "float", $z)
@@ -208,3 +268,26 @@ Func ReduceBotMemory($bDisposeCaptures = True)
 	If $g_iEmptyWorkingSetBot > 0 Then _WinAPI_EmptyWorkingSet(@AutoItPID) ; Reduce Working Set of Bot
 	;DllCall($g_hLibMyBot, "none", "gc") ; run .net garbage collection
 EndFunc   ;==>ReduceBotMemory
+
+Func RemoveZoneIdentifiers()
+	; remove the Zone.Identifier from any exe or dll
+	Local $aPaths = [@ScriptDir, $g_sLibPath, $g_sLibPath & "\adb", $g_sLibPath & "\curl"]
+	For $i = 0 To UBound($aPaths) - 1
+		Local $sPath = $aPaths[$i]
+		Local $aFiles = _FileListToArray($sPath, "*", $FLTA_FILES, True)
+		For $j = 1 To $aFiles[0]
+			If StringRegExp($aFiles[$j], ".+[.](exe|dll)$") Then
+				Local $sStream = $aFiles[$j] & ":Zone.Identifier:$DATA"
+				Local $h = _WinAPI_CreateFile($sStream, 2, 2)
+				If $h Then
+					_WinAPI_CloseHandle($h)
+					If _WinAPI_DeleteFile($sStream) Then
+						SetDebugLog("Removed Zone.Identifier from file: " & $sStream)
+					Else
+						SetDebugLog("Failed to remove Zone.Identifier from file: " & $sStream, $COLOR_ERROR)
+					EndIf
+				EndIf
+			EndIf
+		Next
+	Next
+EndFunc   ;==>RemoveZoneIdentifiers

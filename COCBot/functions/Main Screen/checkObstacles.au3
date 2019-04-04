@@ -7,24 +7,32 @@
 ; Return values .: Returns True when there is something blocking
 ; Author ........: Hungle (2014)
 ; Modified ......: KnowJack (2015), Sardo (08-2015), TheMaster1st(10-2015), MonkeyHunter (08-2016), MMHK (12-2016)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
 ;
-Func checkObstacles($bBuilderBase = False) ;Checks if something is in the way for mainscreen
+Func checkObstacles($bBuilderBase = Default) ;Checks if something is in the way for mainscreen
 	FuncEnter(checkObstacles)
-	Static $checkObstaclesActive = False
+	If $bBuilderBase = Default Then $bBuilderBase = False
+	Static $iRecursive = 0
 
 	If TestCapture() = False And WinGetAndroidHandle() = 0 Then
 		; Android not available
 		Return FuncReturn(True)
 	EndIf
-	If _ColorCheck(_GetPixelColor(383, 405), Hex(0xF0BE70, 6), 20) Then
+
+	Local $offColors[3][3] = [[0x535353, 140, 0], [0xFFFFFF, 55, 20], [0xFDC671, 55, 10]]
+	Local $ButtonPixel = _MultiPixelSearch(270, 372 + $g_iMidOffsetY, 422, 404 + $g_iMidOffsetY, 1, 1, Hex(0x535353, 6), $offColors, 20) ; first vertical black pixel of Cancel button
+	If IsArray($ButtonPixel) Then
+		If $g_bDebugSetlog Then
+			SetDebugLog("ButtonPixelLocation = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG) ;Debug
+			SetDebugLog("Pixel color found #1: " & _GetPixelColor($ButtonPixel[0], $ButtonPixel[1], True) & ", #2: " & _GetPixelColor($ButtonPixel[0] + 140, $ButtonPixel[1], True) & ", #3: " & _GetPixelColor($ButtonPixel[0] + 55, $ButtonPixel[1] + 20, True) & ", #4: " & _GetPixelColor($ButtonPixel[0] + 55, $ButtonPixel[1] + 10, True), $COLOR_DEBUG)
+		EndIf
 		SetLog("Found Switch Account dialog...!", $COLOR_INFO)
-		PureClick(383, 375 + $g_iMidOffsetY, 1, 0, "Click Cancel")
+		PureClick($ButtonPixel[0] + 75, $ButtonPixel[1] + 25, 1, 0, "Click Cancel")
 	EndIf
 	; prevent recursion
 	;If $checkObstaclesActive = True Then
@@ -33,11 +41,10 @@ Func checkObstacles($bBuilderBase = False) ;Checks if something is in the way fo
 	;	Return FuncReturn(True)
 	;EndIf
 	Local $wasForce = OcrForceCaptureRegion(False)
-	Local $checkObstaclesWasActive = $checkObstaclesActive
-	$checkObstaclesActive = True
-	Local $Result = _checkObstacles($bBuilderBase, $checkObstaclesWasActive)
+	$iRecursive += 1
+	Local $Result = _checkObstacles($bBuilderBase, $iRecursive > 5)
 	OcrForceCaptureRegion($wasForce)
-	$checkObstaclesActive = $checkObstaclesWasActive
+	$iRecursive -= 1
 	Return FuncReturn($Result)
 EndFunc   ;==>checkObstacles
 
@@ -51,10 +58,10 @@ Func _checkObstacles($bBuilderBase = False, $bRecursive = False) ;Checks if some
 		If checkObstacles_Network() Then Return True
 		If checkObstacles_GfxError() Then Return True
 	EndIf
-	Local $bIsOnBuilderIsland = _CheckPixel($aIsOnBuilderBase, $g_bNoCapturePixel)
+	Local $bIsOnBuilderIsland = isOnBuilderBase()
 	If $bBuilderBase = False And $bIsOnBuilderIsland = True Then
 		SetLog("Detected Builder Base, trying to switch back to Main Village")
-		If SwitchBetweenBases(False) Then
+		If SwitchBetweenBases() Then
 			$g_bMinorObstacle = True
 			If _Sleep($DELAYCHECKOBSTACLES1) Then Return
 			Return False
@@ -103,12 +110,14 @@ Func _checkObstacles($bBuilderBase = False, $bRecursive = False) ;Checks if some
 		EndIf
 		;;;;;;;##### 2- Take a break #####;;;;;;;
 
-		If UBound(decodeSingleCoord(FindImageInPlace("Break", $g_sImgPersonalBreak, "165,287,335,325", False))) > 1 Then ; used for all 3 different break messages
+		If UBound(decodeSingleCoord(FindImageInPlace("Break", $g_sImgPersonalBreak, "165,287,335,335", False))) > 1 Then ; used for all 3 different break messages
 			SetLog("Village must take a break, wait ...", $COLOR_ERROR)
 			If TestCapture() Then Return "Village must take a break"
 			PushMsg("TakeBreak")
 			If _SleepStatus($DELAYCHECKOBSTACLES4) Then Return ; 2 Minutes
-			checkObstacles_ReloadCoC($aReloadButton, "#0128", $bRecursive) ;Click on reload button
+			Local $point = ($g_iAndroidVersionAPI >= $g_iAndroidLollipop) ? $aReloadButton51 : $aReloadButton
+			SetDebugLog("Break - Using ReloadButton to " & GetAndroidCodeName($g_iAndroidVersionAPI))
+			checkObstacles_ReloadCoC($point, "#0128", $bRecursive)
 			If $g_bForceSinglePBLogoff Then $g_bGForcePBTUpdate = True
 			checkObstacles_ResetSearch()
 			Return True
@@ -133,18 +142,14 @@ Func _checkObstacles($bBuilderBase = False, $bRecursive = False) ;Checks if some
 					Return checkObstacles_StopBot($msg) ; stop bot
 				EndIf
 				SetLog("Connection lost, Reloading CoC...", $COLOR_ERROR)
-				If $g_bChkSharedPrefs And HaveSharedPrefs() Then
+				If ($g_bChkSharedPrefs Or $g_bUpdateSharedPrefs) And HaveSharedPrefs() Then
 					SetLog("Please wait for loading CoC...!")
 					PushSharedPrefs()
-					OpenCoC()
-				Else
-					PureClickP($aReloadButton, 1, 0, "#0131")
+					If Not $bRecursive Then OpenCoC()
 					Return True
 				EndIf
 			Case _CheckPixel($aIsCheckOOS, $g_bNoCapturePixel) Or (UBound(decodeSingleCoord(FindImageInPlace("OOS", $g_sImgOutOfSync, "355,335,435,395", False, $g_iAndroidLollipop))) > 1) ; Check OoS
 				SetLog("Out of Sync Error, Reloading CoC...", $COLOR_ERROR)
-				PureClickP($aReloadButton, 1, 0, "#0131")
-				Return True
 			Case _CheckPixel($aIsMaintenance, $g_bNoCapturePixel) ; Check Maintenance
 				$Result = getOcrMaintenanceTime(171, 345 + $g_iMidOffsetY, "Check Obstacles OCR Maintenance Break=") ; OCR text to find wait time
 				Local $iMaintenanceWaitTime = 0
@@ -170,7 +175,7 @@ Func _checkObstacles($bBuilderBase = False, $bRecursive = False) ;Checks if some
 						SetLog("Error reading Maintenance Break time?", $COLOR_ERROR)
 				EndSelect
 				SetLog("Maintenance Break, waiting: " & $iMaintenanceWaitTime / 60000 & " minutes....", $COLOR_ERROR)
-				If ($g_bNotifyPBEnable = True Or $g_bNotifyTGEnable = True) And $g_bNotifyAlertMaintenance = True Then NotifyPushToBoth("Maintenance Break, waiting: " & $iMaintenanceWaitTime / 60000 & " minutes....")
+				If $g_bNotifyTGEnable And $g_bNotifyAlertMaintenance = True Then NotifyPushToTelegram("Maintenance Break, waiting: " & $iMaintenanceWaitTime / 60000 & " minutes....")
 				If $g_bForceSinglePBLogoff Then $g_bGForcePBTUpdate = True
 				If _SleepStatus($iMaintenanceWaitTime) Then Return
 				checkObstacles_ResetSearch()
@@ -225,7 +230,7 @@ Func _checkObstacles($bBuilderBase = False, $bRecursive = False) ;Checks if some
 					BanMsgBox()
 					Return checkObstacles_StopBot($msg) ; stop bot
 				EndIf
-				SetLog("Warning: Can not find type of Reload error message", $COLOR_ERROR)
+				SetLog("Warning: Cannot find type of Reload error message", $COLOR_ERROR)
 		EndSelect
 		If TestCapture() Then Return "Village is out of sync or inactivity or connection lost or maintenance"
 		Return checkObstacles_ReloadCoC($aReloadButton, "#0131", $bRecursive) ; Click for out of sync or inactivity or connection lost or maintenance
@@ -331,7 +336,7 @@ Func _checkObstacles($bBuilderBase = False, $bRecursive = False) ;Checks if some
 	If Not CheckGoogleSelectAccount() Then
 		SetDebugLog("check Log in with Supercell ID login by shared_prefs")
 		; check Log in with Supercell ID login screen by shared_prefs
-		If CheckLoginWithSupercellID() then Return True
+		If CheckLoginWithSupercellID() Then Return True
 	EndIf
 
 	Return False
@@ -367,7 +372,7 @@ EndFunc   ;==>checkObstacles_RebootAndroid
 Func checkObstacles_StopBot($msg)
 	SetLog($msg, $COLOR_ERROR)
 	If TestCapture() Then Return $msg
-	If ($g_bNotifyPBEnable = True Or $g_bNotifyTGEnable = True) And $g_bNotifyAlertMaintenance = True Then NotifyPushToBoth($msg)
+	If $g_bNotifyTGEnable And $g_bNotifyAlertMaintenance Then NotifyPushToTelegram($msg)
 	OcrForceCaptureRegion(True)
 	Btnstop() ; stop bot
 	Return True

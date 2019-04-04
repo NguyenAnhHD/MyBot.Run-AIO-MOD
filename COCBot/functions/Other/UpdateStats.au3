@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: kaganus (06-2015)
 ; Modified ......: CodeSlinger69 (01-2017), Fliegerfaust (02-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -20,7 +20,7 @@ Func UpdateStats($bForceUpdate = False)
 	; old values
 	Static $s_iOldSmartZapGain = 0, $s_iOldNumLSpellsUsed = 0, $s_iOldNumEQSpellsUsed = 0
 	Static $topgoldloot = 0, $topelixirloot = 0, $topdarkloot = 0, $topTrophyloot = 0
-	Static $bDonateTroopsStatsChanged = False, $bDonateSpellsStatsChanged = False
+	Static $bDonateTroopsStatsChanged = False, $bDonateSpellsStatsChanged = False, $bDonateSiegeStatsChanged = False
 	Static $iOldFreeBuilderCount, $iOldTotalBuilderCount, $iOldGemAmount ; builder and gem amounts
 	Static $iOldCurrentLoot[$eLootCount] ; current stats
 	Static $iOldTotalLoot[$eLootCount] ; total stats
@@ -29,7 +29,7 @@ Func UpdateStats($bForceUpdate = False)
 	Static $iOldSkippedVillageCount, $iOldDroppedTrophyCount ; skipped village and dropped trophy counts
 	Static $iOldCostGoldWall, $iOldCostElixirWall, $iOldCostGoldBuilding, $iOldCostElixirBuilding, $iOldCostDElixirHero ; wall, building and hero upgrade costs
 	Static $iOldNbrOfWallsUppedGold, $iOldNbrOfWallsUppedElixir, $iOldNbrOfBuildingsUppedGold, $iOldNbrOfBuildingsUppedElixir, $iOldNbrOfHeroesUpped ; number of wall, building, hero upgrades with gold, elixir, delixir
-	Static $iOldSearchCost, $iOldTrainCostElixir, $iOldTrainCostDElixir ; search and train troops cost
+	Static $iOldSearchCost, $iOldTrainCostElixir, $iOldTrainCostDElixir, $iOldTrainCostGold ; search and train troops cost
 	Static $iOldNbrOfOoS ; number of Out of Sync occurred
 	Static $iOldNbrOfTHSnipeFails, $iOldNbrOfTHSnipeSuccess ; number of fails and success while TH Sniping
 	Static $iOldGoldFromMines, $iOldElixirFromCollectors, $iOldDElixirFromDrills ; number of resources gain by collecting mines, collectors, drills
@@ -50,6 +50,7 @@ Func UpdateStats($bForceUpdate = False)
 		$topTrophyloot = 0
 		$bDonateTroopsStatsChanged = True
 		$bDonateSpellsStatsChanged = True
+		$bDonateSiegeStatsChanged = True
 		$iOldFreeBuilderCount = 0
 		$iOldTotalBuilderCount = 0
 		$iOldGemAmount = 0 ; builder and gem amounts
@@ -72,6 +73,7 @@ Func UpdateStats($bForceUpdate = False)
 		$iOldSearchCost = 0
 		$iOldTrainCostElixir = 0
 		$iOldTrainCostDElixir = 0 ; search and train troops cost
+		$iOldTrainCostGold = 0 ; Build Sieges
 		$iOldNbrOfOoS = 0 ; number of Out of Sync occurred
 		$iOldNbrOfTHSnipeFails = 0
 		$iOldNbrOfTHSnipeSuccess = 0 ; number of fails and success while TH Sniping
@@ -335,7 +337,7 @@ Func UpdateStats($bForceUpdate = False)
 	If $iOldSkippedVillageCount <> $g_iSkippedVillageCount Then
 		$bStatsUpdated = True
 		GUICtrlSetData($g_hLblResultVillagesSkipped, _NumberFormat($g_iSkippedVillageCount, True))
-		If Not ProfileSwitchAccountEnabled() Then GUICtrlSetData($g_hLblResultSkippedHourNow, _NumberFormat($g_iSkippedVillageCount, True))
+		GUICtrlSetData($g_hLblResultSkippedHourNow, _NumberFormat($g_iSkippedVillageCount, True))
 		$iOldSkippedVillageCount = $g_iSkippedVillageCount
 	EndIf
 
@@ -393,6 +395,12 @@ Func UpdateStats($bForceUpdate = False)
 		$bStatsUpdated = True
 		GUICtrlSetData($g_hLblTrainCostDElixir, _NumberFormat($g_iTrainCostDElixir, True))
 		$iOldTrainCostDElixir = $g_iTrainCostDElixir
+	EndIf
+
+	If $iOldTrainCostGold <> $g_iTrainCostGold Then
+		$bStatsUpdated = True
+		GUICtrlSetData($g_hLblTrainCostGold, _NumberFormat($g_iTrainCostGold, True))
+		$iOldTrainCostGold = $g_iTrainCostGold
 	EndIf
 
 	If $iOldNbrOfOoS <> $g_iNbrOfOoS Then
@@ -470,6 +478,28 @@ Func UpdateStats($bForceUpdate = False)
 		$bDonateSpellsStatsChanged = False
 	EndIf
 
+	For $i = 0 To $eSiegeMachineCount - 1
+		If $g_aiDonateStatsSieges[$i][0] <> $g_aiDonateStatsSieges[$i][1] Then
+			$bStatsUpdated = True
+			GUICtrlSetData($g_hLblDonSiegel[$i], _NumberFormat($g_aiDonateStatsSieges[$i][0], True))
+			If $g_aiDonateStatsSieges[$i][0] > $g_aiDonateStatsSieges[$i][1] Then
+				$g_iTotalDonateStatsSiegeMachines += ($g_aiDonateStatsSieges[$i][0] - $g_aiDonateStatsSieges[$i][1])
+				$g_iTotalDonateStatsSiegeMachinesXP += (($g_aiDonateStatsSieges[$i][0] - $g_aiDonateStatsSieges[$i][1]) * $g_aiSiegeMachineDonateXP[$i])
+			EndIf
+			$g_aiDonateStatsSieges[$i][1] = $g_aiDonateStatsSieges[$i][0]
+			$bDonateSiegeStatsChanged = True
+			$g_iTotalDonateStatsTroopsXP = $g_iTotalDonateStatsSiegeMachinesXP + $g_iTotalDonateStatsTroopsXP
+			$g_iTotalDonateStatsTroops = $g_iTotalDonateStatsTroops + $g_iTotalDonateStatsSiegeMachines
+		EndIf
+	Next
+
+	If $bDonateSiegeStatsChanged Then
+		$bStatsUpdated = True
+		; TODO
+		;GUICtrlSetData($g_hLblTotalTroopsQ, _NumberFormat($g_iTotalDonateStatsTroops, True))
+		GUICtrlSetData($g_hLblTotalTroopsQ, _NumberFormat($g_iTotalDonateStatsTroops, True))
+		GUICtrlSetData($g_hLblTotalTroopsXP, _NumberFormat($g_iTotalDonateStatsTroopsXP, True))
+	EndIf
 
 	If $s_iOldSmartZapGain <> $g_iSmartZapGain Then
 		$bStatsUpdated = True
@@ -529,7 +559,7 @@ Func UpdateStats($bForceUpdate = False)
 	If $iOldAttackedCount <> $g_aiAttackedCount Then
 		$bStatsUpdated = True
 		GUICtrlSetData($g_hLblResultVillagesAttacked, _NumberFormat($g_aiAttackedCount, True))
-		If Not ProfileSwitchAccountEnabled() Then GUICtrlSetData($g_hLblResultAttackedHourNow, _NumberFormat($g_aiAttackedCount, True))
+		GUICtrlSetData($g_hLblResultAttackedHourNow, _NumberFormat($g_aiAttackedCount, True))
 		$iOldAttackedCount = $g_aiAttackedCount
 	EndIf
 
@@ -566,12 +596,10 @@ Func UpdateStats($bForceUpdate = False)
 		EndIf
 		GUICtrlSetData($g_ahLblStatsGainPerHour[$eLootTrophy], _NumberFormat(Round($g_iStatsTotalGain[$eLootTrophy] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600 * 1000)) & " / h")
 
-		If Not ProfileSwitchAccountEnabled() Then
-			GUICtrlSetData($g_hLblResultGoldHourNow, _NumberFormat(Round($g_iStatsTotalGain[$eLootGold] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600)) & "k / h") ;GUI BOTTOM
-			GUICtrlSetData($g_hLblResultElixirHourNow, _NumberFormat(Round($g_iStatsTotalGain[$eLootElixir] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600)) & "k / h") ;GUI BOTTOM
-			If $g_iStatsStartedWith[$eLootDarkElixir] <> "" Then
-				GUICtrlSetData($g_hLblResultDEHourNow, _NumberFormat(Round($g_iStatsTotalGain[$eLootDarkElixir] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600 * 1000)) & " / h") ;GUI BOTTOM
-			EndIf
+		GUICtrlSetData($g_hLblResultGoldHourNow, _NumberFormat(Round($g_iStatsTotalGain[$eLootGold] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600)) & "k / h") ;GUI BOTTOM
+		GUICtrlSetData($g_hLblResultElixirHourNow, _NumberFormat(Round($g_iStatsTotalGain[$eLootElixir] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600)) & "k / h") ;GUI BOTTOM
+		If $g_iStatsStartedWith[$eLootDarkElixir] <> "" Then
+			GUICtrlSetData($g_hLblResultDEHourNow, _NumberFormat(Round($g_iStatsTotalGain[$eLootDarkElixir] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600 * 1000)) & " / h") ;GUI BOTTOM
 		EndIf
 	EndIf
 
@@ -608,41 +636,22 @@ Func UpdateStats($bForceUpdate = False)
 		EndIf
 	Next
 
+	If Not _DateIsValid($g_sLabUpgradeTime) Then GUICtrlSetData($g_hLbLLabTime, "00:00:00")
+
 	If ProfileSwitchAccountEnabled() Then
-		For $i = 0 To 7
-			;village report
-			GUICtrlSetData($g_ahLblResultGoldNowAcc[$i], _NumberFormat($g_aiGoldCurrentAcc[$i], True))
-			GUICtrlSetData($g_ahLblResultElixirNowAcc[$i], _NumberFormat($g_aiElixirCurrentAcc[$i], True))
-			GUICtrlSetData($g_ahLblResultDENowAcc[$i], _NumberFormat($g_aiDarkCurrentAcc[$i], False)) ; set $NullToZero = False for not displaying DE = 0 for accounts don't have DE.
-			GUICtrlSetData($g_ahLblResultTrophyNowAcc[$i], _NumberFormat($g_aiTrophyCurrentAcc[$i], True))
+		;village report
+		GUICtrlSetData($g_ahLblResultGoldNowAcc[$g_iCurAccount], _NumberFormat($g_aiCurrentLoot[$eLootGold], True))
+		GUICtrlSetData($g_ahLblResultElixirNowAcc[$g_iCurAccount], _NumberFormat($g_aiCurrentLoot[$eLootElixir], True))
+		GUICtrlSetData($g_ahLblResultDENowAcc[$g_iCurAccount], _NumberFormat($g_aiCurrentLoot[$eLootDarkElixir], False))
+		GUICtrlSetData($g_ahLblResultTrophyNowAcc[$g_iCurAccount], _NumberFormat($g_aiCurrentLoot[$eLootTrophy], True))
+		If Not _DateIsValid($g_sNextBuilderReadyTime) Then GUICtrlSetData($g_ahLblResultBuilderNowAcc[$g_iCurAccount], $g_iFreeBuilderCount & "/" & $g_iTotalBuilderCount)
+		Local $TempGemDisplay = $g_iGemAmount < 10000 ? $g_iGemAmount : Round($g_iGemAmount/1000,1)
+		GUICtrlSetData($g_ahLblResultGemNowAcc[$g_iCurAccount], _NumberFormat($TempGemDisplay, True))
 
-			If $g_aiGemAmountAcc[$i] < 10000 Then
-				GUICtrlSetData($g_ahLblResultGemNowAcc[$i], _NumberFormat($g_aiGemAmountAcc[$i], True))
-			Else
-				GUICtrlSetData($g_ahLblResultGemNowAcc[$i], Round($g_aiGemAmountAcc[$i]/1000,1) & " k")
-			EndIf
-			GUICtrlSetData($g_ahLblResultBuilderNowAcc[$i], $g_aiFreeBuilderCountAcc[$i] & "/" & $g_aiTotalBuilderCountAcc[$i])
-			GUICtrlSetData($g_ahLblPersonalBreak[$i], $g_aiPersonalBreak[$i])
-
-			;gain stats
-			GUICtrlSetData($g_ahLblHourlyStatsGoldAcc[$i], _NumberFormat(Round($g_aiGoldTotalAcc[$i] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600)) & "k / h")
-			GUICtrlSetData($g_ahLblHourlyStatsElixirAcc[$i], _NumberFormat(Round($g_aiElixirTotalAcc[$i] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600)) & "k / h")
-			GUICtrlSetData($g_ahLblHourlyStatsDarkAcc[$i], _NumberFormat(Round($g_aiDarkTotalAcc[$i] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600 * 1000)) & " / h")
-			GUICtrlSetData($g_ahLblHourlyStatsTrophyAcc[$i], _NumberFormat(Round($g_aiTrophyLootAcc[$i] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600 * 1000)) & " / h")
-			If $g_aiAttackedCountAcc[$i] < 10000 Then
-				GUICtrlSetData($g_ahLblResultAttacked[$i], $g_aiAttackedCountAcc[$i])
-			Else
-				GUICtrlSetData($g_ahLblResultAttacked[$i], Round($g_aiAttackedCountAcc[$i]/1000,1) & " k")
-			EndIf
-		Next
-		GUICtrlSetData($g_hLblResultSkippedHourNow, $g_aiSkippedVillageCountAcc[$g_iCurAccount]) ;	Counting skipped village at Bottom GUI
-		GUICtrlSetData($g_hLblResultAttackedHourNow, $g_aiAttackedCountAcc[$g_iCurAccount]) ;	Counting attacked village at Bottom GUI
-
-		If $g_iFirstAttack = 2 Then
-			GUICtrlSetData($g_hLblResultGoldHourNow, _NumberFormat(Round($g_aiGoldTotalAcc[$g_iCurAccount] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600)) & "k / h") ;GUI BOTTOM
-			GUICtrlSetData($g_hLblResultElixirHourNow, _NumberFormat(Round($g_aiElixirTotalAcc[$g_iCurAccount] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600)) & "k / h") ;GUI BOTTOM
-			GUICtrlSetData($g_hLblResultDEHourNow, _NumberFormat(Round($g_aiDarkTotalAcc[$g_iCurAccount] / (Int(__TimerDiff($g_hTimerSinceStarted) + $g_iTimePassed)) * 3600 * 1000)) & " / h") ;GUI BOTTOM
-		EndIf
+		;gain stats
+		SwitchAccountVariablesReload("UpdateStats")
+		GUICtrlSetData($g_ahLblResultAttacked[$g_iCurAccount], $g_aiAttackedCount)
+		GUICtrlSetData($g_ahLblResultSkipped[$g_iCurAccount], $g_iSkippedVillageCount)
 	EndIf
 
 	If $ResetStats = 1 Then
@@ -693,6 +702,7 @@ Func ResetStats()
 	$g_iSearchCost = 0
 	$g_iTrainCostElixir = 0
 	$g_iTrainCostDElixir = 0
+	$g_iTrainCostGold = 0
 	$g_iNbrOfOoS = 0
 	$g_iNbrOfTHSnipeFails = 0
 	$g_iNbrOfTHSnipeSuccess = 0
@@ -723,21 +733,34 @@ Func ResetStats()
 		EndIf
 	Next
 
+	For $i = 0 To $eSiegeMachineCount - 1
+		$g_aiDonateStatsSieges[$i][0] = 0
+	Next
+
 	$g_iTotalDonateStatsTroops = 0
 	$g_iTotalDonateStatsTroopsXP = 0
 	$g_iTotalDonateStatsSpells = 0
 	$g_iTotalDonateStatsSpellsXP = 0
+	$g_iTotalDonateStatsSiegeMachines = 0
+	$g_iTotalDonateStatsSiegeMachinesXP = 0
 	If ProfileSwitchAccountEnabled() Then
+		SwitchAccountVariablesReload("Reset")
 		For $i = 0 To $g_iTotalAcc
-			$g_aiGoldTotalAcc[$i] = 0
-			$g_aiElixirTotalAcc[$i] = 0
-			$g_aiDarkTotalAcc[$i] = 0
-			$g_aiTrophyLootAcc[$i] = 0
-			$g_aiAttackedCountAcc[$i] = 0
-			$g_aiSkippedVillageCountAcc[$i] = 0
+			GUICtrlSetData($g_ahLblResultRuntimeNowAcc[$i], "00:00:00")
+			$g_aiRunTime[$i] = 0
+			GUICtrlSetData($g_hLbLLabTime, "00:00:00")
+			For $j = 0 To 2
+				GUICtrlSetState($g_hPicHeroGreenStatus[$j][$i], $GUI_HIDE)
+				GUICtrlSetState($g_hPicHeroRedStatus[$j][$i], $GUI_HIDE)
+				GUICtrlSetState($g_hPicHeroBlueStatus[$j][$i], $GUI_HIDE)
+				GUICtrlSetState($g_hPicHeroGrayStatus[$j][$i], $GUI_SHOW)
+			Next
+			GUICtrlSetState($g_hPicLabGreenStatus[$i], $GUI_HIDE)
+			GUICtrlSetState($g_hPicLabRedStatus[$i], $GUI_HIDE)
+			GUICtrlSetState($g_hPicLabGrayStatus[$i], $GUI_SHOW)
+			GUICtrlSetData($g_hLblLabTimeStatus[$i], "00:00:00")
 		Next
 	EndIf
-	ResetGoblinsXP() ; Goblin XP - Team AiO MOD++
 	UpdateStats()
 EndFunc   ;==>ResetStats
 

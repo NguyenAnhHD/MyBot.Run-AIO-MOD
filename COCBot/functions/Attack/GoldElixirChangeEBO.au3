@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Sardo (06-2015), Fliegerfaust (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:v
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -29,6 +29,7 @@ Func GoldElixirChangeEBO()
 	$Elixir1 = getElixirVillageSearch(48, 69 + 29)
 	$Trophies = getTrophyVillageSearch(48, 69 + 99)
 	$Damage = getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY)
+	If Number($Damage) > Number($g_iPercentageDamage) Then $g_iPercentageDamage = Number($Damage)
 	If $Trophies <> "" Then ; If trophy value found, then base has Dark Elixir
 		If _Sleep($DELAYGOLDELIXIRCHANGEEBO1) Then Return
 		$DarkElixir1 = getDarkElixirVillageSearch(48, 69 + 57)
@@ -72,6 +73,7 @@ Func GoldElixirChangeEBO()
 	; Early Check if Percentage is alreay higher than set
 	If $g_abStopAtkPctHigherEnable[$g_iMatchMode] And Number(getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY)) > Number($g_aiStopAtkPctHigherAmt[$g_iMatchMode]) Then
 		SetLog("Overall Damage above " & Number($g_aiStopAtkPctHigherAmt[$g_iMatchMode]), $COLOR_SUCCESS)
+		$g_iPercentageDamage = Number(getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY))
 		$z = 0
 	EndIf
 
@@ -92,7 +94,7 @@ Func GoldElixirChangeEBO()
 		CheckHeroesHealth()
 
 		;DE SPECIAL END EARLY
-		If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 4 And $g_bDESideEndEnable Then
+		If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 And $g_bDESideEndEnable Then
 			If $g_bDropQueen Or $g_bDropKing Then DELow()
 			If $g_iDarkLow = 1 Then ExitLoop
 		EndIf
@@ -143,14 +145,9 @@ Func GoldElixirChangeEBO()
 			Else
 				SetLog("Exit in " & $txtDiff & ", [G]: " & $Gold2 & " [E]: " & $Elixir2 & " [DE]: " & $DarkElixir2 & " [%]: " & $CurDamage, $COLOR_INFO)
 			EndIf
-			; Atk-Log ~ Damage %
-			If ($CurDamage > 0 ) Then
-				$eLootPerc = $CurDamage
-				If($CurDamage = 4) Then
-					$eLootPerc = 74
-				EndIf
-			EndIf
 		EndIf
+
+		If Number($CurDamage) > Number($g_iPercentageDamage) Then $g_iPercentageDamage = Number($CurDamage)
 
 		If Number($CurDamage) >= 92 Then
 			If ($g_bCheckKingPower Or $g_bCheckQueenPower Or $g_bCheckWardenPower) Then
@@ -208,6 +205,7 @@ Func GoldElixirChangeEBO()
 
 		If $g_abStopAtkPctHigherEnable[$g_iMatchMode] And Number(getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY)) > Number($g_aiStopAtkPctHigherAmt[$g_iMatchMode]) Then
 			SetLog("Overall Damage above " & Number($g_aiStopAtkPctHigherAmt[$g_iMatchMode]) & ", exit", $COLOR_SUCCESS)
+			$g_iPercentageDamage = Number(getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY))
 			ExitLoop
 		EndIf
 
@@ -220,6 +218,7 @@ Func GoldElixirChangeEBO()
 		;RETURN IF DAMAGE CHANGE DETECTED
 		If $g_abStopAtkPctNoChangeEnable[$g_iMatchMode] And (Number($Damage) <> Number($CurDamage)) Then
 			SetLog("Overall Damage Percentage change detected, waiting...", $COLOR_SUCCESS)
+			$g_iPercentageDamage = Number(getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY))
 			Return True
 		EndIf
 
@@ -227,7 +226,7 @@ Func GoldElixirChangeEBO()
 	WEnd ; END MAIN LOOP
 
 	;Priority Check... Exit To protect Hero Health
-	If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 4 And $g_bDESideEndEnable And $g_iDarkLow = 1 Then
+	If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 And $g_bDESideEndEnable And $g_iDarkLow = 1 Then
 		SetLog("Returning Now -DE-", $COLOR_SUCCESS)
 		Return False
 	EndIf
@@ -251,6 +250,7 @@ Func GoldElixirChangeEBO()
 	EndIf
 
 	If $g_abStopAtkPctHigherEnable[$g_iMatchMode] And Number(getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY)) > Number($g_aiStopAtkPctHigherAmt[$g_iMatchMode]) Then
+		$g_iPercentageDamage = Number(getOcrOverAllDamage(780, 527 + $g_iBottomOffsetY))
 		Return False
 	EndIf
 

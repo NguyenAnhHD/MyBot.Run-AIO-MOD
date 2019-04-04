@@ -7,7 +7,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -34,6 +34,9 @@ EndFunc   ;==>TogglePauseImpl
 Func TogglePauseUpdateState($Source)
 	$g_iActualTrainSkip = 0
 
+	; always resume Android (CoC game)
+	ResumeAndroid()
+
 	$g_bTogglePauseUpdateState = False
     If $g_bBotPaused Then
 		AndroidShield("TogglePauseImpl paused", False)
@@ -42,6 +45,7 @@ Func TogglePauseUpdateState($Source)
 		SetLog("Bot was Paused!", $COLOR_ERROR)
 		If Not $g_bSearchMode Then
 			$g_iTimePassed += Int(__TimerDiff($g_hTimerSinceStarted))
+			If ProfileSwitchAccountEnabled() Then $g_aiRunTime[$g_iCurAccount] += Int(__TimerDiff($g_ahTimerSinceSwitched[$g_iCurAccount]))
 			;AdlibUnRegister("SetTime")
 		EndIf
 		PushMsg("Pause", $Source)
@@ -56,6 +60,7 @@ Func TogglePauseUpdateState($Source)
 		SetLog("Bot was Resumed.", $COLOR_SUCCESS)
 		If Not $g_bSearchMode Then
 			$g_hTimerSinceStarted = __TimerInit()
+			If ProfileSwitchAccountEnabled() Then $g_ahTimerSinceSwitched[$g_iCurAccount] = $g_hTimerSinceStarted
 			;AdlibRegister("SetTime", 1000)
 		EndIf
 		PushMsg("Resume", $Source)
@@ -78,7 +83,7 @@ Func TogglePauseSleep()
 			TogglePause()
 		EndIf
 		$counter = $counter + 1
-		If ($g_bNotifyPBEnable = True Or $g_bNotifyTGEnable = True) And $g_bNotifyRemoteEnable = True And $counter = 200 Then
+		If $g_bNotifyTGEnable And $g_bNotifyRemoteEnable And $counter = 200 Then
 			NotifyRemoteControl()
 			$counter = 0
 		EndIf

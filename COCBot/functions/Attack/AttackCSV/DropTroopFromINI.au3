@@ -19,7 +19,7 @@
 ; Return values .: None
 ; Author ........: Sardo (2016)
 ; Modified ......: MonkeyHunter (03-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -32,9 +32,10 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		debugAttackCSV("drop using vectors " & $vectors & " index " & _ArrayToString($indexArray, ",") & " and using " & $qtaMin & "-" & $qtaMax & " of " & $troopName)
 	EndIf
 	debugAttackCSV(" - delay for multiple troops in same point: " & $delayPointmin & "-" & $delayPointmax)
-	debugAttackCSV(" - delay when  change deploy point : " & $delayDropMin & "-" & $delayDropMax)
+	debugAttackCSV(" - delay when change deploy point : " & $delayDropMin & "-" & $delayDropMax)
 	debugAttackCSV(" - delay after drop all troops : " & $sleepafterMin & "-" & $sleepAfterMax)
 	debugAttackCSV(" - delay before drop all troops : " & $sleepBeforeMin & "-" & $sleepBeforeMax)
+
 	;how many vectors need to manage...
 	Local $temp = StringSplit($vectors, "-")
 	Local $numbersOfVectors
@@ -78,7 +79,8 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 	Local $bHeroDrop = ($iTroopIndex = $eWarden ? True : False) ;set flag TRUE if Warden was dropped
 
 	;search slot where is the troop...
-	Local $troopPosition = -1, $troopSlotConst = -1 ; $troopSlotConst = xx/22 (the unique slot number of troop) - Slot11 - Team AiO MOD++
+	Local $troopPosition = -1
+	Local $troopSlotConst = -1 ; $troopSlotConst = xx/22 (the unique slot number of troop) - Slot11+
 	For $i = 0 To UBound($g_avAttackTroops) - 1
 		If $g_avAttackTroops[$i][0] = $iTroopIndex And $g_avAttackTroops[$i][1] > 0 Then
 			debugAttackCSV("Found troop position " & $i & ". " & $troopName & " x" & $g_avAttackTroops[$i][1])
@@ -88,7 +90,7 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		EndIf
 	Next
 
-	; Slot11 - Team AiO MOD++
+	; Slot11+
 	debugAttackCSV("Troop position / Total slots: " & $troopSlotConst & " / " & $g_iTotalAttackSlot)
 	If $troopSlotConst >= 0 And $troopSlotConst < $g_iTotalAttackSlot - 10 Then ; can only be selected when in 1st page of troopbar
 		If $g_bDraggedAttackBar Then DragAttackBar($g_iTotalAttackSlot, True) ; return drag
@@ -99,50 +101,52 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		$troopPosition = $troopSlotConst - ($g_iTotalAttackSlot - 10)
 		debugAttackCSV("New troop position: " & $troopPosition)
 	EndIf
-	; Slot11 - Team AiO MOD++
 
-	Local $usespell = True
+	Local $bUseSpell = True
 	Switch $iTroopIndex
 		Case $eLSpell
-			If $g_abAttackUseLightSpell[$g_iMatchMode] = False Then $usespell = False
+			If Not $g_abAttackUseLightSpell[$g_iMatchMode] Then $bUseSpell = False
 		Case $eHSpell
-			If $g_abAttackUseHealSpell[$g_iMatchMode] = False Then $usespell = False
+			If Not $g_abAttackUseHealSpell[$g_iMatchMode] Then $bUseSpell = False
 		Case $eRSpell
-			If $g_abAttackUseRageSpell[$g_iMatchMode] = False Then $usespell = False
+			If Not $g_abAttackUseRageSpell[$g_iMatchMode] Then $bUseSpell = False
 		Case $eJSpell
-			If $g_abAttackUseJumpSpell[$g_iMatchMode] = False Then $usespell = False
+			If Not $g_abAttackUseJumpSpell[$g_iMatchMode] Then $bUseSpell = False
 		Case $eFSpell
-			If $g_abAttackUseFreezeSpell[$g_iMatchMode] = False Then $usespell = False
+			If Not $g_abAttackUseFreezeSpell[$g_iMatchMode] Then $bUseSpell = False
 		Case $eCSpell
-			If $g_abAttackUseCloneSpell[$g_iMatchMode] = False Then $usespell = False
+			If Not $g_abAttackUseCloneSpell[$g_iMatchMode] Then $bUseSpell = False
 		Case $ePSpell
-			If $g_abAttackUsePoisonSpell[$g_iMatchMode] = False Then $usespell = False
+			If Not $g_abAttackUsePoisonSpell[$g_iMatchMode] Then $bUseSpell = False
 		Case $eESpell
-			If $g_abAttackUseEarthquakeSpell[$g_iMatchMode] = False Then $usespell = False
+			If Not $g_abAttackUseEarthquakeSpell[$g_iMatchMode] Then $bUseSpell = False
 		Case $eHaSpell
-			If $g_abAttackUseHasteSpell[$g_iMatchMode] = False Then $usespell = False
+			If Not $g_abAttackUseHasteSpell[$g_iMatchMode] Then $bUseSpell = False
 		Case $eSkSpell
-			If $g_abAttackUseSkeletonSpell[$g_iMatchMode] = False Then $usespell = False
+			If Not $g_abAttackUseSkeletonSpell[$g_iMatchMode] Then $bUseSpell = False
+		Case $eBtSpell
+			If Not $g_abAttackUseBatSpell[$g_iMatchMode] Then $bUseSpell = False
 	EndSwitch
 
-	If $troopPosition = -1 Or $usespell = False Then
+	If $troopPosition = -1 Or Not $bUseSpell Then
 
-		If $usespell = True Then
-			SetLog("No troop found in your attack troops list")
-			debugAttackCSV("No troop found in your attack troops list")
+		If $bUseSpell Then
+			SetLog("No " & GetTroopName($iTroopIndex) & " found in your attack troops list")
+			debugAttackCSV("No " & GetTroopName($iTroopIndex) & " found in your attack troops list")
 		Else
-			If $g_bDebugSetlog Then SetDebugLog("discard use spell", $COLOR_DEBUG)
+			If $g_bDebugSetlog Then SetDebugLog("Discard use " & GetTroopName($iTroopIndex), $COLOR_DEBUG)
 		EndIf
 
 	Else
 
 		;Local $SuspendMode = SuspendAndroid()
 
-		If $g_iCSVLastTroopPositionDropTroopFromINI <> $troopPosition Then
+		If $g_iCSVLastTroopPositionDropTroopFromINI <> $troopSlotConst Then
 			ReleaseClicks()
 			SelectDropTroop($troopPosition) ; select the troop...
-			$g_iCSVLastTroopPositionDropTroopFromINI = $troopPosition
+			$g_iCSVLastTroopPositionDropTroopFromINI = $troopSlotConst
 			ReleaseClicks()
+			KeepClicks()
 		EndIf
 		;sleep time Before deploy all troops
 		Local $sleepBefore = 0
@@ -154,7 +158,7 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		$sleepBefore = Int($sleepBefore / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
 
 		If $sleepBefore > 50 And IsKeepClicksActive() = False Then
-			debugAttackCSV(">> delay Before drop all troops: " & $sleepBefore)
+			debugAttackCSV("- delay Before drop all troops: " & $sleepBefore & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
 			If $sleepBefore <= 1000 Then ; check SLEEPBefore value is less than 1 second?
 				If _Sleep($sleepBefore) Then Return
 				CheckHeroesHealth() ; check hero health == does nothing if hero not dropped
@@ -184,9 +188,8 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 				Else
 					$delayDrop = $delayDropMin
 				EndIf
-				debugAttackCSV(">> delay change drop point: " & $delayDrop)
 				$delayDrop = Int($delayDrop / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
-				debugAttackCSV(">> delay change drop point: " & $delayDrop & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
+				debugAttackCSV("- delay change drop point: " & $delayDrop & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
 			EndIf
 
 			For $j = 1 To $numbersOfVectors
@@ -201,16 +204,16 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 					;delay time between 2 drops in same point
 					If $delayPointmin <> $delayPointmax Then
 						Local $delayPoint = Random($delayPointmin, $delayPointmax, 1)
-						debugAttackCSV(">> random delay deploy point: " & $delayPoint)
 						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
+						debugAttackCSV("- random delay deploy point: " & $delayPoint & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
 					Else
 						Local $delayPoint = $delayPointmin
 						$delayPoint = Int($delayPoint / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
 					EndIf
-					debugAttackCSV(">> delay change deploy Point: " & $delayPoint & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
+					debugAttackCSV("- delay change deploy point: " & $delayPoint & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
 
 					Switch $iTroopIndex
-						Case $eBarb To $eBowl ; drop normal troops
+						Case $eBarb To $eIceG ; drop normal troops
 							If $debug = True Then
 								SetLog("AttackClick( " & $pixel[0] & ", " & $pixel[1] & " , " & $qty2 & ", " & $delayPoint & ",#0666)")
 							Else
@@ -218,36 +221,36 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 							EndIf
 						Case $eKing
 							If $debug = True Then
-								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", " & $g_iKingSlot & ", -1, -1) ")
+								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", " & $troopPosition & ", -1, -1) ")
 							Else
-								dropHeroes($pixel[0], $pixel[1], $troopPosition, -1, -1) ; was $g_iKingSlot, Team AiO MOD++
+								dropHeroes($pixel[0], $pixel[1], $troopPosition, -1, -1) ; was $g_iKingSlot, Slot11+
 							EndIf
 						Case $eQueen
 							If $debug = True Then
-								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ",-1," & $g_iQueenSlot & ", -1) ")
+								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ",-1," & $troopPosition & ", -1) ")
 							Else
-								dropHeroes($pixel[0], $pixel[1], -1, $troopPosition, -1) ; was $g_iQueenSlot, Team AiO MOD++
+								dropHeroes($pixel[0], $pixel[1], -1, $troopPosition, -1) ; was $g_iQueenSlot, Slot11+
 							EndIf
 						Case $eWarden
 							If $debug = True Then
-								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", -1, -1," & $g_iWardenSlot & ") ")
+								SetLog("dropHeroes(" & $pixel[0] & ", " & $pixel[1] & ", -1, -1," & $troopPosition & ") ")
 							Else
-								dropHeroes($pixel[0], $pixel[1], -1, -1, $troopPosition) ; was $g_iWardenSlot, Team AiO MOD++
+								dropHeroes($pixel[0], $pixel[1], -1, -1, $troopPosition) ; was $g_iWardenSlot, Slot11+
 							EndIf
-						Case $eCastle
+						Case $eCastle, $eWallW, $eBattleB, $eStoneS
 							If $debug = True Then
-								SetLog("dropCC(" & $pixel[0] & ", " & $pixel[1] & ", " & $g_iClanCastleSlot & ")")
+								SetLog("dropCC(" & $pixel[0] & ", " & $pixel[1] & ", " & $troopPosition & ")")
 							Else
-								dropCC($pixel[0], $pixel[1], $troopPosition) ; was $g_iClanCastleSlot, Team AiO MOD++
+								dropCC($pixel[0], $pixel[1], $troopPosition)
 							EndIf
-						Case $eLSpell To $eSkSpell
+						Case $eLSpell To $eBtSpell
 							If $debug = True Then
 								SetLog("Drop Spell AttackClick( " & $pixel[0] & ", " & $pixel[1] & " , " & $qty2 & ", " & $delayPoint & ",#0666)")
 							Else
 								AttackClick($pixel[0], $pixel[1], $qty2, $delayPoint, $delayDropLast, "#0667")
 							EndIf
 							; assume spells get always dropped: adjust count so CC spells can be used without recalc
-							If UBound($g_avAttackTroops) > $troopSlotConst And $g_avAttackTroops[$troopSlotConst][1] > 0 And $qty2 > 0 Then ; Slot11 - Team AiO MOD++
+							If UBound($g_avAttackTroops) > $troopSlotConst And $g_avAttackTroops[$troopSlotConst][1] > 0 And $qty2 > 0 Then ; Slot11+
 								$g_avAttackTroops[$troopSlotConst][1] -= $qty2
 								debugAttackCSV("Adjust quantity of spell use: " & $g_avAttackTroops[$troopSlotConst][0] & " x" & $g_avAttackTroops[$troopSlotConst][1])
 							EndIf
@@ -272,10 +275,10 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		EndIf
 		$sleepafter = Int($sleepafter / $g_CSVSpeedDivider[$g_iMatchMode]); CSV Deploy Speed - Team AiO MOD++
 		If $sleepafter > 0 And IsKeepClicksActive() = False Then
-			debugAttackCSV(">> delay after drop all troops: " & $sleepafter)
+			debugAttackCSV("- delay after drop all troops: " & $sleepafter & " (x" & $g_CSVSpeedDivider[$g_iMatchMode] & " faster)")
 			If $sleepafter <= 1000 Then ; check SLEEPAFTER value is less than 1 second?
 				If _Sleep($sleepafter) Then Return
-				If $bHeroDrop = True Then  ;Check hero but skip Warden if was dropped with sleepafter to short to allow icon update
+				If $bHeroDrop = True Then ;Check hero but skip Warden if was dropped with sleepafter to short to allow icon update
 					Local $bHold = $g_bCheckWardenPower ; store existing flag state, should be true?
 					$g_bCheckWardenPower = False ;temp disable warden health check
 					CheckHeroesHealth()

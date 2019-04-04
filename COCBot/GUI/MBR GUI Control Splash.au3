@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: mikemikemikecoc (2016)
 ; Modified ......: CodeSlinger69 (2017), MonkeyHunter (05-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -53,11 +53,16 @@ Func UpdateSplashTitle($title)
 	GUICtrlSetData($g_lSplashTitle, $title)
 EndFunc   ;==>UpdateSplashTitle
 
-Func DestroySplashScreen()
-	If IsHWnd($g_hSplash) Then GUIDelete($g_hSplash)
-	; allow now other bots to launch
-	ReleaseMutex($g_hSplashMutex)
-	$g_hSplashMutex = 0
+Func DestroySplashScreen($bReleaseMutex = True)
+	If $g_hSplash And IsHWnd($g_hSplash) Then
+		GUIDelete($g_hSplash)
+		$g_hSplash = 0
+	EndIf
+	If $bReleaseMutex Then
+		; allow now other bots to launch
+		ReleaseMutex($g_hSplashMutex)
+		$g_hSplashMutex = 0
+	EndIf
 EndFunc   ;==>DestroySplashScreen
 
 Func MoveSplashScreen()

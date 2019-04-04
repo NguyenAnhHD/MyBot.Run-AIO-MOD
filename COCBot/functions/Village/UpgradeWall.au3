@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: ProMac (2015), HungLe (2015)
 ; Modified ......: Sardo (08-2015), KnowJack (08-2015), MonkeyHunter(06-2016) , trlopes (07-2016)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......: checkwall.au3
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -100,6 +100,7 @@ Func UpgradeWall()
 
 				ClickP($aAway, 1, 0, "#0314") ; click away
 				VillageReport(True, True)
+				If SkipWallUpgrade() Then Return
 				$MinWallGold = Number($g_aiCurrentLoot[$eLootGold] - $g_iWallCost) > Number($g_iUpgradeWallMinGold) ; Check if enough Gold
 				$MinWallElixir = Number($g_aiCurrentLoot[$eLootElixir] - $g_iWallCost) > Number($g_iUpgradeWallMinElixir) ; Check if enough Elixir
 
@@ -119,8 +120,8 @@ Func UpgradeWallGold()
 	;Click($WallxLOC, $WallyLOC)
 	If _Sleep($DELAYRESPOND) Then Return
 
-	Local $offColors[3][3] = [[0xD6714B, 47, 37], [0xF0E850, 70, 0], [0xF4F8F2, 79, 0]] ; 2nd pixel brown hammer, 3rd pixel gold, 4th pixel edge of button
-	Local $ButtonPixel = _MultiPixelSearch(240, 563 + $g_iBottomOffsetY, 670, 650 + $g_iBottomOffsetY, 1, 1, Hex(0xF3F3F1, 6), $offColors, 30) ; first gray/white pixel of button
+	Local $offColors[3][3] = [[0xE47D55, 47, 37], [0xF5E74B, 70, 0], [0xFFFFFF, 79, 0]] ; 2nd pixel brown hammer, 3rd pixel gold, 4th pixel edge of button
+	Local $ButtonPixel = _MultiPixelSearch(240, 537 + $g_iBottomOffsetY, 670, 624 + $g_iBottomOffsetY, 1, 1, Hex(0xFFFFFF, 6), $offColors, 30) ; first gray/white pixel of button
 	If IsArray($ButtonPixel) Then
 		If $g_bDebugSetlog Then
 			SetDebugLog("ButtonPixel = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG) ;Debug
@@ -168,12 +169,16 @@ Func UpgradeWallElixir()
 	;Click($WallxLOC, $WallyLOC)
 	If _Sleep($DELAYRESPOND) Then Return
 
-	Local $offColors[3][3] = [[0xBC5B31, 38, 32], [0xF84CF9, 72, 0], [0xF5F9F2, 79, 0]] ; 2nd pixel brown hammer, 3rd pixel gold, 4th pixel edge of button
-	Local $ButtonPixel = _MultiPixelSearch(240, 563 + $g_iBottomOffsetY, 670, 650 + $g_iBottomOffsetY, 1, 1, Hex(0xF4F7F2, 6), $offColors, 30) ; first gray/white pixel of button
+	Local $offColors[3][3] = [[0xE47D55, 47, 37], [0xF84CF9, 72, 0], [0xFFFFFF, 79, 0]] ; 2nd pixel brown hammer, 3rd pixel elixir, 4th pixel edge of button
+	Local $ButtonPixel = _MultiPixelSearch(240, 537 + $g_iBottomOffsetY, 670, 624 + $g_iBottomOffsetY, 1, 1, Hex(0xFFFFFF, 6), $offColors, 30) ; first gray/white pixel of button
 	If IsArray($ButtonPixel) Then
+		If $g_bDebugSetlog Then
+			SetDebugLog("ButtonPixel = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG) ;Debug
+			SetDebugLog("Color #1: " & _GetPixelColor($ButtonPixel[0], $ButtonPixel[1], True) & ", #2: " & _GetPixelColor($ButtonPixel[0] + 47, $ButtonPixel[1] + 37, True) & ", #3: " & _GetPixelColor($ButtonPixel[0] + 72, $ButtonPixel[1], True) & ", #4: " & _GetPixelColor($ButtonPixel[0] + 79, $ButtonPixel[1], True), $COLOR_DEBUG)
+		EndIf
 		Click($ButtonPixel[0] + 20, $ButtonPixel[1] + 20, 1, 0, "#0322") ; Click Upgrade Elixir Button
-
 		If _Sleep($DELAYUPGRADEWALLELIXIR2) Then Return
+
 		If _ColorCheck(_GetPixelColor(677, 150 + $g_iMidOffsetY, True), Hex(0xE1090E, 6), 20) Then
 			If isNoUpgradeLoot(False) = True Then
 				SetLog("Upgrade stopped due to insufficient loot", $COLOR_ERROR)
@@ -297,8 +302,8 @@ Func SkipWallUpgrade() ; Dynamic Upgrades
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;End bldg upgrade value checking
 
 
-	;   Is Warden Level updated |          Is Warden not max yet           |  Is Upgrade enabled       |               Is a Builder available
-	If ($g_iWardenLevel <> -1) And ($g_iWardenLevel < $g_iMaxWardenLevel) And $g_bUpgradeWardenEnable And ($g_iFreeBuilderCount > ($g_bUpgradeWallSaveBuilder ? 1 : 0)) Then
+	;   Is Warden Level updated |          Is Warden not max yet           |  Is Upgrade enabled       |               Is Warden not already upgrading                |               Is a Builder available
+	If ($g_iWardenLevel <> -1) And ($g_iWardenLevel < $g_iMaxWardenLevel) And $g_bUpgradeWardenEnable And BitAND($g_iHeroUpgradingBit, $eHeroWarden) <> $eHeroWarden And ($g_iFreeBuilderCount > ($g_bUpgradeWallSaveBuilder ? 1 : 0)) Then
 		Local $bMinWardenElixir = Number($g_aiCurrentLoot[$eLootElixir]) > ($g_iWallCost + $g_afWardenUpgCost[$g_iWardenLevel] * 1000000 + Number($g_iUpgradeWallMinElixir))
 		If Not $bMinWardenElixir Then
 			Switch $g_iUpgradeWallLootType
@@ -317,19 +322,16 @@ Func SkipWallUpgrade() ; Dynamic Upgrades
 
 	;;;;;;;;;;;;;;;;;;;;;;;;;;;##### Verify the Upgrade troop kind in Laboratory , if is elixir Spell/Troop , the Lab have priority #####;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	Local $bMinWallElixir = Number($g_aiCurrentLoot[$eLootElixir]) > ($g_iWallCost + Number($g_iLaboratoryElixirCost) + Number($g_iUpgradeWallMinElixir)) ; Check if enough Elixir
-	If $g_bAutoLabUpgradeEnable And $g_iCmbLaboratory >= 1 And Not ($g_iCmbLaboratory >= 20 And $g_iCmbLaboratory <= 30) And Not $bMinWallElixir Then
-		Local $sName = $g_avLabTroops[$g_iCmbLaboratory][3]
-		Local $LabElixirNeeded = $g_iLaboratoryElixirCost
-		If $LabElixirNeeded = 0 Then $LabElixirNeeded = "unknown" ; trap error condition of unknown value
+	If $g_bAutoLabUpgradeEnable And $g_iLaboratoryElixirCost > 0 And Not $bMinWallElixir Then
 		Switch $g_iUpgradeWallLootType
 			Case 0 ; Using gold
 				; do nothing
 			Case 1 ; Using elixir
-				SetLog("Laboratory needs " & $LabElixirNeeded & " Elixir to Upgrade:  " & $sName, $COLOR_SUCCESS1)
+				SetLog("Laboratory needs Elixir to Upgrade :  " & $g_iLaboratoryElixirCost, $COLOR_SUCCESS1)
 				SetLog("Skipping Wall Upgrade", $COLOR_SUCCESS1)
 				Return True
 			Case 2 ; Using gold and elixir
-				SetLog("Laboratory needs " & $LabElixirNeeded & " Elixir to Upgrade:  " & $sName, $COLOR_SUCCESS1)
+				SetLog("Laboratory needs Elixir to Upgrade :  " & $g_iLaboratoryElixirCost, $COLOR_SUCCESS1)
 				SetLog("Using Gold only for Wall Upgrade", $COLOR_SUCCESS1)
 				$g_iUpgradeWallLootType = 0
 		EndSwitch

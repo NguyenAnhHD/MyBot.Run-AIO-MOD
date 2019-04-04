@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -55,6 +55,7 @@ Func CreateLogFile()
 		SetDebugLog("Android Program Path: " & $g_sAndroidProgramPath)
 		SetDebugLog("Android Program FileVersionInfo: " & ((IsArray($g_avAndroidProgramFileVersionInfo) ? _ArrayToString($g_avAndroidProgramFileVersionInfo, ",", 1) : "not available")))
 		SetDebugLog("Android ADB Path: " & $g_sAndroidAdbPath)
+		SetDebugLog("Android ADB Global Options: " & $g_sAndroidAdbGlobalOptions)
 		SetDebugLog("Android VBoxManage Path: " & $__VBoxManage_Path)
 		SetDebugLog("Android ADB Shared Folder: " & $g_sAndroidPicturesPath)
 	EndIf
@@ -82,7 +83,7 @@ EndFunc   ;==>CreateLogFile
 ; Return values .: None
 ; Author ........:
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki

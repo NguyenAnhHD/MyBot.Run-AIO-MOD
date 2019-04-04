@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: kaganus (06-2015)
 ; Modified ......: CodeSlinger69 (01-2017), Fliegerfaust (02-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -586,6 +586,7 @@ Func ResetStats()
 	$g_iNbrOfHeroesUpped = 0
 	$g_iSearchCost = 0
 	$g_iTrainCostElixir = 0
+	$g_iTrainCostGold = 0
 	$g_iTrainCostDElixir = 0
 	$g_iNbrOfOoS = 0
 	$g_iNbrOfTHSnipeFails = 0
@@ -617,10 +618,16 @@ Func ResetStats()
 	   EndIf
 	Next
 
+	For $i = 0 To $eSiegeMachineCount - 1
+		$g_aiDonateStatsSieges[$i][0] = 0
+	Next
+
 	$g_iTotalDonateStatsTroops = 0
 	$g_iTotalDonateStatsTroopsXP = 0
 	$g_iTotalDonateStatsSpells = 0
 	$g_iTotalDonateStatsSpellsXP = 0
+	$g_iTotalDonateStatsSiegeMachines = 0
+	$g_iTotalDonateStatsSiegeMachinesXP = 0
 
 	UpdateStats()
  EndFunc   ;==>ResetStats

@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Sardo (08-2015), KnowJack(08-2015). ProMac (08-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -81,6 +81,11 @@ Func _checkArmyCamp($bOpenArmyWindow, $bCloseArmyWindow, $bGetHeroesTime, $bSetL
 	If $g_bDebugFuncTime Then StopWatchStopLog()
 	If _Sleep($DELAYCHECKARMYCAMP6) Then Return ; 10ms improve pause button response
 
+	If $g_bDebugFuncTime Then StopWatchStart("getArmySiegeMachines")
+	getArmySiegeMachines(False, False, False, $bSetLog) ; Last parameter is to check the Army Window
+	If $g_bDebugFuncTime Then StopWatchStopLog()
+	If _Sleep($DELAYCHECKARMYCAMP6) Then Return ; 10ms improve pause button response
+
 	If $g_bDebugFuncTime Then StopWatchStart("getArmyCCSpellCapacity")
 	getArmyCCSpellCapacity(False, False, False, $bSetLog) ; Last parameter is to check the Army Window
 	If $g_bDebugFuncTime Then StopWatchStopLog()
@@ -88,6 +93,11 @@ Func _checkArmyCamp($bOpenArmyWindow, $bCloseArmyWindow, $bGetHeroesTime, $bSetL
 
 	If $g_bDebugFuncTime Then StopWatchStart("getArmyCCStatus")
 	getArmyCCStatus(False, False, False, $bSetLog) ; Last parameter is to check the Army Window
+	If $g_bDebugFuncTime Then StopWatchStopLog()
+	If _Sleep($DELAYCHECKARMYCAMP6) Then Return ; 10ms improve pause button response
+
+	If $g_bDebugFuncTime Then StopWatchStart("getArmyCCSiegeMachines")
+	getArmyCCSiegeMachines(False, False, False, $bSetLog) ; Last parameter is to check the Army Window
 	If $g_bDebugFuncTime Then StopWatchStopLog()
 	If _Sleep($DELAYCHECKARMYCAMP6) Then Return ; 10ms improve pause button response
 

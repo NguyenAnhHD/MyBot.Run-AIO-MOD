@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: NguyenAnhHD (03-2018)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -15,13 +15,17 @@
 #include-once
 
 Global $g_hGUI_SWITCH_OPTIONS = 0, _
-	   $g_hGUI_SWITCH_OPTIONS_TAB = 0, $g_hGUI_SWITCH_OPTIONS_TAB_ITEM1 = 0, $g_hGUI_SWITCH_OPTIONS_TAB_ITEM2 = 0
+	   $g_hGUI_SWITCH_OPTIONS_TAB = 0, $g_hGUI_SWITCH_OPTIONS_TAB_ITEM1 = 0, $g_hGUI_SWITCH_OPTIONS_TAB_ITEM2 = 0, $g_hGUI_SWITCH_OPTIONS_TAB_ITEM3 = 0
 
 Global $g_hGUI_LOG_SA = 0
 
 Global $g_hChkSwitchAcc = 0, $g_hCmbSwitchAcc = 0, $g_hChkSharedPrefs = 0, $g_hCmbTotalAccount = 0, $g_hChkSmartSwitch = 0, $g_hCmbTrainTimeToSkip = 0, $g_hChkDonateLikeCrazy = 0, _
 	   $g_ahChkAccount[8], $g_ahCmbProfile[8], $g_ahChkDonate[8], _
 	   $g_hRadSwitchGooglePlay = 0, $g_hRadSwitchSuperCellID = 0, $g_hRadSwitchSharedPrefs = 0
+
+; Switch Profiles
+Global $g_ahChk_SwitchMax[4], $g_ahCmb_SwitchMax[4], $g_ahChk_BotTypeMax[4], $g_ahCmb_BotTypeMax[4], $g_ahLbl_SwitchMax[4], $g_ahTxt_ConditionMax[4], _
+	   $g_ahChk_SwitchMin[4], $g_ahCmb_SwitchMin[4], $g_ahChk_BotTypeMin[4], $g_ahCmb_BotTypeMin[4], $g_ahLbl_SwitchMin[4], $g_ahTxt_ConditionMin[4]
 
 Global $g_ahChkSetFarm[8], _
 	   $g_ahCmbAction1[8], $g_ahCmbCriteria1[8], $g_ahTxtResource1[8], $g_ahCmbTime1[8], _
@@ -35,9 +39,11 @@ Func CreateSwitchOptions()
 
 	GUISwitch($g_hGUI_SWITCH_OPTIONS)
 	$g_hGUI_SWITCH_OPTIONS_TAB = GUICtrlCreateTab(0, 0, $g_iSizeWGrpTab2 + 2, $g_iSizeHGrpTab4 + 5, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))
-	$g_hGUI_SWITCH_OPTIONS_TAB_ITEM1 = GUICtrlCreateTabItem("Switch Accounts")
+	$g_hGUI_SWITCH_OPTIONS_TAB_ITEM1 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_04_STab_04_STab_01", "Switch Accounts"))
 		CreateSwitchAccount()
-	$g_hGUI_SWITCH_OPTIONS_TAB_ITEM2 = GUICtrlCreateTabItem("Farming Schedule")
+	$g_hGUI_SWITCH_OPTIONS_TAB_ITEM2 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_04_STab_04_STab_02", "Switch Profiles"))
+		CreateSwitchProfile()
+	$g_hGUI_SWITCH_OPTIONS_TAB_ITEM3 = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_04_STab_04_STab_03", "Farming Schedule"))
 		CreateFarmSchedule()
 
 	; This dummy is used in btnStart and btnStop to disable/enable all labels, text, buttons etc. on all tabs.
@@ -71,15 +77,17 @@ Func CreateSwitchAccount()
 		GUICtrlSetOnEvent(-1, "cmbTotalAcc")
 		GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "CmbTotalAccount", "Total CoC Accounts") & ": ", $x + 220, $y + 4, -1, -1)
 
-		$g_hRadSwitchGooglePlay = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "RadSwitchGooglePlay", "Google Play"), $x + 185, $y - 30, -1, -1)
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "RadSwitchGooglePlay_Info_01", "Only support for all Google Play accounts"))
-		GUICtrlSetState(-1, $GUI_CHECKED)
-		GUICtrlSetOnEvent(-1, "chkAccSwitchMode")
-		$g_hRadSwitchSuperCellID = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "RadSwitchSuperCellID", "SuperCell ID"), $x + 265, $y - 30, -1, -1)
-		_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "RadSwitchSuperCellID_Info_01", "Only support for all SuperCell ID accounts"))
-		GUICtrlSetOnEvent(-1, "chkAccSwitchMode")
-		$g_hRadSwitchSharedPrefs = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "RadSwitchSharedPrefs", "Shared_prefs"), $x + 345, $y - 30, -1, -1)
+		$g_hRadSwitchSharedPrefs = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "RadSwitchSharedPrefs", "Shared_prefs"), $x + 185, $y - 30, -1, -1)
 		_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "RadSwitchSharedPrefs_Info_01", "Support for Google Play and SuperCell ID accounts"))
+		If $g_bChkSharedPrefs Then GUICtrlSetState(-1, $GUI_CHECKED)
+		GUICtrlSetOnEvent(-1, "chkAccSwitchMode")
+		$g_hRadSwitchGooglePlay = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "RadSwitchGooglePlay", "Google Play"), $x + 270, $y - 30, -1, -1)
+		_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "RadSwitchGooglePlay_Info_01", "Only support for all Google Play accounts"))
+		If $g_bChkGooglePlay Then GUICtrlSetState(-1, $GUI_CHECKED)
+		GUICtrlSetOnEvent(-1, "chkAccSwitchMode")
+		$g_hRadSwitchSuperCellID = GUICtrlCreateRadio(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "RadSwitchSuperCellID", "SuperCell ID"), $x + 347, $y - 30, -1, -1)
+		_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "RadSwitchSuperCellID_Info_01", "Only support for all SuperCell ID accounts"))
+		If $g_bChkSuperCellID Then GUICtrlSetState(-1, $GUI_CHECKED)
 		GUICtrlSetOnEvent(-1, "chkAccSwitchMode")
 
 	$y += 23
@@ -121,6 +129,61 @@ Func CreateSwitchAccount()
 		Next
 
 EndFunc   ;==>CreateSwitchAccount
+#EndRegion
+
+#Region Switch Profiles tab
+Func CreateSwitchProfile()
+
+	Local $asText[4] = ["Gold", "Elixir", "Dark Elixir", "Trophy"]
+	Local $aIcon[4] = [$eIcnGold, $eIcnElixir, $eIcnDark, $eIcnTrophy]
+	Local $aiValueMax[4] = ["12000000", "12000000", "240000", "5000"]
+	Local $aiValueMin[4] = ["1000000", "1000000", "20000", "3000"]
+	Local $aiLimitMax[4] = [8, 8, 6, 4]
+	Local $aiLimitMin[4] = [7, 7, 5, 4]
+
+	Local $x = 25, $y = 41
+	Local $profileString = _GUICtrlComboBox_GetList($g_hCmbProfile)
+
+	For $i = 0 To 3
+		GUICtrlCreateGroup("        " & $asText[$i] & " " & GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Group_03", "conditions"), $x - 20, $y - 15 + $i * 51, $g_iSizeWGrpTab3, 78)
+		_GUICtrlCreateIcon($g_sLibIconPath, $aIcon[$i], $x - 10, $y - 17 + $i * 51, 20, 20)
+			$g_ahChk_SwitchMax[$i] = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Switch", "Switch to.."), $x - 10, $y + 7 + $i * 51, -1, -1)
+				GUICtrlSetOnEvent(-1, "chkSwitchProfile")
+			$g_ahCmb_SwitchMax[$i] = GUICtrlCreateCombo("", $x + 60, $y + 7 + $i * 51, 75, 20, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+				GUICtrlSetData(-1, $profileString, "<No Profiles>")
+
+			$g_ahChk_BotTypeMax[$i] = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "BotType", "Turn.."), $x + 145, $y + 7 + $i * 51, -1, -1)
+				GUICtrlSetOnEvent(-1, "chkSwitchBotType")
+			$g_ahCmb_BotTypeMax[$i] = GUICtrlCreateCombo("", $x + 195, $y + 7 + $i * 51, 58, 20, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+				GUICtrlSetData(-1, "Off|Donate|Active", "Donate")
+
+			$g_ahLbl_SwitchMax[$i] = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition", "when") & " " & $asText[$i] & " >", $x + 262, $y + 11 + $i * 51, -1, -1)
+			$g_ahTxt_ConditionMax[$i] = GUICtrlCreateInput($aiValueMax[$i], $x + 352, $y + 7 + $i * 51, 55, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_01", "Set the amount of") & " " & $asText[$i] &  " " & _
+								   GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_02", "to trigger switching Profile & Bot Type."))
+				GUICtrlSetLimit(-1, $aiLimitMax[$i])
+
+		$y += 30
+			$g_ahChk_SwitchMin[$i] = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Switch", -1), $x - 10, $y + 5 + $i * 51, -1, -1)
+				GUICtrlSetOnEvent(-1, "chkSwitchProfile")
+			$g_ahCmb_SwitchMin[$i] = GUICtrlCreateCombo("", $x + 60, $y + 5 + $i * 51, 75, 20, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+				GUICtrlSetData(-1, $profileString, "<No Profiles>")
+
+			$g_ahChk_BotTypeMin[$i] = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "BotType", -1), $x + 145, $y + 5 + $i * 51, -1, -1)
+				GUICtrlSetOnEvent(-1, "chkSwitchBotType")
+			$g_ahCmb_BotTypeMin[$i] = GUICtrlCreateCombo("", $x + 195, $y + 5 + $i * 51, 58, 20, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+				GUICtrlSetData(-1, "Off|Donate|Active", "Active")
+
+			$g_ahLbl_SwitchMin[$i] = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition", -1) & " " & $asText[$i] & " <", $x + 262, $y + 9 + $i * 51, -1, -1)
+			$g_ahTxt_ConditionMin[$i] = GUICtrlCreateInput($aiValueMin[$i], $x + 352, $y + 5 + $i * 51, 55, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_01", -1) & " " & $asText[$i] & " " & _
+								   GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_02", -1))
+				GUICtrlSetLimit(-1, $aiLimitMin[$i])
+
+		GUICtrlCreateGroup("", -99, -99, 1, 1)
+	Next
+
+EndFunc   ;==>CreateSwitchProfile
 #EndRegion
 
 #Region Farming Schedule tab

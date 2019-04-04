@@ -7,7 +7,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: KnowJack (07-2015), MonkeyHunter (01-2016), CodeSlinger69 (01-2017), MonkeyHunter (03-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -19,7 +19,7 @@ Func ReturnHome($TakeSS = 1, $GoldChangeCheck = True) ;Return main screen
 	Local $hBitmap_Scaled
 	Local $i, $j
 
-	If $g_bDESideDisableOther And $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 4 And $g_bDESideEndEnable And ($g_bDropQueen Or $g_bDropKing) Then
+	If $g_bDESideDisableOther And $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 And $g_bDESideEndEnable And ($g_bDropQueen Or $g_bDropKing) Then
 		SaveandDisableEBO()
 		SetLog("Disabling Normal End Battle Options", $COLOR_SUCCESS)
 	EndIf
@@ -54,7 +54,7 @@ Func ReturnHome($TakeSS = 1, $GoldChangeCheck = True) ;Return main screen
 		EndIf
 	EndIf
 
-	If $g_bDESideDisableOther And $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 4 And $g_bDESideEndEnable And ($g_bDropQueen Or $g_bDropKing) Then
+	If $g_bDESideDisableOther And $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 And $g_bDESideEndEnable And ($g_bDropQueen Or $g_bDropKing) Then
 		RevertEBO()
 	EndIf
 
@@ -109,7 +109,7 @@ Func ReturnHome($TakeSS = 1, $GoldChangeCheck = True) ;Return main screen
 
 	TrayTip($g_sBotTitle, "", BitOR($TIP_ICONASTERISK, $TIP_NOSOUND)) ; clear village search match found message
 
-	CheckAndroidReboot(False)
+	If CheckAndroidReboot() Then Return
 
 	If $GoldChangeCheck Then
 		If IsAttackPage() Then
@@ -124,7 +124,6 @@ Func ReturnHome($TakeSS = 1, $GoldChangeCheck = True) ;Return main screen
 		If _Sleep($DELAYRETURNHOME3) Then Return ; wait for all report details
 		_CaptureRegion()
 		AttackReport()
-		$g_iTotalSearchTime = 0
 	EndIf
 	If $TakeSS = 1 And $GoldChangeCheck Then
 		SetLog("Taking snapshot of your loot", $COLOR_SUCCESS)
@@ -147,16 +146,19 @@ Func ReturnHome($TakeSS = 1, $GoldChangeCheck = True) ;Return main screen
 	If $GoldChangeCheck Then PushMsg("LastRaid")
 
 	$i = 0 ; Reset Loop counter
+	Local $iExitLoop = -1
 	While 1
 		If $g_bDebugSetlog Then SetDebugLog("Wait for End Fight Scene to appear #" & $i)
 		If _CheckPixel($aEndFightSceneAvl, $g_bCapturePixel) Then ; check for the gold ribbon in the end of battle data screen
-			If IsReturnHomeBattlePage() Then ClickP($aReturnHomeButton, 1, 0, "#0101") ;Click Return Home Button
-			ExitLoop
-		Else
-			$i += 1
+			If IsReturnHomeBattlePage(True) Then
+				ClickP($aReturnHomeButton, 1, 0, "#0101") ;Click Return Home Button
+				; sometimes 1st click is not closing, so try again
+				$iExitLoop = $i
+			EndIf
 		EndIf
-		If $i > 10 Then ExitLoop ; if end battle window is not found in 10*200mms or 2 seconds, then give up.
+		If $i > 25 Or ($iExitLoop > -1 And $i > $iExitLoop) Then ExitLoop ; if end battle window is not found in 25*200mms or 5 seconds, then give up.
 		If _Sleep($DELAYRETURNHOME5) Then Return
+		$i += 1
 	WEnd
 	If _Sleep($DELAYRETURNHOME2) Then Return ; short wait for screen to close
 
@@ -165,6 +167,8 @@ Func ReturnHome($TakeSS = 1, $GoldChangeCheck = True) ;Return main screen
 		If $g_bDebugSetlog Then SetDebugLog("Wait for Star Bonus window to appear #" & $counter)
 		If _Sleep($DELAYRETURNHOME4) Then Return
 		If StarBonus() Then SetLog("Star Bonus window closed chief!", $COLOR_INFO) ; Check for Star Bonus window to fill treasury (2016-01) update
+		$g_bFullArmy = False ; forcing check the army
+		$g_bIsFullArmywithHeroesAndSpells = False ; forcing check the army
 		If ReturnHomeMainPage() Then Return
 		$counter += 1
 		If $counter >= 50 Or isProblemAffect(True) Then
@@ -182,3 +186,52 @@ Func ReturnHomeMainPage()
 	EndIf
 	Return False
 EndFunc   ;==>ReturnHomeMainPage
+
+Func ReturnfromDropTrophies()
+
+	If $g_bDebugSetlog Then SetDebugLog(" -- ReturnfromDropTrophies -- ")
+
+	For $i = 0 To 5 ; dynamic wait loop for surrender button to appear (if end battle or surrender button are not found in 5*(200)ms + 10*(200)ms or 3 seconds, then give up.)
+		If $g_bDebugSetlog Then SetDebugLog("Wait for surrender button to appear #" & $i)
+		ClickP($aSurrenderButton, 1, 0, "#0099") ;Click Surrender
+		Local $j = 0
+		While 1 ; dynamic wait for Okay button
+			If $g_bDebugSetlog Then SetDebugLog("Wait for OK button to appear #" & $j)
+			If IsEndBattlePage(True) Then
+				ClickOkay("SurrenderOkay") ; Click Okay to Confirm surrender
+				ExitLoop 2
+			Else
+				$j += 1
+			EndIf
+			If $j > 10 Then ExitLoop ; if Okay button not found in 10*(200)ms or 2 seconds, then give up.
+			If _Sleep(100) Then Return
+			If _CheckPixel($aSurrenderButton, $g_bCapturePixel) Then ;is surrender button is visible?
+				ClickP($aSurrenderButton, 1, 0, "#0099") ;Click Surrender
+			EndIf
+		WEnd
+		If _Sleep(100) Then Return
+	Next
+
+	$i = 0 ; Reset Loop counter
+	Local $iExitLoop = -1
+	While 1
+		If $g_bDebugSetlog Then SetDebugLog("Wait for End Fight Scene to appear #" & $i)
+		If _CheckPixel($aEndFightSceneAvl, $g_bCapturePixel) Then ; check for the gold ribbon in the end of battle data screen
+			If IsReturnHomeBattlePage(True) Then
+				ClickP($aReturnHomeButton, 1, 0, "#0101") ;Click Return Home Button
+				; sometimes 1st click is not closing, so check again
+				$iExitLoop = $i
+			EndIf
+		Else
+			$i += 1
+		EndIf
+		If $i > 25 Or ($iExitLoop > -1 And $i > $iExitLoop) Then ExitLoop ; if end battle window is not found in 25*200mms or 5 seconds, then give up.
+		If _Sleep($DELAYRETURNHOME5) Then Return
+	WEnd
+	If _Sleep($DELAYRETURNHOME2) Then Return ; short wait for screen to close
+	$g_bFullArmy = False ; forcing check the army
+	$g_bIsFullArmywithHeroesAndSpells = False ; forcing check the army
+	If ReturnHomeMainPage() Then Return
+	checkMainScreen()
+EndFunc   ;==>ReturnfromDropTrophies
+

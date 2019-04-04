@@ -11,7 +11,7 @@
 ; Return values .: None
 ; Author ........: didipe
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -26,7 +26,7 @@ Func DropTroop($troop, $nbSides, $number, $slotsPerEdge = 0, $indexToAttack = -1
 
 
 	If ($g_abAttackStdSmartAttack[$g_iMatchMode]) And ($g_aiAttackStdDropSides[$g_iMatchMode] <> 4) Then ; ! FourFinger
-		If $slotsPerEdge = 0 Or $number < $slotsPerEdge Then $slotsPerEdge = $number
+		If $slotsPerEdge = 0 Or $number < $slotsPerEdge Then $slotsPerEdge = Floor($number / $nbSides)
 		If _Sleep($DELAYDROPTROOP1) Then Return
 		SelectDropTroop($troop) ;Select Troop
 		If _Sleep($DELAYDROPTROOP2) Then Return
@@ -109,7 +109,7 @@ Func DropTroop2($troop, $nbSides, $number, $slotsPerEdge = 0, $name = "")
 	Local $listInfoPixelDropTroop[0]
 
 	If ($g_abAttackStdSmartAttack[$g_iMatchMode]) Then
-		If $slotsPerEdge = 0 Or $number < $slotsPerEdge Then $slotsPerEdge = $number
+		If $slotsPerEdge = 0 Or $number < $slotsPerEdge Then $slotsPerEdge = Floor($number / $nbSides)
 		;If _Sleep($DELAYDROPTROOP1) Then Return
 		;SelectDropTroop($troop) ;Select Troop
 		;If _Sleep($DELAYDROPTROOP2) Then Return

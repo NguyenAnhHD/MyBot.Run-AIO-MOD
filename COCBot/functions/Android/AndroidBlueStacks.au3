@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: GkevinOD (2014), Hervidero (2015)
 ; Modified ......: Cosote (12-2015), KnowJack (08-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -17,15 +17,32 @@ Func OpenBS($bRestart = False) ; @deprecated, use OpenAndroid()
 	Return OpenAndroid($bRestart)
 EndFunc   ;==>OpenBS
 
+Func OpenBlueStacksX($bRestart = False)
+	SetLog("Starting BlueStacks and Clash Of Clans", $COLOR_SUCCESS)
+	If Not InitAndroid() Then Return False
+	If $g_sAndroidEmulator = "BlueStacks" Then
+		; open BlueStacks version 1
+		Return _OpenBlueStacks($bRestart)
+	EndIf
+	; open newer BlueStacks versions
+	Return _OpenBlueStacks2($bRestart)
+EndFunc   ;==>OpenBlueStacksX
+
 Func OpenBlueStacks($bRestart = False)
+	Return OpenBlueStacksX($bRestart)
+EndFunc   ;==>OpenBlueStacks
+
+Func OpenBlueStacks2($bRestart = False)
+	Return OpenBlueStacksX($bRestart)
+EndFunc   ;==>OpenBlueStacks2
+
+Func _OpenBlueStacks($bRestart = False)
 
 	Local $hTimer, $iCount = 0, $cmdPar
 	Local $PID, $ErrorResult, $connected_to, $process_killed
 
-	SetLog("Starting BlueStacks and Clash Of Clans", $COLOR_SUCCESS)
-
 	; always start ADB first to avoid ADB connection problems
-	LaunchConsole($g_sAndroidAdbPath, "start-server", $process_killed)
+	LaunchConsole($g_sAndroidAdbPath, AddSpace($g_sAndroidAdbGlobalOptions) & "start-server", $process_killed)
 
 	;$PID = ShellExecute($__BlueStacks_Path & "HD-RunApp.exe", "-p " & $g_sAndroidGamePackage & " -a " & $g_sAndroidGamePackage & $g_sAndroidGameClass)  ;Start BS and CoC with command line
 	;$PID = ShellExecute($__BlueStacks_Path & "HD-Frontend.exe", $g_sAndroidInstance) ;Start BS and CoC with command line
@@ -68,21 +85,16 @@ Func OpenBlueStacks($bRestart = False)
 
 	Return False
 
-EndFunc   ;==>OpenBlueStacks
+EndFunc   ;==>_OpenBlueStacks
 
-Func OpenBlueStacks2($bRestart = False)
+Func _OpenBlueStacks2($bRestart = False)
 
 	Local $hTimer, $iCount = 0, $cmdOutput, $process_killed, $i, $connected_to, $PID, $cmdPar
-	SetLog("Starting " & $g_sAndroidEmulator & " and Clash Of Clans", $COLOR_SUCCESS)
-
-	If Not InitAndroid() Then Return False
-
-	SetLog("Please wait while " & $g_sAndroidEmulator & " and CoC start...", $COLOR_SUCCESS)
 
 	CloseUnsupportedBlueStacks2()
 
 	; always start ADB first to avoid ADB connection problems
-	LaunchConsole($g_sAndroidAdbPath, "start-server", $process_killed)
+	LaunchConsole($g_sAndroidAdbPath, AddSpace($g_sAndroidAdbGlobalOptions) & "start-server", $process_killed)
 
 	$hTimer = __TimerInit()
 	WinGetAndroidHandle()
@@ -144,7 +156,7 @@ Func OpenBlueStacks2($bRestart = False)
 
 	Return False
 
-EndFunc   ;==>OpenBlueStacks2
+EndFunc   ;==>_OpenBlueStacks2
 
 Func GetBlueStacksXAdbPath()
 	Local $adbPath = $__BlueStacks_Path & "HD-Adb.exe"
@@ -220,6 +232,25 @@ Func InitBlueStacksX($bCheckOnly = False, $bAdjustResolution = False, $bLegacyMo
 	Next
 
 	If Not $bCheckOnly Then
+
+		; re-check BlueStacks / BlueStacks2 key and adjust based on found version as only one BlueStacks version can be installed!
+		Local $sAndroidEmulator = $g_sAndroidEmulator
+		Local $bIsVersion1 = GetVersionNormalized($__BlueStacks_Version) > GetVersionNormalized("0.8") And GetVersionNormalized($__BlueStacks_Version) < GetVersionNormalized("2.0")
+		If $bIsVersion1 And $g_sAndroidEmulator = "BlueStacks2" Then
+			; switch to BlueStacks key
+			$sAndroidEmulator = "BlueStacks"
+		EndIf
+		Local $bIsVersion2 = GetVersionNormalized($__BlueStacks_Version) > GetVersionNormalized("2.0") And GetVersionNormalized($__BlueStacks_Version) < GetVersionNormalized("5.0")
+		If $bIsVersion2 And $g_sAndroidEmulator = "BlueStacks" Then
+			; switch to BlueStacks2 key
+			$sAndroidEmulator = "BlueStacks2"
+		EndIf
+		If $sAndroidEmulator <> $g_sAndroidEmulator Then
+			SetLog("Changing Android Emulator config from " & $g_sAndroidEmulator & " to " & $sAndroidEmulator, $COLOR_WARNING)
+			UpdateAndroidConfig($g_sAndroidInstance, $sAndroidEmulator)
+			Return InitBlueStacksX($bCheckOnly, $bAdjustResolution, $bLegacyMode)
+		EndIf
+
 		$g_iAndroidAdbSuCommand = "/system/xbin/bstk/su"
 		Local $BootParameter = RegRead($g_sHKLM & "\SOFTWARE\BlueStacks\Guests\" & $g_sAndroidInstance & "\", "BootParameters")
 		Local $OEMFeatures
@@ -236,13 +267,8 @@ Func InitBlueStacksX($bCheckOnly = False, $bAdjustResolution = False, $bLegacyMo
 		$g_sAndroidAdbPath = $sPreferredADB
 		If $g_sAndroidAdbPath = "" Then $g_sAndroidAdbPath = $__BlueStacks_Path & "HD-Adb.exe"
 		$g_sAndroidVersion = $__BlueStacks_Version
-		For $i = 0 To 5
-			If RegRead($g_sHKLM & "\SOFTWARE\BlueStacks\Guests\" & $g_sAndroidInstance & "\SharedFolder\" & $i & "\", "Name") = "BstSharedFolder" Then
-				$g_sAndroidPicturesPath = "/storage/sdcard/windows/BstSharedFolder/"
-				$g_sAndroidPicturesHostPath = RegRead($g_sHKLM & "\SOFTWARE\BlueStacks\Guests\" & $g_sAndroidInstance & "\SharedFolder\" & $i & "\", "Path")
-				ExitLoop
-			EndIf
-		Next
+
+		ConfigureSharedFolderBlueStacksX(0) ; something like D:\ProgramData\BlueStacks\Engine\UserData\SharedFolder\
 
 		SetDebugLog($g_sAndroidEmulator & " Engine 'Plus'-Mode: " & $plusMode)
 		SetDebugLog($g_sAndroidEmulator & " OEM Features: " & $OEMFeatures)
@@ -281,9 +307,40 @@ Func InitBlueStacksX($bCheckOnly = False, $bAdjustResolution = False, $bLegacyMo
 
 EndFunc   ;==>InitBlueStacksX
 
+Func ConfigureSharedFolderBlueStacks($iMode = 0, $bSetLog = Default)
+	ConfigureSharedFolderBlueStacksX($iMode, $bSetLog)
+EndFunc   ;==>ConfigureSharedFolderBlueStacks
+
+Func ConfigureSharedFolderBlueStacks2($iMode = 0, $bSetLog = Default)
+	ConfigureSharedFolderBlueStacksX($iMode, $bSetLog)
+EndFunc   ;==>ConfigureSharedFolderBlueStacks2
+
+Func ConfigureSharedFolderBlueStacksX($iMode = 0, $bSetLog = Default)
+	If $bSetLog = Default Then $bSetLog = True
+	Local $bResult = False
+
+	Switch $iMode
+		Case 0 ; check that shared folder is configured in VM
+			For $i = 0 To 5
+				If RegRead($g_sHKLM & "\SOFTWARE\BlueStacks\Guests\" & $g_sAndroidInstance & "\SharedFolder\" & $i & "\", "Name") = "BstSharedFolder" Then
+					$bResult = True
+					$g_bAndroidSharedFolderAvailable = True
+					$g_sAndroidPicturesPath = "/storage/sdcard/windows/BstSharedFolder/"
+					$g_sAndroidPicturesHostPath = RegRead($g_sHKLM & "\SOFTWARE\BlueStacks\Guests\" & $g_sAndroidInstance & "\SharedFolder\" & $i & "\", "Path")
+					ExitLoop
+				EndIf
+			Next
+		Case 1 ; create missing shared folder
+		Case 2 ; Configure VM and add missing shared folder
+	EndSwitch
+
+	Return SetError(0, 0, $bResult)
+
+EndFunc   ;==>ConfigureSharedFolderBlueStacksX
+
 Func InitBlueStacks($bCheckOnly = False)
 	Local $bInstalled = InitBlueStacksX($bCheckOnly)
-	If $bInstalled And (GetVersionNormalized($__BlueStacks_Version) < GetVersionNormalized("0.8") Or GetVersionNormalized($__BlueStacks_Version) > GetVersionNormalized("1.x") > 0) Then
+	If $bInstalled And (GetVersionNormalized($__BlueStacks_Version) < GetVersionNormalized("0.8") Or GetVersionNormalized($__BlueStacks_Version) > GetVersionNormalized("2.0")) Then
 		If Not $bCheckOnly Then
 			SetLog("BlueStacks version is " & $__BlueStacks_Version & " but support version 0.8.x - 1.x not found", $COLOR_ERROR)
 			SetError(1, @extended, False)
@@ -311,19 +368,17 @@ Func InitBlueStacks2($bCheckOnly = False)
 
 	If $bInstalled And Not $bCheckOnly Then
 		$__VBoxManage_Path = $__BlueStacks_Path & "BstkVMMgr.exe"
-		; Also required for BS3 2.55.70.1203
-		; 2.56.75.1279 doesn't need any compensation!!
-		Local $bs3 = GetVersionNormalized("2.50.0.0")
-		Local $bs3WithFrame = GetVersionNormalized("2.56.75")
-		local $bsNow = GetVersionNormalized($__BlueStacks_Version)
-		If StringInStr($__BlueStacks_Version, "4.") = 1 Or (StringInStr($__BlueStacks_Version, "2.") = 1 And $bsNow >= $bs3 And $bsNow < $bs3WithFrame) Then
-			; Mouse clicks in Window are off by -13 on Y-axis, so set special value now
-			Local $aOff = [0, 13]
-			If $g_aiMouseOffsetWindowOnly[0] <> $aOff[0] Or $g_aiMouseOffsetWindowOnly[1] <> $aOff[1] Then
-				$g_aiMouseOffsetWindowOnly = $aOff
-				SetDebugLog("BlueStacks " & $__BlueStacks_Version & ": Adjust mouse clicks when running undocked by: " & $aOff[0] & ", " & $aOff[1])
-			EndIf
+		Local $bsNow = GetVersionNormalized($__BlueStacks_Version)
+		If $bsNow > GetVersionNormalized("4.0") Then
+			; only Version 4 requires new options
+			;$g_sAndroidAdbInstanceShellOptions = " -t -t" ; Additional shell options, only used by BlueStacks2 " -t -t"
+			$g_sAndroidAdbShellOptions = " /data/anr/../../system/xbin/bstk/su root" ; Additional shell options when launch shell with command, only used by BlueStacks2 " /data/anr/../../system/xbin/bstk/su root"
+
+			; tcp forward not working in BS4
+			$g_iAndroidAdbMinitouchMode = 1
 		EndIf
+
+		CheckBlueStacksVersionMod()
 
 		; read ADB port
 		Local $BstAdbPort = RegRead($g_sHKLM & "\SOFTWARE\BlueStacks\Guests\" & $g_sAndroidInstance & "\Config\", "BstAdbPort")
@@ -337,6 +392,52 @@ Func InitBlueStacks2($bCheckOnly = False)
 
 	Return $bInstalled
 EndFunc   ;==>InitBlueStacks2
+
+; Will Check all the differences between versions
+Func CheckBlueStacksVersionMod()
+	Local $bsNow = GetVersionNormalized($__BlueStacks_Version)
+	Local $aOff = [0, 13]
+	; < 2.6.105.x - BS2
+	; Undocked -> Zoomout [OK] , Mouse[OK]
+	; Docked -> Zoomout [OK] , Mouse[OK]
+	; $__BlueStacks2Version_2_5_or_later = False
+
+	Local $bs3 = GetVersionNormalized("2.50.0.0")
+	; 2.50.53.x - BS3
+	; Undocked -> Zoomout [OK] , Mouse[Need compensation]
+	; Docked -> Zoomout [OK] , Mouse[OK]
+	; $__BlueStacks2Version_2_5_or_later = False
+
+	Local $bs3WithFrame = GetVersionNormalized("2.56.75")
+	; 2.56.75 excelent version - 2.56.77 - BS3
+	; Undocked -> Zoomout [NO*] , Mouse[OK] ; *$__BlueStacks2Version_2_5_or_later = True
+	; Docked -> Zoomout [OK] , Mouse[OK]
+
+	Local $bs3NNoFrame = GetVersionNormalized("4.0.0.0")
+	; 4.2.1.9724 - New N version
+	; Undocked -> Zoomout [OK] , Mouse[Need compensation]
+	; Docked -> Zoomout [OK] , Mouse[OK]
+
+	Local $bs3NWithFrame = GetVersionNormalized("4.3.28.0")
+	; 4.3.28.4020 Last version
+	; Undocked -> Zoomout [NO*] , Mouse[OK] ; *$__BlueStacks2Version_2_5_or_later = True
+	; Docked -> Zoomout [OK] , Mouse[OK]
+
+	If ($bsNow >= $bs3 And $bsNow < $bs3WithFrame) Or ($bsNow > $bs3NNoFrame And $bsNow < $bs3NWithFrame) Then
+		; Mouse clicks in Window are off by -13 on Y-axis, so set special value now
+		If $g_aiMouseOffsetWindowOnly[0] <> $aOff[0] Or $g_aiMouseOffsetWindowOnly[1] <> $aOff[1] Then
+			$g_aiMouseOffsetWindowOnly = $aOff
+			SetDebugLog("BlueStacks " & $__BlueStacks_Version & ": Adjust mouse clicks when running undocked by: " & $aOff[0] & ", " & $aOff[1])
+		EndIf
+	EndIf
+
+	;Zoomout Function when is not Docked
+	If $bsNow >= $bs3NWithFrame Or ($bsNow >= $bs3WithFrame And $bsNow < $bs3NNoFrame) Then
+		SetDebugLog("BlueStacks " & $__BlueStacks_Version & " adjustment on ZoomOut")
+		$__BlueStacks2Version_2_5_or_later = True
+	EndIf
+
+EndFunc   ;==>CheckBlueStacksVersionMod
 
 Func GetBlueStacksBackgroundMode()
 	; Only DirectX-Mode is supported for Background Mode
@@ -810,3 +911,4 @@ Func CloseUnsupportedBlueStacksX($bClose = True)
 	Opt("WinTitleMatchMode", $WinTitleMatchMode)
 	Return False
 EndFunc   ;==>CloseUnsupportedBlueStacksX
+

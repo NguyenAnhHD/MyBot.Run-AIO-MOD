@@ -11,7 +11,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -23,16 +23,16 @@ Func LaunchTroop($troopKind, $nbSides, $waveNb, $maxWaveNb, $slotsPerEdge = 0)
 	Local $name = ""
 	For $i = 0 To UBound($g_avAttackTroops) - 1 ; identify the position of this kind of troop
 		If $g_avAttackTroops[$i][0] = $troopKind Then
+			If $g_avAttackTroops[$i][1] < 1 Then Return False
 			$troop = $i
 			$troopNb = Ceiling($g_avAttackTroops[$i][1] / $maxWaveNb)
-			Local $plural = 0
-			If $troopNb > 1 Then $plural = 1
-			$name = NameOfTroop($troopKind, $plural)
+			$name = GetTroopName($troopKind, $troopNb)
 		EndIf
 	Next
 
-	If ($troop = -1) Or ($troopNb = 0) Then
-		;if $waveNb > 0 Then SetLog("Skipping wave of " & $name & " (" & $troopKind & ") : nothing to drop" )
+	If $g_bDebugSetlog Then SetDebugLog("Dropping : " & $troopNb & " " & $name, $COLOR_DEBUG)
+
+	If $troop = -1 Or $troopNb = 0 Then
 		Return False ; nothing to do => skip this wave
 	EndIf
 
@@ -45,7 +45,7 @@ Func LaunchTroop($troopKind, $nbSides, $waveNb, $maxWaveNb, $slotsPerEdge = 0)
 	DropTroop($troop, $nbSides, $troopNb, $slotsPerEdge)
 
 	Return True
-EndFunc   ;==>LauchTroop
+EndFunc   ;==>LaunchTroop
 
 Func LaunchTroop2($listInfoDeploy, $iCC, $iKing, $iQueen, $iWarden)
 	If $g_bDebugSetlog Then SetDebugLog("LaunchTroop2 with CC " & $iCC & ", K " & $iKing & ", Q " & $iQueen & ", W " & $iWarden, $COLOR_DEBUG)
@@ -55,44 +55,38 @@ Func LaunchTroop2($listInfoDeploy, $iCC, $iKing, $iQueen, $iWarden)
 
 	If ($g_abAttackStdSmartAttack[$g_iMatchMode]) And ($g_aiAttackStdDropSides[$g_iMatchMode] <> 4) Then ; ! FourFinger
 		For $i = 0 To UBound($listInfoDeploy) - 1
-			Local $troop = -1
-			Local $troopNb = 0
-			Local $name = ""
-			Local $troopKind = $listInfoDeploy[$i][0]
-			Local $nbSides = $listInfoDeploy[$i][1]
-			Local $waveNb = $listInfoDeploy[$i][2]
-			Local $maxWaveNb = $listInfoDeploy[$i][3]
-			Local $slotsPerEdge = $listInfoDeploy[$i][4]
-			If $g_bDebugSetlog Then SetDebugLog("**ListInfoDeploy row " & $i & ": USE " & $troopKind & " SIDES " & $nbSides & " WAVE " & $waveNb & " XWAVE " & $maxWaveNb & " SLOTXEDGE " & $slotsPerEdge, $COLOR_DEBUG)
-			If (IsNumber($troopKind)) Then
-				For $j = 0 To UBound($g_avAttackTroops) - 1 ; identify the position of this kind of troop
-					If $g_avAttackTroops[$j][0] = $troopKind Then
-						$troop = $j
-						$troopNb = Ceiling($g_avAttackTroops[$j][1] / $maxWaveNb)
-						Local $plural = 0
-						If $troopNb > 1 Then $plural = 1
-						$name = NameOfTroop($troopKind, $plural)
-					EndIf
-				Next
-			EndIf
-			If ($troop <> -1 And $troopNb > 0) Or IsString($troopKind) Then
-				Local $listInfoDeployTroopPixel
-				If (UBound($listListInfoDeployTroopPixel) < $waveNb) Then
-					ReDim $listListInfoDeployTroopPixel[$waveNb]
-					Local $newListInfoDeployTroopPixel[0]
-					$listListInfoDeployTroopPixel[$waveNb - 1] = $newListInfoDeployTroopPixel
+			Local $iFoundTroopAt = -1, $iTroopAmount = 0, $sTroopName
+			Local $vTroopIndex = $listInfoDeploy[$i][0]
+			Local $iNumberSides = $listInfoDeploy[$i][1]
+			Local $iNumberWaves = $listInfoDeploy[$i][2]
+			Local $iMaxNumberWaves = $listInfoDeploy[$i][3]
+			Local $iSlotsPerEdge = $listInfoDeploy[$i][4]
+			If $g_bDebugSetlog Then SetDebugLog("**ListInfoDeploy row " & $i & ": Use: " & $vTroopIndex & "|Sides: " & $iNumberSides & "|Wave: " & $iNumberWaves & "|Max Wavess: " & $iMaxNumberWaves & "|Slots per Edge " & $iSlotsPerEdge, $COLOR_DEBUG)
+			If IsNumber($vTroopIndex) Then
+				$iFoundTroopAt = _ArraySearch($g_avAttackTroops, $vTroopIndex, 0, 0, 0, 0, 1, 0)
+				If $iFoundTroopAt <> -1 Then
+					$iTroopAmount = Ceiling($g_avAttackTroops[$iFoundTroopAt][1] / $iMaxNumberWaves)
+					$sTroopName = GetTroopName($vTroopIndex, $iTroopAmount)
 				EndIf
-				$listInfoDeployTroopPixel = $listListInfoDeployTroopPixel[$waveNb - 1]
+			EndIf
+			If ($iFoundTroopAt <> -1 And $iTroopAmount > 0) Or IsString($vTroopIndex) Then
+				Local $listInfoDeployTroopPixel
+				If (UBound($listListInfoDeployTroopPixel) < $iNumberWaves) Then
+					ReDim $listListInfoDeployTroopPixel[$iNumberWaves]
+					Local $newListInfoDeployTroopPixel[0]
+					$listListInfoDeployTroopPixel[$iNumberWaves - 1] = $newListInfoDeployTroopPixel
+				EndIf
+				$listInfoDeployTroopPixel = $listListInfoDeployTroopPixel[$iNumberWaves - 1]
 
 				ReDim $listInfoDeployTroopPixel[UBound($listInfoDeployTroopPixel) + 1]
-				If (IsString($troopKind)) Then
-					Local $arrCCorHeroes[1] = [$troopKind]
+				If (IsString($vTroopIndex)) Then
+					Local $arrCCorHeroes[1] = [$vTroopIndex]
 					$listInfoDeployTroopPixel[UBound($listInfoDeployTroopPixel) - 1] = $arrCCorHeroes
 				Else
-					Local $infoDropTroop = DropTroop2($troop, $nbSides, $troopNb, $slotsPerEdge, $name)
+					Local $infoDropTroop = DropTroop2($iFoundTroopAt, $iNumberSides, $iTroopAmount, $iSlotsPerEdge, $sTroopName)
 					$listInfoDeployTroopPixel[UBound($listInfoDeployTroopPixel) - 1] = $infoDropTroop
 				EndIf
-				$listListInfoDeployTroopPixel[$waveNb - 1] = $listInfoDeployTroopPixel
+				$listListInfoDeployTroopPixel[$iNumberWaves - 1] = $listInfoDeployTroopPixel
 			EndIf
 		Next
 
@@ -206,7 +200,7 @@ Func LaunchTroop2($listInfoDeploy, $iCC, $iKing, $iQueen, $iWarden)
 									If _Sleep($DELAYLAUNCHTROOP21) Then Return
 									SelectDropTroop($infoTroopListArrPixel[0]) ;Select Troop
 									If _Sleep($DELAYLAUNCHTROOP23) Then Return
-									SetLog("Dropping " & $infoTroopListArrPixel[2] & "  of " & $infoTroopListArrPixel[5] & " => on each side (side : " & $i + 1 & ")", $COLOR_SUCCESS)
+									SetLog("Dropping " & $infoTroopListArrPixel[2] & " of " & $infoTroopListArrPixel[5] & " Points Per Side: " & $infoTroopListArrPixel[3] & " (side " & $i + 1 & ")", $COLOR_SUCCESS)
 									Local $pixelDropTroop[1] = [$listPixel]
 									DropOnPixel($infoTroopListArrPixel[0], $pixelDropTroop, $infoTroopListArrPixel[2], $infoTroopListArrPixel[3])
 								EndIf
@@ -227,16 +221,18 @@ Func LaunchTroop2($listInfoDeploy, $iCC, $iKing, $iQueen, $iWarden)
 				Local $infoPixelDropTroop = $listInfoDeployTroopPixel[$i]
 				If Not (IsString($infoPixelDropTroop[0]) And ($infoPixelDropTroop[0] = "CC" Or $infoPixelDropTroop[0] = "HEROES")) Then
 					Local $numberLeft = ReadTroopQuantity($infoPixelDropTroop[0])
-					;SetLog("NumberLeft : " & $numberLeft)
 					If ($numberLeft > 0) Then
 						If _Sleep($DELAYLAUNCHTROOP21) Then Return
 						SelectDropTroop($infoPixelDropTroop[0]) ;Select Troop
 						If _Sleep($DELAYLAUNCHTROOP23) Then Return
-						SetLog("Dropping last " & $numberLeft & "  of " & $infoPixelDropTroop[5], $COLOR_SUCCESS)
+						SetLog("Dropping last " & $numberLeft & " of " & $infoPixelDropTroop[5], $COLOR_SUCCESS)
+						;                       $troop,             $listArrPixel,               $number,                                 $slotsPerEdge = 0
 						DropOnPixel($infoPixelDropTroop[0], $infoPixelDropTroop[1], Ceiling($numberLeft / UBound($infoPixelDropTroop[1])), $infoPixelDropTroop[3])
 					EndIf
 				EndIf
+				If _Sleep(SetSleep(0)) Then Return
 			Next
+			If _Sleep(SetSleep(1)) Then Return
 		Next
 	Else
 		For $i = 0 To UBound($listInfoDeploy) - 1

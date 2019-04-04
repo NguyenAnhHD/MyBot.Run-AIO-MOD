@@ -13,7 +13,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -337,11 +337,9 @@ Func SetSwitchAccLog($String, $Color = $COLOR_BLACK, $Font = "Verdana", $FontSiz
 EndFunc   ;==>SetSwitchAccLog
 
 Func AtkLogHead()
-	Local $Text = ""
-	If ProfileSwitchAccountEnabled() Then $Text = "|Account"
 	SetAtkLog(_PadStringCenter(" " & GetTranslatedFileIni("MBR Func_AtkLogHead", "AtkLogHead_Text_01", "ATTACK LOG") & " ", 71, "="), "", $COLOR_BLACK, "MS Shell Dlg", 8.5)
-	SetAtkLog(GetTranslatedFileIni("MBR Func_AtkLogHead", "AtkLogHead_Text_02", '|                 ------- RESULT ------ ---- LOOT ---- ---- BONUS ----'), "")
-	SetAtkLog(GetTranslatedFileIni("MBR Func_AtkLogHead", "AtkLogHead_Text_03", '|AC|TIME.|TROP|SRC|CLOUD|TH|TR|[%]|TR.|S|GOLD|ELIX|  DE|GOLD|ELIX|  DE|L.') & $Text, "")
+	SetAtkLog(GetTranslatedFileIni("MBR Func_AtkLogHead", "AtkLogHead_Text_02", '|                      -------  LOOT ------           ------ BONUS ------'), "")
+	SetAtkLog(GetTranslatedFileIni("MBR Func_AtkLogHead", "AtkLogHead_Text_03", '|AC|TIME.|TROP.|SRC|DS|   GOLD| ELIXIR|  DE|TR.|S|  %|  GOLD|ELIXIR|  DE|L.'), "")
 EndFunc   ;==>AtkLogHead
 
 Func __FileWriteLog($handle, $text)

@@ -7,7 +7,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: KnowJack (08-2015), TheMaster1st (09-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -94,14 +94,14 @@ Func waitMainScreenMini()
 	SetLog("Waiting for Main Screen after " & $g_sAndroidEmulator & " restart", $COLOR_INFO)
 
 	; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
-	If $g_iChkAutoDock Then
+	If $g_bChkAutoDock Then
 		If Not $g_bAndroidEmbedded Then
-			SetLog("Bot Auto Dock to Emulator", $COLOR_INFO)
+			SetLog("Auto use Dock Android Window", $COLOR_INFO)
 			btnEmbed()
 		EndIf
-	ElseIf $g_iChkAutoHideEmulator Then
+	ElseIf $g_bChkAutoHideEmulator Then
 		If Not $g_bIsHidden Then
-			SetLog("Bot Auto Hide Emulator", $COLOR_INFO)
+			SetLog("Auto hidden the Emulator", $COLOR_INFO)
 			btnHide()
 			$g_bIsHidden = True
 		EndIf

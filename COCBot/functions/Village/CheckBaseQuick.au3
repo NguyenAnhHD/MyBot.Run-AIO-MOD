@@ -8,7 +8,7 @@
 ; Return values .: None
 ; Author ........: MonkeyHunter (12-2015, 09-2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -60,7 +60,7 @@ Func CheckBaseQuick($bStopRecursion = False, $sReturnHome = "")
 		If Not ($g_bFullArmy) And $g_bTrainEnabled = True Then
 			If $g_iActualTrainSkip < $g_iMaxTrainSkip Then
 				; Train()
-				TrainRevamp()
+				TrainSystem()
 				If $g_bRestart Then Return
 			Else
 				If $g_bDebugSetlogTrain Then SetLog("skip train. " & $g_iActualTrainSkip + 1 & "/" & $g_iMaxTrainSkip, $color_purple)

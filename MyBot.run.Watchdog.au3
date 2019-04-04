@@ -3,7 +3,7 @@
 ; Description ...: This file contens the Sequence that runs all MBR Bot
 ; Author ........: cosote (12-2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -12,7 +12,6 @@
 
 #NoTrayIcon
 #RequireAdmin
-#AutoIt3Wrapper_UseUpx=y
 #AutoIt3Wrapper_UseX64=7n
 #AutoIt3Wrapper_Run_Au3Stripper=y
 #Au3Stripper_Parameters=/rsln
@@ -116,7 +115,7 @@ Func UpdateManagedMyBot($aBotDetails)
 	Return True
 EndFunc   ;==>UpdateManagedMyBot
 
-Global $g_sBotTitle = "My Bot Watchdog " & $g_sBotVersion ;~ Don't use any non file name supported characters like \ / : * ? " < > |
+Global $g_sBotTitle = "My Bot Watchdog " & $g_sBotVersion & " - " & " AiO++ MOD " & $g_sModVersion & " -" ;~ Don't use any non file name supported characters like \ / : * ? " < > |
 
 Opt("WinTitleMatchMode", 3) ; Window Title exact match mode
 

@@ -10,7 +10,7 @@
 ; Return values .: NA
 ; Author ........: CodeSlinger69 (2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -64,7 +64,7 @@ Func _Ini_Save($filename)
 	FileCopy($filename, $filename & ".bak", $FC_OVERWRITE)
 
 	Local $hFile = FileOpen($filename, $FO_OVERWRITE + $FO_UTF16_LE)
-
+	FileWriteLine($hFile, ";" & TimeDebug() & "MyBot.run configuration saved: " & $filename)
 	Local $sCurrentSection = ""
 
 	For $i = 0 To $g_iIniLineCount - 1

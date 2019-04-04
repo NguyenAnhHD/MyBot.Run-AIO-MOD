@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: GkevinOD (2014)
 ; Modified ......: Hervidero (2015), KnowJack(July 2015), CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -29,7 +29,7 @@ Func Initiate()
 			SetLogCentered(" Search Mode Start ", Default, $COLOR_SUCCESS)
 		EndIf
 		SetLogCentered("  Current Profile: " & $g_sProfileCurrentName & " ", "-", $COLOR_INFO)
-		If $g_bDebugSetlog Or $g_bDebugOcr Or $g_bDebugRedArea Or $g_bDebugImageSave Or $g_bDebugBuildingPos Or $g_bDebugOCRdonate Or $g_bDebugAttackCSV Or $g_bDebugAndroid Then ;Or $g_bDevMode
+		If $g_bDebugSetlog Or $g_bDebugOcr Or $g_bDebugRedArea Or $g_bDebugImageSave Or $g_bDebugBuildingPos Or $g_bDebugOCRdonate Or $g_bDebugAttackCSV Or $g_bDebugAndroid Then
 			SetLogCentered(" Warning Debug Mode Enabled! ", "-", $COLOR_ERROR)
 			SetLog("      SetLog : " & $g_bDebugSetlog, $COLOR_ERROR, "Lucida Console", 8)
 			SetLog("     Android : " & $g_bDebugAndroid, $COLOR_ERROR, "Lucida Console", 8)
@@ -44,9 +44,9 @@ Func Initiate()
 
 		$g_bFirstStart = True
 		$g_bInitiateSwitchAcc = True
-		$g_iFirstTimeLab = 0
+		$g_sLabUpgradeTime = ""
 
-		If $g_bNotifyDeleteAllPushesOnStart Then _DeletePush()
+;~ 		If $g_bNotifyDeleteAllPushesOnStart Then _DeletePush()
 
 		If Not $g_bSearchMode Then
 			$g_hTimerSinceStarted = __TimerInit()
@@ -191,11 +191,40 @@ EndFunc   ;==>btnSearchMode
 
 Func btnPause($bRunNow = True)
 	TogglePause()
+	; Enable/Disable GUI while botting - Team AiO MOD++
+	GUICtrlSetState($g_hBtnDisableGUI, $GUI_HIDE)
+	GUICtrlSetState($g_hBtnEnableGUI, $GUI_SHOW)
 EndFunc   ;==>btnPause
 
 Func btnResume()
 	TogglePause()
+	; Enable/Disable GUI while botting - Team AiO MOD++
+	GUICtrlSetState($g_hBtnDisableGUI, $GUI_HIDE)
+	GUICtrlSetState($g_hBtnEnableGUI, $GUI_HIDE)
 EndFunc   ;==>btnResume
+
+; Enable/Disable GUI while botting - Team AiO MOD++
+Func btnEnableGUI()
+	GUICtrlSetState($g_hBtnEnableGUI, $GUI_HIDE)
+	GUICtrlSetState($g_hBtnDisableGUI, $GUI_SHOW)
+	GUICtrlSetState($g_hBtnResume, $GUI_DISABLE)
+	AndroidShieldForceDown(True)
+	EnableGuiControls() ; enable emulator menu controls
+	SetLog("Enabled bot controls as you wished", $COLOR_SUCCESS)
+EndFunc   ;==>btnEnableGUI
+
+Func btnDisableGUI()
+	GUICtrlSetState($g_hBtnDisableGUI, $GUI_HIDE)
+	GUICtrlSetState($g_hBtnEnableGUI, $GUI_SHOW)
+	GUICtrlSetState($g_hBtnResume, $GUI_ENABLE)
+	SetLog("Save config and disable bot controls manually", $COLOR_SUCCESS)
+	AndroidShieldForceDown(False)
+	SaveConfig()
+	readConfig()
+	applyConfig()
+	DisableGuiControls()
+EndFunc   ;==>btnDisableGUI
+; Enable/Disable GUI while botting - Team AiO MOD++
 
 Func btnAttackNowDB()
 	If $g_bRunState Then
@@ -384,7 +413,7 @@ Func ToggleGuiControls($bEnabled, $bOptimizedRedraw = True)
 	$g_bGUIControlDisabled = True
 	For $i = $g_hFirstControlToHide To $g_hLastControlToHide
 		If IsAlwaysEnabledControl($i) Then ContinueLoop
-		If $g_bNotifyPBEnable And $i = $g_hBtnNotifyDeleteMessages Then ContinueLoop ; exclude the DeleteAllMesages button when PushBullet is enabled
+		;If $g_bNotifyPBEnable And $i = $g_hBtnNotifyDeleteMessages Then ContinueLoop ; exclude the DeleteAllMesages button when PushBullet is enabled
 		If Not $bEnabled Then
 			; Save state of all controls on tabs
 			$g_aiControlPrevState[$i] = BitAND(GUICtrlGetState($i), $GUI_ENABLE)

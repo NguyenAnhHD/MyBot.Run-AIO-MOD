@@ -7,7 +7,7 @@
 ; Return values .: Total current spell count or -1 when not yet read
 ; Author ........:
 ; Modified ......: MonkeyHunter (06-2016), CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -34,7 +34,7 @@ EndFunc   ;==>GetCurTotalSpell
 Func GetCurTotalDarkSpell()
 
 	Local $iCount = 0
-	For $i = $eSpellPoison To $eSpellSkeleton - 1
+	For $i = $eSpellPoison To $eSpellBat - 1
 		$iCount += $g_aiCurrentSpells[$i]
 	Next
 
@@ -49,7 +49,7 @@ EndFunc   ;==>GetCurTotalDarkSpell
 Func GetCurTotalSpells()
 
 	Local $aCount[2]
-	For $i = $eSpellLightning To $eSpellSkeleton - 1
+	For $i = $eSpellLightning To $eSpellBat - 1
 		$aCount[0] += $g_aiCurrentSpells[$i]
 		If $g_aiCurrentSpells[$i] >= 1 Then $aCount[1] += 1
 	Next

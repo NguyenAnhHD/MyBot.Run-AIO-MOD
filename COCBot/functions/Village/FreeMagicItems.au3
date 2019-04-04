@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: ProMac (03-2018)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -33,7 +33,7 @@ Func CollectFreeMagicItems($bTest = False)
 		Click($g_iQuickMISX + 120, $g_iQuickMISY + 160)
 		If _Sleep(1500) Then Return
 	Else
-		SetLog("Trader unvailable", $COLOR_INFO)
+		SetLog("Trader unavailable", $COLOR_INFO)
 		Return
 	EndIf
 

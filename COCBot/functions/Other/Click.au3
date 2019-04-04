@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: (2014)
 ; Modified ......: HungLe (may-2015) Sardo 2015-08
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......: checkMainscreen, isProblemAffect
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -16,8 +16,7 @@
 #include-once
 #include <WinAPISys.au3>
 
-; Bot Humanization - Team AiO MOD++
-Func FClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
+Func Click($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 	If $g_bDebugClick Or TestCapture() Then
 		Local $txt = _DecodeDebug($debugtxt)
 		SetLog("Click " & $x & "," & $y & "," & $times & "," & $speed & " " & $debugtxt & $txt, $COLOR_ACTION, "Verdana", "7.5", 0)
@@ -27,8 +26,6 @@ Func FClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 
 	If $g_bAndroidAdbClick = True Then
 		AndroidClick($x, $y, $times, $speed)
-	EndIf
-	If $g_bAndroidAdbClick = True Then
 		Return
 	EndIf
 
@@ -74,8 +71,6 @@ Func _ControlClick($x, $y)
 		$y += $g_aiBSrpos[1]
 	EndIf
 	If $g_iAndroidControlClickMode = 0 Then
-		Opt("MouseClickDelay", $g_iAndroidControlClickDelay) ;Default: 10 milliseconds
-		Opt("MouseClickDownDelay", $g_iAndroidControlClickDownDelay) ;Default: 2 milliseconds
 		Return ControlClick($hWin, "", "", "left", "1", $x, $y)
 	EndIf
 	Local $WM_LBUTTONDOWN = 0x0201, $WM_LBUTTONUP = 0x0202
@@ -109,13 +104,10 @@ Func BuildingClick($x, $y, $debugtxt = "")
 EndFunc   ;==>BuildingClick
 
 Func BuildingClickP($point, $debugtxt = "")
-	Local $x = $point[0]
-	Local $y = $point[1]
-	Return BuildingClick($x, $y, $debugtxt)
+	Return BuildingClick($point[0], $point[1], $debugtxt)
 EndFunc   ;==>BuildingClickP
 
-; Bot Humanization - Team AiO MOD++
-Func FPureClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
+Func PureClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 	If $g_bDebugClick Then
 		Local $txt = _DecodeDebug($debugtxt)
 		SetLog("PureClick " & $x & "," & $y & "," & $times & "," & $speed & " " & $debugtxt & $txt, $COLOR_ACTION, "Verdana", "7.5", 0)
@@ -124,9 +116,9 @@ Func FPureClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 	If TestCapture() Then Return
 
 	If $g_bAndroidAdbClick = True Then
-		AndroidClick($x, $y, $times, $speed, False)
-	EndIf
-	If $g_bAndroidAdbClick = True Then
+		For $i = 1 to $times
+			AndroidClick($x, $y, 1, $speed, False)
+		Next
 		Return
 	EndIf
 
@@ -149,8 +141,7 @@ Func PureClickP($point, $howMuch = 1, $speed = 0, $debugtxt = "")
 	PureClick($point[0], $point[1], $howMuch, $speed, $debugtxt)
 EndFunc   ;==>PureClickP
 
-; Bot Humanization - Team AiO MOD++
-Func FGemClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
+Func GemClick($x, $y, $times = 1, $speed = 0, $debugtxt = "")
 	If $g_bDebugClick Then
 		Local $txt = _DecodeDebug($debugtxt)
 		SetLog("GemClick " & $x & "," & $y & "," & $times & "," & $speed & " " & $debugtxt & $txt, $COLOR_ACTION, "Verdana", "7.5", 0)
@@ -334,6 +325,8 @@ Func _DecodeDebug($message)
 			Return $separator & "Train - Train Baby Dragon"
 		Case "#0343"
 			Return $separator & "Train - Train Miner"
+		Case "#0344"
+			Return $separator & "Train - Train Ice Golem"	
 
 			;DONATE
 		Case "#0168"
@@ -362,19 +355,6 @@ Func _DecodeDebug($message)
 			Return $separator & "Profile - Profile Button"
 		Case "#0223"
 			Return $separator & "Profile - Close Page"
-			;REARM
-		Case "#0225"
-			Return $separator & "Rearm - Click Town Hall"
-		Case "#0326", "#0228"
-			Return $separator & "Rearm - Click Rearm Button"
-		Case "#0226", "#0229"
-			Return $separator & "Rearm - Click Rearm"
-		Case "#0227", "#0230", "#0233"
-			Return $separator & "Rearm - Close Gem Spend Window"
-		Case "#0231"
-			Return $separator & "Rearm - Click Inferno Button"
-		Case "#0232"
-			Return $separator & "Rearm - Inferno Button"
 			;REQUEST CC
 		Case "#0250"
 			Return $separator & "Request - Click Castle Clan"
@@ -426,7 +406,8 @@ Func _DecodeDebug($message)
 			Return $separator & "Attack Search - Press retry search button"
 		Case "#0513"
 			Return $separator & "Attack Search - Return Home button"
-
+		Case "#0514"
+			Return $separator & "Attack Search - Clouds, keep game alive"
 		Case "#0000"
 			Return $separator & " "
 

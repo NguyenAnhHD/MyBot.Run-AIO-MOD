@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: GKevinOD (2014)
 ; Modified ......: DkEd, Hervidero (2015), CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -111,6 +111,7 @@ Global $g_hTiShow = 0, $g_hTiHide = 0, $g_hTiDonate = 0, $g_hTiAbout = 0, $g_hTi
 Global $g_aFrmBotPosInit[8] = [0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_hFirstControlToHide = 0, $g_hLastControlToHide = 0, $g_aiControlPrevState[1]
 Global $g_bFrmBotMinimized = False ; prevents bot flickering
+Global $g_hLblAndroidInfo = 0
 
 Global $g_oCtrlIconData = ObjCreate("Scripting.Dictionary")
 Global $g_oGuiNotInMini = ObjCreate("Scripting.Dictionary")
@@ -166,14 +167,14 @@ Func CreateMainGUI()
 	EndIf
 
 	; Set Main Window icon
-	GUISetIcon($g_sLibIconPath, $eIcnGUI)
+	GUISetIcon($g_sLibIconPath, $eIcnAiOMOD)
 	If $g_iGuiMode = 0 Then
 		UpdateBotTitle()
 		Return
 	EndIf
 
 	; Create tray icon
-	TraySetIcon($g_sLibIconPath, $eIcnGUI)
+	TraySetIcon($g_sLibIconPath, $eIcnAiOMOD)
 	Opt("TrayMenuMode", 3)
 	Opt("TrayOnEventMode", 1)
 	Opt("TrayIconHide", 0)
@@ -312,6 +313,11 @@ Func CreateMainGUIControls($bGuiModeUpdate = False)
 		$g_hFrmBot_MAIN_PIC = _GUICtrlCreatePic($g_sLogoPath, 0, $_GUI_MAIN_TOP, $_GUI_MAIN_WIDTH, 67)
 		GUICtrlSetOnEvent(-1, "BotMoveRequest")
 
+		$g_hLblAndroidInfo = GUICtrlCreateLabel($g_sAndroidEmulator & " v" & $g_sAndroidVersion, $_GUI_MAIN_WIDTH - 395, $_GUI_MAIN_TOP + 54, -1, 12, $SS_LEFT)
+		GUICtrlSetFont(-1, 8.5, $FW_BOLD)
+		GUICtrlSetColor(-1, 0x804001)
+		GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
+
 		$g_hFrmBot_URL_PIC = _GUICtrlCreatePic($g_sLogoUrlPath, 0, $_GUI_MAIN_TOP + 67, $_GUI_MAIN_WIDTH, 13)
 		GUICtrlSetCursor(-1, 0)
 
@@ -374,8 +380,8 @@ Func CreateMainGUIControls($bGuiModeUpdate = False)
 	SplashStep(GetTranslatedFileIni("MBR GUI Design - Loading", "SplashStep_05", "Loading Attack tab..."))
 	CreateAttackTab()
 
-	SplashStep(GetTranslatedFileIni("MBR GUI Design - Loading", "SplashStep_10", "Loading Mods tab..."))
-	CreateMODTab()
+;~	SplashStep(GetTranslatedFileIni("MBR GUI Design - Loading", "SplashStep_10", "Loading Mods tab..."))
+;~	CreateMODTab()
 
 	SplashStep(GetTranslatedFileIni("MBR GUI Design - Loading", "SplashStep_06", "Loading Bot tab..."))
 	CreateBotTab() ; also creates  $g_hLastControlToHide
@@ -401,7 +407,7 @@ Func CreateMainGUIControls($bGuiModeUpdate = False)
 	$g_hTabLog = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_01", "Log"))
 	$g_hTabVillage = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_02", "Village"))
 	$g_hTabAttack = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_03", "Attack Plan"))
-	$g_hTabMOD = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06", "Mods"))
+;~	$g_hTabMOD = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_06", "Mods"))
 	$g_hTabBot = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_04", "Bot"))
 	$g_hTabAbout = GUICtrlCreateTabItem(GetTranslatedFileIni("MBR Main GUI", "Tab_05", "About Us"))
 	GUICtrlCreateTabItem("")

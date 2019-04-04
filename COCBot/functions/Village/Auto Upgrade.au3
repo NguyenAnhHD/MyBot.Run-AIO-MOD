@@ -1,25 +1,17 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: Pico Auto Upgrade (v6.1)
-; Description ...: This file contains all functions of Pico Auto Upgrade feature
-; Syntax ........: ---
-; Parameters ....: ---
-; Return values .: ---
-; Author ........: RoroTiti
-; Modified ......: 22/07/2017 (full rewrite from A to Z)
-; Remarks .......: This file is part of MyBotRun. Copyright 2017
+; Name ..........:
+; Description ...:
+; Syntax ........:
+; Parameters ....:
+; Return values .:
+; Author ........:
+; Modified ......:
+; Remarks .......: This file is part of MyBotRun. Copyright 2015-2018
 ;                  MyBotRun is distributed under the terms of the GNU GPL
 ; Related .......: ---
 ; Link ..........: https://www.mybot.run
 ; Example .......: ---
 ;================================================================================================================================
-Func randomSleep($SleepTime, $Range = 0)
-	If $g_bRunState = False Then Return
-	If $Range = 0 Then $Range = Round($SleepTime / 5)
-	Local $SleepTimeF = Random($SleepTime - $Range, $SleepTime + $Range, 1)
-	If $g_bDebugClick Then SetLog("Default sleep : " & $SleepTime & " - Random sleep : " & $SleepTimeF, $COLOR_ORANGE)
-	If _Sleep($SleepTimeF) Then Return
-EndFunc   ;==>randomSleep
-
 Func AutoUpgrade($bTest = False)
 	Local $bWasRunState = $g_bRunState
 	$g_bRunState = True
@@ -29,9 +21,9 @@ Func AutoUpgrade($bTest = False)
 EndFunc
 
 Func _AutoUpgrade()
-	If $g_iChkAutoUpgrade = 0 Then Return ; disabled, no need to continue...
+	If Not $g_bAutoUpgradeEnabled Then Return
 
-	SetLog("Entering Auto Upgrade...", $COLOR_INFO)
+	SetLog("Starting Auto Upgrade", $COLOR_INFO)
 	Local $iLoopAmount = 0
 	Local $iLoopMax = 6
 
@@ -41,17 +33,12 @@ Func _AutoUpgrade()
 		If $iLoopAmount >= $iLoopMax Or $iLoopAmount >= 12 Then ExitLoop ; 6 loops max, to avoid infinite loop
 
 		ClickP($aAway, 1, 0, "#0000") ;Click Away
-		randomSleep($DELAYAUTOUPGRADEBUILDING1)
-		VillageReport(True, False)
+		If _sleep($DELAYAUTOUPGRADEBUILDING1) Then Return
+		VillageReport(True, True)
 
-		If $g_iFreeBuilderCount < 1 Then
-			SetLog("No builder available... Skipping Auto Upgrade...", $COLOR_WARNING)
-			ExitLoop
-		EndIf
-
-		; check if Save builder for walls is active
-		If $g_bUpgradeWallSaveBuilder And ($g_iFreeBuilderCount < 2) Then
-			SetLog("The only builder available must be kept for walls... Skipping Auto Upgrade...", $COLOR_WARNING)
+		;Check if there is a free builder for Auto Upgrade
+		If ($g_iFreeBuilderCount - ($g_bAutoUpgradeWallsEnable And $g_bUpgradeWallSaveBuilder ? 1 : 0) - ReservedBuildersForHeroes()) <= 0 Then
+			SetLog("No builder available. Skipping Auto Upgrade!", $COLOR_WARNING)
 			ExitLoop
 		EndIf
 
@@ -86,7 +73,7 @@ Func _AutoUpgrade()
 		If _Sleep($DELAYAUTOUPGRADEBUILDING1) Then Return
 
 		; check if any wrong click by verifying the presence of the Upgrade button (the hammer)
-		If Not QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 120, 630, 740, 680) Then
+		If Not QuickMIS("BC1", $g_sImgAUpgradeUpgradeBtn, 140, 590, 720, 670) Then
 			SetLog("No upgrade here... Wrong click, looking next...", $COLOR_WARNING)
 			;$g_iNextLineOffset = $g_iCurrentLineOffset -> not necessary finally, but in case, I keep lne commented
 			$g_iNextLineOffset = $g_iCurrentLineOffset
@@ -94,7 +81,7 @@ Func _AutoUpgrade()
 		EndIf
 
 		; get the name and actual level of upgrade selected, if strings are empty, will exit Auto Upgrade, an error happens
-		$g_aUpgradeNameLevel = BuildingInfo(242, 520 + $g_iBottomOffsetY)
+		$g_aUpgradeNameLevel = BuildingInfo(242, 491 + $g_iBottomOffsetY)
 		If $g_aUpgradeNameLevel[0] = "" Then
 			SetLog("Error when trying to get upgrade name and level, looking next...", $COLOR_ERROR)
 			$g_iNextLineOffset = $g_iCurrentLineOffset
@@ -116,20 +103,22 @@ Func _AutoUpgrade()
 				$bMustIgnoreUpgrade = ($g_iChkUpgradesToIgnore[4] = 1) ? True : False
 			Case "Laboratory"
 				$bMustIgnoreUpgrade = ($g_iChkUpgradesToIgnore[5] = 1) ? True : False
-			Case "Barracks"
+			Case "Wall"
 				$bMustIgnoreUpgrade = ($g_iChkUpgradesToIgnore[6] = 1) ? True : False
-			Case "Dark Barracks"
+			Case "Barracks"
 				$bMustIgnoreUpgrade = ($g_iChkUpgradesToIgnore[7] = 1) ? True : False
-			Case "Spell Factory"
+			Case "Dark Barracks"
 				$bMustIgnoreUpgrade = ($g_iChkUpgradesToIgnore[8] = 1) ? True : False
-			Case "Dark Spell Factory"
+			Case "Spell Factory"
 				$bMustIgnoreUpgrade = ($g_iChkUpgradesToIgnore[9] = 1) ? True : False
-			Case "Gold Mine"
+			Case "Dark Spell Factory"
 				$bMustIgnoreUpgrade = ($g_iChkUpgradesToIgnore[10] = 1) ? True : False
-			Case "Elixir Collector"
+			Case "Gold Mine"
 				$bMustIgnoreUpgrade = ($g_iChkUpgradesToIgnore[11] = 1) ? True : False
-			Case "Dark Elixir Drill"
+			Case "Elixir Collector"
 				$bMustIgnoreUpgrade = ($g_iChkUpgradesToIgnore[12] = 1) ? True : False
+			Case "Dark Elixir Drill"
+				$bMustIgnoreUpgrade = ($g_iChkUpgradesToIgnore[13] = 1) ? True : False
 			Case Else
 				$bMustIgnoreUpgrade = False
 		EndSwitch
@@ -148,8 +137,8 @@ Func _AutoUpgrade()
 		Switch $g_aUpgradeNameLevel[1]
 			Case "Barbarian King", "Archer Queen", "Grand Warden"
 				$g_aUpgradeResourceCostDuration[0] = QuickMIS("N1", $g_sImgAUpgradeRes, 690, 540, 730, 580) ; get resource
-				$g_aUpgradeResourceCostDuration[1] = getResourcesBonus(598, 519 + $g_iMidOffsetY) ; get cost
-				$g_aUpgradeResourceCostDuration[2] = getHeroUpgradeTime(464, 527 + $g_iMidOffsetY) ; get duration
+				$g_aUpgradeResourceCostDuration[1] = getResourcesBonus(598, 522 + $g_iMidOffsetY) ; get cost
+				$g_aUpgradeResourceCostDuration[2] = getHeroUpgradeTime(578, 465 + $g_iMidOffsetY) ; get duration
 			Case Else
 				$g_aUpgradeResourceCostDuration[0] = QuickMIS("N1", $g_sImgAUpgradeRes, 460, 510, 500, 550) ; get resource
 				$g_aUpgradeResourceCostDuration[1] = getResourcesBonus(366, 487 + $g_iMidOffsetY) ; get cost

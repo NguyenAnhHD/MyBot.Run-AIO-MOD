@@ -22,13 +22,14 @@ Func ClanHop()
 	Local $iPosJoinedClans = 0, $iScrolls = 0, $iHopLoops = 0, $iErrors = 0
 
 	Local $aJoinClanBtn[4] = [157, 510, 0x6CBB1F, 20] ; Green Join Button on Chat Tab when you are not in a Clan
-	Local $aClanPage[4] = [768, 398, 0xCE0D0E, 20] ; Red Leave Clan Button on Clan Page
-	Local $aClanPageJoin[4] = [768, 398, 0x74BD2F, 20] ; Green Join Clan Button on Clan Page
-	Local $aJoinClanPage[4] = [720, 310, 0xEBCC80, 20] ; Trophy Amount of Clan Background of first Clan
-	Local $aClanChat[4] = [105, 650, 0x86C808, 40] ; *Your Name* joined the Clan Message Check to verify loaded Clan Chat
-	Local $aChatTab[4] = [189, 24, 0x706C50, 20] ; Clan Chat Tab on Top, check if right one is selected
-	Local $aGlobalTab[4] = [189, 24, 0x383828, 20] ; Global Chat Tab on Top, check if right one is selected
-	Local $aClanBadgeNoClan[4] = [151, 307, 0xF05838, 20]; Orange Tile of Clan Logo on Chat Tab if you are not in a Clan
+	Local $aClanPage[4] = [725, 410, 0xEF5D5F, 20] ; Red Leave Clan Button on Clan Page
+	Local $aClanPageJoin[4] = [720, 407, 0xBCE764, 20] ; Green Join Clan Button on Clan Page
+	Local $aJoinClanPage[4] = [755, 319, 0xE8C672, 20] ; Trophy Amount of Clan Background of first Clan
+	Local $aClanChat[4] = [83, 650, 0x8BD004, 30] ; *Your Name* joined the Clan Message Check to verify loaded Clan Chat
+	Local $aChatTab[4] = [170, 16, 0x79755B, 20] ; Clan Chat Tab on Top, check if right one is selected
+	Local $aGlobalTab[4] = [170, 16, 0x383828, 10] ; Global Chat Tab on Top, check if right one is selected
+	Local $aClanBadgeNoClan[4] = [150, 315, 0xEB4C30, 20]; Orange Tile of Clan Logo on Chat Tab if you are not in a Clan
+	Local $aClanChatRules[4] = [158, 493, 0x6CB531, 20]
 
 	Local $aClanNameBtn[2] = [89, 63] ; Button to open Clan Page from Chat Tab
 
@@ -151,17 +152,25 @@ Func ClanHop()
 
 		ClickP($aClanPageJoin) ; Join Clan
 
+		If Not _WaitForCheckPixel($aClanChatRules, $g_bCapturePixel, Default, "Wait For Chat Rules in Clan Page:") Then ; Check Chat Rules in Clan Page
+			SetLog("Chat Rules did not show.. Starting over again", $COLOR_ERROR)
+			$iErrors += 1
+			ContinueLoop
+		EndIf
+
+		ClickP($aClanChatRules)
+
 		If Not _WaitForCheckPixel($aClanChat, $g_bCapturePixel, Default, "Wait For Clan Chat:") Then ; Check for your "joined the Clan" Message to verify that Chat loaded successfully
 			SetLog("Could not verify loaded Clan Chat. Starting over again", $COLOR_ERROR)
 			$iErrors += 1
 			ContinueLoop
 		EndIf
 
-		DonateCC(False) ; Start Donate Sequence
+		DonateCC() ; Start Donate Sequence
 
 		If _Sleep(300) Then Return ; Little Sleep if requests got filled and chat moves
 
-		DonateCC(False)
+		DonateCC()
 
 		ForceCaptureRegion()
 		If Not _CheckPixel($aChatTab, $g_bCapturePixel) Then ClickP($aOpenChat, 1, 0, "#0168") ; Clicks chat tab
@@ -204,7 +213,9 @@ Func ClanHop()
 					EndIf
 				EndIf
 			WEnd
-			TrainRevamp()
+			VillageReport()
+			ProfileSwitch()
+			TrainSystem()
 			$iHopLoops = 0
 
 		EndIf

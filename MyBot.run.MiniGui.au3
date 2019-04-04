@@ -3,7 +3,7 @@
 ; Description ...: This file contains the initialization and main loop sequences f0r the MBR Bot
 ; Author ........:  (2014)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -13,7 +13,6 @@
 ; AutoIt pragmas
 #NoTrayIcon
 #RequireAdmin
-#AutoIt3Wrapper_UseUpx=y
 #AutoIt3Wrapper_UseX64=7n
 ;#AutoIt3Wrapper_Res_HiDpi=Y ; HiDpi will be set during run-time!
 #AutoIt3Wrapper_Run_Au3Stripper=y
@@ -51,8 +50,6 @@ Opt("GUIEventOptions", 1) ; Handle minimize and restore for dock android support
 Opt("GUICloseOnESC", 0) ; Don't send the $GUI_EVENT_CLOSE message when ESC is pressed.
 Opt("WinTitleMatchMode", 3) ; Window Title exact match mode
 Opt("GUIOnEventMode", 1)
-Opt("MouseClickDelay", 10)
-Opt("MouseClickDownDelay", 10)
 
 Global $hNtDll = DllOpen("ntdll.dll")
 #cs
@@ -149,7 +146,7 @@ Func UpdateBotTitle($sTitle = "My Bot " & $g_sBotVersion)
 	DllCall("kernel32.dll", "bool", "SetConsoleTitle", "str", "Console " & $g_sBotTitle)
 	; Update try icon title
 	TraySetToolTip($g_sBotTitle)
-	GUISetIcon($g_sLibIconPath, $eIcnGUI)
+	GUISetIcon($g_sLibIconPath, $eIcnAiOMOD)
 
 	SetDebugLog("Bot title updated to: " & $g_sBotTitle)
 EndFunc   ;==>UpdateBotTitle
@@ -367,6 +364,7 @@ Func InitAndroid($bCheckOnly = False, $bLogChangesOnly = True)
 			, ((IsArray($g_avAndroidProgramFileVersionInfo) ? _ArrayToString($g_avAndroidProgramFileVersionInfo, ",", 1) : "not available")) _
 			, $g_iAndroidSecureFlags _
 			, $g_sAndroidAdbPath _
+			, $g_sAndroidAdbGlobalOptions _
 			, $__VBoxManage_Path _
 			, $g_sAndroidAdbDevice _
 			, $g_sAndroidPicturesPath _
@@ -441,6 +439,7 @@ Func InitAndroid($bCheckOnly = False, $bLogChangesOnly = True)
 		If CompareAndUpdate($aPriorValues[IncrUpdate($i)], $sText) Or $bLogChangesOnly = False Then SetDebugLog("Android Program FileVersionInfo: " & $sText)
 		If CompareAndUpdate($aPriorValues[IncrUpdate($i)], $g_iAndroidSecureFlags) Or $bLogChangesOnly = False Then SetDebugLog("Android SecureME setting: " & $g_iAndroidSecureFlags)
 		If CompareAndUpdate($aPriorValues[IncrUpdate($i)], $g_sAndroidAdbPath) Or $bLogChangesOnly = False Then SetDebugLog("Android ADB Path: " & $g_sAndroidAdbPath)
+		If CompareAndUpdate($aPriorValues[IncrUpdate($i)], $g_sAndroidAdbGlobalOptions) Or $bLogChangesOnly = False Then SetDebugLog("Android ADB Global Options: " & $g_sAndroidAdbGlobalOptions)
 		If CompareAndUpdate($aPriorValues[IncrUpdate($i)], $__VBoxManage_Path) Or $bLogChangesOnly = False Then SetDebugLog("Android VBoxManage Path: " & $__VBoxManage_Path)
 		If CompareAndUpdate($aPriorValues[IncrUpdate($i)], $g_sAndroidAdbDevice) Or $bLogChangesOnly = False Then SetDebugLog("Android ADB Device: " & $g_sAndroidAdbDevice)
 		If CompareAndUpdate($aPriorValues[IncrUpdate($i)], $g_sAndroidPicturesPath) Or $bLogChangesOnly = False Then SetDebugLog("Android ADB Shared Folder: " & $g_sAndroidPicturesPath)
@@ -1046,6 +1045,7 @@ Func BotStopped()
 	;GUICtrlSetState($g_hBtnAttackNowTS, $GUI_HIDE)
 	;GUICtrlSetState($g_hPicTwoArrowShield, $GUI_SHOW)
 	;GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
+	;GUICtrlSetState($g_hLblMod, $GUI_SHOW)
 
 	; update try items
 	TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Start", "Start bot"))

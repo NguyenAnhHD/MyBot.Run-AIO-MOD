@@ -7,7 +7,7 @@
 ; Return values .: None
 ; Author ........: MonkeyHunter (08-2016)
 ; Modified ......: MonkeyHunter (05-2017) MMHK (07-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -16,6 +16,7 @@
 Func WaitForClouds()
 
 	If $g_bDebugSetlog Then SetDebugLog("Begin WaitForClouds:", $COLOR_DEBUG1)
+	$g_bCloudsActive = True
 
 	Local $iCount = 0
 	Local $bigCount = 0, $iLastTime = 0
@@ -51,16 +52,17 @@ Func WaitForClouds()
 	Local $hMinuteTimer = __TimerInit() ; initialize timer for tracking search time
 
 	While $g_bRestart = False And _CaptureRegions() And _CheckPixel($aNoCloudsAttack) = False ; loop to wait for clouds to disappear
-		If _Sleep($DELAYGETRESOURCES1) Then Return
+		; notice: don't exit function with return in this loop, use ExitLoop ! ! !
+		If _Sleep($DELAYGETRESOURCES1) Then ExitLoop
 		$iCount += 1
 		If isProblemAffect(True) Then ; check for reload error messages and restart search if needed
 			resetAttackSearch()
-			Return
+			ExitLoop
 		EndIf
 		If $iCount >= $maxSearchCount Then ; If clouds do not clear in alloted time do something
 			If EnableLongSearch() = False Then ; Check if attacking in Champion 1 or higher league with long search that needs to be continued
 				resetAttackSearch()
-				Return
+				ExitLoop
 			Else
 				$bigCount += 1 ; Increment long wait time fail safe timer
 				If $bigCount > $maxLongSearchCount Then ; check maximum wait time
@@ -69,7 +71,7 @@ Func WaitForClouds()
 					$g_bIsClientSyncError = False ; disable fast OOS restart if not simple error and restarting CoC
 					$g_bRestart = True
 					CloseCoC(True)
-					Return
+					ExitLoop
 				EndIf
 				$iCount = 0 ; reset outer loop value
 			EndIf
@@ -79,18 +81,13 @@ Func WaitForClouds()
 			$g_bIsClientSyncError = True
 			$g_bRestart = True
 			CloseCoC(True)
-			Return
+			ExitLoop
 		EndIf
 		If $g_bDebugSetlog Then _GUICtrlStatusBar_SetTextEx($g_hStatusBar, " Status: Loop to clean screen without Clouds, # " & $iCount)
 		$iSearchTime = __TimerDiff($hMinuteTimer) / 60000 ;get time since minute timer start in minutes
 		If $iSearchTime >= $iLastTime + 1 Then
 			$g_iTotalSearchTime += 1
 			SetLog("Cloud wait time " & StringFormat("%.1f", $iSearchTime) & " minute(s), Total Searchtime = " & $g_iTotalSearchTime & " minute(s)", $COLOR_INFO)
-			; Stop on Low battery - Team AiO MOD++
-			If $g_bStopOnBatt Then
-				Setlog("Check Stop on battery", $COLOR_INFO)
-				_BatteryStatus()
-			EndIf
 			; Restart Search Legend league ~ back to home on certain minute on cloud and no reach enemy - Team AiO MOD++
 			If $g_bIsSearchTimeout Then
 				If $iSearchTime > $g_iSearchTimeout Then
@@ -99,21 +96,21 @@ Func WaitForClouds()
 					getArmyTroopCapacity(True, True)
 					$g_bRestart = True ; set force runbot restart flag
 					$g_bIsClientSyncError = True ; set OOS flag for fast restart
-					Return
+					ExitLoop
 				EndIf
 			EndIf
 			$iLastTime += 1
 			; once a minute safety checks for search fail/retry msg and Personal Break events and early detection if CoC app has crashed inside emulator (Bluestacks issue mainly)
 			If chkAttackSearchFail() = 2 Or chkAttackSearchPersonalBreak() = True Or GetAndroidProcessPID() = 0 Then
 				resetAttackSearch()
-				Return
+				ExitLoop
 			EndIf
 			; Check if CoC app restarted without notice (where android restarted app automatically with same PID), and returned to main base
 			If _CheckPixel($aIsMain, $g_bCapturePixel) Then
 				SetLog("Strange error detected! 'WaitforClouds' returned to main base unexpectedly, OOS restart initiated", $COLOR_ERROR)
 				$g_bRestart = True ; Set flag for OOS restart condition
 				resetAttackSearch()
-				Return
+				ExitLoop
 			EndIf
 			; attempt to enable GUI during long wait?
 			If $iSearchTime > 2 And Not $bEnabledGUI Then
@@ -164,7 +161,8 @@ Func EnableLongSearch()
 			If $g_bDebugSetlog Then SetDebugLog("Cloud Search Text not found...", $COLOR_DEBUG)
 			Return False
 		Else
-			Click(271, 351 + $g_iMidOffsetY) ; click on text just to keep game alive
+			Local $KeepAlive[2] = [271, 351 + $g_iMidOffsetY]
+			ClickP($KeepAlive, 1, 0, "#0514") ; click on text just to keep game alive
 		EndIf
 
 		; Small delay
@@ -224,8 +222,9 @@ Func chkAttackSearchPersonalBreak()
 EndFunc   ;==>chkAttackSearchPersonalBreak
 
 Func btnSearchFailRetry()
-	If QuickMIS("BC1", @ScriptDir & "\imgxml\Resources\Clouds", 270, 400, 600, 500) Then
-		Click($g_iQuickMISX + 270, $g_iQuickMISY + 400, 1, 0, "#0512")
+	Local $aRetrySearchButton = decodeSingleCoord(findImage("Retry Search", $g_sImgRetrySearchButton, GetDiamondFromRect("270,400,600,500"), 1, True))
+	If IsArray($aRetrySearchButton) And UBound($aRetrySearchButton) = 2 Then
+		Click($aRetrySearchButton[0], $aRetrySearchButton[1], 1, 0, "#0512")
 		Return True
 	EndIf
 	Return False

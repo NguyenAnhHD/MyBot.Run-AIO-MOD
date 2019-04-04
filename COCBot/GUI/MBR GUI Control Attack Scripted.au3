@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MyBot.run team
 ; Modified ......: CodeSlinger69 (2017), MMHK (01-2008)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -503,3 +503,35 @@ EndFunc   ;==>cmbScriptDroplineDB
 Func cmbScriptDroplineAB()
 	$g_aiAttackScrDroplineEdge[$LB] = _GUICtrlComboBox_GetCurSel($g_hCmbScriptDroplineAB)
 EndFunc   ;==>cmbScriptDroplineAB
+
+Func AttackNowAB()
+	Local $tempbRunState = $g_bRunState
+	Local $tempSieges = $g_aiCurrentSiegeMachines
+	$g_aiCurrentSiegeMachines[$eSiegeWallWrecker] = 1
+	$g_aiCurrentSiegeMachines[$eSiegeBattleBlimp] = 1
+	$g_aiCurrentSiegeMachines[$eSiegeStoneSlammer] = 1
+	$g_aiAttackAlgorithm[$LB] = 1										; Select Scripted Attack
+	$g_sAttackScrScriptName[$LB] = GuiCtrlRead($g_hCmbScriptNameAB)		; Select Scripted Attack File From The Combo Box, Cos it wasn't refreshing until pressing Start button
+	$g_iMatchMode = $LB													; Select Live Base As Attack Type
+	$g_bRunState = True
+	PrepareAttack($g_iMatchMode)										;
+		Attack()			; Fire xD
+	$g_aiCurrentSiegeMachines = $tempSieges
+	$g_bRunState = $tempbRunState
+EndFunc   ;==>AttackNowAB
+
+Func AttackNowDB()
+	Local $tempbRunState = $g_bRunState
+	Local $tempSieges = $g_aiCurrentSiegeMachines
+	$g_aiCurrentSiegeMachines[$eSiegeWallWrecker] = 1
+	$g_aiCurrentSiegeMachines[$eSiegeBattleBlimp] = 1
+	$g_aiCurrentSiegeMachines[$eSiegeStoneSlammer] = 1
+	$g_aiAttackAlgorithm[$DB] = 1										; Select Scripted Attack
+	$g_sAttackScrScriptName[$DB] = GuiCtrlRead($g_hCmbScriptNameDB)		; Select Scripted Attack File From The Combo Box, Cos it wasn't refreshing until pressing Start button
+	$g_iMatchMode = $DB													; Select Live Base As Attack Type
+	$g_bRunState = True
+	PrepareAttack($g_iMatchMode)										;
+		Attack()			; Fire xD
+	$g_aiCurrentSiegeMachines = $tempSieges
+	$g_bRunState = $tempbRunState
+EndFunc   ;==>AttackNowDB

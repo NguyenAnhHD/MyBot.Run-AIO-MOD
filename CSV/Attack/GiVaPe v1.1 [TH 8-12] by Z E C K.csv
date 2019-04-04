@@ -1,0 +1,88 @@
+NOTE  |Author: Z E C K v1.1 [08.09.2018]
+NOTE  |TH8★12Gia 7Wiz 2Pek 3Wal 7Val 1Rage 1Heal 3Quak 1Po-n CC:Gia a Quake
+NOTE  |TH9★12Gia 8Wiz 2Pek 3Wal 9Val 2Rage 1Heal 3Quake CC:Gia a Quak
+NOTE  |TH10★12Gia 8Wiz 2Pek 5Wal 11Val 2Rage 1Heal 3Quak 1Po-n CC:Gia a Qua
+NOTE  |TH11★12Gia 9Wiz 2Pek 5Wal 13Val 1Rage 2Heal 4Quak 1Po-n CC:Gia a Rage
+NOTE  |TH12★12Gia 10Wiz 2Pek 5Wal 15Val 1Rag 2Heal 4Quak 1Po-n CC:Gia a Rage
+NOTE  |    Script Work on "ImgLoc Raw Redline" ~ "Full drop line fix outer corner"
+
+      |----------------------------------------------GoVaPe Start-------------------------------------------------|
+      |                                                Z E C K                                                    |
+	  
+      |_TROOPNAME_|__FLEXIBLE_|____TH06___|____TH07___|____TH08___|____TH09___|____TH10___|____TH11___|____TH12___|
+TRAIN |Giant      |0          |0          |0          |12         |12         |12         |12         |12          |	  
+TRAIN |Valk       |0          |0          |0          |7          |9          |11         |13         |15         |
+TRAIN |Wiza       |0          |0          |0          |7          |8          |8          |9          |10         |
+TRAIN |Pekk       |0          |0          |0          |2          |2          |2          |2          |2          |
+TRAIN |Wall       |0          |0          |0          |3          |3          |5          |5          |5          |
+
+TRAIN |RSpell     |0          |0          |0          |1          |2          |2          |1          |1          |
+TRAIN |HSpell     |0          |0          |0          |1          |1          |1          |2          |2          |
+TRAIN |ESpell     |0          |0          |0          |3          |3          |3          |4          |4          |
+TRAIN |PSpell     |0          |0          |0          |1          |0          |1          |1          |1          |
+ 
+      |_TROOPNAME_|___________|____TH06___|____TH07___|____TH08___|____TH09___|____TH10___|____TH11___|____TH12___|
+TRAIN |King       |0          |0          |0          |1          |1          |1          |1          |1          |
+TRAIN |Queen      |0          |0          |0          |0          |1          |1          |1          |1          |
+TRAIN |Warden     |0          |0          |0          |0          |0          |0          |1          |1          |
+
+      |___________|___________|____TH06___|____TH07___|____TH08___|____TH09___|____TH10___|____TH11___|____TH12___|
+REDLN |0          |0          |1          |1          |1          |1          |1          |1          |1          |
+DRPLN |0          |0          |3          |3          |3          |3          |3          |3          |3          |
+
+      |___________|___________|____TH06___|____TH07___|____TH08___|____TH09___|____TH10___|____TH11___|____TH12___|
+CCREQ |           |           |           |           |Giant Quake|Giant Quake|Giant Quake|Giant  Rage|Giant  Rage|
+
+	  |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|___________|
+SIDE  |0          |0          |0          |0          |0          |0          |10         |           |           |
+      |EAGLE      |INFERNO    |XBOW       |WIZTOWER   |MORTAR     |AIRDEFENSE |GEMBOX     |GEMBOX     |           |
+SIDEB |15         |5          |0          |0          |0          |0          |0          |0          |           |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|___________|___________|
+MAKE  |A          |FRONT-LEFT |10         |1          |EXT-INT    |0          |0          |           |           |
+MAKE  |B          |FRONT-RIGHT|10         |1          |EXT-INT    |0          |0          |           |           |
+MAKE  |C          |FRONT-LEFT |10         |-7         |EXT-INT    |0          |0          |           |           |
+MAKE  |D          |FRONT-LEFT |10         |-8         |INT-EXT    |0          |0          |           |           |
+MAKE  |E          |FRONT-LEFT |10         |-4         |INT-EXT    |0          |0          |           |           |
+MAKE  |T          |FRONT-RIGHT|10         |-13        |INT-EXT    |0          |0          |           |           |
+MAKE  |E          |FRONT-LEFT |10         |-15        |INT-EXT    |0          |0          |           |           |
+MAKE  |G          |FRONT-LEFT |10         |-16        |INT-EXT    |0          |0          |           |           |
+MAKE  |F          |FRONT-RIGHT|10         |-18        |INT-EXT    |0          |0          |           |           |
+MAKE  |M          |LEFT-FRONT |10         |0          |EXT-INT    |0          |5          |           |           |
+MAKE  |N          |RIGHT-FRONT|10         |0          |EXT-INT    |0          |5          |           |           |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|___________|
+DROP  |E          |1          |4          |ESpell     |60-80      |80-90      |450-500    |           |           |
+DROP  |E          |1          |1          |ESpell     |60-80      |80-90      |600-700    |           |           |
+WAIT  |2500-3000  |           |           |           |           |           |           |           |           |
+DROP  |A-B        |5,6,8,10   |4          |Giant      |50-70      |80-90      |15-20      |           |           |
+DROP  |A          |10         |1          |Castle     |50-70      |0          |570-700    |           |           |
+DROP  |A          |10         |1          |WallW      |50-70      |0          |500-700    |           |           |
+DROP  |A          |10         |1          |BattleB    |50-70      |0          |500-700    |           |           |
+DROP  |A-B        |3,5,7,9,10 |5          |Wiza       |50-70      |70-90      |50-70      |           |           |
+WAIT  |1700-2000  |           |           |           |           |           |           |           |           |
+DROP  |A          |10         |5          |Wall       |50-70      |70-90      |400-450    |           |           |
+WAIT  |4000-4200  |           |           |           |           |           |           |           |           |
+DROP  |T          |1          |1          |PSpell     |50-70      |0          |400-450    |           |           |
+DROP  |A          |10         |4          |Giant      |50-70      |70-90      |400-450    |           |           |
+DROP  |A          |10         |2          |Pekk       |50-70      |70-90      |250-300    |           |           |
+DROP  |C          |10         |1          |HSpell     |50-70      |0          |400-450    |           |           |
+DROP  |A          |9          |1          |Warden     |50         |0          |400-450    |           |           |
+DROP  |D          |1          |1          |RSpell     |50-70      |0          |400-450    |           |           |
+DROP  |A          |10         |15         |Valk       |50-70      |37-50      |250-300    |           |           |
+DROP  |A          |9          |1          |Queen      |50-70      |0          |250-300    |           |           |
+DROP  |A          |10         |1          |King       |50-70      |0          |400-450    |           |           |
+WAIT  |2700-3000  |           |           |           |           |           |           |           |           |
+DROP  |E          |1          |1          |HSpell     |50-70      |0          |400-450    |           |           |
+DROP  |G          |1          |1          |RSpell     |50-70      |0          |200-250    |           |           |
+DROP  |F          |1          |1          |HaSpell    |50-70      |0          |400-450    |           |           |
+DROP  |G          |2          |1          |HaSpell    |50-70      |0          |400-450    |           |           |
+WAIT  |5200-5500  |           |           |           |           |           |           |           |           |
+DROP  |A          |10         |1          |WallW      |50         |0          |500-700    |           |           |
+DROP  |A          |10         |1          |BattleB    |50         |0          |500-700    |           |           |
+DROP  |A          |9          |1          |Warden     |50         |0          |400-500    |           |           |
+DROP  |M-N        |10         |5          |Arch       |50-70      |0          |400-500    |           |           |
+DROP  |M-N        |7-10       |1          |REMAIN     |50-70      |100        |50-100     |           |           |
+
+      |                                             i am one of them                                              |
+      |------------------------------------------------GoVaPe End-------------------------------------------------|

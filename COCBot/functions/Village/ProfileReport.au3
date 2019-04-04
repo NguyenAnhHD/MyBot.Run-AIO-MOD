@@ -7,7 +7,7 @@
 ; Return values .: None
 ; Author ........: Sardo
 ; Modified ......: KnowJack (07-2015), Sardo (08-2015), CodeSlinger69 (01-2017), Fliegerfaust (09-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -27,20 +27,19 @@ Func ProfileReport()
 	Click(30, 40, 1, 0, "#0222") ; Click Info Profile Button
 	If _Sleep($DELAYPROFILEREPORT2) Then Return
 
-	While Not _ColorCheck(_GetPixelColor(252, 69, True), Hex(0xF4F4F0, 6), 5) ; wait for Info Profile to open
+	While Not _ColorCheck(_GetPixelColor(252, 69, True), Hex(0xEEEEE9, 6), 5) ; wait for Info Profile to open
 		$iCount += 1
 		If _Sleep($DELAYPROFILEREPORT1) Then Return
 		If $iCount >= 25 Then ExitLoop
 	WEnd
-	If $iCount >= 25 Then
-		SetDebugLog("Profile Page did not open after " & $iCount & " Loops", $COLOR_DEBUG)
-		Return
-	EndIf
+	If $iCount >= 25 Then SetDebugLog("Profile Page did not open after " & $iCount & " Loops", $COLOR_DEBUG)
 
-	; Check If exist 'Claim Reward' button , click and return to Top of the Profile Page
+   ; Check If exist 'Claim Reward' button , click and return to Top of the Profile Page
+	Local $aSearchResult
 	For $i = 0 to 1 ; Check twice,  because the button is animated
-		If QuickMIS("BC1", $g_sImgCollectReward, 680, 165, 855, 680) Then
-			Click($g_iQuickMISX + 680, $g_iQuickMISY + 165)
+		$aSearchResult = decodeSingleCoord(findImage("CollectReward", $g_sImgCollectReward, GetDiamondFromRect("680,165,855,680"), 1, True))
+		If IsArray($aSearchResult) And UBound($aSearchResult) = 2 Then
+			Click($aSearchResult[0], $aSearchResult[1])
 			SetLog("Reward collected", $COLOR_SUCCESS)
 			For $i = 0 To 9
 				ClickDrag(421, 200, 421, 630, 2000)
@@ -61,21 +60,21 @@ Func ProfileReport()
 		$iAttacksWon = 0
 		$iDefensesWon = 0
 	Else
-		$iAttacksWon = getProfile(578, 347)
+		$iAttacksWon = getProfile(575, 346)
 		If $g_bDebugSetlog Then SetDebugLog("$iAttacksWon: " & $iAttacksWon, $COLOR_DEBUG)
 		$iCount = 0
 		While $iAttacksWon = "" ; Wait for $attacksWon to be readable in case of slow PC
 			If _Sleep($DELAYPROFILEREPORT1) Then Return
-			$iAttacksWon = getProfile(578, 347)
+			$iAttacksWon = getProfile(575, 346)
 			If $g_bDebugSetlog Then SetDebugLog("Read Loop $iAttacksWon: " & $iAttacksWon & ", Count: " & $iCount, $COLOR_DEBUG)
 			$iCount += 1
 			If $iCount >= 20 Then ExitLoop
 		WEnd
 		If $g_bDebugSetlog And $iCount >= 20 Then SetLog("Excess wait time for reading $AttacksWon: " & getProfile(578, 347), $COLOR_DEBUG)
-		$iDefensesWon = getProfile(790, 347)
+		$iDefensesWon = getProfile(789, 346)
 	EndIf
-	$g_iTroopsDonated = getProfile(158, 347)
-	$g_iTroopsReceived = getProfile(360, 347)
+	$g_iTroopsDonated = getProfile(156, 346)
+	$g_iTroopsReceived = getProfile(357, 346)
 
 	SetLog(" [ATKW]: " & _NumberFormat($iAttacksWon) & " [DEFW]: " & _NumberFormat($iDefensesWon) & " [TDON]: " & _NumberFormat($g_iTroopsDonated) & " [TREC]: " & _NumberFormat($g_iTroopsReceived), $COLOR_SUCCESS)
 	Click(830, 80, 1, 0, "#0223") ; Close Profile page

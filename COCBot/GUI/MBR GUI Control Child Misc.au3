@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MyBot.run team
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -50,6 +50,7 @@ Func btnAddConfirm()
 			GUICtrlSetState($g_hBtnRenameProfile, $GUI_HIDE)
 			GUICtrlSetState($g_hBtnPullSharedPrefs, $GUI_HIDE)
 			GUICtrlSetState($g_hBtnPushSharedPrefs, $GUI_HIDE)
+			GUICtrlSetState($g_hBtnSaveprofile, $GUI_HIDE)
 		Case $g_hBtnConfirmAddProfile
 			Local $newProfileName = StringRegExpReplace(GUICtrlRead($g_hTxtVillageName), '[/:*?"<>|]', '_')
 			If FileExists($g_sProfilePath & "\" & $newProfileName) Then
@@ -74,6 +75,7 @@ Func btnAddConfirm()
 			GUICtrlSetState($g_hBtnRenameProfile, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnPullSharedPrefs, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnPushSharedPrefs, $GUI_SHOW)
+			GUICtrlSetState($g_hBtnSaveprofile, $GUI_SHOW)
 
 			If GUICtrlGetState($g_hBtnDeleteProfile) <> $GUI_ENABLE Then GUICtrlSetState($g_hBtnDeleteProfile, $GUI_ENABLE)
 			If GUICtrlGetState($g_hBtnRenameProfile) <> $GUI_ENABLE Then GUICtrlSetState($g_hBtnRenameProfile, $GUI_ENABLE)
@@ -112,6 +114,7 @@ Func btnDeleteCancel()
 			GUICtrlSetState($g_hBtnRenameProfile, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnPullSharedPrefs, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnPushSharedPrefs, $GUI_SHOW)
+			GUICtrlSetState($g_hBtnSaveprofile, $GUI_SHOW)
 		Case Else
 			SetLog("If you are seeing this log message there is something wrong.", $COLOR_ERROR)
 	EndSwitch
@@ -140,6 +143,7 @@ Func btnRenameConfirm()
 			GUICtrlSetState($g_hBtnConfirmRenameProfile, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnPullSharedPrefs, $GUI_HIDE)
 			GUICtrlSetState($g_hBtnPushSharedPrefs, $GUI_HIDE)
+			GUICtrlSetState($g_hBtnSaveprofile, $GUI_HIDE)
 		Case $g_hBtnConfirmRenameProfile
 			Local $newProfileName = StringRegExpReplace(GUICtrlRead($g_hTxtVillageName), '[/:*?"<>|]', '_')
 			If FileExists($g_sProfilePath & "\" & $newProfileName) Then
@@ -163,6 +167,7 @@ Func btnRenameConfirm()
 			GUICtrlSetState($g_hBtnRenameProfile, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnPullSharedPrefs, $GUI_SHOW)
 			GUICtrlSetState($g_hBtnPushSharedPrefs, $GUI_SHOW)
+			GUICtrlSetState($g_hBtnSaveprofile, $GUI_SHOW)
 		Case Else
 			SetLog("If you are seeing this log message there is something wrong.", $COLOR_ERROR)
 	EndSwitch
@@ -174,6 +179,14 @@ EndFunc
 
 Func btnPushSharedPrefs()
 	PushSharedPrefs()
+EndFunc
+
+Func BtnSaveprofile()
+	Setlog("Saving your setting...", $COLOR_INFO)
+	SaveConfig()
+	readConfig()
+	applyConfig()
+	Setlog("Done!", $COLOR_SUCCESS)
 EndFunc
 
 Func OnlySCIDAccounts()
@@ -215,24 +228,6 @@ Func chkBotStop()
 	EndIf
 EndFunc   ;==>chkBotStop
 
-;~ Func btnLocateBarracks()
-;~ 	Local $wasRunState = $g_bRunState
-;~ 	$g_bRunState = True
-;~ 	ZoomOut()
-;~ 	;LocateOneBarrack()
-;~ 	$g_bRunState = $wasRunState
-;~ 	AndroidShield("btnLocateBarracks") ; Update shield status due to manual $g_bRunState
-;~ EndFunc   ;==>btnLocateBarracks
-
-;~ Func btnLocateArmyCamp()
-;~ 	Local $wasRunState = $g_bRunState
-;~ 	$g_bRunState = True
-;~ 	ZoomOut()
-;~ 	;LocateBarrack(True)
-;~ 	$g_bRunState = $wasRunState
-;~ 	AndroidShield("btnLocateArmyCamp") ; Update shield status due to manual $g_bRunState
-;~ EndFunc   ;==>btnLocateArmyCamp
-
 Func btnLocateClanCastle()
 	Local $wasRunState = $g_bRunState
 	$g_bRunState = True
@@ -242,28 +237,9 @@ Func btnLocateClanCastle()
 	AndroidShield("btnLocateClanCastle") ; Update shield status due to manual $g_bRunState
 EndFunc   ;==>btnLocateClanCastle
 
-;~ Func btnLocateSpellfactory()
-;~ 	Local $wasRunState = $g_bRunState
-;~ 	$g_bRunState = True
-;~ 	ZoomOut()
-;~ 	LocateSpellFactory()
-;~ 	$g_bRunState = $wasRunState
-;~ 	AndroidShield("btnLocateSpellfactory") ; Update shield status due to manual $g_bRunState
-;~ EndFunc   ;==>btnLocateSpellfactory
-
-;~ Func btnLocateDarkSpellfactory()
-;~ 	Local $wasRunState = $g_bRunState
-;~ 	$g_bRunState = True
-;~ 	ZoomOut()
-;~ 	LocateDarkSpellFactory()
-;~ 	$g_bRunState = $wasRunState
-;~ 	AndroidShield("btnLocateDarkSpellfactory") ; Update shield status due to manual $g_bRunState
-;~ EndFunc   ;==>btnLocateDarkSpellfactory
-
 Func btnLocateKingAltar()
 	LocateKingAltar()
 EndFunc   ;==>btnLocateKingAltar
-
 
 Func btnLocateQueenAltar()
 	LocateQueenAltar()
@@ -287,21 +263,12 @@ Func btnLocateTownHall()
 		Local $MsgBox = _ExtMsgBox(0, GetTranslatedFileIni("MBR Popups", "Ok_Cancel", "Ok|Cancel"), GetTranslatedFileIni("MBR Popups", "Close_Bot", "Close Bot Please!"), $stext, 120)
 		If $g_bDebugSetlog Then SetDebugLog("$MsgBox= " & $MsgBox, $COLOR_DEBUG)
 		If $MsgBox = 1 Then
-			#cs
-				Local $stext = @CRLF & GetTranslatedFileIni("MBR Popups", "Sure_Close Bot", "Are you 100% sure you want to restart bot ?") & @CRLF & @CRLF & _
-				GetTranslatedFileIni("MBR Popups", "Restart_bot", "Click OK to close bot and then restart the bot (manually)") & @CRLF & @CRLF & GetTranslatedFileIni("MBR Popups", "Cancel_to_exit", -1) & @CRLF
-				Local $MsgBox = _ExtMsgBox(0, GetTranslatedFileIni("MBR Popups", "Ok_Cancel", -1), GetTranslatedFileIni("MBR Popups", "Close_Bot", -1), $stext, 120)
-				If $g_bDebugSetlog Then SetDebugLog("$MsgBox= " & $MsgBox, $COLOR_DEBUG)
-				If $MsgBox = 1 Then BotClose(False)
-			#ce
 			RestartBot(False, $wasRunState)
 		EndIf
 	EndIf
 	$g_bRunState = $wasRunState
 	AndroidShield("btnLocateTownHall") ; Update shield status due to manual $g_bRunState
 EndFunc   ;==>btnLocateTownHall
-
-
 
 Func btnResetBuilding()
 	Local $wasRunState = $g_bRunState
@@ -548,10 +515,19 @@ EndFunc   ;==>chkTrophyHeroes
 
 Func ChkCollect()
 	If GUICtrlRead($g_hChkCollect) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hChkCollectCartFirst, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkTreasuryCollect, $GUI_ENABLE)
+		GUICtrlSetState($g_hTxtCollectGold, $GUI_ENABLE)
+		GUICtrlSetState($g_hTxtCollectElixir, $GUI_ENABLE)
+		GUICtrlSetState($g_hTxtCollectDark, $GUI_ENABLE)
 	Else
+		GUICtrlSetState($g_hChkCollectCartFirst, $GUI_UNCHECKED)
+		GUICtrlSetState($g_hChkCollectCartFirst, $GUI_DISABLE)
 		GUICtrlSetState($g_hChkTreasuryCollect, $GUI_UNCHECKED)
 		GUICtrlSetState($g_hChkTreasuryCollect, $GUI_DISABLE)
+		GUICtrlSetState($g_hTxtCollectGold, $GUI_DISABLE)
+		GUICtrlSetState($g_hTxtCollectElixir, $GUI_DISABLE)
+		GUICtrlSetState($g_hTxtCollectDark, $GUI_DISABLE)
 	EndIf
 	ChkTreasuryCollect()
 EndFunc   ;==>ChkCollect
@@ -576,11 +552,9 @@ Func chkStartClockTowerBoost()
 	EndIf
 EndFunc   ;==>chkStartClockTowerBoost
 
-
-
 Func chkActivateClangames()
 	If GUICtrlRead($g_hChkClanGamesEnabled) = $GUI_CHECKED Then
-		GUICtrlSetState($g_hChkClanGamesOnly, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkClanGames60, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkClanGamesAir, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkClanGamesGround, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkClanGamesMisc, $GUI_ENABLE)
@@ -598,7 +572,7 @@ Func chkActivateClangames()
 		GUICtrlSetState($g_hChkClanGamesStopBeforeReachAndPurge, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkClanGamesDebug, $GUI_ENABLE)
 	Else
-		GUICtrlSetState($g_hChkClanGamesOnly, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkClanGames60, $GUI_DISABLE)
 		GUICtrlSetState($g_hChkClanGamesAir, $GUI_DISABLE)
 		GUICtrlSetState($g_hChkClanGamesGround, $GUI_DISABLE)
 		GUICtrlSetState($g_hChkClanGamesMisc, $GUI_DISABLE)
@@ -625,4 +599,4 @@ Func chkPurgeLimits()
 	Else
 		GUICtrlSetState($g_hcmbPurgeLimit, $GUI_DISABLE)
 	EndIf
-EndFunc
+EndFunc   ;==>chkPurgeLimits

@@ -3,7 +3,7 @@
 ; Description ...: Functions for the new profile system
 ; Author ........: LunaEclipse(02-2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; ===============================================================================================================================
 
@@ -33,10 +33,18 @@ Func setupProfileComboBox()
 	GUICtrlSetData($g_hCmbProfile, "", "")
 	; Set the new data of available profiles
 	GUICtrlSetData($g_hCmbProfile, $profileString, "<No Profiles>")
+	; Switch Accounts
 	For $i = 0 To 7
 		GUICtrlSetData($g_ahCmbProfile[$i], "")
 		GUICtrlSetData($g_ahCmbProfile[$i], "|" & $profileString)
 		_GUICtrlComboBox_SetCurSel($g_ahCmbProfile[$i], 0)
+	Next
+	; Switch Profiles
+	For $i = 0 To 3
+		GUICtrlSetData($g_ahCmb_SwitchMax[$i], "")
+		GUICtrlSetData($g_ahCmb_SwitchMax[$i], $profileString, "<No Profiles>")
+		GUICtrlSetData($g_ahCmb_SwitchMin[$i], "")
+		GUICtrlSetData($g_ahCmb_SwitchMin[$i], $profileString, "<No Profiles>")
 	Next
 EndFunc   ;==>setupProfileComboBox
 
@@ -57,7 +65,7 @@ Func renameProfile()
 
 		; rename the directory and all files and sub folders.
 		DirMove($originalPath, $newPath, $FC_NOOVERWRITE)
-		
+
 		; rename also private pofile folder
 		$originalPath = $g_sPrivateProfilePath & "\" & GUICtrlRead($g_hCmbProfile)
 		$newPath = $g_sPrivateProfilePath & "\" & $g_sProfileCurrentName
@@ -66,7 +74,7 @@ Func renameProfile()
 			DirMove($originalPath, $newPath, $FC_NOOVERWRITE)
 		EndIf
 	EndIf
-	
+
 EndFunc   ;==>renameProfile
 
 Func deleteProfile()
@@ -91,7 +99,7 @@ Func deleteProfile()
 		EndIf
 		; Remove the directory and all files and sub folders.
 		DirRemove($deletePath, $DIR_REMOVE)
-		
+
 		$deletePath = $g_sPrivateProfilePath & "\" & $sProfile
 		If FileExists($deletePath) Then
 			; Remove the directory and all files and sub folders.

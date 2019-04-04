@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: Heridero, Zengzeng (2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -57,6 +57,7 @@ Func CheckPrerequisites($bSilent = False)
 		GUICtrlSetState($g_hBtnStart, $GUI_DISABLE)
 		$g_bRestarted = False
 	EndIf
+
 	Return $isAllOK
 EndFunc   ;==>CheckPrerequisites
 
@@ -96,24 +97,35 @@ Func isEveryFileInstalled($bSilent = False)
 	Local $aCheckFiles = [@ScriptDir & "\COCBot", _
 			$g_sLibPath, _
 			@ScriptDir & "\Images", _
-			$g_sLibMyBotPath, _
-			$g_sLibImageSearchPath, _
-			$g_sLibIconPath, _
+			@ScriptDir & "\imgxml", _
+			$g_sLibPath & "\helper_functions.dll", _
+			$g_sLibPath & "\ImageSearchDLL.dll", _
+			$g_sLibPath & "\MBRBot.dll", _
+			$g_sLibPath & "\MyBot.run.dll", _
+			$g_sLibPath & "\Newtonsoft.Json.dll", _
+			$g_sLibPath & "\sqlite3.dll", _
 			$g_sLibPath & "\opencv_core220.dll", _
 			$g_sLibPath & "\opencv_imgproc220.dll"]
 
 	For $vElement In $aCheckFiles
 		$iCount += FileExists($vElement)
 	Next
+	; How many .xml files in imgxml folder
+	Local $xmls = _FileListToArrayRec(@ScriptDir & "\imgxml\", "*.xml", $FLTAR_FILES + $FLTAR_NOHIDDEN, $FLTAR_RECUR, $FLTAR_NOSORT)
+	If IsArray($xmls) Then
+		If Number($xmls[0]) < 570 Then SetLog("Verify '\imgxml\' folder, found " & $xmls[0] & " *.xml files.", $COLOR_ERROR)
+	EndIf
+
+	Local $MsgBox = 0
+	Local $sText1 = GetTranslatedFileIni("MBR Popups", "CheckPrerequisites_Item_01", "Hey Chief, we are missing some files!")
+	Local $sText2 = GetTranslatedFileIni("MBR Popups", "CheckPrerequisites_Item_02", "Please extract all files and folders and start this program again!")
+	Local $sText3 = GetTranslatedFileIni("MBR Popups", "CheckPrerequisites_Item_03", "Sorry, Start button disabled until fixed!")
+	Local $sText4 = GetTranslatedFileIni("MBR Popups", "CheckPrerequisites_Item_04", "Hey Chief, file name incorrect!")
+	Local $sText5 = GetTranslatedFileIni("MBR Popups", "CheckPrerequisites_Item_05", 'You have renamed the file "MyBot.run.exe"! Please change it back to MyBot.run.exe and restart the bot!')
 	If $iCount = UBound($aCheckFiles) Then
 		$bResult = True
 	ElseIf Not $bSilent Then
 		GUICtrlSetState($g_hBtnStart, $GUI_DISABLE)
-
-		Local $sText1 = "", $sText2 = "", $sText3 = "", $MsgBox = 0
-		$sText1 = GetTranslatedFileIni("MBR Popups", "CheckPrerequisites_Item_01", "Hey Chief, we are missing some files!")
-		$sText2 = GetTranslatedFileIni("MBR Popups", "CheckPrerequisites_Item_02", "Please extract all files and folders and start this program again!")
-		$sText3 = GetTranslatedFileIni("MBR Popups", "CheckPrerequisites_Item_03", "Sorry, Start button disabled until fixed!")
 
 		SetLog($sText1, $COLOR_ERROR)
 		SetLog($sText2, $COLOR_ERROR)
@@ -126,17 +138,13 @@ Func isEveryFileInstalled($bSilent = False)
 	If @Compiled Then ;if .exe
 		If Not StringInStr(@ScriptFullPath, "MyBot.run.exe", 1) Then ; if filename isn't MyBot.run.exe
 			If Not $bSilent Then
-				Local $sText1, $sText2, $MsgBox
-				$sText1 = GetTranslatedFileIni("MBR Popups", "CheckPrerequisites_Item_04", "Hey Chief, file name incorrect!")
-				$sText2 = GetTranslatedFileIni("MBR Popups", "CheckPrerequisites_Item_05", 'You have renamed the file "MyBot.run.exe"! Please change it back to MyBot.run.exe and restart the bot!')
-				$sText3 = GetTranslatedFileIni("MBR Popups", "CheckPrerequisites_Item_03", "Sorry, Start button disabled until fixed!")
-
+			
 				SetLog($sText1, $COLOR_ERROR)
-				SetLog($sText2, $COLOR_ERROR)
+				SetLog($sText5, $COLOR_ERROR)
 				SetLog($sText3, $COLOR_ERROR)
 
 				_ExtMsgBoxSet(1 + 64, $SS_CENTER, 0x004080, 0xFFFF00, 12, "Comic Sans MS", 500)
-				$MsgBox = _ExtMsgBox(48, GetTranslatedFileIni("MBR Popups", "Ok", "Ok"), $sText1, $sText2, 0)
+				$MsgBox = _ExtMsgBox(48, GetTranslatedFileIni("MBR Popups", "Ok", "Ok"), $sText1, $sText5, 0)
 				GUICtrlSetState($g_hBtnStart, $GUI_DISABLE)
 			EndIf
 			$bResult = False

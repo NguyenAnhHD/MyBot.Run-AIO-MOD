@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MMHK (11-2016)
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -103,3 +103,13 @@ Func cmbAndroidBackgroundMode()
 	$g_iAndroidBackgroundMode = _GUICtrlComboBox_GetCurSel($g_hCmbAndroidBackgroundMode)
 	UpdateAndroidBackgroundMode()
 EndFunc   ;==>cmbAndroidBackgroundMode
+
+func EnableShowTouchs()
+	AndroidAdbSendShellCommand("content insert --uri content://settings/system --bind name:s:show_touches --bind value:i:1")
+	SetDebugLog("EnableShowTouchs ON")
+EndFunc
+
+func DisableShowTouchs()
+	AndroidAdbSendShellCommand("content insert --uri content://settings/system --bind name:s:show_touches --bind value:i:0")
+	SetDebugLog("EnableShowTouchs OFF")
+EndFunc

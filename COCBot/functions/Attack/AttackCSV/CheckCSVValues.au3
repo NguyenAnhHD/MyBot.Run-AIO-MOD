@@ -8,7 +8,7 @@
 ; Return values .: None
 ; Author ........: Sardo (2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -92,6 +92,10 @@ Func CheckCsvValues($instruction, $variablenumber, $variable)
 						Case "MORTAR"
 							Return True
 						Case "AIRDEFENSE"
+							Return True
+						Case "EX-WALL"
+							Return True
+						Case "IN-WALL"
 							Return True
 						Case Else
 							Return False

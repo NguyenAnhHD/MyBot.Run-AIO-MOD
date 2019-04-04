@@ -6,101 +6,91 @@
 ; Return values .: None
 ; Author ........: GkevinOD (2014)
 ; Modified ......: Hervidero (2015), CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
 #include-once
-Func btnMilkingOptions()
-;~ 	OpenGUIMilk2()
-EndFunc   ;==>btnMilkingOptions
-
-Func btnDBAttackConfigure()
-	Switch _GUICtrlComboBox_GetCurSel($g_hCmbDBAlgorithm)
-		Case 0
-			;Algorithm Alltroops
-;~ 			OpenGUIAlgorithmAllTroopsConfig($DB)
-		Case 1
-			; Scripted Attack
-;~ 			OpenGUIAlgorithmAttackCSVConfig($DB)
-		Case 2
-			; Milking Attack
-;~ 			OpenGUIMilk2()
-	EndSwitch
-EndFunc   ;==>btnDBAttackConfigure
-
-Func btnABAttackConfigure()
-	Switch _GUICtrlComboBox_GetCurSel($g_hCmbDBAlgorithm)
-		Case 0
-			;Algorithm Alltroops
-;~ 			OpenGUIAlgorithmAllTroopsConfig($LB)
-		Case 1
-			; Scripted Attack
-;~ 			OpenGUIAlgorithmAttackCSVConfig($LB)
-
-	EndSwitch
-EndFunc   ;==>btnABAttackConfigure
-
 Func cmbDBAlgorithm()
 	Local $iCmbValue = _GUICtrlComboBox_GetCurSel($g_hCmbDBAlgorithm)
 	; Algorithm Alltroops
 	; show spells if milking because after milking you can continue to attack with thsnipe or standard attack where you can use spells
-    _GUI_Value_STATE(($iCmbValue = 1 Or $iCmbValue = 2) ? "SHOW" : "HIDE", $g_aGroupAttackDBSpell & "#" & $groupIMGAttackDBSpell)
+	_GUI_Value_STATE($iCmbValue = 1 ? "SHOW" : "HIDE", $g_aGroupAttackDBSpell & "#" & $groupIMGAttackDBSpell)
 
 	If BitAND(GUICtrlGetState($g_hGUI_DEADBASE), $GUI_SHOW) And GUICtrlRead($g_hGUI_DEADBASE_TAB) = 1 Then ; fix ghosting during control applyConfig
 		Select
 			Case $iCmbValue = 0 ; Standard Attack
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
-				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_MILKING)
-				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_UNCHECKED)	; Slot11 - Team AiO MOD++
-				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_DISABLE)	; Slot11 - Team AiO MOD++
+				GUISetState(@SW_HIDE,$g_hGUI_DEADBASE_ATTACK_SMARTFARM)
 			Case $iCmbValue = 1 ; Scripted Attack
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
-				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_MILKING)
-				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_ENABLE)	; Slot11 - Team AiO MOD++
-			Case $iCmbValue = 2 ; Milking Attack
+				GUISetState(@SW_HIDE,$g_hGUI_DEADBASE_ATTACK_SMARTFARM)
+			Case $iCmbValue = 2 ; Smart Farm Attack
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
-				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_DEADBASE_ATTACK_MILKING)
-				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_UNCHECKED)	; Slot11 - Team AiO MOD++
-				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_DISABLE)	; Slot11 - Team AiO MOD++
+				GUISetState(@SW_SHOWNOACTIVATE,$g_hGUI_DEADBASE_ATTACK_SMARTFARM)
 			Case Else
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_SCRIPTED)
-				GUISetState(@SW_HIDE, $g_hGUI_DEADBASE_ATTACK_MILKING)
-				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_UNCHECKED)	; Slot11 - Team AiO MOD++
-				GUICtrlSetState($g_hChkExtendedAttackBarDB, $GUI_DISABLE)	; Slot11 - Team AiO MOD++
+				GUISetState(@SW_HIDE,$g_hGUI_DEADBASE_ATTACK_SMARTFARM)
 		EndSelect
 	EndIf
 EndFunc   ;==>cmbDBAlgorithm
 
 Func cmbABAlgorithm()
 	Local $iCmbValue = _GUICtrlComboBox_GetCurSel($g_hcmbABAlgorithm)
-    _GUI_Value_STATE($iCmbValue = 1 ? "SHOW" : "HIDE", $groupAttackABSpell & "#" & $groupIMGAttackABSpell)
+	_GUI_Value_STATE($iCmbValue = 1 ? "SHOW" : "HIDE", $groupAttackABSpell & "#" & $groupIMGAttackABSpell)
 
 	If BitAND(GUICtrlGetState($g_hGUI_ACTIVEBASE), $GUI_SHOW) And GUICtrlRead($g_hGUI_ACTIVEBASE_TAB) = 1 Then ; fix ghosting during control applyConfig
 		Select
 			Case $iCmbValue = 0 ; Standard Attack
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_ACTIVEBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED)
-				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_UNCHECKED)	; Slot11 - Team AiO MOD++
-				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_DISABLE)	; Slot11 - Team AiO MOD++
 			Case $iCmbValue = 1 ; Scripted Attack
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_STANDARD)
 				GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED)
-				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_ENABLE)	; Slot11 - Team AiO MOD++
 			Case Else
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_STANDARD)
 				GUISetState(@SW_HIDE, $g_hGUI_ACTIVEBASE_ATTACK_SCRIPTED)
-				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_UNCHECKED)	; Slot11 - Team AiO MOD++
-				GUICtrlSetState($g_hChkExtendedAttackBarLB, $GUI_DISABLE)	; Slot11 - Team AiO MOD++
 		EndSelect
 	EndIf
 EndFunc   ;==>cmbABAlgorithm
+
+Func chkABWardenAttack()
+	If GUICtrlRead($g_hChkABWardenAttack) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hCmbABWardenMode, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hCmbABWardenMode, $GUI_DISABLE)
+	EndIf
+EndFunc   ;==>chkABWardenAttack
+
+Func chkDBWardenAttack()
+	If GUICtrlRead($g_hChkDBWardenAttack) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hCmbDBWardenMode, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hCmbDBWardenMode, $GUI_DISABLE)
+	EndIf
+EndFunc   ;==>chkDBWardenAttack
+
+Func chkABDropCC()
+	If GUICtrlRead($g_hChkABDropCC) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hcmbABSiege, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hcmbABSiege, $GUI_DISABLE)
+	EndIf
+EndFunc   ;==>chkABDropCC
+
+Func chkDBDropCC()
+	If GUICtrlRead($g_hChkDBDropCC) = $GUI_CHECKED Then
+		GUICtrlSetState($g_hcmbDBSiege, $GUI_ENABLE)
+	Else
+		GUICtrlSetState($g_hcmbDBSiege, $GUI_DISABLE)
+	EndIf
+EndFunc   ;==>chkDBDropCC
 
 Func chkAttackNow()
 	If GUICtrlRead($g_hChkAttackNow) = $GUI_CHECKED Then
@@ -322,7 +312,7 @@ Func chkAttackPlannerEnable()
 		Else
 			GUICtrlSetState($g_hChkAttackPlannerCloseAll, $GUI_ENABLE)
 			GUICtrlSetState($g_hChkAttackPlannerCloseCoC, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-	    EndIf
+		EndIf
 
 		GUICtrlSetState($g_hChkAttackPlannerRandom, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkAttackPlannerDayLimit, $GUI_ENABLE)
@@ -394,7 +384,7 @@ Func chkAttackPlannerSuspendComputer()
 	Else
 		$g_bAttackPlannerSuspendComputer = False
 	EndIf
-EndFunc   ;==>chkAttackPlannerCloseCoC
+EndFunc   ;==>chkAttackPlannerSuspendComputer
 
 Func chkAttackPlannerCloseAll()
 	If GUICtrlRead($g_hChkAttackPlannerCloseAll) = $GUI_CHECKED Then
@@ -429,7 +419,7 @@ EndFunc   ;==>chkAttackPlannerRandom
 
 Func cmbAttackPlannerRandom()
 	$g_iAttackPlannerRandomTime = Int(_GUICtrlComboBox_GetCurSel($g_hCmbAttackPlannerRandom))
-	GUICtrlSetData($g_hLbAttackPlannerRandom, $g_iAttackPlannerRandomTime > 0 ? GetTranslatedFileIni("MBR Global GUI Design", "hrs", -1) : GetTranslatedFileIni("MBR Global GUI Design", "hr", -1))
+	GUICtrlSetData($g_hLbAttackPlannerRandom, $g_iAttackPlannerRandomTime > 0 ? GetTranslatedFileIni("MBR Global GUI Design", "hrs", -1) : GetTranslatedFileIni("MBR Global GUI Design", "hr", "hr"))
 EndFunc   ;==>cmbAttackPlannerRandom
 
 Func chkAttackPlannerDayLimit()
@@ -483,32 +473,32 @@ Func _cmbAttackPlannerDayLimit()
 EndFunc   ;==>_cmbAttackPlannerDayLimit
 
 Func chkDropCCHoursEnable()
-    Local $bChk = GUICtrlRead($g_hChkDropCCHoursEnable) = $GUI_CHECKED
+	Local $bChk = GUICtrlRead($g_hChkDropCCHoursEnable) = $GUI_CHECKED
 
-    $g_bPlannedDropCCHoursEnable = ($bChk ? 1 : 0)
-    For $i = 0 To 23
-	  GUICtrlSetState($g_ahChkDropCCHours[$i], $bChk ? $GUI_ENABLE : $GUI_DISABLE)
-    Next
-    GUICtrlSetState($g_ahChkDropCCHoursE1, $bChk ? $GUI_ENABLE : $GUI_DISABLE)
-    GUICtrlSetState($g_ahChkDropCCHoursE2, $bChk ? $GUI_ENABLE : $GUI_DISABLE)
+	$g_bPlannedDropCCHoursEnable = ($bChk ? 1 : 0)
+	For $i = 0 To 23
+		GUICtrlSetState($g_ahChkDropCCHours[$i], $bChk ? $GUI_ENABLE : $GUI_DISABLE)
+	Next
+	GUICtrlSetState($g_ahChkDropCCHoursE1, $bChk ? $GUI_ENABLE : $GUI_DISABLE)
+	GUICtrlSetState($g_ahChkDropCCHoursE2, $bChk ? $GUI_ENABLE : $GUI_DISABLE)
 EndFunc   ;==>chkDropCCHoursEnable
 
 Func chkDropCCHoursE1()
-    Local $bChk = GUICtrlRead($g_ahChkDropCCHoursE1) = $GUI_CHECKED And GUICtrlRead($g_ahChkDropCCHours[0]) = $GUI_CHECKED
+	Local $bChk = GUICtrlRead($g_ahChkDropCCHoursE1) = $GUI_CHECKED And GUICtrlRead($g_ahChkDropCCHours[0]) = $GUI_CHECKED
 
-    For $i = 0 To 11
-	  GUICtrlSetState($g_ahChkDropCCHours[$i], $bChk ? $GUI_UNCHECKED : $GUI_CHECKED)
-    Next
+	For $i = 0 To 11
+		GUICtrlSetState($g_ahChkDropCCHours[$i], $bChk ? $GUI_UNCHECKED : $GUI_CHECKED)
+	Next
 	Sleep(300)
 	GUICtrlSetState($g_ahChkDropCCHoursE1, $GUI_UNCHECKED)
 EndFunc   ;==>chkDropCCHoursE1
 
 Func chkDropCCHoursE2()
-    Local $bChk = GUICtrlRead($g_ahChkDropCCHoursE2) = $GUI_CHECKED And GUICtrlRead($g_ahChkDropCCHours[12]) = $GUI_CHECKED
+	Local $bChk = GUICtrlRead($g_ahChkDropCCHoursE2) = $GUI_CHECKED And GUICtrlRead($g_ahChkDropCCHours[12]) = $GUI_CHECKED
 
-    For $i = 12 To 23
-	  GUICtrlSetState($g_ahChkDropCCHours[$i], $bChk ? $GUI_UNCHECKED : $GUI_CHECKED)
-    Next
+	For $i = 12 To 23
+		GUICtrlSetState($g_ahChkDropCCHours[$i], $bChk ? $GUI_UNCHECKED : $GUI_CHECKED)
+	Next
 	Sleep(300)
 	GUICtrlSetState($g_ahChkDropCCHoursE2, $GUI_UNCHECKED)
 EndFunc   ;==>chkDropCCHoursE2
@@ -543,26 +533,6 @@ Func chkSearchReduction()
 	EndIf
 EndFunc   ;==>chkSearchReduction
 
-; Func chkBullyMode()
-; If GUICtrlRead($Bullycheck) = $GUI_CHECKED Then
-; GUISetState(@SW_SHOW, $g_hGrpBullyAtkCombo)
-; GUISetState(@SW_SHOW, $g_hLblBullyMode)
-; GUISetState(@SW_SHOW, $g_hTxtATBullyMode)
-; GUISetState(@SW_SHOW, $g_hLblATBullyMode)
-; GUISetState(@SW_SHOW, $g_hCmbBullyMaxTH)
-; GUISetState(@SW_SHOW, $g_hRadBullyUseDBAttack)
-; GUISetState(@SW_SHOW, $g_hRadBullyUseLBAttack)
-; Else
-; GUISetState(@SW_HIDE, $g_hGrpBullyAtkCombo)
-; GUISetState(@SW_HIDE, $g_hLblBullyMode)
-; GUISetState(@SW_HIDE, $g_hTxtATBullyMode)
-; GUISetState(@SW_HIDE, $g_hLblATBullyMode)
-; GUISetState(@SW_HIDE, $g_hCmbBullyMaxTH)
-; GUISetState(@SW_HIDE, $g_hRadBullyUseDBAttack)
-; GUISetState(@SW_HIDE, $g_hRadBullyUseLBAttack)
-; EndIf
-; EndFunc   ;==>chkBullyMode
-
 Func sldMaxVSDelay()
 	$g_iSearchDelayMax = GUICtrlRead($g_hSldMaxVSDelay)
 	GUICtrlSetData($g_hLblMaxVSDelay, $g_iSearchDelayMax)
@@ -571,12 +541,12 @@ Func sldMaxVSDelay()
 		GUICtrlSetData($g_hSldVSDelay, $g_iSearchDelayMax)
 		$g_iSearchDelayMin = $g_iSearchDelayMax
 	EndIf
-	If $g_iSearchDelayMin = 1 Then
+	If $g_iSearchDelayMin <= 1 Then
 		GUICtrlSetData($g_hLblTextVSDelay, GetTranslatedFileIni("MBR Global GUI Design", "second", "second"))
 	Else
 		GUICtrlSetData($g_hLblTextVSDelay, GetTranslatedFileIni("MBR Global GUI Design", "seconds", "seconds"))
 	EndIf
-	If $g_iSearchDelayMax = 1 Then
+	If $g_iSearchDelayMax <= 1 Then
 		GUICtrlSetData($g_hLblTextMaxVSDelay, GetTranslatedFileIni("MBR Global GUI Design", "second", "second"))
 	Else
 		GUICtrlSetData($g_hLblTextMaxVSDelay, GetTranslatedFileIni("MBR Global GUI Design", "seconds", "seconds"))
@@ -591,12 +561,12 @@ Func sldVSDelay()
 		GUICtrlSetData($g_hSldMaxVSDelay, $g_iSearchDelayMin)
 		$g_iSearchDelayMax = $g_iSearchDelayMin
 	EndIf
-	If $g_iSearchDelayMin = 1 Then
+	If $g_iSearchDelayMin <= 1 Then
 		GUICtrlSetData($g_hLblTextVSDelay, GetTranslatedFileIni("MBR Global GUI Design", "second", "second"))
 	Else
 		GUICtrlSetData($g_hLblTextVSDelay, GetTranslatedFileIni("MBR Global GUI Design", "seconds", "seconds"))
 	EndIf
-	If $g_iSearchDelayMax = 1 Then
+	If $g_iSearchDelayMax <= 1 Then
 		GUICtrlSetData($g_hLblTextMaxVSDelay, GetTranslatedFileIni("MBR Global GUI Design", "second", "second"))
 	Else
 		GUICtrlSetData($g_hLblTextMaxVSDelay, GetTranslatedFileIni("MBR Global GUI Design", "seconds", "seconds"))
@@ -607,7 +577,7 @@ Func dbCheck()
 	$g_abAttackTypeEnable[$DB] = (GUICtrlRead($g_hChkDeadbase) = $GUI_CHECKED)
 
 	If IsBotLaunched() Then _GUICtrlTab_SetCurFocus($g_hGUI_SEARCH_TAB, 0) ; activate deadbase tab
-	If BitAND(GUICtrlRead($g_hChkDBActivateSearches), GUICtrlRead($g_hChkDBActivateTropies), GUICtrlRead($g_hChkDBActivateCamps), GUICtrlRead($g_hChkDBSpellsWait), GUICtrlRead($g_hChkExtendedAttackBarDB)) = $GUI_UNCHECKED Then
+	If BitAND(GUICtrlRead($g_hChkDBActivateSearches), GUICtrlRead($g_hChkDBActivateTropies), GUICtrlRead($g_hChkDBActivateCamps), GUICtrlRead($g_hChkDBSpellsWait)) = $GUI_UNCHECKED Then
 		GUICtrlSetState($g_hChkDBActivateSearches, $GUI_CHECKED)
 		chkDBActivateSearches() ; this includes a call to dbCheckall() -> tabSEARCH()
 	Else
@@ -619,7 +589,7 @@ Func abCheck()
 	$g_abAttackTypeEnable[$LB] = (GUICtrlRead($g_hChkActivebase) = $GUI_CHECKED)
 
 	If IsBotLaunched() Then _GUICtrlTab_SetCurFocus($g_hGUI_SEARCH_TAB, 1)
-	If BitAND(GUICtrlRead($g_hChkABActivateSearches), GUICtrlRead($g_hChkABActivateTropies), GUICtrlRead($g_hChkABActivateCamps), GUICtrlRead($g_hChkABSpellsWait), GUICtrlRead($g_hChkExtendedAttackBarLB)) = $GUI_UNCHECKED Then
+	If BitAND(GUICtrlRead($g_hChkABActivateSearches), GUICtrlRead($g_hChkABActivateTropies), GUICtrlRead($g_hChkABActivateCamps), GUICtrlRead($g_hChkABSpellsWait)) = $GUI_UNCHECKED Then
 		GUICtrlSetState($g_hChkABActivateSearches, $GUI_CHECKED)
 		chkABActivateSearches() ; this includes a call to abCheckall() -> tabSEARCH()
 	Else

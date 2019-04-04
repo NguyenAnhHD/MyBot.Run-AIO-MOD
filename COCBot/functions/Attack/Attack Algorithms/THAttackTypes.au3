@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: AtoZ (2015)
 ; Modified ......: Barracoda (07-2015), TheMaster1st (10-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -30,11 +30,7 @@ Func AttackTHParseCSV($test = False)
 		Case $LB
 			$attackCSVtoUse = $g_iTHSnipeBeforeScript[$LB]
 		Case $DB
-			If $g_bDuringMilkingAttack = True Then
-				$attackCSVtoUse = $g_sMilkFarmAlgorithmTh
-			Else
-				$attackCSVtoUse = $g_iTHSnipeBeforeScript[$DB]
-			EndIf
+			$attackCSVtoUse = $g_iTHSnipeBeforeScript[$DB]
 	EndSwitch
 
 
@@ -50,7 +46,7 @@ Func AttackTHParseCSV($test = False)
 			$acommand = StringSplit($line, "|")
 			If $acommand[0] >= 8 Then
 				$command = StringStripWS(StringUpper($acommand[1]), 2)
-				;   $eLSpell, $eHSpell, $eRSpell, $eJSpell, $eFSpell, $eCSpell, $ePSpell, $eESpell, $eHaSpell, $eSkSpell
+				;   $eLSpell, $eHSpell, $eRSpell, $eJSpell, $eFSpell, $eCSpell, $ePSpell, $eESpell, $eHaSpell, $eSkSpell, $eBtSpell
 				Select
 					Case $command = "TROOP" Or $command = ""
 						;SetLog("<<<<discard line>>>>")
@@ -59,7 +55,7 @@ Func AttackTHParseCSV($test = False)
 
 						SetLog($acommand[8], $COLOR_INFO)
 
-					Case StringInStr(StringUpper("-Barb-Arch-Giant-Gobl-Wall-Ball-Wiza-Heal-Drag-Pekk-BabyD-Mine-EDrag-Mini-Hogs-Valk-Gole-Witc-Lava-Bowl"), "-" & $command & "-") > 0
+					Case StringInStr(StringUpper("-Barb-Arch-Giant-Gobl-Wall-Ball-Wiza-Heal-Drag-Pekk-BabyD-Mine-EDrag-Mini-Hogs-Valk-Gole-Witc-Lava-Bowl-IceG"), "-" & $command & "-") > 0
 						If $g_bDebugSetlog Then SetDebugLog(">> AttackTHGrid($e" & $command & ", Random (" & Int($acommand[2]) & "," & Int($acommand[3]) & ",1), Random(" & Int($acommand[4]) & "," & Int($acommand[5]) & ",1), Random(" & Int($acommand[6]) & "," & Int($acommand[7]) & ",1) )")
 
 						Local $iNbOfSpots

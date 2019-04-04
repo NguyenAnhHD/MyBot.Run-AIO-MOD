@@ -4,7 +4,7 @@
 ; Syntax ........: $iDelayXXXXXXYYY  : XXXX = function name using the delay, YYY = delay value or position of delay in file
 ; Author ........: Sardo (08-2015)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -38,7 +38,7 @@ Global Const $DELAYALGORITHM_ALLTROOPS1 = 2000
 Global Const $DELAYALGORITHM_ALLTROOPS2 = 1000
 Global Const $DELAYALGORITHM_ALLTROOPS3 = $DELAYWAITFORPOPUP
 Global Const $DELAYALGORITHM_ALLTROOPS4 = 100
-Global Const $DELAYALGORITHM_ALLTROOPS5 = 500
+Global Const $DELAYALGORITHM_ALLTROOPS5 = 250
 
 ;barch
 Global Const $DELAYBARCH1 = 100
@@ -56,6 +56,7 @@ Global Const $DELAYDROPCC2 = 500 ;click
 ;dropHeroes
 Global Const $DELAYDROPHEROES1 = 300
 Global Const $DELAYDROPHEROES2 = 500
+Global Const $DELAYCHECKHEROESHEALTH = 4000
 
 ;GoldElixirChange
 Global Const $DELAYGOLDELIXIRCHANGE1 = 500
@@ -231,7 +232,7 @@ Global Const $DELAYGETTHLEVEL3 = 200 ; click
 
 
 ;Laboratory
-Global Const $DELAYLABORATORY1 = 750
+Global Const $DELAYLABORATORY1 = 1000
 Global Const $DELAYLABORATORY2 = 200
 Global Const $DELAYLABORATORY3 = 1000
 Global Const $DELAYLABORATORY4 = 200 ; click
@@ -267,12 +268,6 @@ Global Const $DELAYPROFILEREPORT3 = 200
 Global Const $DELAYNOTIFY1 = 500
 Global Const $DELAYPUSHMSG1 = 500
 Global Const $DELAYPUSHMSG2 = 1000
-
-;ReArm
-Global Const $DELAYREARM1 = 500
-Global Const $DELAYREARM2 = 1500
-Global Const $DELAYREARM3 = 700
-Global Const $DELAYREARM4 = 200
 
 ;Treasury
 Global Const $DELAYTREASURY1 = 500
@@ -372,6 +367,7 @@ Global Const $DELAYWAITATTACK1 = 60000
 Global Const $DELAYWAITATTACK2 = 300000
 
 ;Close Open
+Global Const $DELAYCLOSEOPEN500 = 500
 Global Const $DELAYCLOSEOPEN1000 = 1000
 Global Const $DELAYCLOSEOPEN1500 = 1500
 Global Const $DELAYCLOSEOPEN2000 = 2000
@@ -388,9 +384,3 @@ Global $DELAYSWITCHBASES1 = 1000
 ;ClockTower
 Global $DELAYCLOCKTOWER1 = 1000
 Global $DELAYCLOCKTOWER2 = 200
-
-;SuperXP / GoblinXP
-Global Const $DELAYDROPSuperXP1= 500
-Global Const $DELAYDROPSuperXP2 = 1000
-Global Const $DELAYDROPSuperXP3 = 250
-Global Const $DELAYPREPARESearchSuperXP = 500

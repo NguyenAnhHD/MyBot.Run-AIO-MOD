@@ -3,78 +3,42 @@
             | | | _| / _ \| |\/| |    / _ \| | (_) |
             |_| |___/_/ \_\_|  |_|   /_/ \_\_|\___/
 
-                    Based on MyBot.run v7.5.x
+                    Based on MyBot.run v7.7.x
 
-	**V1.8.6**
-	- Add Grab healed heroes feature
-	- Add Builder time status
-	- Fix Slot11+ (DropTrophy attack & Multiple CC Spells)
-	- Fix Restart Search if cloud time not work
-	- Fix click button for Switch accounts Supercell ID
-	- Improve Stop for War feature
-	- Improve some GUI - June Update
-	- Update to MBR v7.5.4
-	- Update Some language
+	**V2.0**
+	* Update:
+		- Update Official v7.7.3
 
-	**V1.8.5**
-	- Add Skip Request CC By Demen
-	- Fix coordinates and color for TrainRevamp - June 2018
-	- Fix Goblin XP Not Click On Reload Button
-	- Fix not find button for switch accounts SC_ID on MEmu version 2.8.0 or lower
+	* Added:
+		- Add Precise Army feature
+		- Add Multi-Click Army 3 feature
+		- Add Request Defense troops feature
+		- Add Switch Profiles feature
+		- Add Farm Schedule feature
+		- Add Boost for Workshop, Resource Magic
+		- Add Clan Hop feature
+		- Add Four Finger Classic option for Standard Attack
+		- Add CSV Deployment Speed
+		- Add CSV '%', 'Sleep Before' cmd for CSV Attack
+		- Add Max logout time option
+		- Add Restart Search Legend league
+		- Add Builder time, Hero & Lab Stats
+		- Add Enable/Disable GUI while botting
+		- Add Auto Hide/Dock for Emulator
 
-	**V1.8.4**
-	- Fix not switch to account 5 or above
-	- Fix check troops/spells CC not work - June 2018
-	- Fix cost for Grand Warden
-	- Fix not find remove button CC Spells
-	- Fix Taskbar Error
-	- Fix Some Minor Error
-	- Update to MBR v7.5.3
+	* Fixed:
+		- April Update Fixed Buildings info positions
+		- April Update Fixed Buildings icon positions
+		- April Update Fixed Auto upgrade button position
+		- April Update Fixed Okay button
+		- April Update Fixed Star Bonus button
+		- April Update Fixed Wall upgrade button
+		- April Update Fixed Loot Cart button
+		- April Update Fixed Treasury button
+		- April Update Fixed Boost for Magic in Town Hall
+		- April Update Fixed Builder time
+		- April Update Added Auto upgrade wall exclude
 
-	**V1.8.3**
-	- Add Farm Schedule feature
-	- Add Stop For War By Demen
-	- Add Request troops for defense By Demen
-	- Fix & Improve GTFO
-	- Fix & Improve Slot+11 By Demen
-	- Fix Quick Train
-	- Fix bug sometimes not pull SCID account list
-	- Update to MBR v7.5.2
-
-	**V1.8.2**
-	- Fix Goblin XP not find button
-	- Fix GTFO not find Donate button
-	- Improve Switch Account (fixed not closing tab supercell id when image was not detected)
-	- Improve Smart Train (change some new code and fix some bugs)
-
-	**V1.8.1**
-	- Add Slot+11
-	- Improve switch accounts (compatible with multiple types for Supercell ID)
-	- Improve Smart Train (improve system logs and fixed some a of minor bugs)
-	- Improve check Grand Warden Mode (fixed some a of minor bugs)
-	- Improve check Clan Castle (fixed some a of minor bugs)
-	- Improve and fix Auto use Dock/Hide/Minimized emulator & bot feature
-	- Fix Bot Humanization feature
-	- Fix Attack Log
-	- Update to MBR v7.5.1
-
-	**V1.8**
-	- Add CSV 'REMAIN', '%', 'Sleep Before' cmd for CSV Attack
-	- Add Attack now button
-	- Add CSV Deploy Speed
-	- Add Check Collector Outside
-	- Add Clan Hop feature
-	- Add Bot Humanization feature
-	- Add Goblin XP feature
-	- Add GTFO feature
-	- Add Max logout time option
-	- Add Request CC Troops at first
-	- Add CheckCC Troops feature
-	- Add Check Grand Warden mode feature
-	- Add Smart Train feature
-	- Add Classic Four Finger
-	- Add Auto Dock, Hide Emulator & Bot
-	- Add Restart Search Legend league
-	- Add Drop Trophy with a Balloon
-	- Add Stop on Low battery
-	- Add Colorful Attack Log
+	* Improve:
+		- Improve Switch Accounts for Supercell ID option
+		- And improve many other features....

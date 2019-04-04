@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -15,7 +15,7 @@
 #include-once
 
 Global $g_hChkShareAttack = 0, $g_hLblShareMinLoot = 0, $g_hTxtShareMinGold = 0, $g_hTxtShareMinElixir = 0, $g_hTxtShareMinDark = 0, $g_hTxtShareMessage = 0, _
-	   $g_hChkTakeLootSS = 0, $g_hChkScreenshotLootInfo = 0, $g_hChkColorfulAttackLog = 0
+	   $g_hChkTakeLootSS = 0, $g_hChkScreenshotLootInfo = 0
 
 Global $g_hLblShareMinGold = 0, $g_hLblShareMinElixir = 0,  $g_hLblShareMinDark = 0
 
@@ -83,14 +83,6 @@ Func CreateAttackSearchOptionsEndBattle()
 		$g_hChkScreenshotLootInfo = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-EndBattle", "ChkScreenshotLootInfo", "Include loot info in filename"), $x, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Options-EndBattle", "ChkScreenshotLootInfo_Info_01", "Include loot info in the screenshot filename"))
 			GUICtrlSetState(-1,$GUI_DISABLE)
-	GUICtrlCreateGroup("", -99, -99, 1, 1)
-
-	$x = 20
-	$y += 55
-	GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-EndBattle", "Group_03", "Attack Log"), $x - 15, $y - 20, $g_iSizeWGrpTab4, 60)
-		$g_hChkColorfulAttackLog = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-EndBattle", "ChkColorfulAttackLog", "Colorful Attack Log"), $x, $y, -1, -1)
-			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Options-EndBattle", "ChkColorfulAttackLog_Info_01", "When you select this option, the avatar will be displayed in color. Each color indicates a star"))
-			GUICtrlSetState(-1, $GUI_UNCHECKED)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 EndFunc   ;==>CreateAttackSearchOptionsEndBattle

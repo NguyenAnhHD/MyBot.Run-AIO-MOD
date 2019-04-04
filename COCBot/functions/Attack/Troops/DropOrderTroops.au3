@@ -53,54 +53,45 @@ Func MatchTroopDropName($Num)
 		Case 19
 			Return $eBowl
 		Case 20
-			Return "CC"
+			Return $eIceG
 		Case 21
+			Return "CC"
+		Case 22
 			Return "HEROES"
 	EndSwitch
 EndFunc   ;==>MatchTroopDropName
 
 Func MatchSlotsPerEdge($Num)
+	; 0 = spread in all deploy points each side , 1 = one deploy point , 2 = 2 deploy points
 	Switch _GUICtrlComboBox_GetCurSel($g_ahCmbDropOrder[$Num])
 		Case 0 ;$eBarb
 			Return 0
 		Case 1 ;$eArch
 			Return 0
 		Case 2 ;$eGiants
-			If $nbSides = 5 Then
-				Return $g_aiSlotsGiants
-			Else
-				Return $g_iSlotsGiants
-			EndIf
+			Return $g_iSlotsGiants
 		Case 3 ;$eGobl
 			Return 0
 		Case 4 ;$eWall
-			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then
-				Return 1
-			Else
-				Return 2
-			EndIf
+			Return 1
 		Case 5 ;$eBall
-			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then
+			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 6 Then
 				Return 0
 			Else
 				Return 2
 			EndIf
 		Case 6 ;$eWiza
-			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then
-				Return 0
-			Else
-				Return 2
-			EndIf
+			Return 0
 		Case 7 ;$eHeal
 			Return 1
 		Case 8 ;$eDrag
-			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then
+			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 6 Then
 				Return 0
 			Else
 				Return 2
 			EndIf
 		Case 9 ;$ePekk
-			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then
+			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 6 Then
 				Return 1
 			Else
 				Return 2
@@ -108,13 +99,13 @@ Func MatchSlotsPerEdge($Num)
 		Case 10 ;$eBabyD
 			Return 1
 		Case 11 ;$eMine
-			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then
+			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 6 Then
 				Return 0
 			Else
 				Return 1
 			EndIf
 		Case 12 ; $eEDrag
-			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then
+			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 6 Then
 				Return 0
 			Else
 				Return 2
@@ -122,13 +113,13 @@ Func MatchSlotsPerEdge($Num)
 		Case 13 ;$eMini
 			Return 0
 		Case 14 ;$eHogs
-			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then
+			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 6 Then
 				Return 1
 			Else
 				Return 2
 			EndIf
 		Case 15 ;$eValk
-			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then
+			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 6 Then
 				Return 0
 			Else
 				Return 2
@@ -136,7 +127,7 @@ Func MatchSlotsPerEdge($Num)
 		Case 16 ;$eGole
 			Return 2
 		Case 17 ;$eWitc
-			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 5 Then
+			If $g_iMatchMode = $LB And $g_aiAttackStdDropSides[$LB] = 6 Then
 				Return 1
 			Else
 				Return 2
@@ -145,16 +136,18 @@ Func MatchSlotsPerEdge($Num)
 			Return 2
 		Case 19 ;$eBowl
 			Return 0
-		Case 20 ;CC
+		Case 20 ;$eIceG
+			Return 2
+		Case 21 ;CC
 			Return 1
-		Case 21 ;HEROES
+		Case 22 ;HEROES
 			Return 1
 	EndSwitch
 EndFunc   ;==>MatchSlotsPerEdge
 
 Func MatchSidesDrop($Num)
 	Switch _GUICtrlComboBox_GetCurSel($g_ahCmbDropOrder[$Num])
-		Case 0 To 19 ;$eBarb to $eBowl
+		Case 0 To 20 ;$eBarb to $eIceG
 			If $g_aiAttackStdDropSides[$g_iMatchMode] = 0 Then Return 1
 			If $g_aiAttackStdDropSides[$g_iMatchMode] = 1 Then Return 2
 			If $g_aiAttackStdDropSides[$g_iMatchMode] = 2 Then Return 3
@@ -162,9 +155,9 @@ Func MatchSidesDrop($Num)
 			If $g_aiAttackStdDropSides[$g_iMatchMode] = 4 Then Return 4
 			If $g_aiAttackStdDropSides[$g_iMatchMode] = 5 Then Return 1
 			If $g_aiAttackStdDropSides[$g_iMatchMode] = 6 Then Return 1
-		Case 20
-			Return 1 ;CC
 		Case 21
+			Return 1 ;CC
+		Case 22
 			Return 1 ;HEROES
 	EndSwitch
 EndFunc   ;==>MatchSidesDrop

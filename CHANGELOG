@@ -1,4 +1,253 @@
-﻿* **V7.5.4**
+﻿* **V7.7.3**
+* Added Telegram notification when the lab is idle by @mitzu2250
+* Added Google Play Services button under Bot/Android Play Store to manually install/update Google Play Services
+* Added conditions "TH", "SIEGE" and "TH+SIEGE" to csv WAIT command, to break the wait early thx @Fahid.Mahmood for the inspiration
+*       see CSV HowTo Guide or Max-Human-Like TH12 LavaLoonion.csv for usage
+* Added Bot/Android "Update shared_prefs" option to always push and pull shared_prefs to reset zoom, set language to English, disable snow and rate popup
+* Fixed forum authentication crashing the bot with FileNotFoundException (as reported in Windows Event Log)
+* Fixed forum authentication http error 500
+* Fixed forum authentication interfering with watch dog
+* Fixed forum authentication due to windows permissions, saving .mybot.run.authentication file now in @AppDataDir (existing will be moved)
+* Fixed shared_prefs pull/push due to windows permissions, saving now in @AppDataDir\MyBot.run-Profiles (existing will be moved)
+* Fixed CSV attack with 11+ slots in attackbar
+* Fixed Telegram push for Smart Wait Time by @mitzu2250
+* Fixed Clangames "Caravan is not available"
+* Fixed minitouch click and click&drag for BlueStacks 4
+* Fixed KOPLAYER "device offline" problem
+* Fixed MEmu and BlueStacks CoC crashing when using home button or polite close
+* Fixed Nox DirectX mode for versions 3.3.0 - 6.2.0 ("Unsupported Nox screen size of 864 x 36" or similar)
+* Fixed Nox "Nox unsupported Graphics Engine Type" log message
+* Fixed Nox shared folder detection and disabled VM is running check (as it might not work)
+* Fixed missing shared folder by adding configuration to instance
+* Fixed docked mode manual mouse double click (fixed also mouse device issues for MEmu and LeapDroid)
+* Fixed LeapDroid and iTools version identification
+* Fixed check obstables not restarting CoC due to recursion
+* Improved running different Android Emulator by replacing emulator provided adb.exe with MyBot.run version
+
+* **V7.7.2**
+* Fixed forum authentication with non ansi characters like Hindi, Cyrillic or Asian
+* Fixed incorrect share folder detection when permission denied ocurres
+* Fixed removal of "Zone.Identifier" for files in lib\adb and lib\curl folders
+* Fixed forum authentication running before check prerequisites
+
+* **V7.7.1**
+* Added MyBot.run Forum user authentication registration to bot fixing COPYCAT problems
+* Added Android click mode (minitouch or WinAPI) to Bot/Android options, default is now minitouch as it's most stable
+* Added REMAIN cmd in csv attack
+* Added KOPLAYER 2.0.0 support
+* Fixed "Troop ... is not available due to full queue"
+* Fixed "Cannot find/verify 'Okay' Button in Army tab #2"
+* Fixed minitouch port initialization
+* Fixed attackbar troop count detection, when count is 200+
+* Fixed minitouch group clicks deploy
+* Fixed LeapDroid render mode detecion
+* Fixed LeapDroid "device offline" problem
+* Fixed SmartFarm debug errors
+* Fixed hero sometime not dropped when CSV recalc not detecting hero anymore
+* Fixed stopping ADB shell instance when bot stopped
+* Fixed bot exeution when "Zone.Identifier" exist on exe or dll files
+* Improved BB boat detection to return to home base
+* Improved minitouch fixing tcp connection problems
+* Improved manual clicks when bot stopped/paused and bot is docked
+* Improved BlueStack/BlueStacks2 command line key to be used on any BlueStacks version
+* Improved MEmu smartwait closing CoC preventing CoC unresponsiveness crash
+* Improved Builder Base village measuring/zoomout
+* Improved one star battle end to activate also Warden
+* Improved Copycat warning
+
+* **V7.7**
+* Added Automatic Builder Base Troop Upgrades
+* Added Wall detection in CSV attack, see BoWiHe v3.2 by @Zeck for details
+* Added zoomout mode under Bot/Android/Android Options
+* Added /minimizebot command line option to minimize bot after auto-start
+* Added Grand Warden mode selection
+* Fixed Grand Warden Boosting when 7 Buttons exist
+* Fixed Auto Hero Upgrade Button not being found
+* Fixed BS2/BS3/BS4 adb connection issues, use dedicated adb daemon on free tcp port per instance
+* Fixed Cyrillic OCR
+* Fixed Extended Attackbar Slot Detection
+* Fixed infinite looping between home and builder base
+* Fixed bot running in a folder with umlauts
+* Fixed freeze in village search waiting for clouds to clear
+* Fixed command line help (parameter /? or /help)
+* Fixed help display when links used in bot
+* Fixed page error on Battle End Screen
+* Fixed array errors in multiple places when image search returned no result
+* Fixed bot crash when using screencap with wrong coordinates
+* Fixed bot running directly from UNC network path like \\mybot_pc\mybot_home\...
+* Fixed Android "reset" (soft reboot) when Bot is paused during Android suspend
+* Fixed Droid4X 0.10.7 support
+* Fixed wall upgrade using elsewhere needed recources, when upgrading more than one wall
+* Improved siege machine selection
+* Improved TH12 detection
+* Improved bot responsiveness during image processing
+* Improved android zoomout
+* Improved android accurate click&drag
+* Improved bot first time detection
+* Improved timed heroes activation to 3 digit number, e.g. 150 sec.
+* Improved detection for SmartFarm and SmartZap
+* Improved zoom-out error handling restarting android on multiple failures
+* Improved measuring village & centering village
+* Improved measuring builder base
+* Improved Eagle lvl 2 weak base detection
+* Improved frequent android restarts due to page error by resetting error counter when beginning to search villages
+* Improved last raid notify text @MikeD
+* Changed CoC launch to push shared_prefs only when account switching is enabled
+
+* **V7.6.6**
+* Added check & remove unwanted CC siege machine
+* Fixed Custom Drop Order @ViperZ (December 2018 Update)
+* Fixed "Wait for Siege Machine", when bot is in "Halt Attack"
+* Fixed wait for CC Troops when CC Spells are not used and "Village/Req. & Donate/When lacking" options are not configured
+* Fixed several small bugs from previous Version
+* Fixed Rearm for Infernos and Xbows/Eagle
+* Fixed weak base detection when TH not detected to assume then TH12
+* Fixed exiting search due to zoom-out level, now it just measures village
+* Fixed reading quantity of Bat Spell in Clan castle
+* Fixed Heroes in AutoUpgrade
+* Fixed RequestCC can not request, cause Army Overview moves slightly
+* Fixed Haste donation
+* Fixed Clock tower boost
+* Fixed losing CoC Android shared_prefs when shared folder not available
+* Fixed BlueStacks2 support for all versions (incl. 4)
+* Fixed Smartfarm for Snow theme
+* Fixed shared folder detection for all android emulators
+* Fixed returning home from battle report
+* Fixed heroes activation when getting weak
+* Improved deadbase collector lvl 12 and lvl 13 (snow) and  50% detection
+* Improved Eagle lvl 1-3 weak base detection, also re-check weak-base after 5 sec.
+* Improved Laboratory, prefer units in current army composition
+* Improved Giant Deployment in SmartFarm/Standard Attack
+
+* **V7.6.5**
+* Added Ice Golem Support @ViperZ
+* Added Bat Spell Support @ViperZ
+* Added Stone Slammer Support @ViperZ
+* Fixed Snow Theme Detection (December 2018 Update)
+* Fixed Request Clan Castle (December 2018 Update)
+* Fixed Edit/Remove Army (December 2018 Update)
+* Fixed Clan Games not opening due to snow (December 2018 Update)
+* Fixed Switch Account (December 2018 Update)
+* Fixed Laboratory (December 2018 Update)
+* Fixed Collectors Level 13 Snow Theme (December 2018 Update)
+* Fixed Laboratory Time Position Change, reported/fixed by Fahid.Mahmood (October 2018 Update)
+* Fixed new elixir collector level 13 (October 2018 Update)
+* Fixed new dark elixir drill level 7 (October 2018 Update)
+* Fixed error "Cannot open Army Overview window" when "Wait for Clan Castle" enabled and Castle is not full, fixed by @Demen
+* Fixed switch account never switch back to the account in personal break, fixed by @Demen
+* Fixed clan chat did not open when donating CC, fixed by @Demen
+* Fixed Nox 6.2.5.3 in DirectX rendering mode
+* Improved clan games, new challenges added
+* Improved the attack bar getting spells levels and quantities when exist heroes or not
+* Improved Laboratory, updates selected troop to max possible
+	If no further upgrade possible, or "Any" selected, cheapest upgrade will be done next
+	1 Dark Elixir is worth 50 Elixir in comparism context
+* Increased Android Launch Timout to 10 min
+
+* **V7.6.4**
+* October Update Fixed Drop Trophies , Now the slots are not selected by default
+* October Update Fixed Heroes Recover timer when is boosted
+* October Update Fixed values to Train Costs, WB, Baby Dragon , Golem , Bowler and Witch
+* October Update Fixed values to Siege Build Costs
+* October Update Fixed Siege Donate XP to 30
+* Fixed Troop/Spell drop in CSV after hero activation
+* Fixed Switch Account when wait hero
+* Fixed Queued minion detection
+* Fixed Spells Donation
+* Fixed Hero Upgrade when boost potion present
+* Fixed ReplayShare every 30 minutes , reported/fixed by @Fahid.Mahmood
+* Fixed Hero Heal Time While Boosting , reported/fixed by @Fahid.Mahmood
+* Improved Healer detection on attack bar
+* Improved Laboratory White font number 9
+* Added Drop trophy with balloon, wizard and minion at any troop slot
+
+
+* **V7.6.3**
+* Fixed Google Play account switch
+* Fixed lab status display
+* Added Donate only troops and spells in queue
+* Added Double train siege machine when it is set to build only 1 type of siege machine
+* Added Translating troop list in Request CC to other languages
+* Improved multi-stats, improved SwitchAccount stats display for current account only
+* Improved CC spell selection
+* Improved check & remove unwanted CC spells
+* Improved lab check, only check once every 6 hours
+* Improved double train with less open & close army window
+
+* **V7.6.2**
+* Fixed Bluestacks 4.x and CoC PB message , different font and place.
+* Fixed Siege Build when queued empty and camp is full, making a double sieges.
+* Fixed Conflict with Balloons and siege on attack bar, reported by @Black-sTyle-Vii
+* Fixed Donate only - Switch account and a second train army reported by @hrishikesh
+* Fixed UI translate code reported by @Black-sTyle-Vii
+* Fixed Group of 10 clicks issue,  when android click is enabled + Adb Screencapture
+* Fixed Deployed Sides [DS] at attack log when was csv attack
+* Fixed Failed Switch to Clash Castle at attack bar because the delay, reported by @Pepito
+* fixed Switch account and Heroes status , reseting hero status on account switch
+* Added Clan Games new version with option to 60min events
+* Added New method to get version from Github, using the github API.
+* Added Enable/Disable 'Show touch' on emulator under Android TAB
+* Added Check CC troops and remove unwanted
+* Improved BlueStacks newest versions Undocked and Docked
+* Improved Using Siege to attack deadbase while DropTrophy
+* Improved Collect, added conditions for collect
+* Improved Collect, optionally collect Loot Cart before Resources
+* Improved Delay between remaining troops drop
+* Improved COM obj errors detection to Telegram and change to InetRead
+* Improved Remain Troops, less clicks,  at Smart-Farm
+* Improved Double Train with making donated troops for army 1
+* Improved Donate CC - skip reading spell and siege when not needed
+* Improved SC_id login on MEmu 2.5.0 and 2.8.6 , smaller buttons! reported @NguyenAnhHD
+* Changed MyBot icons
+* Removed 24 unnecessary ocr/bundle files
+* Updated scripts Attacks to last version
+* Updated German lang file by @Black-sTyle-Vii
+* Updated Azerbaijani lang file by @Z E C K
+* Updated Turkish lang file by @Z E C K
+
+* **V7.6.1**
+* Fixed Queen activation at scripted Attacks
+* Fixed Train Sieges on Quick Train , by @ChacalGyn
+* Fixed Train Sieges after donate all current sieges and camp is 0
+* Improved MEmu/Nox OpenGL and DirectX Render detection for Win10 Build 17134
+* Improved Heroes Upgrade, don't check a hero, which is already upgrading
+* Improved Heroes Upgrade, reserve builders for upgrading
+* Improved Wall Upgrade, allow upgrade by elixier, when Warden is already upgrading
+* Removed the Scheduler Notify Tab
+
+* **V7.6**
+* Added New Logo/banner by @Hecki
+* Added Double Train Army by @Demen
+* Added Support for attack bar with more than 11 slots by @Demen
+* Added Siege Machines at Train
+* Added Siege Machines at Donation.
+* Added Siege Machines at Clan Games.
+* Added Siege Machines at Attack.
+* Added Local DB [using SQLite] to collect more attack stats.
+* Added Smart-Farm Attack to standard dead bases attack
+* Added Boost using Magic Training Potion by @ViperZ
+* Added Telegram - Shutdown , Hibernate and Standby with a confirm message, just to avoid user errors
+* Added Telegram and invalid commands
+* Added Profile button to save current setting without having to start bot
+* Fixed Reset last command on Telegram
+* Fixed UI Responsiveness when the telegram is checked
+* Fixed Forced PBT for Normal Switch
+* Fixed Some issues in switch from-to Builder base - Main Village, Get village measuring and zoomout
+* Fixed Village Measuring and Zoomout problem when the emulator is to slow
+* Fixed The Standby command on Telegram
+* Fixed Queued Troops and Spells new bundle of images
+* Improved Siege Switch and attack bar benchmarks, 'big' images had size reduction and screencaptures
+* Improved Switch between Bases
+* Improved Builder Base detection
+* Improved Bot function sequences, your army is ready to attack then before any other routine will train and attack
+* Improved Request CC, only "Wait for Castle" on Search Tab, settings are on Request Tab
+* Improved Request CC, enforce Spells even without "Wait for Castle"
+* Improved Donate CC, will not proceed with the routine if the words doesn't match , reducing times and logs , by @Demen
+* Improved Clone Detection on Army window and Spells Log
+* Removed PushBullet code because the limit of 100/month
+* Updated Android Status & Information.txt
+
+* **V7.5.4**
 * Added Electro Dragon in to Clan Games
 * Added Only request donation, when specific Clan Castle type is missing by @Demen
 * Added Restart search to pick healed heroes up by @Demen

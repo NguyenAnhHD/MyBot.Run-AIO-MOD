@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Cosote (2015-12)
 ; Modified ......: Cosote (2016-08)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -180,7 +180,7 @@ Func ProcessesExist($ProgramPath, $ProgramParameter = Default, $CompareMode = De
 	Local $PIDs[0]
 
 	For $Process In WmiQuery($query)
-		SetDebugLog($Process[0] & " = " & $Process[1])
+		SetDebugLog($Process[0] & " = " & $Process[2])
 		Local $processCommandLineCompare = StringReplace(StringReplace(StringReplace(StringReplace($Process[2], ".exe", "", 1), " ", ""), '"', ""), "'", "")
 		If ($CompareMode = 0 And $commandLineCompare = $processCommandLineCompare) Or _
 				($CompareMode = 0 And StringRight($commandLineCompare, StringLen($processCommandLineCompare)) = $processCommandLineCompare) Or _

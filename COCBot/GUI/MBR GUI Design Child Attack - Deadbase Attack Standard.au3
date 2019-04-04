@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -20,12 +20,6 @@ Global $g_hCmbStandardDropOrderDB = 0, $g_hCmbStandardDropSidesDB = 0, $g_hCmbSt
 
 Global $g_hLblSmartDeployDB = 0, $g_hPicAttackNearDarkElixirDrillDB = 0
 Global $g_hBtnCustomDropOrderDB = 0
-
-; Unit/Wave Factor - Team AiO MOD++
-Global $g_hGrpSettings = 0
-Global $g_hChkGiantSlot = 0, $g_hCmbGiantSlot = 0
-Global $g_hChkUnitFactor = 0, $g_hTxtUnitFactor = 0
-Global $g_hChkWaveFactor = 0, $g_hTxtWaveFactor = 0
 
 Func CreateAttackSearchDeadBaseStandard()
 
@@ -52,14 +46,13 @@ Func CreateAttackSearchDeadBaseStandard()
 				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbStandardDropSides_Info_01", "Attack on a single side, penetrates through base") & @CRLF & _
 								   GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbStandardDropSides_Info_02", "Attack on two sides, penetrates through base") & @CRLF & _
 								   GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbStandardDropSides_Info_03", "Attack on three sides, gets outer and some inside of base") & @CRLF & _
-								   GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbStandardDropSides_Info_07", "Attack on Classic Four Fingers") & @CRLF & _
 								   GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbStandardDropSides_Info_04", "Select the No. of sides to attack on."))
 				GUICtrlSetData(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbStandardDropSides_Item_01", "one side") & "|" & _
 								   GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbStandardDropSides_Item_02", "two sides") & "|" & _
 								   GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbStandardDropSides_Item_03", "three sides") & "|" & _
 								   GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbStandardDropSides_Item_04", "all sides equally") & "|" & _
 								   GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbStandardDropSides_Item_07", "Classic Four Fingers"), GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbStandardDropSides_Item_04", -1))
-				GUICtrlSetOnEvent(-1, "Bridge") ; Uncheck SmartAttack Red Area when enable FourFinger to avoid conflict
+				GUICtrlSetOnEvent(-1, "cmbStandardDropSidesDB") ; Uncheck SmartAttack Red Area when enable FourFinger to avoid conflict
 		$y += 25
 			GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "Lbl-CmbStandardUnitDelay", "Delay Unit") & ":", $x, $y + 5, -1, -1)
 				$sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "Lbl-CmbStandardUnitDelay_Info_01", "This delays the deployment of troops, 1 (fast) = like a Bot, 10 (slow) = Like a Human.") & @CRLF & _
@@ -68,12 +61,13 @@ Func CreateAttackSearchDeadBaseStandard()
 			$g_hCmbStandardUnitDelayDB = GUICtrlCreateCombo("", $x + 55, $y, 36, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 				_GUICtrlSetTip(-1, $sTxtTip)
 				GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9|10", "4")
+				GUICtrlSetOnEvent(-1, "chkSpeedAtkDB")
 			GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "Lbl-CmbStandardWaveDelay_Info_01", "Wave") & ":", $x + 100, $y + 5, -1, -1)
 				_GUICtrlSetTip(-1, $sTxtTip)
 			$g_hCmbStandardWaveDelayDB = GUICtrlCreateCombo("", $x + 140, $y, 36, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 				_GUICtrlSetTip(-1, $sTxtTip)
 				GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9|10", "4")
-
+				GUICtrlSetOnEvent(-1, "chkSpeedAtkDB")
 		$y += 22
 			$g_hChkRandomSpeedAtkDB = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkRandomSpeedAtk", "Randomize delay for Units && Waves"), $x, $y, -1, -1)
 				_GUICtrlSetTip(-1, $sTxtTip)
@@ -116,46 +110,6 @@ Func CreateAttackSearchDeadBaseStandard()
 				_GUICtrlSetTip(-1, $sTxtTip)
 			$g_hPicAttackNearDarkElixirDrillDB = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDrill, $x + 20 , $y - 3, 24, 24)
 				_GUICtrlSetTip(-1, $sTxtTip)
-
-		; Unit/Wave Factor - Team AiO MOD++
-		$x = 23
-		$y = 110
-		$g_hGrpSettings = GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "Group_02", "Settings"), $x, $y, 180, 105)
-
-		$y += 5
-			$g_hChkGiantSlot = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot", "GiantSlot"), $x + 10, $y + 10, 89, 25)
-				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot_Info_01", "perimeter (> = 12, recommended)") & @CRLF & _
-								   GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkGiantSlot_Info_02", "two points on each side (> = 8, recommended)"))
-				GUICtrlSetOnEvent(-1, "chkGiantSlot")
-				GUICtrlSetState(-1, $GUI_UNCHECKED)
-			$g_hCmbGiantSlot = GUICtrlCreateCombo("", $x + 99, $y + 12, 73, 25, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
-				GUICtrlSetData(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbGiantSlot_Info_01", "Perimeter") & "|" & _
-								   GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbGiantSlot_Info_02", "TwoPoints"), GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "CmbGiantSlot_Info_02", -1))
-				GUICtrlSetOnEvent(-1, "cmbGiantSlot")
-
-		$y += 34
-			$g_hChkUnitFactor = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor", "Modify Unit Factor"), $x + 10, $y + 4, 130, 25)
-				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor_Info_01", "Unit deploy delay = Unit setting x Unit Factor (millisecond)"))
-				GUICtrlSetOnEvent(-1, "chkUnitFactor")
-				GUICtrlSetState(-1, $GUI_UNCHECKED)
-			$g_hTxtUnitFactor = GUICtrlCreateInput("10", $x + 140, $y + 6, 31, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkUnitFactor_Info_02", "Unit deploy delay = Unit setting x Unit Factor (millisecond)"))
-				GUICtrlSetState(-1, $GUI_DISABLE)
-				GUICtrlSetData(-1, 10)
-
-		$y += 30
-			$g_hChkWaveFactor = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor", "Modify Wave Factor"), $x + 10, $y + 2, 130, 25)
-				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor_Info_01", "Switch troop delay = Wave setting x Wave Factor (millisecond)"))
-				GUICtrlSetOnEvent(-1, "chkWaveFactor")
-				GUICtrlSetState(-1, $GUI_UNCHECKED)
-			$g_hTxtWaveFactor = GUICtrlCreateInput("100", $x + 140, $y + 4, 31, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
-				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Standard", "ChkWaveFactor_Info_02", "Switch troop delay = Wave setting x Wave Factor (millisecond)"))
-				GUICtrlSetState(-1, $GUI_DISABLE)
-				GUICtrlSetData(-1, 100)
-
-		For $i = $g_hGrpSettings To $g_hTxtWaveFactor
-			GUICtrlSetState($i, $GUI_HIDE)
-		Next
 
 		$y += 40
 		$x = 98

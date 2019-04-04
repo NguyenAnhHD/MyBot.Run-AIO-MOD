@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........:
@@ -37,10 +37,6 @@ Func FindTownHall($check = True, $forceCaptureRegion = True)
 			$g_iTHy = 0
 		EndIf
 		;EndIf
-
-		; Atk-Log ~ TownHall Info
-		$eTHLevel = StringFormat("%2s", $g_iSearchTH)
-
 		Return " [TH]:" & StringFormat("%2s", $g_iSearchTH) & ", " & $g_sTHLoc
 	EndIf
 	$g_sTHLoc = $g_iSearchTH

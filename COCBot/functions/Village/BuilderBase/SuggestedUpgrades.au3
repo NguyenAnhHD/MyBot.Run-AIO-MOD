@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: ProMac (05-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -256,8 +256,8 @@ Func GetUpgradeButton($sUpgButtom = "", $Debug = False)
 	If $sUpgButtom = "Elixir" Then $sUpgButtom = $g_sImgAutoUpgradeBtnElixir
 	If $sUpgButtom = "Gold" Then $sUpgButtom = $g_sImgAutoUpgradeBtnGold
 
-	If QuickMIS("BC1", $g_sImgAutoUpgradeBtnDir, 300, 650, 600, 720, True, $Debug) Then
-		Local $sBuildingName = getNameBuilding(242, 584)
+	If QuickMIS("BC1", $g_sImgAutoUpgradeBtnDir, 300, 590, 600, 670, True, $Debug) Then
+		Local $sBuildingName = getNameBuilding(242, 550)
 		If _Sleep(500) Then Return
 		SetLog("Building: " & $sBuildingName, $COLOR_INFO)
 		; Verify if is Builder Hall and If is to Upgrade
@@ -271,7 +271,7 @@ Func GetUpgradeButton($sUpgButtom = "", $Debug = False)
 				$aBtnPos[1] = 530
 			#ce
 		EndIf
-		Click($g_iQuickMISX + 300, $g_iQuickMISY + 650, 1)
+		Click($g_iQuickMISX + 300, $g_iQuickMISY + 590, 1)
 		If _Sleep(1500) Then Return
 		If QuickMIS("BC1", $sUpgButtom, $aBtnPos[0], $aBtnPos[1], $aBtnPos[0] + $aBtnPos[2], $aBtnPos[1] + $aBtnPos[3], True, $Debug) Then
 			Click($g_iQuickMISX + $aBtnPos[0], $g_iQuickMISY + $aBtnPos[1], 1)

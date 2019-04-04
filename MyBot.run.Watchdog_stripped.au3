@@ -4,12 +4,13 @@
 #pragma compile(Out, MyBot.run.Watchdog.exe) ; Required
 #pragma compile(Icon, "Images\MyBot.ico")
 #pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
-#pragma compile(ProductVersion, 7.5.4)
-#pragma compile(FileVersion, 7.5.4)
+#pragma compile(ProductVersion, 7.7)
+#pragma compile(FileVersion, 7.7.3)
 #pragma compile(LegalCopyright, © https://mybot.run)
 #Au3Stripper_Off
 #Au3Stripper_On
-Global $g_sBotVersion = "v7.5.4"
+Global $g_sBotVersion = "v7.7.3"
+Global $g_sModVersion = "v2.0"
 Opt("MustDeclareVars", 1)
 Global Const $WAIT_TIMEOUT = 258
 Global Const $STDERR_MERGED = 8
@@ -542,7 +543,7 @@ EndFunc
 Func UpdateManagedMyBot($aBotDetails)
 Return True
 EndFunc
-Global $g_sBotTitle = "My Bot Watchdog " & $g_sBotVersion
+Global $g_sBotTitle = "My Bot Watchdog " & $g_sBotVersion & " - " & " AiO++ MOD " & $g_sModVersion & " -"
 Opt("WinTitleMatchMode", 3)
 Global Enum $g_eBotDetailsBotForm = 0, $g_eBotDetailsTimer, $g_eBotDetailsProfile, $g_eBotDetailsCommandLine, $g_eBotDetailsTitle, $g_eBotDetailsRunState, $g_eBotDetailsPaused, $g_eBotDetailsLaunched, $g_eBotDetailsVerifyCount, $g_eBotDetailsBotStateStruct, $g_eBotDetailsOptionalStruct, $g_eBotDetailsArraySize
 Global $tagSTRUCT_BOT_STATE = "struct" & ";hwnd BotHWnd" & ";hwnd AndroidHWnd" & ";boolean RunState" & ";boolean Paused" & ";boolean Launched" & ";uint64 g_hTimerSinceStarted" & ";uint g_iTimePassed" & ";char Profile[64]" & ";char AndroidEmulator[32]" & ";char AndroidInstance[32]" & ";int StructType" & ";ptr StructPtr" & ";boolean RegisterInHost" & ";endstruct"
@@ -857,6 +858,7 @@ Return _ArrayToString($g_WmiFields, ",")
 EndFunc
 Func GetWmiObject()
 If $g_oWMI = 0 Then $g_oWMI = ObjGet("winmgmts:{impersonationLevel=impersonate}!\\.\root\cimv2")
+If @error Or Not IsObj($g_oWMI) Then Return -1
 Return $g_oWMI
 EndFunc
 Func CloseWmiObject()
@@ -875,7 +877,9 @@ EndIf
 EndIf
 Local $aProcesses[0]
 SetDebugLog("WMI Query: " & $sQuery)
-Local $oProcessColl = GetWmiObject().ExecQuery($sQuery, "WQL", 0x20 + 0x10)
+Local $oObjc = GetWmiObject()
+If $oObjc = -1 Or @error Then Return 0
+Local $oProcessColl = $oObjc.ExecQuery($sQuery, "WQL", 0x20 + 0x10)
 For $Process In $oProcessColl
 Local $aProcess[UBound($g_WmiFields)]
 For $i = 0 To UBound($g_WmiFields) - 1

@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -22,7 +22,7 @@ Func CreateAttackSearchTHSnipeEndBattle()
 	Local $x = 10, $y = 45
 	$g_hGrpTSEndBattle = GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - EndBattle", "Group_01", -1), $x - 5, $y - 20, $g_iSizeWGrpTab4, $g_iSizeHGrpTab4)
 	;Apply to switch Attack Standard after THSnipe End ==>
-		GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - EndBattle", "LblSwitch_DB_Attack_at_END", "Switch DB Attack at END") & ":", $x, $y, 143, 18, $SS_LEFT)
+		GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - EndBattle", "LblSwitch_DB_Attack_at_END", "Switch DB Attack at END") & ":", $x, $y, -1, 18, $SS_LEFT)
 	$y += 15
 		;chk camps
 		$g_hChkTSActivateCamps2 = GUICtrlCreateCheckbox("", $x + 2, $y + 3, 16, 16)

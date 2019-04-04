@@ -7,21 +7,21 @@
 ; Return values .: None
 ; Author ........: Code Monkey #4
 ; Modified ......: KnowJack (Aug 2015), MonkeyHunter(2015-12)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
-Func PrepareSearch() ;Click attack button and find match button, will break shield
+Func PrepareSearch($Mode = $DB) ;Click attack button and find match button, will break shield
 
 	SetLog("Going to Attack...", $COLOR_INFO)
 
 	; RestartSearchPickupHero - Check Remaining Heal Time
-	If $g_bSearchRestartPickupHero Then
+	If $g_bSearchRestartPickupHero And $Mode <> $DT Then
 		For $pTroopType = $eKing To $eWarden ; check all 3 hero
 			For $pMatchMode = $DB To $g_iModeCount - 1 ; check all attack modes
-				If IsSpecialTroopToBeUsed($pMatchMode, $pTroopType) Then
+				If IsUnitUsed($pMatchMode, $pTroopType) Then
 					If Not _DateIsValid($g_asHeroHealTime[$pTroopType - $eKing]) Then
 						getArmyHeroTime("All", True, True)
 						ExitLoop 2
@@ -64,6 +64,7 @@ Func PrepareSearch() ;Click attack button and find match button, will break shie
 		$g_bIsClientSyncError = False
 		Return
 	Else
+		$g_bCloudsActive = True ; early set of clouds to ensure no android suspend occurs that might cause infinite waits...
 		If $g_bUseRandomClick = False Then
 			ClickP($aFindMatchButton, 1, 0, "#0150") ;Click Find a Match Button
 		Else

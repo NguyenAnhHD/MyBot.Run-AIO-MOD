@@ -6,7 +6,7 @@
 ; Return values .:
 ; Author ........: Promac(04-2016), MonkeyHunter (04-2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -32,14 +32,9 @@ Func getArmyTroopTime($bOpenArmyWindow = False, $bCloseArmyWindow = False, $bChe
 		EndIf
 	EndIf
 
+
 	Local $sResultTroops = getRemainTrainTimer(495, 169, $bNeedCapture) ;Get time via OCR.
 	$g_aiTimeTrain[0] = ConvertOCRTime("Troops", $sResultTroops, $bSetLog) ; update global array
-
-	; Used in Donate/Train only Mode - Ezeck 6-14-17
-	; Set the Timer to be used in train donate only, durring the donate cycle
-	If ($g_iCommandStop = 3 Or $g_iCommandStop = 0) Then
-		$g_hTrainTimeLeft = TimerInit()
-	EndIf
 
 	If $bCloseArmyWindow Then
 		ClickP($aAway, 1, 0, "#0000") ;Click Away

@@ -6,21 +6,20 @@
 ; Return values .: None
 ; Author ........: KnowJack (June 2015)
 ; Modified ......: Sardo 2015-08
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
 ; Example .......: No
 ; ===============================================================================================================================
-Func LocateLab()
+Func LocateLab($bCollect = True)
 	Local $stext, $MsgBox, $iStupid = 0, $iSilly = 0, $sErrorText = ""
 
-	SetLog("Locating Laboratory...", $COLOR_INFO)
+	SetLog("Locating Laboratory", $COLOR_INFO)
 
-	If _GetPixelColor($aTopLeftClient[0], $aTopLeftClient[1], True) <> Hex($aTopLeftClient[2], 6) Or _GetPixelColor($aTopRightClient[0], $aTopRightClient[1], True) <> Hex($aTopRightClient[2], 6) Then
-		Zoomout()
-		Collect()
-	EndIf
+	WinGetAndroidHandle()
+	checkMainScreen()
+	If $bCollect Then Collect(False)
 
 	While 1
 		_ExtMsgBoxSet(1 + 64, $SS_CENTER, 0x004080, 0xFFFF00, 12, "Comic Sans MS", 600)
@@ -53,12 +52,6 @@ Func LocateLab()
 						SetLog(" Operator Error - Bad Laboratory Location.", $COLOR_ERROR)
 						ClickP($aAway, 1, 0, "#0380")
 						Return False
-					Case Else
-						SetLog(" Operator Error - Bad Laboratory Location.", $COLOR_ERROR)
-						$g_aiLaboratoryPos[0] = -1
-						$g_aiLaboratoryPos[1] = -1
-						ClickP($aAway, 1, 0, "#0381")
-						Return False
 				EndSelect
 			EndIf
 		Else
@@ -66,7 +59,7 @@ Func LocateLab()
 			ClickP($aAway, 1, 0, "#0382")
 			Return
 		EndIf
-		Local $sLabInfo = BuildingInfo(242, 520 + $g_iBottomOffsetY); 860x780
+		Local $sLabInfo = BuildingInfo(242, 491 + $g_iBottomOffsetY); 860x780
 		If $sLabInfo[0] > 1 Or $sLabInfo[0] = "" Then
 			If StringInStr($sLabInfo[1], "Lab") = 0 Then
 				Local $sLocMsg = ($sLabInfo[0] = "" ? "Nothing" : $sLabInfo[1])
@@ -86,11 +79,9 @@ Func LocateLab()
 						$sErrorText = $sLocMsg & " ?!?!?!" & @CRLF & @CRLF & "Last Chance, DO NOT MAKE ME ANGRY, or" & @CRLF & "I will give ALL of your gold to Barbarian King," & @CRLF & "And ALL of your Gems to the Archer Queen!" & @CRLF
 						ContinueLoop
 					Case $iSilly > 4
-						SetLog("Quit joking, Click the Army Camp, or restart bot and try again", $COLOR_ERROR)
-						$g_aiLaboratoryPos[0] = -1
-						$g_aiLaboratoryPos[1] = -1
+						SetLog("Ok, you really think that's a Laboratory?" & @CRLF & "I don't care anymore, go ahead with it!", $COLOR_ERROR)
 						ClickP($aAway, 1, 0, "#0383")
-						Return False
+						ExitLoop
 				EndSelect
 			EndIf
 		Else

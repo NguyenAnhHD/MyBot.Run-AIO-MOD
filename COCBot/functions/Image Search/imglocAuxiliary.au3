@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Trlopes (2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -16,8 +16,7 @@
 Func decodeMultipleCoords($coords, $iDedupX = -1, $iDedupY = -1, $iSorted = -1)
 	;returns array of N coordinates [0=x, 1=y][0=x1, 1=y1]
 	Local $retCoords
-	Local $aEmpty[1] = [""]
-	Local $p, $pOff = 0
+	Local $pOff = 0
 	;	SetDebugLog("**decodeMultipleCoords: " & $coords, $COLOR_DEBUG)
 	Local $aCoordsSplit = StringSplit($coords, "|", $STR_NOCOUNT)
 	If StringInStr($aCoordsSplit[0], ",") > 0 Then
@@ -26,11 +25,22 @@ Func decodeMultipleCoords($coords, $iDedupX = -1, $iDedupY = -1, $iSorted = -1)
 		$pOff = 1
 		Local $retCoords[Number($aCoordsSplit[0])]
 	EndIf
+	Local $iErr = 0
 	For $p = 0 To UBound($retCoords) - 1
-		$retCoords[$p] = decodeSingleCoord($aCoordsSplit[$p + $pOff])
+		Local $c = decodeSingleCoord($aCoordsSplit[$p + $pOff])
+		If UBound($c) > 1 Then
+			$retCoords[$p - $iErr] = $c
+		Else
+			; not a coordinate
+			$iErr += 1
+		EndIf
 	Next
+	If $iErr > 0 Then ReDim $retCoords[UBound($retCoords) - $iErr]
 
-	If UBound($retCoords) = 0 Then Return $aEmpty
+	If UBound($retCoords) = 0 Then
+		Local $aEmpty[0]
+		Return $aEmpty
+	EndIf
 	If UBound($retCoords) = 1 Or ($iDedupX < 1 And $iDedupY < 1 And $iSorted = -1) Then Return $retCoords ; no dedup, return array
 
 	; dedup coords
@@ -95,14 +105,14 @@ Func RetrieveImglocProperty($key, $property)
 	Return $aValue[0]
 EndFunc   ;==>RetrieveImglocProperty
 
-Func checkImglocError(ByRef $imglocvalue, $funcName, $sTileSource = "")
+Func checkImglocError(ByRef $imglocvalue, $funcName, $sTileSource = "", $sImageArea = "")
 	;Return true if there is an error in imgloc return string
 	If IsArray($imglocvalue) Then ;despite beeing a string, AutoIt receives a array[0]
 		If $imglocvalue[0] = "0" Or $imglocvalue[0] = "" Then
-			If $g_bDebugSetlog Then SetDebugLog($funcName & " imgloc search returned no results" & ($sTileSource ? " for '" & $sTileSource & "' !" : "!"), $COLOR_WARNING)
+			If $g_bDebugSetlog Then SetDebugLog($funcName & " imgloc search returned no results" & ($sImageArea ? " in " & $sImageArea : "")  & ($sTileSource ? " for '" & $sTileSource & "' !" : "!"), $COLOR_WARNING)
 			Return True
 		ElseIf StringLeft($imglocvalue[0], 2) = "-1" Then ;error
-			If $g_bDebugSetlog Then SetDebugLog($funcName & " - Imgloc DLL Error: " + $imglocvalue[0], $COLOR_ERROR)
+			If $g_bDebugSetlog Then SetDebugLog($funcName & " - Imgloc DLL Error: " & $imglocvalue[0], $COLOR_ERROR)
 			Return True
 		ElseIf StringLeft($imglocvalue[0], 2) = "-2" Then ;critical error
 			SetLog($funcName & " - Imgloc DLL Critical Error", $COLOR_RED)
@@ -231,8 +241,8 @@ Func GetButtonDiamond($sButtonName)
 			$btnDiamond = "357,545|502,545|502,607|357,607"
 		Case "Next" ; attackpage attackwindow
 			$btnDiamond = "697,542|850,542|850,610|697,610"
-		Case "ObjectButtons", "BoostOne", "BoostCT" ; Full size of object buttons at the bottom
-			$btnDiamond = GetDiamondFromRect("200,617(460,83)")
+		Case "ObjectButtons", "BoostOne", "BoostCT", "Upgrade", "Research", "MagicItems", "Boostleft", "Treasury" ; Full size of object buttons at the bottom
+			$btnDiamond = GetDiamondFromRect("140,590,720,670")
 		Case "GEM", "BOOSTBtn" ; Boost window button (full button size)
 			$btnDiamond = GetDiamondFromRect("359,412(148,66)")
 		Case "EnterShop"
@@ -255,16 +265,14 @@ Func GetButtonDiamond($sButtonName)
 			$btnDiamond = "282,85|306,85|306,130|282,130"
 		Case "DownDonation" ;mainwindow - only when chat window is visible
 			$btnDiamond = "282,635|306,635|306,680|282,680"
-		Case "Treasury"
-			$btnDiamond = "125,610|740,610|740,715|125,715"
 		Case "Collect"
 			$btnDiamond = "350,450|505,450|505,521|350,521"
 		Case "BoostBarrack", "BarrackBoosted"
 			$btnDiamond = GetDiamondFromRect("630,280,850,360")
 		Case "ArmyTab", "TrainTroopsTab", "BrewSpellsTab", "BuildSiegeMachinesTab", "QuickTrainTab"
 			$btnDiamond = GetDiamondFromRect("18,100,800,150")
-		Case "Rearm"
-			$btnDiamond = "110,620|730,620|750,700|111,700"
+		Case "BoostTrainingPotionBtn", "BoostResourcePotionBtn"
+			$btnDiamond = GetDiamondFromRect("420,395(85,60)")
 		Case Else
 			$btnDiamond = "FV" ; use full image to locate button
 	EndSwitch
@@ -350,7 +358,7 @@ Func findImage($sImageName, $sImageTile, $sImageArea, $maxReturnPoints = 1, $bFo
 		Return
 	EndIf
 
-	If checkImglocError($result, "findImage", $sImageTile) = True Then
+	If checkImglocError($result, "findImage", $sImageTile, $sImageArea) Then
 		If $g_bDebugSetlog And $g_bDebugImageSave Then DebugImageSave("findImage_" & $sImageName, True)
 		Return $aCoords
 	EndIf
@@ -453,18 +461,29 @@ Func findMultiple($directory, $sCocDiamond, $redLines, $minLevel = 0, $maxLevel 
 	If $result[0] <> "" Then ;despite being a string, AutoIt receives a array[0]
 		Local $resultArr = StringSplit($result[0], "|", $STR_NOCOUNT)
 		ReDim $returnValues[UBound($resultArr)]
+		Local $iErr = 0
 		For $rs = 0 To UBound($resultArr) - 1
 			For $rD = 0 To UBound($returnData) - 1 ; cycle props
 				$returnLine[$rD] = RetrieveImglocProperty($resultArr[$rs], $returnData[$rD])
+				If $returnData[$rD] = "objectpoints" Then
+					; validate object points
+					If StringInStr($returnLine[$rD], ",") = 0 Then
+						; no valid coordinate, skip values
+						If $g_bDebugSetlog Then SetDebugLog("findMultiple : Invalid objectpoint in result in " & $rD & ": " & $result[0])
+						$iErr += 1
+						ContinueLoop 2
+					EndIf
+				EndIf
 				If $g_bDebugSetlog Then SetDebugLog("findMultiple : " & $resultArr[$rs] & "->" & $returnData[$rD] & " -> " & $returnLine[$rD])
 			Next
-			$returnValues[$rs] = $returnLine
+			$returnValues[$rs - $iErr] = $returnLine
 		Next
+		If $iErr Then ReDim $returnValues[UBound($resultArr) - $iErr]
 
 		;;lets check if we should get redlinedata
 		If $redLines = "" Then
-			$g_sImglocRedline = RetrieveImglocProperty("redline", "") ;global var set in imglocTHSearch
-			If $g_bDebugSetlog Then SetDebugLog("findMultiple : Redline argument is emty, seting global Redlines")
+			$g_sImglocRedline = RetrieveImglocProperty("redline", "") ;global var set in imgltocTHSearch
+			If $g_bDebugSetlog Then SetDebugLog("findMultiple : Redline argument is emty, setting global Redlines")
 		EndIf
 		If $g_bDebugSetlog Then SetDebugLog("******** findMultiple *** END ***", $COLOR_ORANGE)
 		Return $returnValues
@@ -529,6 +548,28 @@ Func GetDiamondFromRect($rect)
 	$returnvalue = $DiamdValues[0] & "|" & $DiamdValues[1] & "|" & $DiamdValues[2] & "|" & $DiamdValues[3]
 	Return $returnvalue
 EndFunc   ;==>GetDiamondFromRect
+
+Func GetDiamondFromArray($aRectArray)
+	;Recieves $aArray[0] = StartX
+	;		  $aArray[1] = StartY
+	;		  $aArray[2] = EndX
+	;		  $aArray[3] = EndY
+
+	If UBound($aRectArray, 1) < 4 Then
+			SetDebugLog("GetDiamondFromArray: Bad Input Array!", $COLOR_ERROR)
+			Return ""
+	EndIf
+	Local $iX = Number($aRectArray[0]), $iY = Number($aRectArray[1])
+	Local $iEndX = Number($aRectArray[2]), $iEndY = Number($aRectArray[3])
+
+	;If User inputed Width and Height then add start point to get the final End Coordinates
+	If $iEndY <= $iY Then $iEndY += $iY
+	If $iEndX <= $iX Then $iEndX += $iX
+
+	Local $sReturnDiamond = ""
+	$sReturnDiamond = $iX & "," & $iY & "|" & $iEndX & "," & $iY & "|" & $iEndX & "," & $iEndY & "|" & $iX & "," & $iEndY
+    Return $sReturnDiamond
+EndFunc
 
 Func FindImageInPlace($sImageName, $sImageTile, $place, $bForceCaptureRegion = True, $AndroidTag = Default)
 	;creates a reduced capture of the place area a finds the image in that area
@@ -706,6 +747,8 @@ Func decodeTroopEnum($tEnum)
 			Return "ElectroDragon"
 		Case $eBowl
 			Return "Bowler"
+		Case $eIceG
+			Return "IceGolem"
 		Case $eESpell
 			Return "EarthquakeSpell"
 		Case $eFSpell
@@ -724,6 +767,8 @@ Func decodeTroopEnum($tEnum)
 			Return "RageSpell"
 		Case $eSkSpell
 			Return "SkeletonSpell"
+		Case $eBtSpell
+			Return "BatSpell"
 		Case $eCSpell
 			Return "CloneSpell"
 		Case $eCastle
@@ -782,6 +827,8 @@ Func decodeTroopName($sName)
 			Return $eEDrag
 		Case "Bowler"
 			Return $eBowl
+		Case "IceGolem"
+			Return $eIceG
 		Case "EarthquakeSpell"
 			Return $eESpell
 		Case "FreezeSpell"
@@ -800,6 +847,8 @@ Func decodeTroopName($sName)
 			Return $eRSpell
 		Case "SkeletonSpell"
 			Return $eSkSpell
+		Case "BatSpell"
+			Return $eBtSpell
 		Case "CloneSpell"
 			Return $eCSpell
 		Case "Castle"
@@ -824,35 +873,32 @@ Func Slot($iX, $iY) ; Return Slots for Quantity Reading on Army Window
 				If $iY < 315 Then Return 184 ; Troops
 				If $iY > 315 Then Return 195 ; Spell
 
-			Case 244 To 307 ; Slot 4
+			Case 244 To 314 ; Slot 4
 				If $iY < 315 Then Return 255 ; Troops
 				If $iY > 315 Then Return 272 ; Spell
 
-			Case 308 To 392 ; Slot 5
+			Case 315 To 387 ; Slot 5
 				If $iY < 315 Then Return 330 ; Troops
 				If $iY > 315 Then Return 341 ; Spell
 
-			Case 393 To 464 ; Slot 6
+			Case 388 To 460 ; Slot 6
 				If $iY < 315 Then Return 403 ; Troops
 				If $iY > 315 Then Return 415 ; Spell
 
-			Case 465 To 537 ; Slot 7
+			Case 461 To 533 ; Slot 7
 				If $iY < 315 Then Return 477 ; Troops
 				If $iY > 315 Then Return 485 ; Spell
-			Case 538 To 610 ; Slot 8
-				Return 551 ; Troops
+;~ 			Case 534 To 600 ; Slot 7.5 (8)
+;~ 				Return 551 ; Troops
 
-			Case 611 To 682 ; Slot 9
-				If $iY < 315 Then Return 625 ; Troops
-				If $iY > 315 Then Return 619 ; Heroes
+			Case 605 To 677 ; Slot 8
+				Return 620 ; Siege Machines slot 1
 
-			Case 683 To 752 ; Slot 10
-				If $iY < 315 Then Return 694 ; Troops
-				If $iY > 315 Then Return 691 ; Heroes
+			Case 678 To 752 ; Slot 9
+				Return 693 ; Siege Machines slot 2
 
-			Case 753 To 825 ; Slot 11
-				Return 764 ; Troops
-
+			Case 754 To 826 ; Slot 10
+				Return 769 ; Siege Machines slot 2
 		EndSwitch
 	Else ;CC Troops & Spells
 		Switch $iX
@@ -871,15 +917,17 @@ Func Slot($iX, $iY) ; Return Slots for Quantity Reading on Army Window
 			Case 308 To 392 ; CC Troops Slot 5
 				Return 330
 
-			Case 393 To 464 ; CC Troops Slot 6
+			Case 393 To 435 ; CC Troops Slot 6
 				Return 403
 
-			Case 510 To 580 ; CC Spell Slot 1
-				Return 533
-			Case 581 To 599 ; CC Spell Middle ( Happens with Clan Castles with the max. Capacity of 1!)
-				Return 578
-			Case 600 To 660 ; CC Spell Slot 2
-				Return 610
+			Case 450 To 510; CC Spell Slot 1
+				Return 475
+			Case 511 To 535 ; CC Spell Middle ( Happens with Clan Castles with the max. Capacity of 1!)
+				Return 510
+			Case 536 To 605 ; CC Spell Slot 2
+				Return 555
+			Case 625 To 700 ; CC Siege Machines
+				Return 650
 		EndSwitch
 	EndIf
 EndFunc   ;==>Slot

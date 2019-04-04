@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: Cosote (02-2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -32,7 +32,8 @@ Func OpenNox($bRestart = False)
 
 	$hTimer = __TimerInit()
 
-	If WaitForRunningVMS($g_iAndroidLaunchWaitSec - __TimerDiff($hTimer) / 1000, $hTimer) Then Return False
+	; Nox can have issues detecting if VM is running, so now disabled
+	;If WaitForRunningVMS($g_iAndroidLaunchWaitSec - __TimerDiff($hTimer) / 1000, $hTimer) Then Return False
 
 	; update ADB port, as that can changes when Nox just started...
 	$g_bInitAndroid = True
@@ -127,10 +128,12 @@ Func GetNoxAdbPath()
 EndFunc   ;==>GetNoxAdbPath
 
 Func GetNoxBackgroundMode()
+
 	Local $iDirectX = $g_iAndroidBackgroundModeDirectX
 	Local $iOpenGL = $g_iAndroidBackgroundModeOpenGL
 	; hack for super strange Windows Fall Creator Update with OpenGL and DirectX problems
-	If @OSBuild >= 16299 Then
+	; doesn't have this issue with OSBuild : 17134
+	If @OSBuild >= 16299 And @OSBuild < 17134 Then
 		SetDebugLog("DirectX/OpenGL Fix applied for Windows Build 16299")
 		$iDirectX = $g_iAndroidBackgroundModeOpenGL
 		$iOpenGL = $g_iAndroidBackgroundModeDirectX
@@ -140,7 +143,7 @@ Func GetNoxBackgroundMode()
 	If $sConfig Then
 		Local $graphic_engine_type = IniRead($sConfig, "setting", "graphic_engine_type", "") ; 0 = OpenGL, 1 = DirectX
 		Switch $graphic_engine_type
-			Case "0"
+			Case "0", ""
 				Return $iOpenGL
 			Case "1"
 				Return $iDirectX
@@ -215,37 +218,6 @@ Func InitNox($bCheckOnly = False)
 			SetLog("Using ADB default device " & $g_sAndroidAdbDevice & " for " & $g_sAndroidEmulator, $COLOR_ERROR)
 		EndIf
 
-		;$g_sAndroidPicturesPath = "/mnt/shell/emulated/0/Download/other/"
-		;$g_sAndroidPicturesPath = "/mnt/shared/Other/"
-		$g_sAndroidPicturesPath = "(/mnt/shared/Other|/mnt/shell/emulated/0/Download/other)"
-		$aRegexResult = StringRegExp($__VBoxVMinfo, "Name: 'Other', Host path: '(.*)'.*", $STR_REGEXPARRAYGLOBALMATCH)
-		If Not @error Then
-			$g_bAndroidSharedFolderAvailable = True
-			$g_sAndroidPicturesHostPath = $aRegexResult[UBound($aRegexResult) - 1] & "\"
-		Else
-			; Check the shared folder 'Nox_share' , this is the default path on last version
-			If FileExists(@MyDocumentsDir & "\Nox_share\") Then
-				$g_bAndroidSharedFolderAvailable = True
-				$g_sAndroidPicturesHostPath = @MyDocumentsDir & "\Nox_share\Other\"
-				If Not FileExists($g_sAndroidPicturesHostPath) Then
-					; Just in case of 'Other' Folder doesn't exist
-					DirCreate($g_sAndroidPicturesHostPath)
-				EndIf
-			; > Nox v5.2.0.0
-			ElseIf FileExists(@HomeDrive & @HomePath & "\Nox_share\") Then
-				$g_bAndroidSharedFolderAvailable = True
-				$g_sAndroidPicturesHostPath = @HomeDrive & @HomePath & "\Nox_share\"
-				If Not FileExists($g_sAndroidPicturesHostPath) Then
-					; Just in case of 'Other' Folder doesn't exist
-					DirCreate($g_sAndroidPicturesHostPath)
-				EndIf
-			Else
-				$g_bAndroidSharedFolderAvailable = False
-				$g_bAndroidAdbScreencap = False
-				$g_sAndroidPicturesHostPath = ""
-				SetLog($g_sAndroidEmulator & " Background Mode is not available", $COLOR_ERROR)
-			EndIf
-		EndIf
 
 		Local $v = GetVersionNormalized($g_sAndroidVersion)
 		For $i = 0 To UBound($__Nox_Config) - 1
@@ -253,6 +225,7 @@ Func InitNox($bCheckOnly = False)
 			If $v >= $v2 Then
 				SetDebugLog("Using Android Config of " & $g_sAndroidEmulator & " " & $__Nox_Config[$i][0])
 				$g_sAppClassInstance = $__Nox_Config[$i][1]
+				$g_bAndroidControlUseParentPos = $__Nox_Config[$i][2]
 				$g_avAndroidAppConfig[$g_iAndroidConfig][3] = $g_sAppClassInstance
 				ExitLoop
 			EndIf
@@ -264,6 +237,10 @@ Func InitNox($bCheckOnly = False)
 			SetDebugLog("Update Android Mouse Offset to " & $g_aiMouseOffset[0] & ", " & $g_aiMouseOffset[1])
 			EndIf
 		#ce
+
+		; Update shared folder state
+		$g_sAndroidSharedFolderName = "Other"
+		ConfigureSharedFolderNox(0) ; something like C:\Users\Administrator\Documents\Nox_share\Other\
 
 		UpdateHWnD($g_hAndroidWindow, False) ; Ensure $g_sAppClassInstance is properly set
 
@@ -284,6 +261,52 @@ Func GetNoxConfigFile()
 	Return ""
 EndFunc   ;==>GetNoxConfigFile
 
+Func ConfigureSharedFolderNox($iMode = 0, $bSetLog = Default)
+	If $bSetLog = Default Then $bSetLog = True
+	Local $bResult = False
+
+	Switch $iMode
+		Case 0 ; check that shared folder is configured in VM
+			;$g_sAndroidPicturesPath = "/mnt/shell/emulated/0/Download/other/"
+			;$g_sAndroidPicturesPath = "/mnt/shared/Other/"
+			$g_sAndroidPicturesPath = "(/mnt/shared/Other|/mnt/shell/emulated/0/Download/other|/mnt/shell/emulated/0/Others)"
+			Local $aRegexResult = StringRegExp($__VBoxVMinfo, "Name: '" & $g_sAndroidSharedFolderName & "', Host path: '(.*)'.*", $STR_REGEXPARRAYGLOBALMATCH)
+			If Not @error Then
+				$bResult = True
+				$g_bAndroidSharedFolderAvailable = True
+				$g_sAndroidPicturesHostPath = $aRegexResult[UBound($aRegexResult) - 1] & "\"
+			Else
+				; Check the shared folder 'Nox_share' , this is the default path on last version
+				If FileExists(@HomeDrive & @HomePath & "\Nox_share\OtherShare\") Then
+					; > Nox v6
+					$g_bAndroidSharedFolderAvailable = True
+					$g_sAndroidPicturesHostPath = @HomeDrive & @HomePath & "\Nox_share\OtherShare\"
+				ElseIf FileExists(@HomeDrive & @HomePath & "\Nox_share\") Then
+					; > Nox v5.2.0.0
+					$g_bAndroidSharedFolderAvailable = True
+					$g_sAndroidPicturesHostPath = @HomeDrive & @HomePath & "\Nox_share\"
+				ElseIf FileExists(@MyDocumentsDir & "\Nox_share\Other\") Then
+					$g_bAndroidSharedFolderAvailable = True
+					$g_sAndroidPicturesHostPath = @MyDocumentsDir & "\Nox_share\Other\"
+				Else
+					$g_bAndroidSharedFolderAvailable = False
+					$g_bAndroidAdbScreencap = False
+					$g_sAndroidPicturesHostPath = ""
+					SetLog($g_sAndroidEmulator & " Background Mode is not available", $COLOR_ERROR)
+				EndIf
+			EndIf
+
+		Case 1 ; create missing shared folder
+			$bResult = AndroidPicturePathAutoConfig(@MyDocumentsDir, "\Nox_share\Other", $bSetLog)
+
+		Case Else
+			; use default impl.
+			Return SetError(1, 0, "")
+	EndSwitch
+
+	Return SetError(0, 0, $bResult)
+EndFunc
+
 Func SetScreenNox()
 
 	If Not InitAndroid() Then Return False
@@ -296,14 +319,8 @@ Func SetScreenNox()
 	; Set dpi
 	;$cmdOutput = LaunchConsole($__VBoxManage_Path, "guestproperty set " & $g_sAndroidInstance & " vbox_dpi 160", $process_killed)
 
-	AndroidPicturePathAutoConfig(@MyDocumentsDir, "\Nox_share\Other") ; ensure $g_sAndroidPicturesHostPath is set and exists
-	If $g_bAndroidSharedFolderAvailable = False And $g_bAndroidPicturesPathAutoConfig = True And FileExists($g_sAndroidPicturesHostPath) = 1 Then
-		; remove tailing backslash
-		Local $path = $g_sAndroidPicturesHostPath
-		If StringRight($path, 1) = "\" Then $path = StringLeft($path, StringLen($path) - 1)
-		$cmdOutput = LaunchConsole($__VBoxManage_Path, "sharedfolder remove " & $g_sAndroidInstance & " --name Other", $process_killed)
-		$cmdOutput = LaunchConsole($__VBoxManage_Path, "sharedfolder add " & $g_sAndroidInstance & " --name Other --hostpath """ & $path & """  --automount", $process_killed)
-	EndIf
+	ConfigureSharedFolder(1, True)
+	ConfigureSharedFolder(2, True)
 
 	; find Nox conf.ini in C:\Users\User\AppData\Local\Nox and set "Fix window size" to Enable, "Remember size and position" to Disable and screen res also
 	Local $sConfig = GetNoxConfigFile()
@@ -347,7 +364,25 @@ Func CheckScreenNox($bSetLog = True)
 
 	For $i = 0 To UBound($aValues) - 1
 		$aRegexResult = StringRegExp($__VBoxGuestProperties, "Name: " & $aValues[$i][0] & ", value: (.+), timestamp:", $STR_REGEXPARRAYMATCH)
-		If @error = 0 Then $Value = $aRegexResult[0]
+		If @error = 0 Then
+			$Value = $aRegexResult[0]
+		Else
+			If StringInStr($__VBoxGuestProperties, "error:") = 0 Then
+				If $bSetLog Then
+					SetLog("Cannot validate " & $g_sAndroidEmulator & " property " & $aValues[$i][0], $COLOR_ERROR)
+				Else
+					SetDebugLog("Cannot validate " & $g_sAndroidEmulator & " property " & $aValues[$i][0], $COLOR_ERROR)
+				EndIF
+			Else
+				$Value = $aValues[$i][1]
+				If $bSetLog Then
+					SetLog("Cannot validate " & $g_sAndroidEmulator & " property " & $aValues[$i][0] & ", assuming " & $Value, $COLOR_ERROR)
+				Else
+					SetDebugLog("Cannot validate " & $g_sAndroidEmulator & " property " & $aValues[$i][0] & ", assuming " & $Value, $COLOR_ERROR)
+				EndIF
+			EndIf
+		EndIf
+
 		If $Value <> $aValues[$i][1] Then
 			If $iErrCnt = 0 Then
 				If $bSetLog Then
@@ -366,7 +401,7 @@ Func CheckScreenNox($bSetLog = True)
 	Next
 
 	; check if shared folder exists
-	If AndroidPicturePathAutoConfig(@MyDocumentsDir, "\Nox_share\Other", $bSetLog) Then $iErrCnt += 1
+	If ConfigureSharedFolder(1, $bSetLog) Then $iErrCnt += 1
 
 	If $iErrCnt > 0 Then Return False
 	Return True
@@ -452,14 +487,19 @@ Func EmbedNox($bEmbed = Default, $hHWndAfter = Default)
 	Next
 
 	If $hToolbar = 0 Then
-		SetDebugLog("EmbedNox(" & $bEmbed & "): toolbar Window not found, list of windows:" & $c, Default, True)
+		SetDebugLog("EmbedNox(" & $bEmbed & "): toolbar Window not found, list of windows:" & $c) ;, Default, True
 		For $i = 1 To UBound($aWin) - 1
 			Local $h = $aWin[$i][0]
 			Local $c = $aWin[$i][1]
-			SetDebugLog("EmbedNox(" & $bEmbed & "): Handle = " & $h & ", Class = " & $c, Default, True)
+			Local $aPos = WinGetPos($h)
+			If UBound($aPos) > 3 Then
+				SetDebugLog("EmbedNox(" & $bEmbed & "): Handle = " & $h & ", Class = " & $c & ", width=" & $aPos[2] & ", height=" & $aPos[3]) ;, Default, True
+			Else
+				SetDebugLog("EmbedNox(" & $bEmbed & "): Handle = " & $h & ", Class = " & $c) ;, Default, True
+			EndIf
 		Next
 	Else
-		SetDebugLog("EmbedNox(" & $bEmbed & "): $hToolbar=" & $hToolbar, Default, True)
+		SetDebugLog("EmbedNox(" & $bEmbed & "): $hToolbar=" & $hToolbar) ;, Default, True
 		If $bEmbed Then
 			WinMove2($hToolbar, "", -1, -1, -1, -1, $HWND_NOTOPMOST, $SWP_HIDEWINDOW, False, False)
 		Else

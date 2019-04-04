@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MyBot.run team
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -15,28 +15,6 @@
 #include-once
 
 Func chkPBTGenabled()
-	If GUICtrlRead($g_hChkNotifyPBEnable) = $GUI_CHECKED Then
-		$g_bNotifyPBEnable = True
-		GUICtrlSetState($g_hTxtNotifyPBToken, $GUI_ENABLE)
-		GUICtrlSetState($g_hBtnNotifyDeleteMessages, $GUI_ENABLE)
-		GUICtrlSetState($g_hChkNotifyDeleteAllPBPushes, $GUI_ENABLE)
-		GUICtrlSetState($g_hChkNotifyDeleteOldPBPushes, $GUI_ENABLE)
-		GUICtrlSetState($g_hBtnNotifyDeleteMessages, $GUI_ENABLE)
-		If $g_bNotifyDeletePushesOlderThan = True Then
-			GUICtrlSetState($g_hCmbNotifyPushHours, $GUI_ENABLE)
-		Else
-			GUICtrlSetState($g_hCmbNotifyPushHours, $GUI_DISABLE)
-		EndIf
-	Else
-		$g_bNotifyPBEnable = False
-		GUICtrlSetState($g_hChkNotifyTGEnable, $GUI_ENABLE)
-		GUICtrlSetState($g_hTxtNotifyPBToken, $GUI_DISABLE)
-		GUICtrlSetState($g_hBtnNotifyDeleteMessages, $GUI_DISABLE)
-		GUICtrlSetState($g_hChkNotifyDeleteAllPBPushes, $GUI_DISABLE)
-		GUICtrlSetState($g_hChkNotifyDeleteOldPBPushes, $GUI_DISABLE)
-		GUICtrlSetState($g_hBtnNotifyDeleteMessages, $GUI_DISABLE)
-		GUICtrlSetState($g_hCmbNotifyPushHours, $GUI_DISABLE)
-	EndIf
 
 	If GUICtrlRead($g_hChkNotifyTGEnable) = $GUI_CHECKED Then
 		$g_bNotifyTGEnable = True
@@ -46,7 +24,7 @@ Func chkPBTGenabled()
 		GUICtrlSetState($g_hTxtNotifyTGToken, $GUI_DISABLE)
 	EndIf
 
-	If $g_bNotifyPBEnable = True Or $g_bNotifyTGEnable = True Then
+	If $g_bNotifyTGEnable = True Then
 		GUICtrlSetState($g_hChkNotifyRemote, $GUI_ENABLE)
 		GUICtrlSetState($g_hTxtNotifyOrigin, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkNotifyAlertMatchFound, $GUI_ENABLE)
@@ -64,6 +42,7 @@ Func chkPBTGenabled()
 		GUICtrlSetState($g_hChkNotifyAlertBAN, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkNotifyBOTUpdate, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkNotifyAlertSmartWaitTime, $GUI_ENABLE)
+		GUICtrlSetState($g_hChkNotifyAlertLaboratoryIdle, $GUI_ENABLE)
 	Else
 		GUICtrlSetState($g_hChkNotifyRemote, $GUI_DISABLE)
 		GUICtrlSetState($g_hTxtNotifyOrigin, $GUI_DISABLE)
@@ -81,35 +60,10 @@ Func chkPBTGenabled()
 		GUICtrlSetState($g_hChkNotifyAlertMaintenance, $GUI_DISABLE)
 		GUICtrlSetState($g_hChkNotifyAlertBAN, $GUI_DISABLE)
 		GUICtrlSetState($g_hChkNotifyBOTUpdate, $GUI_DISABLE)
-		GUICtrlSetState($g_hCmbNotifyPushHours, $GUI_DISABLE)
-		GUICtrlSetState($g_hChkNotifyDeleteAllPBPushes, $GUI_DISABLE)
-		GUICtrlSetState($g_hChkNotifyDeleteOldPBPushes, $GUI_DISABLE)
-		GUICtrlSetState($g_hBtnNotifyDeleteMessages, $GUI_DISABLE)
 		GUICtrlSetState($g_hChkNotifyAlertSmartWaitTime, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkNotifyAlertLaboratoryIdle, $GUI_DISABLE)
 	EndIf
 EndFunc   ;==>chkPBTGenabled
-
-Func chkDeleteOldPBPushes()
-	If GUICtrlRead($g_hChkNotifyDeleteOldPBPushes) = $GUI_CHECKED Then
-		$g_bNotifyDeletePushesOlderThan = True
-		If $g_bNotifyPBEnable Then GUICtrlSetState($g_hCmbNotifyPushHours, $GUI_ENABLE)
-	Else
-		$g_bNotifyDeletePushesOlderThan = False
-		GUICtrlSetState($g_hCmbNotifyPushHours, $GUI_DISABLE)
-	EndIf
-EndFunc   ;==>chkDeleteOldPBPushes
-
-Func btnDeletePBMessages()
-	$g_bNotifyDeleteAllPushesNow = True
-EndFunc   ;==>btnDeletePBMessages
-
-Func NotifyHelp()
-	If FileExists(@ScriptDir & "\Help\NotifyHelp_" & $g_sLanguage & ".mht") Then
-		ShellExecute(@ScriptDir & "\Help\NotifyHelp_" & $g_sLanguage & ".mht")
-	ElseIf FileExists(@ScriptDir & "\Help\NotifyHelp_English.mht") Then
-		ShellExecute(@ScriptDir & "\Help\NotifyHelp_English.mht")
-	EndIf
-EndFunc	;==>NotifyHelp
 
 Func chkNotifyHours()
 	Local $b = GUICtrlRead($g_hChkNotifyOnlyHours) = $GUI_CHECKED

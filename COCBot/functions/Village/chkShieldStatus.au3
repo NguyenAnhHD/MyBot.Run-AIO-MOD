@@ -8,7 +8,7 @@
 ; Return values .: None
 ; Author ........: MonkeyHunter (2016-02)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -17,7 +17,7 @@
 Func chkShieldStatus($bChkShield = True, $bForceChkPBT = False)
 
 	; skip shield data collection if force single PB, wait for shield, or close while training not enabled, or window is not on main base
-	If ($g_bForceSinglePBLogoff = False And ($g_bChkBotStop = True And $g_iCmbBotCond >= 19) = False) And $g_bCloseWhileTrainingEnable = False And Not $g_bRequestTroopsEnableDefense Or Not (IsMainPage()) Then Return
+    If ($g_bForceSinglePBLogoff = False And ($g_bChkBotStop = True And $g_iCmbBotCond >= 19) = False) And $g_bCloseWhileTrainingEnable = False And Not $g_bRequestCCDefense Or Not (IsMainPage()) Then Return
 
 	Local $Result, $iTimeTillPBTstartSec, $ichkTime = 0, $ichkSTime = 0, $ichkPBTime = 0
 
@@ -76,7 +76,7 @@ Func chkShieldStatus($bChkShield = True, $bForceChkPBT = False)
 		EndIf
 	EndIf
 
-	If $g_bForceSinglePBLogoff = False Then Return ; return if force single PB feature not enabled.
+	If Not $g_bForceSinglePBLogoff And Not $g_bRequestCCDefense Then Return ; return if force single PB feature And RequestCC Defense are both not enabled.
 
 	If _DateIsValid($g_sPBStartTime) Then
 		$ichkPBTime = Int(_DateDiff('s', $g_sPBStartTime, _NowCalc())) ; compare existing shield date/time to now.
@@ -104,9 +104,6 @@ Func chkShieldStatus($bChkShield = True, $bForceChkPBT = False)
 				SetLog("Personal Break starts in: " & $sFormattedDiff)
 				Local $CorrectstringPB_GUI = StringReplace($sFormattedDiff, StringInStr($sFormattedDiff, " hours ") >= 1 ? " hours " : " hour ", "h")
 				$CorrectstringPB_GUI = StringReplace($CorrectstringPB_GUI, StringInStr($CorrectstringPB_GUI, " minutes ") >= 1 ? " minutes " : " minute ", "'")
-				$g_aiPersonalBreak[$g_iCurAccount] = $CorrectstringPB_GUI
-			Else
-				$g_aiPersonalBreak[$g_iCurAccount] = ""
 			EndIf
 
 			If $iTimeTillPBTstartMin < -(Int($g_iSinglePBForcedEarlyExitTime)) Then
@@ -120,7 +117,6 @@ Func chkShieldStatus($bChkShield = True, $bForceChkPBT = False)
 		Else
 			SetLog("Bad getPBTtime() return value: " & $Result, $COLOR_ERROR)
 			$g_sPBStartTime = "" ; reset to force update next pass
-			$g_aiPersonalBreak[$g_iCurAccount] = ""
 		EndIf
 	EndIf
 
@@ -140,7 +136,7 @@ Func _Date_Difference($sStartDate, Const $sEndDate, Const $iGrain)
 		If $iUnit <> 0 Then
 			$sReturn &= $iUnit & " " & $aType[$i] & ($iUnit > 1 ? "s" : "") & " "
 		EndIf
-		$sStartDate = _DateAdd($aUnit[$i], $iUnit, $sStartDate)
+		$sStartDate = _DateAdd($aUnit[$i], Int($iUnit), $sStartDate)
 	Next
 
 	Return $sReturn

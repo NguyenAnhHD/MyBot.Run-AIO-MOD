@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MyBot.run team
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -41,16 +41,51 @@ Func chkSmartAttackRedAreaAB()
 EndFunc   ;==>chkSmartAttackRedAreaAB
 
 Func chkRandomSpeedAtkDB()
-	If GUICtrlRead($g_hChkRandomSpeedAtkDB) = $GUI_CHECKED Then
-		;$iChkDBRandomSpeedAtk = 1
-		GUICtrlSetState($g_hCmbStandardUnitDelayDB, $GUI_DISABLE)
-		GUICtrlSetState($g_hCmbStandardWaveDelayDB, $GUI_DISABLE)
-	Else
-		;$iChkDBRandomSpeedAtk = 0
-		GUICtrlSetState($g_hCmbStandardUnitDelayDB, $GUI_ENABLE)
-		GUICtrlSetState($g_hCmbStandardWaveDelayDB, $GUI_ENABLE)
+	Local $iCmbValue = _GUICtrlComboBox_GetCurSel($g_hCmbDBAlgorithm)
+	If $iCmbValue = 0 Then
+		If GUICtrlRead($g_hChkRandomSpeedAtkDB) = $GUI_CHECKED Then
+			GUICtrlSetState($g_hChkRandomSpeedAtkDB1, $GUI_CHECKED)
+			GUICtrlSetState($g_hCmbStandardUnitDelayDB, $GUI_DISABLE)
+			GUICtrlSetState($g_hCmbStandardWaveDelayDB, $GUI_DISABLE)
+			GUICtrlSetState($g_hCmbStandardUnitDelayDB1, $GUI_DISABLE)
+			GUICtrlSetState($g_hCmbStandardWaveDelayDB1, $GUI_DISABLE)
+		Else
+			GUICtrlSetState($g_hChkRandomSpeedAtkDB1, $GUI_UNCHECKED)
+			GUICtrlSetState($g_hCmbStandardUnitDelayDB, $GUI_ENABLE)
+			GUICtrlSetState($g_hCmbStandardWaveDelayDB, $GUI_ENABLE)
+			GUICtrlSetState($g_hCmbStandardUnitDelayDB1, $GUI_ENABLE)
+			GUICtrlSetState($g_hCmbStandardWaveDelayDB1, $GUI_ENABLE)
+			chkSpeedAtkDB()
+		EndIf
+	EndIf
+	If $iCmbValue = 2 Then
+		If GUICtrlRead($g_hChkRandomSpeedAtkDB1) = $GUI_CHECKED And $iCmbValue = 2 Then
+			GUICtrlSetState($g_hChkRandomSpeedAtkDB, $GUI_CHECKED)
+			GUICtrlSetState($g_hCmbStandardUnitDelayDB, $GUI_DISABLE)
+			GUICtrlSetState($g_hCmbStandardWaveDelayDB, $GUI_DISABLE)
+			GUICtrlSetState($g_hCmbStandardUnitDelayDB1, $GUI_DISABLE)
+			GUICtrlSetState($g_hCmbStandardWaveDelayDB1, $GUI_DISABLE)
+		Else
+			GUICtrlSetState($g_hChkRandomSpeedAtkDB, $GUI_UNCHECKED)
+			GUICtrlSetState($g_hCmbStandardUnitDelayDB, $GUI_ENABLE)
+			GUICtrlSetState($g_hCmbStandardWaveDelayDB, $GUI_ENABLE)
+			GUICtrlSetState($g_hCmbStandardUnitDelayDB1, $GUI_ENABLE)
+			GUICtrlSetState($g_hCmbStandardWaveDelayDB1, $GUI_ENABLE)
+			chkSpeedAtkDB()
+		EndIf
 	EndIf
 EndFunc   ;==>chkRandomSpeedAtkDB
+
+Func chkSpeedAtkDB()
+	Local $iCmbValue = _GUICtrlComboBox_GetCurSel($g_hCmbDBAlgorithm)
+	If $iCmbValue = 2 And GUICtrlRead($g_hChkRandomSpeedAtkDB1) = $GUI_UNCHECKED then
+		_GUICtrlComboBox_SetCurSel($g_hCmbStandardUnitDelayDB, _GUICtrlComboBox_GetCurSel($g_hCmbStandardUnitDelayDB1))
+		_GUICtrlComboBox_SetCurSel($g_hCmbStandardWaveDelayDB, _GUICtrlComboBox_GetCurSel($g_hCmbStandardWaveDelayDB1))
+	ElseIf $iCmbValue = 0 And GUICtrlRead($g_hChkRandomSpeedAtkDB) = $GUI_UNCHECKED then
+		_GUICtrlComboBox_SetCurSel($g_hCmbStandardUnitDelayDB1, _GUICtrlComboBox_GetCurSel($g_hCmbStandardUnitDelayDB))
+		_GUICtrlComboBox_SetCurSel($g_hCmbStandardWaveDelayDB1, _GUICtrlComboBox_GetCurSel($g_hCmbStandardWaveDelayDB))
+	EndIf
+EndFunc
 
 Func chkSmartAttackRedAreaDB()
 	If GUICtrlRead($g_hChkSmartAttackRedAreaDB) = $GUI_CHECKED Then

@@ -1,0 +1,66 @@
+NOTE  |Author: Z E C K v1.2 Initial [20.08.2018]
+NOTE  |             ★★★ TH 7-8 ★★★
+NOTE  |
+NOTE  |Train: 8 Dragons, 8 Balloons Spells: 3 Rage + Haste - in CC Balloons
+NOTE  |
+NOTE  |       Script work on "EXTERNAL EDGES"
+
+      |--------------------------------------DragLoon Start-------------------------------------------|
+      |                                          Z E C K                                              |
+
+      |_TROOPNAME_|__FLEXIBLE_|____TH06___|____TH07___|____TH08___|____TH09___|____TH10___|____TH11___|
+TRAIN |Ball       |0          |0          |8          |8          |0          |0          |0          |
+TRAIN |Drag       |0          |0          |8          |8          |0          |0          |0          |
+
+TRAIN |RSpell     |0          |0          |3          |4          |0          |0          |0          |
+TRAIN |HSpell     |0          |0          |3          |3          |0          |0          |0          |
+
+      |_TROOPNAME_|___________|____TH06___|____TH07___|____TH08___|____TH09___|____TH10___|____TH11___|
+TRAIN |King       |0          |0          |0          |0          |0          |1          |1          |
+TRAIN |Queen      |0          |0          |0          |0          |0          |1          |1          |
+TRAIN |Warden     |0          |0          |0          |0          |0          |0          |1          |
+
+      |___________|___________|____TH06___|____TH07___|____TH08___|____TH09___|____TH10___|____TH11___|
+REDLN |0          |0          |0          |0          |0          |0          |4          |4          |
+DRPLN |0          |0          |0          |0          |0          |0          |0          |0          |
+
+      |___________|___________|____TH06___|____TH07___|____TH08___|____TH09___|____TH10___|____TH11___|
+CCREQ |           |           |           |Ball       |Ball  Haste|           |           |           |
+
+      |EXTR. GOLD |EXTR.ELIXIR|EXTR. DARK |DEPO. GOLD |DEPO.ELIXIR|DEPO. DARK |TOWNHALL   |FORCED SIDE|
+SIDE  |0          |0          |0          |0          |0          |0          |10         |           |
+      |EAGLE      |INFERNO    |XBOW       |WIZTOWER   |MORTAR     |AIRDEFENSE |GEMBOX     |GEMBOX     |
+SIDEB |0          |0          |0          |0          |0          |9          |0          |0          |
+
+      |VECTOR_____|SIDE_______|DROP_POINTS|ADDTILES___|VERSUS_____|RANDOMX_PX_|RANDOMY_PX_|BUILDING___|
+MAKE  |A          |FRONT-LEFT |10         |0          |EXT-INT    |0          |0          |           |
+MAKE  |B          |FRONT-RIGHT|10         |0          |INT-EXT    |0          |0          |           |
+MAKE  |Z          |FRONT-RIGHT|10         |0          |EXT-INT    |0          |0          |           |
+MAKE  |K          |FRONT-LEFT |10         |0          |INT-EXT    |0          |0          |           |
+MAKE  |C          |FRONT-LEFT |10         |-7         |INT-EXT    |0          |0          |           |
+MAKE  |D          |FRONT-RIGHT|10         |-8         |INT-EXT    |0          |0          |           |
+MAKE  |V          |FRONT-LEFT |10         |-17        |INT-EXT    |0          |0          |           |
+MAKE  |L          |FRONT-RIGHT|10         |-18        |INT-EXT    |0          |0          |           |
+MAKE  |H          |FRONT-RIGHT|10         |-24        |INT-EXT    |0          |5          |           |
+MAKE  |M          |LEFT-FRONT |10         |0          |EXT-INT    |0          |0          |           |
+MAKE  |N          |RIGHT-FRONT|10         |0          |EXT-INT    |0          |0          |           |
+
+      |VECTOR_____|INDEX______|QTY_X_VECT_|TROOPNAME__|DELAY_DROP_|DELAYCHANGE|SLEEPAFTER_|___________|
+DROP  |A          |3,3,4,2,5  |5          |Drag       |50-60      |27-50      |15-20      |           |
+DROP  |A          |2,4,5,4,2  |5          |Drag       |50-60      |27-50      |15-20      |           |
+DROP  |A          |10         |1          |Castle     |0          |0          |150-200    |           |
+DROP  |A          |4,6,8,10   |4          |Ball       |50-70      |27-50      |15-20      |           |
+DROP  |B          |1,3,5,6    |4          |Ball       |50-70      |27-50      |15-20      |           |
+DROP  |Z          |5,7,9,10   |4          |Ball       |50-70      |27-50      |15-20      |           |
+DROP  |K          |1,2,4,6    |4          |Ball       |50-70      |27-50      |200-250    |           |
+DROP  |D          |4          |1          |RSpell     |0          |0          |200-250    |           |
+DROP  |C          |3          |1          |RSpell     |0          |0          |200-250    |           |
+DROP  |M          |4          |1          |King       |50         |0          |200-250    |           |
+WAIT  |1200-1300  |           |           |           |           |           |           |           |
+DROP  |V          |1          |1          |RSpell     |0          |0          |200-250    |           |
+DROP  |L          |3          |1          |RSpell     |0          |0          |250-300    |           |
+DROP  |L          |3          |1          |HaSpell    |0          |0          |200-250    |           |
+DROP  |H          |3          |1          |HaSpell    |0          |0          |150-200    |           |
+DROP  |A          |7-10       |1          |REMAIN     |50-70      |100        |50-100     |           |
+      |                                                                                               |
+      |-----------------------------------------DragLoon End------------------------------------------|

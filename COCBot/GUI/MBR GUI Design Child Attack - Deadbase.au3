@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......: CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -18,7 +18,7 @@ Global $g_hGUI_DEADBASE = 0
 
 #include "MBR GUI Design Child Attack - Deadbase Attack Standard.au3"
 #include "MBR GUI Design Child Attack - Deadbase Attack Scripted.au3"
-#include "MBR GUI Design Child Attack - Deadbase Attack Milking.au3"
+#include "MBR GUI Design Child Attack - Deadbase Attack Smart Farm.au3"
 #include "MBR GUI Design Child Attack - Deadbase-Search.au3"
 #include "MBR GUI Design Child Attack - Deadbase-Attack.au3"
 #include "MBR GUI Design Child Attack - Deadbase-EndBattle.au3"
@@ -34,7 +34,7 @@ Func CreateAttackSearchDeadBase()
 	;creating subchilds first!
 	CreateAttackSearchDeadBaseStandard()
 	CreateAttackSearchDeadBaseScripted()
-	CreateAttackSearchDeadBaseMilking()
+	CreateAttackSearchDeadBaseSmartFarm()
 
 	GUISwitch($g_hGUI_DEADBASE)
 	$g_hGUI_DEADBASE_TAB = GUICtrlCreateTab(0, 0, $g_iSizeWGrpTab3, $g_iSizeHGrpTab3, BitOR($TCS_MULTILINE, $TCS_RIGHTJUSTIFY))

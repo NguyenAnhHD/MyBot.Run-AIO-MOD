@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: GKevinOD (2014)
 ; Modified ......: DkEd, Hervidero (2015), CodeSlinger69 (01-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -110,6 +110,7 @@ Global $g_hTiShow = 0, $g_hTiHide = 0, $g_hTiDonate = 0, $g_hTiAbout = 0, $g_hTi
 Global $g_aFrmBotPosInit[8] = [0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_hFirstControlToHide = 0, $g_hLastControlToHide = 0, $g_aiControlPrevState[1]
 Global $g_bFrmBotMinimized = False ; prevents bot flickering
+Global $g_lblHepNotify = 0, $g_lblHelpBot = 0
 
 Global $g_oCtrlIconData = ObjCreate("Scripting.Dictionary")
 
@@ -157,12 +158,12 @@ Func CreateMainGUI()
 			$g_iFrmBotPosY = 100
 		EndIf
 	EndIf
-	
+
 	; Set Main Window icon
-	GUISetIcon($g_sLibIconPath, $eIcnGUI)
+	GUISetIcon($g_sLibIconPath, $eIcnAiOMOD)
 
 	; Create tray icon
-	TraySetIcon($g_sLibIconPath, $eIcnGUI)
+	TraySetIcon($g_sLibIconPath, $eIcnAiOMOD)
 	Opt("TrayMenuMode", 3)
 	Opt("TrayOnEventMode", 1)
 	Opt("TrayIconHide", 0)

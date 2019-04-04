@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: AtoZ (2015)
 ; Modified ......: Barracoda (07-2015), TheMaster1st (10-2015)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -22,12 +22,13 @@ Func AttackTHGrid($troopKind, $iNbOfSpots = 1, $iAtEachSpot = 1, $Sleep = Random
 		$waveNb : 0 => "Only"  , 1 => "First" , 2 => "Second"  , 3 => "Third"  , 4 => "Last"
 	#ce ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+	$g_iSidesAttack = 1
+
 	Local $aThx, $aThy, $num
 	Local $TroopCountBeg
 	Local $THtroop = -1
 	Local $troopNb = 0
 	Local $name = ""
-	Local $plural = 0
 	Local $waveName = "first"
 	Local $NumTroopDeployed = 0
 
@@ -113,10 +114,9 @@ Func AttackTHGrid($troopKind, $iNbOfSpots = 1, $iAtEachSpot = 1, $Sleep = Random
 	EndIf
 
 	; All Barracks Troops
-	If $troopKind >= $eBarb And $troopKind <= $eBowl Then
+	If $troopKind >= $eBarb And $troopKind <= $eIceG Then
 		$troopNb = $iNbOfSpots * $iAtEachSpot
-		If $troopNb > 1 Then $plural = 1
-		$name = NameOfTroop($troopKind, $plural)
+		$name = GetTroopName($troopKind, $troopNb)
 
 		$TroopCountBeg = Number(ReadTroopQuantity($THtroop))
 		If ($TroopCountBeg = 0) And $g_bDebugSetlog Then SetLog("No " & $name & " Remaining!!!")
@@ -137,7 +137,7 @@ Func AttackTHGrid($troopKind, $iNbOfSpots = 1, $iAtEachSpot = 1, $Sleep = Random
 
 	DeployTHNormal($iAtEachSpot, $iNbOfSpots)
 
-	If $troopKind >= $eBarb And $troopKind <= $eBowl Then
+	If $troopKind >= $eBarb And $troopKind <= $eIceG Then
 		If $TroopCountBeg <> Number(ReadTroopQuantity($THtroop)) Then
 			$NumTroopDeployed = $TroopCountBeg - Number(ReadTroopQuantity($THtroop))
 			SetLog("Deployment of " & $NumTroopDeployed & " " & $name & " was Successful!")
@@ -283,7 +283,7 @@ Func CastSpell($THSpell, $x, $y)
 	For $i = 0 To UBound($g_avAttackTroops) - 1
 		If $g_avAttackTroops[$i][0] = $THSpell Then
 			$Spell = $i
-			$name = NameOfTroop($THSpell, 0)
+			$name = GetTroopName($THSpell)
 		EndIf
 	Next
 
@@ -304,7 +304,7 @@ Func CheckOneStar($DelayInSec = 0, $Log = True, $CheckHeroes = True)
 
 		If _Sleep(5) Then Return True
 		If $g_bRestart = True Then Return True
-		If $CheckHeroes = True And ($g_bCheckQueenPower = True Or $g_bCheckKingPower = True) Then CheckHeroesHealth() ;Check Heroes Health and activate their abilities if health is not green
+		If $CheckHeroes = True And ($g_bCheckQueenPower = True Or $g_bCheckKingPower = True Or $g_bCheckWardenPower = True) Then CheckHeroesHealth() ;Check Heroes Health and activate their abilities if health is not green
 		;check for one star
 		If _ColorCheck(_GetPixelColor($aWonOneStar[0], $aWonOneStar[1], True), Hex($aWonOneStar[2], 6), $aWonOneStar[3]) Then ;exit if 1 star
 			If $Log = True Then SetLog("Townhall has been destroyed!", $COLOR_ACTION)
@@ -325,6 +325,15 @@ Func CheckOneStar($DelayInSec = 0, $Log = True, $CheckHeroes = True)
 				SetLog("Activating King's power to restore some health before EndBattle", $COLOR_INFO)
 				SelectDropTroop($g_iKingSlot)
 				$g_bCheckKingPower = False
+			EndIf
+
+			If _Sleep(500) Then Return True
+			If $g_bRestart = True Then Return True
+
+			If $g_bCheckWardenPower = True Then
+				SetLog("Activating Warden's power to restore some health before EndBattle", $COLOR_INFO)
+				SelectDropTroop($g_iWardenSlot)
+				$g_bCheckWardenPower = False
 			EndIf
 
 			If $Log = True Then

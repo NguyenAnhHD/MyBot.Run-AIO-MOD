@@ -7,7 +7,7 @@
 ; Author ........: Code Monkey #6
 ; Modified ......: kaganus (Jun/Aug 2015), Sardo 2015-07, KnowJack(Aug 2015) , The Master (2015), MonkeyHunter (02/08-2016),
 ;				   CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -20,6 +20,15 @@ Func VillageSearch()
 	$g_bCloudsActive = True
 
 	Local $Result = _VillageSearch()
+	If $g_bSearchAttackNowEnable Then
+		GUICtrlSetState($g_hBtnAttackNowDB, $GUI_HIDE)
+		GUICtrlSetState($g_hBtnAttackNowLB, $GUI_HIDE)
+		GUICtrlSetState($g_hBtnAttackNowTS, $GUI_HIDE)
+		GUICtrlSetState($g_hPicTwoArrowShield, $GUI_SHOW)
+		GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
+		GUICtrlSetState($g_hLblMod, $GUI_SHOW)
+		$g_bBtnAttackNowPressed = False
+	EndIf
 
 	$g_bVillageSearchActive = False
 	$g_bCloudsActive = False
@@ -36,8 +45,8 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 	Local $bReturnToPickupHero = False
 	Local $abHeroUse[3] = [False, False, False]
 	For $i = 0 to 2
-		$abHeroUse[$i] = ($g_abSearchSearchesEnable[$DB] ? IsSpecialTroopToBeUsed($DB, $eKing + $i) : False) _
-							Or ($g_abSearchSearchesEnable[$LB] ? IsSpecialTroopToBeUsed($LB, $eKing + $i) : False)
+		$abHeroUse[$i] = ($g_abSearchSearchesEnable[$DB] ? IsUnitUsed($DB, $eKing + $i) : False) _
+							Or ($g_abSearchSearchesEnable[$LB] ? IsUnitUsed($LB, $eKing + $i) : False)
 	Next
 
 	If $g_bDebugDeadBaseImage Or $g_aiSearchEnableDebugDeadBaseImage > 0 Then
@@ -75,11 +84,12 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 	EndIf
 
 	If $g_bSearchAttackNowEnable Then
-		HideShields(True)
 		GUICtrlSetState($g_hBtnAttackNowDB, $GUI_SHOW)
 		GUICtrlSetState($g_hBtnAttackNowLB, $GUI_SHOW)
 		GUICtrlSetState($g_hBtnAttackNowTS, $GUI_SHOW)
-		;GUICtrlSetState($g_hLblVersion, $GUI_HIDE)
+		GUICtrlSetState($g_hPicTwoArrowShield, $GUI_HIDE)
+		GUICtrlSetState($g_hLblVersion, $GUI_HIDE)
+		GUICtrlSetState($g_hLblMod, $GUI_HIDE)
 	EndIf
 
 	If $g_bIsClientSyncError = False And $g_bIsSearchLimit = False Then
@@ -87,6 +97,9 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 	EndIf
 
 	If $g_bIsSearchLimit = True Then $g_bIsSearchLimit = False
+
+	; reset page errors
+	InitAndroidPageError()
 
 	While 1 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;### Main Search Loop ###;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -139,14 +152,21 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 			EndIf
 		Next
 
+		; reset village measures
+		setVillageOffset(0, 0, 1)
+		ConvertInternalExternArea()
+
 		; only one capture here, very important for consistent debug images, zombies, redline calc etc.
 		ForceCaptureRegion()
 		_CaptureRegion2()
 
 		; measure enemy village (only if resources match)
+		Local $bAlwaysMeasure = $g_bVillageSearchAlwaysMeasure
 		For $i = 0 To $g_iModeCount - 1
-			If $match[$i] Then
+			If $match[$i] Or $bAlwaysMeasure Then
 				If CheckZoomOut("VillageSearch", True, False) = False Then
+					DebugImageSave("VillageSearchMeasureFailed", False, Default, Default) ; make clean snapshot as well
+					ExitLoop ; disable exiting search for December 2018 update due to zoomout issues
 					; check two more times, only required for snow theme (snow fall can make it easily fail), but don't hurt to keep it
 					$i = 0
 					Local $bMeasured
@@ -195,10 +215,17 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 		; ----------------- WRITE LOG OF ENEMY RESOURCES -----------------------------------
 		Local $GetResourcesTXT = StringFormat("%3s", $g_iSearchCount) & "> [G]:" & StringFormat("%7s", $g_iSearchGold) & " [E]:" & StringFormat("%7s", $g_iSearchElixir) & " [D]:" & StringFormat("%5s", $g_iSearchDark) & " [T]:" & StringFormat("%2s", $g_iSearchTrophy) & $THString
 
+		; Stats Attack
+		$g_sSearchCount = $g_iSearchCount
+		$g_sOppGold = $g_iSearchGold
+		$g_sOppElixir = $g_iSearchElixir
+		$g_sOppDE = $g_iSearchDark
+		$g_sOppTrophies = $g_iSearchTrophy
+
 		; ----------------- CHECK DEAD BASE -------------------------------------------------
 		If Not $g_bRunState Then Return
-		; check deadbase if no milking attack or milking attack but low cpu settings  ($g_iMilkAttackType=1)
-		Local $checkDeadBase = ($match[$DB] And $g_aiAttackAlgorithm[$DB] <> 2) Or $match[$LB] Or ($match[$DB] And $g_aiAttackAlgorithm[$DB] = 2 And $g_iMilkAttackType = 1)
+		; check deadbase
+		Local $checkDeadBase = $match[$DB] Or $match[$LB]
 		If $checkDeadBase Then
 			$dbBase = checkDeadBase()
 		EndIf
@@ -206,135 +233,52 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 		; ----------------- CHECK WEAK BASE -------------------------------------------------
 		If (IsWeakBaseActive($DB) And $dbBase And ($match[$DB] Or $g_abFilterMeetOneConditionEnable[$DB])) Or _
 				(IsWeakBaseActive($LB) And ($match[$LB] Or $g_abFilterMeetOneConditionEnable[$LB])) Then
-
-			;let try to reduce weekbase time
-			If ($g_iSearchTH <> "-") Then
-				$weakBaseValues = IsWeakBase($g_iImglocTHLevel, $g_sImglocRedline, False)
-			Else
-				$weakBaseValues = IsWeakBase(11, "", False)
-			EndIf
-
+			; check twice if Eagle is active
+			Local $maxTry = 1
 			For $i = 0 To $g_iModeCount - 2
-				If IsWeakBaseActive($i) And (($i = $DB And $dbBase) Or $i <> $DB) And ($match[$i] Or $g_abFilterMeetOneConditionEnable[$i]) Then
-					If getIsWeak($weakBaseValues, $i) Then
-						$match[$i] = True
-					Else
-						$match[$i] = False
-						$noMatchTxt &= ", Not a Weak Base for " & $g_asModeText[$i]
+				If $g_abFilterMaxEagleEnable[$i] Then $maxTry = 2
+			Next
+			For $try = 1 To $maxTry ; check twice to be sure due to walking heroes
+				;let try to reduce weekbase time
+				If ($g_iSearchTH <> "-") Then
+					$weakBaseValues = IsWeakBase($g_iImglocTHLevel, $g_sImglocRedline, False)
+				Else
+					$weakBaseValues = IsWeakBase($g_iMaxTHLevel, "", False)
+				EndIf
+				Local $bIsWeak = False
+				For $i = 0 To $g_iModeCount - 2
+					If IsWeakBaseActive($i) And (($i = $DB And $dbBase) Or $i <> $DB) And ($match[$i] Or $g_abFilterMeetOneConditionEnable[$i]) Then
+						If getIsWeak($weakBaseValues, $i) Then
+							$match[$i] = True
+							$bIsWeak = True
+						Else
+							$match[$i] = False
+							$noMatchTxt &= ", Not a Weak Base for " & $g_asModeText[$i]
+							; don't check again
+							$try = 2
+						EndIf
 					EndIf
+				Next
+
+				If $bIsWeak And $try = 1 Then
+					ResumeAndroid()
+					If _Sleep(3000) Then Return ; wait 3 Seconds to give heroes time to "walk away"
+					ForceCaptureRegion()
+					_CaptureRegion2()
+					SuspendAndroid()
 				EndIf
 			Next
 		EndIf
 
-		; ----------------- CHECK MILKING ----------------------------------------------------
-		CheckMilkingBase($match[$DB], $dbBase) ;update  $milkingAttackOutside, $g_sMilkFarmObjectivesSTR, $g_iSearchTH  etc.
-
 		ResumeAndroid()
 
 		; ----------------- WRITE LOG VILLAGE FOUND AND ASSIGN VALUE AT $g_iMatchMode and exitloop  IF CONTITIONS MEET ---------------------------
-		If $match[$DB] And $g_aiAttackAlgorithm[$DB] = 2 And $g_bMilkingAttackOutside = True Then
-			SetLog($GetResourcesTXT, $COLOR_SUCCESS, "Lucida Console", 7.5)
-			SetLog("      " & "Milking Attack th outside Found!", $COLOR_SUCCESS, "Lucida Console", 7.5)
-			$logwrited = True
-			$g_iMatchMode = $DB
-			ExitLoop
-		ElseIf $match[$DB] And $g_aiAttackAlgorithm[$DB] = 2 And $g_iMilkAttackType = 0 And StringLen($g_sMilkFarmObjectivesSTR) > 0 Then
-			SetLog($GetResourcesTXT, $COLOR_SUCCESS, "Lucida Console", 7.5)
-			SetLog("      " & "Milking Attack HIGH CPU SETTINGS Found!", $COLOR_SUCCESS, "Lucida Console", 7.5)
-			$logwrited = True
-			$g_iMatchMode = $DB
-			ExitLoop
-		ElseIf $match[$DB] And $g_aiAttackAlgorithm[$DB] = 2 And $g_iMilkAttackType = 1 And StringLen($g_sMilkFarmObjectivesSTR) > 0 And $dbBase Then
-			SetLog($GetResourcesTXT, $COLOR_SUCCESS, "Lucida Console", 7.5)
-			SetLog("      " & "Milking Attack LOW CPU SETTINGS Found!", $COLOR_SUCCESS, "Lucida Console", 7.5)
-			$logwrited = True
-			$g_iMatchMode = $DB
-			ExitLoop
-		ElseIf $match[$DB] And $dbBase Then
+		If $match[$DB] And $dbBase Then
 			SetLog($GetResourcesTXT, $COLOR_SUCCESS, "Lucida Console", 7.5)
 			SetLog("      " & "Dead Base Found!", $COLOR_SUCCESS, "Lucida Console", 7.5)
 			$logwrited = True
-
-			; Check Collector Outside - Team AiO MOD++
-			Local $g_bFlagSearchAnotherBase = False
-			If Not $g_bFlagSearchAnotherBase Then
-				If $g_bDBMeetCollOutside Then ; check is that collector  near outside
-					$g_bScanMineAndElixir = False
-
-					If AreCollectorsOutside($g_iTxtDBMinCollOutsidePercent) Then
-						SetLog("Collectors are outside, match found !", $COLOR_GREEN, "Lucida Console", 7.5)
-						$g_bFlagSearchAnotherBase = False
-					Else
-						$g_bFlagSearchAnotherBase = True
-						If $g_bSkipCollectorCheck = 1 Then
-							If Number($g_iTxtSkipCollectorGold) <> 0 And Number($g_iTxtSkipCollectorElixir) <> 0 And Number($g_iTxtSkipCollectorDark) <> 0 Then
-								If Number($g_iSearchGold) >= Number($g_iTxtSkipCollectorGold) And Number($g_iSearchElixir) >= Number($g_iTxtSkipCollectorElixir) And Number($g_iSearchDark) >= Number($g_iTxtSkipCollectorDark) Then
-									SetLog("Target Resource(G,E,D) over for skip collectors check, Prepare for attack...", $COLOR_GREEN, "Lucida Console", 7.5)
-									$g_bFlagSearchAnotherBase = False
-								EndIf
-							ElseIf Number($g_iTxtSkipCollectorGold) <> 0 And Number($g_iTxtSkipCollectorElixir) <> 0 Then
-								If Number($g_iSearchGold) >= Number($g_iTxtSkipCollectorGold) And Number($g_iSearchElixir) >= Number($g_iTxtSkipCollectorElixir) Then
-									SetLog("Target Resource(G,E) over for skip collectors check, Prepare for attack...", $COLOR_GREEN, "Lucida Console", 7.5)
-									$g_bFlagSearchAnotherBase = False
-								EndIf
-							ElseIf Number($g_iTxtSkipCollectorGold) <> 0 And Number($g_iTxtSkipCollectorDark) <> 0 Then
-								If Number($g_iSearchGold) >= Number($g_iTxtSkipCollectorGold) And Number($g_iSearchDark) >= Number($g_iTxtSkipCollectorDark) Then
-									SetLog("Target Resource(G,D) over for skip collectors check, Prepare for attack...", $COLOR_GREEN, "Lucida Console", 7.5)
-									$g_bFlagSearchAnotherBase = False
-								EndIf
-							ElseIf Number($g_iTxtSkipCollectorElixir) <> 0 And Number($g_iTxtSkipCollectorDark) <> 0 Then
-								If Number($g_iSearchElixir) >= Number($g_iTxtSkipCollectorElixir) And Number($g_iSearchDark) >= Number($g_iTxtSkipCollectorDark) Then
-									SetLog("Target Resource(E,D) over for skip collectors check, Prepare for attack...", $COLOR_GREEN, "Lucida Console", 7.5)
-									$g_bFlagSearchAnotherBase = False
-								EndIf
-							ElseIf Number($g_iTxtSkipCollectorGold) <> 0 Then
-								If Number($g_iSearchGold) >= Number($g_iTxtSkipCollectorGold) Then
-									SetLog("Target Resource(G) over for skip collectors check, Prepare for attack...", $COLOR_GREEN, "Lucida Console", 7.5)
-									$g_bFlagSearchAnotherBase = False
-								EndIf
-							ElseIf Number($g_iTxtSkipCollectorElixir) <> 0 Then
-								If Number($g_iSearchElixir) >= Number($g_iTxtSkipCollectorElixir) Then
-									SetLog("Target Resource(E) over for skip collectors check, Prepare for attack...", $COLOR_GREEN, "Lucida Console", 7.5)
-									$g_bFlagSearchAnotherBase = False
-								EndIf
-							ElseIf Number($g_iTxtSkipCollectorDark) <> 0 Then
-								If Number($g_iSearchDark) >= Number($g_iTxtSkipCollectorDark) Then
-									SetLog("Target Resource(D) over for skip collectors check, Prepare for attack...", $COLOR_GREEN, "Lucida Console", 7.5)
-									$g_bFlagSearchAnotherBase = False
-								EndIf
-							EndIf
-							If $g_bFlagSearchAnotherBase Then
-								SetLog("Collectors are not outside AND Target Resource not match for attack, skipping search !", $COLOR_RED, "Lucida Console", 7.5)
-							EndIf
-						Else
-							SetLog("Collectors are not outside, skipping search !", $COLOR_RED, "Lucida Console", 7.5)
-						EndIf
-						If $g_bSkipCollectorCheckTH Then
-							If $g_bFlagSearchAnotherBase Then
-								If $g_iSearchTH <> "-" Then
-									If Number($g_iSearchTH) <= $g_iCmbSkipCollectorCheckTH Then
-										SetLog("Target TownHall Level is " & $g_iSearchTH & ", lower than or equal my setting " & $g_iCmbSkipCollectorCheckTH & ", Prepare for attack...", $COLOR_GREEN, "Lucida Console", 7.5)
-										$g_bFlagSearchAnotherBase = False
-									Else
-										SetLog("Collectors are not outside, and TownHall Level is " & $g_iSearchTH & " Over " & $g_iCmbSkipCollectorCheckTH & ", skipping search !", $COLOR_RED, "Lucida Console", 7.5)
-									EndIf
-								Else
-									SetLog("Collectors are not outside, and failded to get townhall level, skipping search !", $COLOR_RED, "Lucida Console", 7.5)
-								EndIf
-							EndIf
-						EndIf
-					EndIf
-					$g_iSearchTH = ""
-				Else
-					$g_bFlagSearchAnotherBase = False
-				EndIf
-				If Not $g_bFlagSearchAnotherBase Then
-					$g_iMatchMode = $DB
-					ExitLoop
-				EndIf
-			EndIf
-			; Check Collector Outside - Team AiO MOD++
-
+			$g_iMatchMode = $DB
+			ExitLoop
 		ElseIf $match[$LB] And Not $dbBase Then
 			SetLog($GetResourcesTXT, $COLOR_SUCCESS, "Lucida Console", 7.5)
 			SetLog("      " & "Live Base Found!", $COLOR_SUCCESS, "Lucida Console", 7.5)
@@ -487,10 +431,6 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 			$g_iSearchCost += $g_aiSearchCost[$g_iTownHallLevel - 1]
 			$g_iStatsTotalGain[$eLootGold] -= $g_aiSearchCost[$g_iTownHallLevel - 1]
 		EndIf
-		If ProfileSwitchAccountEnabled() Then
-			$g_aiSkippedVillageCountAcc[$g_iCurAccount] += 1
-			If $g_iTownHallLevel <> "" And $g_iTownHallLevel > 0 Then $g_aiGoldTotalAcc[$g_iCurAccount] -= $g_aiSearchCost[$g_iTownHallLevel - 1]
-		EndIf
 		UpdateStats()
 
 	WEnd ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;### Main Search Loop End ###;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -505,18 +445,9 @@ Func _VillageSearch() ;Control for searching a village that meets conditions
 		SetLogCentered(" Attack Now Pressed! ", "~", $COLOR_SUCCESS)
 	EndIf
 
-	If $g_bSearchAttackNowEnable Then
-		GUICtrlSetState($g_hBtnAttackNowDB, $GUI_HIDE)
-		GUICtrlSetState($g_hBtnAttackNowLB, $GUI_HIDE)
-		GUICtrlSetState($g_hBtnAttackNowTS, $GUI_HIDE)
-		HideShields(False)
-		;GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
-		$g_bBtnAttackNowPressed = False
-	EndIf
-
 	;--- write in log match found ----
 	If $g_bSearchAlertMe Then
-		TrayTip($g_asModeText[$g_iMatchMode] & " Match Found!", "Gold: " & $g_iSearchGold & "; Elixir: " & $g_iSearchElixir & "; Dark: " & $g_iSearchDark & "; Trophy: " & $g_iSearchTrophy, "", 0)
+		TrayTip($g_sProfileCurrentName & ": " & $g_asModeText[$g_iMatchMode] & " Match Found!", "Gold: " & $g_iSearchGold & "; Elixir: " & $g_iSearchElixir & "; Dark: " & $g_iSearchDark & "; Trophy: " & $g_iSearchTrophy, "", 0)
 		If FileExists(@WindowsDir & "\media\Festival\Windows Exclamation.wav") Then
 			SoundPlay(@WindowsDir & "\media\Festival\Windows Exclamation.wav", 1)
 		ElseIf FileExists(@WindowsDir & "\media\Windows Exclamation.wav") Then

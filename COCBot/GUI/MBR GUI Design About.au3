@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: CodeSlinger69 (2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -23,7 +23,7 @@ Func CreateAboutTab()
 	; GUISetBkColor($COLOR_WHITE, $g_hGUI_ABOUT)
 
 	Local $sText = ""
-	Local $x = 18, $y = 15 + $_GUI_MAIN_TOP
+	Local $x = 18, $y = 10 + $_GUI_MAIN_TOP
 	;$g_hLblCreditsBckGrnd = GUICtrlCreateLabel("", $x - 20, $y - 20, 454, 380)  ; adds fixed white background for entire tab, if using "Labels"
 	;GUICtrlSetBkColor(-1, $COLOR_WHITE)
 	$sText = "My Bot is brought to you by a worldwide team of open source" & @CRLF & _
@@ -50,16 +50,25 @@ Func CreateAboutTab()
 	GUICtrlCreateLabel($sText, $x - 5, $y, 410, 20, BitOR($WS_VISIBLE, $ES_AUTOVSCROLL, $SS_LEFT), 0)
 	GUICtrlSetFont(-1, 9.5, $FW_BOLD, Default, "Arial")
 	GUICtrlSetColor(-1, $COLOR_NAVY)
-	$sText = "Cosote, Fliegerfaust, MMHK, TripleM"
+	$sText = "Cosote, Demen, Fliegerfaust and TripleM"
 	GUICtrlCreateLabel($sText, $x + 5, $y + 15, 410, 50, BitOR($WS_VISIBLE, $ES_AUTOVSCROLL, $SS_LEFT), 0)
 	GUICtrlSetFont(-1, 9, $FW_MEDIUM, Default, "Arial")
 
-	$y += 60
+	$y += 35
+	$sText = "Special participation at v7.6.6: "
+	GUICtrlCreateLabel($sText, $x - 5, $y, 410, 20, BitOR($WS_VISIBLE, $ES_AUTOVSCROLL, $SS_LEFT), 0)
+	GUICtrlSetFont(-1, 9.5, $FW_BOLD, Default, "Arial")
+	GUICtrlSetColor(-1, $COLOR_NAVY)
+	$sText = "ViperZ"
+	GUICtrlCreateLabel($sText, $x + 5, $y + 15, 410, 50, BitOR($WS_VISIBLE, $ES_AUTOVSCROLL, $SS_LEFT), 0)
+	GUICtrlSetFont(-1, 9, $FW_MEDIUM, Default, "Arial")
+
+	$y += 35
 	$sText = "Inactive developers: "
 	GUICtrlCreateLabel($sText, $x - 5, $y, 410, 20, BitOR($WS_VISIBLE, $ES_AUTOVSCROLL, $SS_LEFT), 0)
 	GUICtrlSetFont(-1, 9.5, $FW_BOLD, Default, "Arial")
 	GUICtrlSetColor(-1, $COLOR_NAVY)
-	$sText = "Boju, Codeslinger69, Ezeck0001, Hervidero, IceCube, Kaganus, MR.ViPeR, Sardo, TheRevenor, Trlopes"
+	$sText = "Hervidero, Kaganus, Sardo, Trlopes"
 	GUICtrlCreateLabel($sText, $x + 5, $y + 15, 410, 50, BitOR($WS_VISIBLE, $ES_AUTOVSCROLL, $SS_LEFT), 0)
 	GUICtrlSetFont(-1, 9, $FW_MEDIUM, Default, "Arial")
 
@@ -68,7 +77,7 @@ Func CreateAboutTab()
 	GUICtrlCreateLabel($sText, $x - 5, $y, 410, 20, BitOR($WS_VISIBLE, $ES_AUTOVSCROLL, $SS_LEFT), 0)
 	GUICtrlSetFont(-1, 9.5, $FW_BOLD, Default, "Arial")
 	GUICtrlSetColor(-1, $COLOR_NAVY)
-	$sText = "Antidote, AtoZ, Barracoda, Didipe, Dinobot, DixonHill, DkEd, GkevinOD, HungLe, KnowJack, LunaEclipse, MonkeyHunter, ProMac, Safar46, Saviart, TheMaster1st, Zengzeng, and others"
+	$sText = "Antidote, AtoZ, Barracoda, Boju, Codeslinger69, Didipe, Dinobot, DixonHill, DkEd, GkevinOD, HungLe, KnowJack, LunaEclipse, MonkeyHunter, ProMac, Safar46, Saviart, TheMaster1st, Zengzeng, and others"
 	GUICtrlCreateLabel($sText, $x + 5, $y + 15, 410, 50, BitOR($WS_VISIBLE, $ES_AUTOVSCROLL, $SS_LEFT), 0)
 	GUICtrlSetFont(-1, 9, $FW_MEDIUM, Default, "Arial")
 
@@ -93,21 +102,42 @@ Func CreateAboutTab()
 			"This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even " & @CRLF & _
 			"the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General " & @CRLF & _
 			"Public License for more details. The license can be found in the main code folder location." & @CRLF & _
-			"Copyright (C) 2015-2018 MyBot.run"
+			"Copyright (C) 2015-2019 MyBot.run"
 	GUICtrlCreateLabel($sText, $x + 1, $y, 415, 56, BitOR($WS_VISIBLE, $ES_AUTOVSCROLL, $SS_LEFT, $ES_CENTER), 0)
 	GUICtrlSetColor(-1, 0x000053)
 	GUICtrlSetFont(-1, 6.5, $FW_BOLD, Default, "Arial", $CLEARTYPE_QUALITY)
 EndFunc   ;==>CreateAboutTab
 
 Func ShowCommandLineHelp()
+	Return ShowHelp(Default)
+EndFunc   ;==>ShowCommandLineHelp
+
+Func ShowControlHelp()
+	Return ShowHelp(@GUI_CtrlId)
+EndFunc   ;==>ShowControlHelp
+
+Func ShowHelp($Source = Default)
+
+	SetDebugLog ("Help File called from: " & $source)
+
+	Local $PathHelp = "CommandLineParameter"
+
+	; This can be use for several Help Files
+	Switch $source
+		Case $g_lblHelpBot; Bot/Android/Help Handle
+			$PathHelp = "CommandLineParameter"
+		Case $g_lblHepNotify
+			$PathHelp = "NotifyHelp"
+	EndSwitch
 
 	UpdateBotTitle()
-	$g_hGUI_CommandLineHelp = GUICreate($g_sBotTitle & " - Command Line Help", 650, 700, -1, -1, BitOR($WS_CAPTION, $WS_POPUPWINDOW, $DS_MODALFRAME))
+	$g_hGUI_CommandLineHelp = GUICreate($g_sBotTitle & " - Command Line Help", 650, 700, -1, -1, BitOR($WS_CAPTION, $WS_POPUPWINDOW, $DS_MODALFRAME), $WS_EX_TOPMOST, $g_hFrmBot)
 	GUISetIcon($g_sLibIconPath, $eIcnGUI, $g_hGUI_CommandLineHelp)
 
 	; add controls
+	Local $hClose = GUICtrlCreateButton("Close", 300, 670, 50)
 	Local $hRichEdit = _GUICtrlRichEdit_Create($g_hGUI_CommandLineHelp, "", 2, 0, 646, 667, $WS_VSCROLL + $ES_MULTILINE)
-	Local $sHelpFile = @ScriptDir & "\Help\CommandLineParameter"
+	Local $sHelpFile = @ScriptDir & "\Help\" & $PathHelp
 	If $g_sLanguage <> $g_sDefaultLanguage Then
 		If FileExists($sHelpFile & "_" & $g_sLanguage & ".rtf") Then
 			$sHelpFile &= "_" & $g_sLanguage
@@ -118,11 +148,9 @@ Func ShowCommandLineHelp()
 	_GUICtrlRichEdit_StreamFromFile($hRichEdit, $sHelpFile & ".rtf")
 	_GUICtrlRichEdit_SetReadOnly($hRichEdit)
 	_GUICtrlRichEdit_SetScrollPos($hRichEdit, 0, 0) ; scroll to top
-	Local $hClose = GUICtrlCreateButton("Close", 300, 670, 50)
-
-	GUISetState(@SW_SHOW)
 
 	Local $iOpt = Opt("GUIOnEventMode", 0)
+	GUISetState(@SW_SHOW, $g_hGUI_CommandLineHelp)
 	While 1
 		Switch GUIGetMsg()
 			Case $GUI_EVENT_CLOSE, $hClose
@@ -132,5 +160,4 @@ Func ShowCommandLineHelp()
 
 	GUIDelete($g_hGUI_CommandLineHelp)
 	Opt("GUIOnEventMode", $iOpt)
-
-EndFunc   ;==>ShowCommandLineHelp
+EndFunc   ;==>ShowHelp

@@ -7,7 +7,7 @@
 ; Return values .: None
 ; Author ........: Code Monkey #5
 ; Modified ......: Sardo 2016-02
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -27,11 +27,7 @@ Func SearchTownHallLoc()
 		Case $LB
 			$addtiles = $g_iTHSnipeBeforeTiles[$LB]
 		Case $DB
-			If $g_bDuringMilkingAttack = True Then
-				$addtiles = $g_iMilkFarmTHMaxTilesFromBorder
-			Else
-				$addtiles = $g_iTHSnipeBeforeTiles[$DB]
-			EndIf
+			$addtiles = $g_iTHSnipeBeforeTiles[$DB]
 	EndSwitch
 
 

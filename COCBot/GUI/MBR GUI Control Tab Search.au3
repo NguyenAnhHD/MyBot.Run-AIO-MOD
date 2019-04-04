@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: GkevinOD (2014)
 ; Modified ......: Hervidero (2015), CodeSlinger69 [2017], MonkeyHunter (03-2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -388,17 +388,9 @@ EndFunc   ;==>chkTSActivateCamps
 Func chkDBKingWait()
 	If $g_iTownHallLevel > 6 Or $g_iTownHallLevel = 0 Then ; Must be TH7 or above to have King
 		If GUICtrlRead($g_hChkDBKingWait) = $GUI_CHECKED Then
-			If $g_bUpgradeKingEnable = False Then
-				GUICtrlSetState($g_hChkDBKingAttack, $GUI_CHECKED)
-			Else
-				GUICtrlSetState($g_hChkDBKingWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeKingEnable Then GUICtrlSetState($g_hChkDBKingAttack, $GUI_ENABLE)
 		Else
-			If $g_bUpgradeKingEnable = False Then
-				GUICtrlSetState($g_hChkDBKingWait, $GUI_ENABLE)
-			Else
-				GUICtrlSetState($g_hChkDBKingWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeKingEnable Then GUICtrlSetState($g_hChkDBKingWait, $GUI_ENABLE)
 		EndIf
 	Else
 		GUICtrlSetState($g_hChkDBKingWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
@@ -409,17 +401,9 @@ EndFunc   ;==>chkDBKingWait
 Func chkDBQueenWait()
 	If $g_iTownHallLevel > 8 Or $g_iTownHallLevel = 0 Then ; Must be TH9 or above to have Queen
 		If GUICtrlRead($g_hChkDBQueenWait) = $GUI_CHECKED Then
-			If $g_bUpgradeQueenEnable = False Then
-				GUICtrlSetState($g_hChkDBQueenAttack, $GUI_CHECKED)
-			Else
-				GUICtrlSetState($g_hChkDBQueenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeQueenEnable Then GUICtrlSetState($g_hChkDBQueenAttack, $GUI_ENABLE)
 		Else
-			If $g_bUpgradeQueenEnable = False Then
-				GUICtrlSetState($g_hChkDBQueenWait, $GUI_ENABLE)
-			Else
-				GUICtrlSetState($g_hChkDBQueenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeQueenEnable Then GUICtrlSetState($g_hChkDBQueenWait, $GUI_ENABLE)
 		EndIf
 	Else
 		GUICtrlSetState($g_hChkDBQueenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
@@ -430,18 +414,9 @@ EndFunc   ;==>chkDBQueenWait
 Func chkDBWardenWait()
 	If $g_iTownHallLevel > 10 Or $g_iTownHallLevel = 0 Then ; Must be TH11 to have warden
 		If GUICtrlRead($g_hChkDBWardenWait) = $GUI_CHECKED Then
-			If $g_bUpgradeWardenEnable = False Then
-				GUICtrlSetState($g_hChkDBWardenAttack, $GUI_CHECKED)
-				GUICtrlSetState($g_hPicDBWardenWait, $GUI_ENABLE)
-			Else
-				GUICtrlSetState($g_hChkDBWardenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeWardenEnable Then GUICtrlSetState($g_hChkDBWardenAttack, $GUI_ENABLE)
 		Else
-			If $g_bUpgradeWardenEnable = False Then
-				GUICtrlSetState($g_hChkDBWardenWait, $GUI_ENABLE)
-			Else
-				GUICtrlSetState($g_hChkDBWardenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeWardenEnable Then GUICtrlSetState($g_hChkDBWardenWait, $GUI_ENABLE)
 		EndIf
 	Else
 		GUICtrlSetState($g_hChkDBWardenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
@@ -452,17 +427,9 @@ EndFunc   ;==>chkDBWardenWait
 Func chkABKingWait()
 	If $g_iTownHallLevel > 6 Or $g_iTownHallLevel = 0 Then ; Must be TH7 or above to have King
 		If GUICtrlRead($g_hChkABKingWait) = $GUI_CHECKED Then
-			If $g_bUpgradeKingEnable = False Then
-				GUICtrlSetState($g_hChkABKingAttack, $GUI_CHECKED)
-			Else
-				GUICtrlSetState($g_hChkABKingWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeKingEnable Then GUICtrlSetState($g_hChkABKingAttack, $GUI_ENABLE)
 		Else
-			If $g_bUpgradeKingEnable = False Then
-				GUICtrlSetState($g_hChkABKingWait, $GUI_ENABLE)
-			Else
-				GUICtrlSetState($g_hChkABKingWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeKingEnable Then GUICtrlSetState($g_hChkABKingWait, $GUI_ENABLE)
 		EndIf
 	Else
 		GUICtrlSetState($g_hChkABKingWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
@@ -473,17 +440,9 @@ EndFunc   ;==>chkABKingWait
 Func chkABQueenWait()
 	If $g_iTownHallLevel > 8 Or $g_iTownHallLevel = 0 Then ; Must be TH9 or above to have Queen
 		If GUICtrlRead($g_hChkABQueenWait) = $GUI_CHECKED Then
-			If $g_bUpgradeQueenEnable = False Then
-				GUICtrlSetState($g_hChkABQueenAttack, $GUI_CHECKED)
-			Else
-				GUICtrlSetState($g_hChkABQueenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeQueenEnable Then GUICtrlSetState($g_hChkABQueenAttack, $GUI_ENABLE)
 		Else
-			If $g_bUpgradeQueenEnable = False Then
-				GUICtrlSetState($g_hChkABQueenWait, $GUI_ENABLE)
-			Else
-				GUICtrlSetState($g_hChkABQueenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeQueenEnable Then GUICtrlSetState($g_hChkABQueenWait, $GUI_ENABLE)
 		EndIf
 	Else
 		GUICtrlSetState($g_hChkABQueenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
@@ -494,67 +453,15 @@ EndFunc   ;==>chkABQueenWait
 Func chkABWardenWait()
 	If $g_iTownHallLevel > 10 Or $g_iTownHallLevel = 0 Then ; Must be TH11 to have warden
 		If GUICtrlRead($g_hChkABWardenWait) = $GUI_CHECKED Then
-			If $g_bUpgradeWardenEnable = False Then
-				GUICtrlSetState($g_hChkABWardenAttack, $GUI_CHECKED)
-			Else
-				GUICtrlSetState($g_hChkABWardenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeWardenEnable Then GUICtrlSetState($g_hChkABWardenAttack, $GUI_ENABLE)
 		Else
-			If $g_bUpgradeWardenEnable = False Then
-				GUICtrlSetState($g_hChkABWardenWait, $GUI_ENABLE)
-			Else
-				GUICtrlSetState($g_hChkABWardenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
-			EndIf
+			If Not $g_bUpgradeWardenEnable Then GUICtrlSetState($g_hChkABWardenWait, $GUI_ENABLE)
 		EndIf
 	Else
 		GUICtrlSetState($g_hChkABWardenWait, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
 		GUICtrlSetState($g_hChkABWardenAttack, BitOR($GUI_DISABLE, $GUI_UNCHECKED))
 	EndIf
 EndFunc   ;==>chkABWardenWait
-
-Func chkDBWaitForCCSpell()
-	If GUICtrlRead($g_hChkDBWaitForCastleSpell) = $GUI_CHECKED Then
-		GUICtrlSetState($g_hCmbDBWaitForCastleSpell, $GUI_ENABLE)
-		cmbDBWaitForCCSpell()
-	Else
-		GUICtrlSetState($g_hCmbDBWaitForCastleSpell, $GUI_DISABLE)
-		GUICtrlSetState($g_hTxtDBWaitForCastleSpell, $GUI_DISABLE)
-		GUICtrlSetState($g_hCmbDBWaitForCastleSpell2, $GUI_DISABLE)
-	EndIf
-EndFunc   ;==>chkDBWaitForCCSpell
-
-Func chkABWaitForCCSpell()
-	If GUICtrlRead($g_hChkABWaitForCastleSpell) = $GUI_CHECKED Then
-		GUICtrlSetState($g_hCmbABWaitForCastleSpell, $GUI_ENABLE)
-		cmbABWaitForCCSpell()
-	Else
-		GUICtrlSetState($g_hCmbABWaitForCastleSpell, $GUI_DISABLE)
-		GUICtrlSetState($g_hTxtABWaitForCastleSpell, $GUI_DISABLE)
-		GUICtrlSetState($g_hCmbABWaitForCastleSpell2, $GUI_DISABLE)
-	EndIf
-EndFunc   ;==>chkABWaitForCCSpell
-
-Func cmbDBWaitForCCSpell()
-	Local $iSpellSelection = _GUICtrlComboBox_GetCurSel($g_hCmbDBWaitForCastleSpell)
-	If $iSpellSelection > 0 And  $iSpellSelection < 5 Then
-		GUICtrlSetState($g_hCmbDBWaitForCastleSpell2, $GUI_DISABLE)
-		GUICtrlSetState($g_hTxtDBWaitForCastleSpell, $GUI_DISABLE)
-	Else
-		GUICtrlSetState($g_hCmbDBWaitForCastleSpell2, $GUI_ENABLE)
-		GUICtrlSetState($g_hTxtDBWaitForCastleSpell, $GUI_ENABLE)
-	EndIf
-EndFunc   ;==>cmbDBWaitForCCSpell
-
-Func cmbABWaitForCCSpell()
-	Local $iSpellSelection = _GUICtrlComboBox_GetCurSel($g_hCmbABWaitForCastleSpell)
-	If $iSpellSelection > 0 And  $iSpellSelection < 5 Then
-		GUICtrlSetState($g_hCmbABWaitForCastleSpell2, $GUI_DISABLE)
-		GUICtrlSetState($g_hTxtABWaitForCastleSpell, $GUI_DISABLE)
-	Else
-		GUICtrlSetState($g_hCmbABWaitForCastleSpell2, $GUI_ENABLE)
-		GUICtrlSetState($g_hTxtABWaitForCastleSpell, $GUI_ENABLE)
-	EndIf
-EndFunc   ;==>cmbABWaitForCCSpell
 
 Func chkDBSpellsWait()
 	If $g_iTownHallLevel > 4 Or $g_iTownHallLevel = 0 Then ; Must be TH5+ to have spells
@@ -668,7 +575,7 @@ Func chkSpellWaitError()
 							$sFunnyText = $sText & GetTranslatedFileIni("MBR GUI Control Tab Search", "Func_chkSpellWaitError_FunnyText_01", "Sorry not that button!") & @CRLF
 						Case 2
 							_ExtMsgBoxSet(1 + 64, $SS_CENTER, 0xDC00FF, 0x011E00, 12, "Comic Sans MS", 480)
-							$sFunnyText = $sText & GetTranslatedFileIni("MBR GUI Control Tab Search", "Func_chkSpellWaitError_FunnyText_02", "Donate ??5000 to MyBot.run while you wait 15 minutes for this to time out?") & @CRLF
+							$sFunnyText = $sText & GetTranslatedFileIni("MBR GUI Control Tab Search", "Func_chkSpellWaitError_FunnyText_02", "Donate £5000 to MyBot.run while you wait 15 minutes for this to time out?") & @CRLF
 						Case 3
 							_ExtMsgBoxSet(1 + 64, $SS_CENTER, 0x000000, 0xFFFFFF, 12, "Tahoma", 480)
 							$sFunnyText = $sText & GetTranslatedFileIni("MBR GUI Control Tab Search", "Func_chkSpellWaitError_FunnyText_03", "Having trouble finding the exit button?") & @CRLF

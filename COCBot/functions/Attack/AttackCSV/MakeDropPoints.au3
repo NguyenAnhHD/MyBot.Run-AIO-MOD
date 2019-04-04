@@ -11,7 +11,7 @@
 ; Return values .: None
 ; Author ........: Sardo (2016)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -176,7 +176,7 @@ EndFunc   ;==>MakeDropPoints
 ; 					  : 4 = strange programming error?
 ; Author ........: MonkeyHunter (05-2017)
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -206,6 +206,10 @@ Func MakeTargetDropPoints($side, $pointsQty, $addtiles, $building)
 			$BuildingEnum = $eBldgMortar
 		Case "AIRDEFENSE"
 			$BuildingEnum = $eBldgAirDefense
+		Case "EX-WALL"
+			$BuildingEnum = $eExternalWall
+		Case "IN-WALL"
+			$BuildingEnum = $eInternalWall
 		Case Else
 			SetLog("Defense name not understood", $COLOR_ERROR) ; impossible error as value is checked earlier
 			SetError(1, 0, "")
@@ -235,14 +239,14 @@ Func MakeTargetDropPoints($side, $pointsQty, $addtiles, $building)
 			Next
 			If $aLocation = "" Then
 				; error check?
-				Setlog("Building location not found on side, random pick", $COLOR_ERROR)
+				SetLog("Building location not found on side, random pick", $COLOR_ERROR)
 				If IsArray($aBuildingLoc[0]) Then $aLocation = $aBuildingLoc[0]
 			EndIf
 		Else ; use only building found even if not on user chosen side?
 			$aLocation = $aBuildingLoc[0]
 		EndIf
 	Else
-		Setlog($g_sBldgNames[$BuildingEnum] & " _LOCATION not an array", $COLOR_ERROR)
+		SetLog($g_sBldgNames[$BuildingEnum] & " _LOCATION not an array", $COLOR_ERROR)
 		Return SetError(3, 0, "")
 	EndIf
 
@@ -279,6 +283,7 @@ Func MakeTargetDropPoints($side, $pointsQty, $addtiles, $building)
 			Next
 			If isInsideDiamondRedArea($pixel) = False Then SetDebugLog("MakeTargetDropPoints() ADDTILES error!")
 			$sLoc = $pixel[0] & "-" & $pixel[1] ; make string for modified building location
+			SetLog("Target drop point for " &  $g_sBldgNames[$BuildingEnum] & " (adding " & $addtiles & " tiles): " & $sLoc)
 			Return GetListPixel($sLoc, "-", "MakeTargetDropPoints TARGET") ; return ADDTILES modified location array
 		Case 5
 			; drop point(s) are 5 points outside redline closest to building target as returned by GetDeployableNextTo($sPoints, $distance = 3, $redlineoverride = "")
@@ -287,7 +292,7 @@ Func MakeTargetDropPoints($side, $pointsQty, $addtiles, $building)
 			Return GetListPixel($Output, ",", "MakeTargetDropPoints NEARPOINTS") ;imgloc DLL calls return comma separated values
 		Case Else
 			; impossible?
-			Setlog("Strange MakeTargetDropPoint Error", $COLOR_ERROR)
+			SetLog("Strange MakeTargetDropPoint Error", $COLOR_ERROR)
 			Return SetError(6, 0, "")
 	EndSwitch
 

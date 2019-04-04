@@ -6,7 +6,7 @@
 ; Return values .: None
 ; Author ........: MyBot.run Team
 ; Modified ......: CodeSlinger69 (2017)
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -89,11 +89,13 @@ EndFunc   ;==>chkDisableNotifications
 Func chkUseRandomClick()
 	$g_bUseRandomClick = (GUICtrlRead($g_hChkUseRandomClick) = $GUI_CHECKED)
 EndFunc   ;==>chkUseRandomClick
+
 #cs
 	Func chkUpdatingWhenMinimized()
 	$g_bUpdatingWhenMinimized = (GUICtrlRead($g_hChkUpdatingWhenMinimized) = $GUI_CHECKED)
 	EndFunc   ;==>chkUpdatingWhenMinimized
 #ce
+
 Func chkHideWhenMinimized()
 	$g_bHideWhenMinimized = (GUICtrlRead($g_hChkHideWhenMinimized) = $GUI_CHECKED)
 	TrayItemSetState($g_hTiHide, ($g_bHideWhenMinimized = 1 ? $TRAY_CHECKED : $TRAY_UNCHECKED))
@@ -209,9 +211,7 @@ Func chkSwitchAcc()
 		For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
 			GUICtrlSetState($i, $GUI_ENABLE)
 		Next
-		GUICtrlSetState($g_hChkOnlySCIDAccounts, $GUI_UNCHECKED)
-		GUICtrlSetState($g_hChkOnlySCIDAccounts, $GUI_DISABLE)
-		OnlySCIDAccounts()
+		GUICtrlSetState($g_hChkOnlySCIDAccounts, $GUI_DISABLE + $GUI_UNCHECKED)
 		For $i = 0 To 7
 			GUICtrlSetState($g_ahChkSetFarm[$i], $GUI_ENABLE)
 			_chkSetFarmSchedule($i)
@@ -222,13 +222,14 @@ Func chkSwitchAcc()
 			GUICtrlSetState($i, $GUI_DISABLE)
 		Next
 		GUICtrlSetState($g_hChkOnlySCIDAccounts, $GUI_ENABLE)
-		OnlySCIDAccounts()
 		For $i = 0 To 7
 			For $j = $g_ahChkSetFarm[$i] To $g_ahCmbTime2[$i]
 				GUICtrlSetState($j, $GUI_DISABLE)
 			Next
 		Next
 	EndIf
+	chkSwitchProfile()
+	OnlySCIDAccounts()
 EndFunc   ;==>chkSwitchAcc
 
 Func cmbSwitchAcc()
@@ -293,13 +294,17 @@ Func _cmbSwitchAcc($bReadSaveConfig = True)
 	For $i = $g_hCmbTotalAccount To $g_ahChkDonate[7]
 		GUICtrlSetState($i, (($bEnable) ? $GUI_ENABLE : $GUI_DISABLE))
 	Next
-
 	cmbTotalAcc()
 
 	For $i = 0 To 7
-		For $j = $g_ahChkSetFarm[$i] To $g_ahCmbTime2[$i]
-			GUICtrlSetState($j, (($bEnable) ? $GUI_ENABLE : $GUI_DISABLE))
-		Next
+		If $bEnable Then
+			GUICtrlSetState($g_ahChkSetFarm[$i], $GUI_ENABLE)
+			_chkSetFarmSchedule($i)
+		Else
+			For $j = $g_ahChkSetFarm[$i] To $g_ahCmbTime2[$i]
+				GUICtrlSetState($j, $GUI_DISABLE)
+			Next
+		EndIf
 	Next
 
 	$s_bActive = False
@@ -329,8 +334,7 @@ Func chkSmartSwitch()
 	If GUICtrlRead($g_hChkSmartSwitch) = $GUI_CHECKED Then
 		GUICtrlSetState($g_hChkDonateLikeCrazy, $GUI_ENABLE)
 	Else
-		GUICtrlSetState($g_hChkDonateLikeCrazy, $GUI_UNCHECKED)
-		GUICtrlSetState($g_hChkDonateLikeCrazy, $GUI_DISABLE)
+		GUICtrlSetState($g_hChkDonateLikeCrazy, $GUI_DISABLE + $GUI_UNCHECKED)
 	EndIf
 EndFunc   ;==>chkSmartSwitch
 
@@ -408,6 +412,54 @@ Func chkAccSwitchMode()
 		$g_bChkSharedPrefs = False
 	EndIf
 EndFunc   ;==>chkAccSwitchMode
+
+; ========== Switch Profiles ============
+Func chkSwitchProfile()
+	For $i = 0 To 3
+		If GUICtrlRead($g_ahChk_SwitchMax[$i]) = $GUI_CHECKED Then
+			_GUI_Value_STATE("ENABLE", $g_ahCmb_SwitchMax[$i] & "#" & $g_ahLbl_SwitchMax[$i] & "#" & $g_ahTxt_ConditionMax[$i])
+			If GUICtrlRead($g_hChkSwitchAcc) = $GUI_CHECKED Then
+				GUICtrlSetState($g_ahChk_BotTypeMax[$i], $GUI_ENABLE)
+			Else
+				GUICtrlSetState($g_ahChk_BotTypeMax[$i], $GUI_DISABLE + $GUI_UNCHECKED)
+			EndIf
+		Else
+			For $j = $g_ahCmb_SwitchMax[$i] To $g_ahTxt_ConditionMax[$i]
+				GUICtrlSetState($j, $GUI_DISABLE)
+			Next
+			GUICtrlSetState($g_ahChk_BotTypeMax[$i], $GUI_UNCHECKED)
+		EndIf
+		If GUICtrlRead($g_ahChk_SwitchMin[$i]) = $GUI_CHECKED Then
+			_GUI_Value_STATE("ENABLE", $g_ahCmb_SwitchMin[$i] & "#" & $g_ahLbl_SwitchMin[$i] & "#" & $g_ahTxt_ConditionMin[$i])
+			If GUICtrlRead($g_hChkSwitchAcc) = $GUI_CHECKED Then
+				GUICtrlSetState($g_ahChk_BotTypeMin[$i], $GUI_ENABLE)
+			Else
+				GUICtrlSetState($g_ahChk_BotTypeMin[$i], $GUI_DISABLE + $GUI_UNCHECKED)
+			EndIf
+		Else
+			For $j = $g_ahCmb_SwitchMin[$i] To $g_ahTxt_ConditionMin[$i]
+				GUICtrlSetState($j, $GUI_DISABLE)
+			Next
+			GUICtrlSetState($g_ahChk_BotTypeMin[$i], $GUI_UNCHECKED)
+		EndIf
+	Next
+	chkSwitchBotType()
+EndFunc   ;==>chkSwitchProfile
+
+Func chkSwitchBotType()
+	For $i = 0 To 3
+		If GUICtrlRead($g_ahChk_BotTypeMax[$i]) = $GUI_CHECKED Then
+			GUICtrlSetState($g_ahCmb_BotTypeMax[$i], $GUI_ENABLE)
+		Else
+			GUICtrlSetState($g_ahCmb_BotTypeMax[$i], $GUI_DISABLE)
+		EndIf
+		If GUICtrlRead($g_ahChk_BotTypeMin[$i]) = $GUI_CHECKED Then
+			GUICtrlSetState($g_ahCmb_BotTypeMin[$i], $GUI_ENABLE)
+		Else
+			GUICtrlSetState($g_ahCmb_BotTypeMin[$i], $GUI_DISABLE)
+		EndIf
+	Next
+EndFunc   ;==>chkSwitchBotType
 
 ; ========== FarmSchedule ============
 Func chkSetFarmSchedule()
@@ -580,14 +632,6 @@ Func btnTestTrain()
 	If @error Then $result = "Error " & @error & ", " & @extended & ", " & ((IsArray($result)) ? (_ArrayToString($result, ",")) : ($result))
 	SetLog("Result ArmyHeroStatus(0, 1, 2) = " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result)), $COLOR_INFO)
 
-	SetLog("Testing GetCurCCSpell()", $COLOR_INFO)
-	$result = GetCurCCSpell(1)
-	If @error Then $result = "Error " & @error & ", " & @extended & ", " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result))
-	SetLog("Result GetCurCCSpell(1) = " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result)), $COLOR_INFO)
-	$result = GetCurCCSpell(2)
-	If @error Then $result = "Error " & @error & ", " & @extended & ", " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result))
-	SetLog("Result GetCurCCSpell(2) = " & ((IsArray($result)) ? ("Array: " & _ArrayToString($result, ",")) : ($result)), $COLOR_INFO)
-
 	SetLog("Testing Train DONE", $COLOR_INFO)
 	EndImageTest()
 
@@ -596,37 +640,20 @@ Func btnTestTrain()
 EndFunc   ;==>btnTestTrain
 
 Func btnTestDonateCC()
-	Local $currentOCR = $g_bDebugOcr
 	Local $currentRunState = $g_bRunState
 	Local $currentSetlog = $g_bDebugSetlog
 	_GUICtrlTab_ClickTab($g_hTabMain, 0)
-	$g_bDebugOcr = True
 	$g_bRunState = True
-	$g_bDebugSetlog = True
-	ForceCaptureRegion()
-	DebugImageSave("donateCC_")
 
 	SetLog(_PadStringCenter(" Test DonateCC begin (" & $g_sBotVersion & ")", 54, "="), $COLOR_INFO)
-	$g_iDonationWindowY = 0
-	Local $aDonWinOffColors[3][3] = [[0xFFFFFF, 0, 1], [0xFFFFFF, 0, 31], [0xABABA8, 0, 32]]
-	Local $aDonationWindow = _MultiPixelSearch(409, 0, 410, $g_iDEFAULT_HEIGHT, 1, 1, Hex(0xFFFFFF, 6), $aDonWinOffColors, 10)
-
-	If IsArray($aDonationWindow) Then
-		$g_iDonationWindowY = $aDonationWindow[1]
-		_Sleep(250)
-		SetLog("$DonationWindowY: " & $g_iDonationWindowY, $COLOR_DEBUG)
-	Else
-		SetLog("Could not find the Donate Window :(", $COLOR_ERROR)
-		Return False
-	EndIf
-	SetLog("Detecting Troops...")
-	DetectSlotTroop($eBowl)
-	SetLog("Detecting Spells...")
-	DetectSlotSpell($eSkSpell)
+	PrepareDonateCC()
+	$g_iCurrentSpells = 11
+	$g_aiCurrentSiegeMachines[$eSiegeWallWrecker] = 1
+	$g_aiCurrentSiegeMachines[$eSiegeBattleBlimp] = 1
+	$g_aiCurrentSiegeMachines[$eSiegeStoneSlammer] = 1
+	DonateCC()
 	SetLog(_PadStringCenter(" Test DonateCC end ", 54, "="), $COLOR_INFO)
-	ShellExecute($g_sProfileTempDebugPath & "donateCC_")
 
-	$g_bDebugOcr = $currentOCR
 	$g_bRunState = $currentRunState
 	$g_bDebugSetlog = $currentSetlog
 EndFunc   ;==>btnTestDonateCC
@@ -652,52 +679,37 @@ Func btnTestSendText()
 EndFunc   ;==>btnTestSendText
 
 Func btnTestAttackBar()
-	BeginImageTest() ; get image for testing
-	Local $currentOCR = $g_bDebugOcr
-	Local $currentRunState = $g_bRunState
+	Local $bCurrentOCR = $g_bDebugOcr, $bCurrentRunState = $g_bRunState, $bCurrentDebugImage = $g_bDebugImageSave
+
 	_GUICtrlTab_ClickTab($g_hTabMain, 0)
 
 	$g_bDebugOcr = True
+    $g_bDebugImageSave = True
 	$g_bRunState = True
-	ForceCaptureRegion()
-	SetLog(_PadStringCenter(" Test Attack Bar begin (" & $g_sBotVersion & ")", 54, "="), $COLOR_INFO)
 
-	_CaptureRegion2(0, 571 + $g_iBottomOffsetY, 859, 671 + $g_iBottomOffsetY)
-	Local $result = DllCallMyBot("searchIdentifyTroop", "ptr", $g_hHBitmap2)
-	SetLog("DLL Troopsbar list: " & $result[0], $COLOR_DEBUG)
-	If $g_bForceClanCastleDetection Then $result[0] = FixClanCastle($result[0])
-	Local $aTroopDataList = StringSplit($result[0], "|")
-	Local $aTemp[12][3]
-	If $result[0] <> "" Then
-		For $i = 1 To $aTroopDataList[0]
-			Local $troopData = StringSplit($aTroopDataList[$i], "#", $STR_NOCOUNT)
-;~ 				$aTemp[Number($troopData[1])][0] = $troopData[0]
-;~ 				$aTemp[Number($troopData[1])][1] = Number($troopData[2])
-;~ 				SetLog("-" & NameOfTroop( $aTemp[$i][0]) & " pos  " & $aTemp[$i][0] & " qty " & $aTemp[$i][2])
-			If $troopData[0] = 17 Or $troopData[0] = 18 Or $troopData[0] = 19 Or $troopData[0] = 20 Then $troopData[2] = 1
-			SetLog("position: " & $troopData[1] & " | troop code: " & $troopData[0] & " troop name:" & NameOfTroop($troopData[0]) & " | qty: " & $troopData[2])
-		Next
+	If MsgBox($MB_YESNO, "Screenshot or Live Image", "Do you want to use a Screenshot instead of a Live Image?") = $IDYES Then
+	 Local $sImageFile = BeginImageTest() ; get image for testing
+	 If $sImageFile = False Then $sImageFile = "Live Screenshot"
 	EndIf
 
-	;make snapshot start
-	_CaptureRegion(0, 630, $g_iDEFAULT_WIDTH)
-	Local $savefolder = $g_sProfileTempDebugPath
-	$savefolder = $g_sProfileTempDebugPath & "Test_Attack_Bar\"
-	DirCreate($savefolder)
-	Local $debugfile
-	Local $Date = @MDAY & "." & @MON & "." & @YEAR
-	Local $Time = @HOUR & "." & @MIN & "." & @SEC
-	$debugfile = "Test_Attack_Bar_" & $g_sBotVersion & "_" & $Date & "_" & $Time & ".png"
-	_GDIPlus_ImageSaveToFile($g_hBitmap, $savefolder & $debugfile)
-	;make snapshot end
+
+	SetLog(_PadStringCenter(" Begin AttackBar Detection", 54, "="), $COlOR_INFO)
+
+	Local $avAttackBar = GetAttackBar(False, $DB, True)
+
+	If IsArray($avAttackBar) And UBound($avAttackBar, 1) >= 1 Then
+	SetLog("Found " & UBound($avAttackBar, 1) & " Slots", $COlOR_SUCCESS)
+	For $i = 0 To UBound($avAttackBar, 1) - 1
+		SetLog("- Slot " & $avAttackBar[$i][1] & ": " & $avAttackBar[$i][2] & " " & GetTroopName($avAttackBar[$i][0], $avAttackBar[$i][2]) & " (X: " & $avAttackBar[$i][3] & "|Y: " & $avAttackBar[$i][4] & "|OCR X: " & $avAttackBar[$i][5] & "|OCR Y: " & $avAttackBar[$i][6] & ")", $COLOR_SUCCESS)
+	Next
+	EndIf
+	SetLog(_PadStringCenter(" End AttackBar Detection ", 54, "="), $COlOR_INFO)
 
 	EndImageTest() ; clear test image handle
 
-	SetLog(_PadStringCenter(" Test Attack Bar end ", 54, "="), $COLOR_INFO)
-	ShellExecute($savefolder)
-
-	$g_bDebugOcr = $currentOCR
-	$g_bRunState = $currentRunState
+	$g_bDebugOcr = $bCurrentOCR
+	$g_bDebugImageSave = $bCurrentDebugImage
+	$g_bRunState = $bCurrentRunState
 EndFunc   ;==>btnTestAttackBar
 
 
@@ -886,7 +898,13 @@ Func btnTestAttackCSV()
 
 	$g_iMatchMode = $DB ; define which script to use
 
-	SearchZoomOut($aCenterEnemyVillageClickDrag, True, "btnTestAttackCSV")
+	; reset village measures
+	setVillageOffset(0, 0, 1)
+	ConvertInternalExternArea()
+	;SearchZoomOut($aCenterEnemyVillageClickDrag, True, "btnTestAttackCSV")
+	If CheckZoomOut("btnTestAttackCSV", True, False) = False Then
+		SetLog("CheckZoomOut failed", $COLOR_INFO)
+	EndIf
 	ResetTHsearch()
 	SetLog("Testing FindTownhall()", $COLOR_INFO)
 	SetLog("FindTownhall() = " & FindTownhall(True), $COLOR_INFO)
@@ -924,7 +942,13 @@ Func btnTestGetLocationBuilding()
 	$g_bDebugBuildingPos = True
 	$g_bDebugSetlog = True
 
-	SearchZoomOut($aCenterEnemyVillageClickDrag, True, "btnTestAttackCSV")
+	; reset village measures
+	setVillageOffset(0, 0, 1)
+	ConvertInternalExternArea()
+	;SearchZoomOut($aCenterEnemyVillageClickDrag, True, "btnTestAttackCSV")
+	If CheckZoomOut("btnTestGetLocationBuilding", True, False) = False Then
+		SetLog("CheckZoomOut failed", $COLOR_INFO)
+	EndIf
 	ResetTHsearch()
 	SetLog("Testing FindTownhall()", $COLOR_INFO)
 	SetLog("FindTownhall() = " & FindTownhall(True), $COLOR_INFO)
@@ -942,6 +966,7 @@ Func btnTestGetLocationBuilding()
 
 	_LogObjList($g_oBldgAttackInfo) ; log dictionary contents
 	btnTestGetLocationBuildingImage() ; create image of locations
+	;AttackCSVDEBUGIMAGE()
 
 	Local $string, $iFindBldgTotalTestTime
 	Local $iKeys = $g_oBldgAttackInfo.Keys
@@ -1210,7 +1235,12 @@ Func btnTestWeakBase()
 	Local $currentRunState = $g_bRunState
 	$g_bRunState = True
 	BeginImageTest()
-	IsWeakBase()
+	FindTownhall(True)
+	If ($g_iSearchTH <> "-") Then
+		IsWeakBase($g_iImglocTHLevel, $g_sImglocRedline, False)
+	Else
+		IsWeakBase($g_iMaxTHLevel, "", False)
+	EndIf
 	EndImageTest()
 	$g_bRunState = $currentRunState
 EndFunc   ;==>btnTestWeakBase
@@ -1252,3 +1282,19 @@ EndFunc   ;==>btnTestSmartWait
 Func btnConsoleWindow()
 	ConsoleWindow()
 EndFunc   ;==>btnConsoleWindow
+
+Func chkSQLite()
+	$g_bUseStatistics = GUICtrlRead($g_hChkSqlite) = $GUI_CHECKED
+EndFunc   ;==>chkSQLite
+
+Func SQLiteExport()
+
+	If Not $g_bUseStatistics Then
+		Setlog("")
+		Return
+	EndIf
+	Setlog("Exporting data from SQlite, please wait!", $COLOR_ACTION)
+	ExportDataBase(False)
+	Setlog("Export successfully completed.", $COLOR_SUCCESS)
+
+EndFunc   ;==>SQLiteExport

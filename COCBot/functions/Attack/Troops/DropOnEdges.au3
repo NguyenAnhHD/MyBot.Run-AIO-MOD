@@ -10,7 +10,7 @@
 ; Return values .: None
 ; Author ........:
 ; Modified ......:
-; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
 ; Link ..........: https://github.com/MyBotRun/MyBot/wiki
@@ -39,7 +39,7 @@ Func DropOnEdges($troop, $nbSides, $number, $slotsPerEdge = 0)
 		If $slotsPerEdge = 2 Then
 			For $i = 0 To $nbSides - 4 ; Four Fingers Deployment Giants
 				KeepClicks()
-				Local $nbTroopsPerEdge = Round($nbTroopsLeft / (($nbSides-1) - $i * 2))
+				Local $nbTroopsPerEdge = Round($nbTroopsLeft / (($nbSides - 1) - $i * 2))
 				DropOnEdge($troop, $g_aaiEdgeDropPoints[$i], $nbTroopsPerEdge, $slotsPerEdge, $g_aaiEdgeDropPoints[$i + 2], $i)
 				$nbTroopsLeft -= $nbTroopsPerEdge * 2
 				ReleaseClicks()
@@ -47,7 +47,7 @@ Func DropOnEdges($troop, $nbSides, $number, $slotsPerEdge = 0)
 		Else
 			For $i = 0 To $nbSides - 5 ; Four Fingers Deployment Troops
 				KeepClicks()
-				Local $nbTroopsPerEdge = Round($nbTroopsLeft / (($nbSides-1) - $i * 2))
+				Local $nbTroopsPerEdge = Round($nbTroopsLeft / (($nbSides - 1) - $i * 2))
 				DropOnEdge($troop, $g_aaiEdgeDropPoints[$i], $nbTroopsPerEdge, $slotsPerEdge, $g_aaiEdgeDropPoints[$i + 2], $i, $nbSides)
 				$nbTroopsLeft -= $nbTroopsPerEdge * 2
 				ReleaseClicks()
