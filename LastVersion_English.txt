@@ -1,4 +1,4 @@
 [mod]
-version    = "v1.8.6"
+version    = "v2.0"
 messagenew = "Fully working with June 2018 Update\nNew GUI and lots of new features\nFor more information, go to \nhttps://mybot.run\n\n Always free and open source."
-messageold = "A new version of MyBot AIO++ MOD (v1.8.6) is available!\nPlease download the latest from:\nhttps://mybot.run"
+messageold = "A new version of MyBot AIO++ MOD (v2.0) is available!\nPlease download the latest from:\nhttps://mybot.run"
