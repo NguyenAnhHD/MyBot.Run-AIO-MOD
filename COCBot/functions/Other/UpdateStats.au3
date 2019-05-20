@@ -761,6 +761,7 @@ Func ResetStats()
 			GUICtrlSetData($g_hLblLabTimeStatus[$i], "00:00:00")
 		Next
 	EndIf
+	ResetStatsSX()
 	UpdateStats()
 EndFunc   ;==>ResetStats
 

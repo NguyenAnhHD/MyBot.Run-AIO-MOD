@@ -41,8 +41,8 @@ Func applyConfig($bRedrawAtExit = True, $TypeReadSave = "Read") ;Applies the dat
 	If $g_iGuiMode <> 1 Then
 		If $g_iGuiMode = 2 Then ; mini mode controls
 			Switch $TypeReadSave
-				Case "Read"
-					GUICtrlSetState($g_hChkBackgroundMode, $g_bChkBackgroundMode = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+                Case "Read"
+                    GUICtrlSetState($g_hChkBackgroundMode, $g_bChkBackgroundMode = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 				Case "Save"
 					$g_bChkBackgroundMode = (GUICtrlRead($g_hChkBackgroundMode) = $GUI_CHECKED)
 			EndSwitch
@@ -124,8 +124,6 @@ Func applyConfig($bRedrawAtExit = True, $TypeReadSave = "Read") ;Applies the dat
 	ApplyConfig_600_35_1($TypeReadSave)
 	; <><><><> Bot / Profile / Switch Accounts <><><><>
 	ApplyConfig_600_35_2($TypeReadSave)
-	; <><><><> Bot / Profile / Switch Profiles <><><><>
-	ApplyConfig_600_35_3($TypeReadSave)
 	; <><><> Attack Plan / Train Army / Troops/Spells <><><>
 	; Quick train
 	ApplyConfig_600_52_1($TypeReadSave)
@@ -138,8 +136,29 @@ Func applyConfig($bRedrawAtExit = True, $TypeReadSave = "Read") ;Applies the dat
 	; <><><> Attack Plan / Train Army / Options <><><>
 	ApplyConfig_641_1($TypeReadSave)
 
-	;  <><><> Team AiO MOD++ (2018) <><><>
-	ApplyConfig_MOD($TypeReadSave)
+	; <><><> Team AiO MOD++ (2019) <><><>
+	; <><><> SuperXP / GoblinXP <><><>
+	ApplyConfig_MOD_SuperXP($TypeReadSave)
+	; <><><> ChatActions <><><>
+	ApplyConfig_MOD_ChatActions($TypeReadSave)
+	; <><><> Daily Discounts + Builder Base Attack + Builder Base Drop Order <><><>
+	ApplyConfig_MOD_600_6($TypeReadSave)
+	; <><><> Request CC for defense <><><>
+	ApplyConfig_MOD_600_11($TypeReadSave)
+	; <><><> ClanHop <><><>
+	ApplyConfig_MOD_600_12($TypeReadSave)
+	; <><><> Restart Search Legend league <><><>
+	ApplyConfig_MOD_600_28($TypeReadSave)
+	; <><><> Classic Four Finger + CSV Deploy Speed <><><>
+	ApplyConfig_MOD_600_29($TypeReadSave)
+	; <><><> Check Collectors Outside <><><>
+	ApplyConfig_MOD_600_31($TypeReadSave)
+	; <><><> Auto Dock, Hide Emulator & Bot <><><>
+	ApplyConfig_MOD_600_35_1($TypeReadSave)
+	; <><><><> Switch Profiles <><><><>
+	ApplyConfig_MOD_600_35_2($TypeReadSave)
+	; <><><> Max logout time <><><>
+	ApplyConfig_MOD_641_1($TypeReadSave)
 
 	; <><><><> Attack Plan / Strategies <><><><>
 	; <<< nothing here >>>
@@ -188,22 +207,28 @@ Func ApplyConfig_Android($TypeReadSave)
 	Switch $TypeReadSave
 		Case "Read"
 			SetCurSelCmbCOCDistributors()
+			sldAdditionalClickDelay(True)
 			UpdateBotTitle()
 			_GUICtrlComboBox_SetCurSel($g_hCmbAndroidBackgroundMode, $g_iAndroidBackgroundMode)
 			_GUICtrlComboBox_SetCurSel($g_hCmbAndroidZoomoutMode, $g_iAndroidZoomoutMode)
+			_GUICtrlComboBox_SetCurSel($g_hCmbAndroidReplaceAdb, $g_iAndroidAdbReplace)
 			GUICtrlSetState($g_hChkAndroidAdbClickDragScript, $g_bAndroidAdbClickDragScript ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkAndroidCloseWithBot, $g_bAndroidCloseWithBot ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkUseDedicatedAdbPort, $g_bAndroidAdbPortPerInstance ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkUpdateSharedPrefs, $g_bUpdateSharedPrefs ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetData($g_hTxtAndroidRebootHours, $g_iAndroidRebootHours)
 			_GUICtrlComboBox_SetCurSel($g_hCmbSuspendAndroid, AndroidSuspendFlagsToIndex($g_iAndroidSuspendModeFlags))
 		Case "Save"
 			cmbCOCDistributors()
+			sldAdditionalClickDelay()
 			cmbAndroidBackgroundMode()
 			$g_iAndroidZoomoutMode = _GUICtrlComboBox_GetCurSel($g_hCmbAndroidZoomoutMode)
+			$g_iAndroidAdbReplace = _GUICtrlComboBox_GetCurSel($g_hCmbAndroidReplaceAdb)
 			$g_bAndroidAdbClickEnabled = (GUICtrlRead($g_hChkAndroidAdbClick) = $GUI_CHECKED ? True : False)
 			$g_bAndroidAdbClick = $g_bAndroidAdbClickEnabled ; also update $g_bAndroidAdbClick as that one is actually used
 			$g_bAndroidAdbClickDragScript = (GUICtrlRead($g_hChkAndroidAdbClickDragScript) = $GUI_CHECKED ? True : False)
 			$g_bAndroidCloseWithBot = (GUICtrlRead($g_hChkAndroidCloseWithBot) = $GUI_CHECKED ? True : False)
+			$g_bAndroidAdbPortPerInstance = (GUICtrlRead($g_hChkUseDedicatedAdbPort) = $GUI_CHECKED ? True : False)
 			$g_bUpdateSharedPrefs = (GUICtrlRead($g_hChkUpdateSharedPrefs) = $GUI_CHECKED ? True : False)
 			$g_iAndroidRebootHours = Int(GUICtrlRead($g_hTxtAndroidRebootHours)) ; Hours are entered
 			cmbSuspendAndroid()
@@ -306,6 +331,7 @@ Func ApplyConfig_600_6($TypeReadSave)
 			GUICtrlSetState($g_hChkGemsBox, $g_bChkGemsBox ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkTreasuryCollect, $g_bChkTreasuryCollect ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkFreeMagicItems, $g_bChkCollectFreeMagicItems ? $GUI_CHECKED : $GUI_UNCHECKED)
+			ChkFreeMagicItems()
 			ChkTreasuryCollect()
 			GUICtrlSetData($g_hTxtTreasuryGold, $g_iTxtTreasuryGold)
 			GUICtrlSetData($g_hTxtTreasuryElixir, $g_iTxtTreasuryElixir)
@@ -449,20 +475,6 @@ Func ApplyConfig_600_11($TypeReadSave)
 			For $i = 0 To 23
 				GUICtrlSetState($g_ahChkRequestCCHours[$i], $g_abRequestCCHours[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
 			Next
-
-			; Request CC for defense - Team AiO MOD++
-			GUICtrlSetState($g_hChkRequestCCDefense, $g_bRequestCCDefense ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetData($g_hTxtRequestCCDefense, $g_sRequestCCDefenseText)
-			_GUICtrlComboBox_SetCurSel($g_hCmbRequestCCDefenseWhen, $g_bRequestCCDefenseWhenPB ? 0 : 1)
-			GUICtrlSetData($g_hTxtRequestCCDefenseTime, $g_iRequestDefenseTime)
-			GUICtrlSetState($g_hChkSaveCCTroopForDefense, $g_bSaveCCTroopForDefense ? $GUI_CHECKED : $GUI_UNCHECKED)
-			For $i = 0 To 2
-				_GUICtrlComboBox_SetCurSel($g_ahCmbCCTroopDefense[$i] , $g_aiCCTroopDefenseType[$i])
-				GUICtrlSetData($g_ahTxtCCTroopDefense[$i], $g_aiCCTroopDefenseQty[$i])
-			Next
-			chkSaveCCTroopForDefense()
-			chkRequestCCDefense()
-
 		Case "Save"
 			$g_bRequestTroopsEnable = (GUICtrlRead($g_hChkRequestTroopsEnable) = $GUI_CHECKED)
 			$g_sRequestTroopsText = GUICtrlRead($g_hTxtRequestCC)
@@ -484,18 +496,6 @@ Func ApplyConfig_600_11($TypeReadSave)
 			For $i = 0 To 23
 				$g_abRequestCCHours[$i] = (GUICtrlRead($g_ahChkRequestCCHours[$i]) = $GUI_CHECKED)
 			Next
-
-			; Request CC for defense - Team AiO MOD++
-			$g_bRequestCCDefense = (GUICtrlRead($g_hChkRequestCCDefense) = $GUI_CHECKED)
-			$g_sRequestCCDefenseText = GUICtrlRead($g_hTxtRequestCCDefense)
-			$g_bRequestCCDefenseWhenPB = (_GUICtrlComboBox_GetCurSel($g_hCmbRequestCCDefenseWhen) = 0)
-			$g_iRequestDefenseTime = GUICtrlRead($g_hTxtRequestCCDefenseTime)
-			$g_bSaveCCTroopForDefense = (GUICtrlRead($g_hChkSaveCCTroopForDefense) = $GUI_CHECKED)
-			For $i = 0 To 2
-				$g_aiCCTroopDefenseType[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmbCCTroopDefense[$i])
-				$g_aiCCTroopDefenseQty[$i] = GUICtrlRead($g_ahTxtCCTroopDefense[$i])
-			Next
-
 	EndSwitch
 EndFunc   ;==>ApplyConfig_600_11
 
@@ -666,6 +666,7 @@ Func ApplyConfig_600_13($TypeReadSave)
 			_GUICtrlComboBox_SetCurSel($g_hCmbCCDonated, $g_iCCDonated - 1)
 			_GUICtrlComboBox_SetCurSel($g_hCmbCCReceived, $g_iCCReceived - 1)
 			chkBalanceDR()
+			GUICtrlSetState($g_hChkCheckDonateOften, $g_bCheckDonateOften = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 
 		Case "Save"
 			$g_bDonateHoursEnable = (GUICtrlRead($g_hChkDonateHoursEnable) = $GUI_CHECKED)
@@ -678,6 +679,7 @@ Func ApplyConfig_600_13($TypeReadSave)
 			$g_bUseCCBalanced = (GUICtrlRead($g_hChkUseCCBalanced) = $GUI_CHECKED)
 			$g_iCCDonated = _GUICtrlComboBox_GetCurSel($g_hCmbCCDonated) + 1
 			$g_iCCReceived = _GUICtrlComboBox_GetCurSel($g_hCmbCCReceived) + 1
+			$g_bCheckDonateOften = (GUICtrlRead($g_hChkCheckDonateOften) = $GUI_CHECKED)
 	EndSwitch
 EndFunc   ;==>ApplyConfig_600_13
 
@@ -2064,44 +2066,6 @@ Func ApplyConfig_600_35_2($TypeReadSave)
 			$g_iTrainTimeToSkip = _GUICtrlComboBox_GetCurSel($g_hCmbTrainTimeToSkip)
 	EndSwitch
 EndFunc   ;==>ApplyConfig_600_35_2
-
-Func ApplyConfig_600_35_3($TypeReadSave)
-	; <><><><> Bot / Profile / Switch Profiles <><><><>
-	Switch $TypeReadSave
-		Case "Read"
-			For $i = 0 To 3
-				GUICtrlSetState($g_ahChk_SwitchMax[$i], $g_abChkSwitchMax[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
-				GUICtrlSetState($g_ahChk_SwitchMin[$i], $g_abChkSwitchMin[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
-				_GUICtrlComboBox_SetCurSel($g_ahCmb_SwitchMax[$i], $g_aiCmbSwitchMax[$i])
-				_GUICtrlComboBox_SetCurSel($g_ahCmb_SwitchMin[$i], $g_aiCmbSwitchMin[$i])
-
-				GUICtrlSetState($g_ahChk_BotTypeMax[$i], $g_abChkBotTypeMax[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
-				GUICtrlSetState($g_ahChk_BotTypeMin[$i], $g_abChkBotTypeMin[$i] ? $GUI_CHECKED : $GUI_UNCHECKED)
-				_GUICtrlComboBox_SetCurSel($g_ahCmb_BotTypeMax[$i], $g_aiCmbBotTypeMax[$i])
-				_GUICtrlComboBox_SetCurSel($g_ahCmb_BotTypeMin[$i], $g_aiCmbBotTypeMin[$i])
-
-				GUICtrlSetData($g_ahTxt_ConditionMax[$i], $g_aiConditionMax[$i])
-				GUICtrlSetData($g_ahTxt_ConditionMin[$i], $g_aiConditionMin[$i])
-			Next
-			chkSwitchProfile()
-			chkSwitchBotType()
-		Case "Save"
-			For $i = 0 To 3
-				$g_abChkSwitchMax[$i] = (GUICtrlRead($g_ahChk_SwitchMax[$i]) = $GUI_CHECKED)
-				$g_abChkSwitchMin[$i] = (GUICtrlRead($g_ahChk_SwitchMin[$i]) = $GUI_CHECKED)
-				$g_aiCmbSwitchMax[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmb_SwitchMax[$i])
-				$g_aiCmbSwitchMin[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmb_SwitchMin[$i])
-
-				$g_abChkBotTypeMax[$i] = (GUICtrlRead($g_ahChk_BotTypeMax[$i]) = $GUI_CHECKED)
-				$g_abChkBotTypeMin[$i] = (GUICtrlRead($g_ahChk_BotTypeMin[$i]) = $GUI_CHECKED)
-				$g_aiCmbBotTypeMax[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmb_BotTypeMax[$i])
-				$g_aiCmbBotTypeMin[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmb_BotTypeMin[$i])
-
-				$g_aiConditionMax[$i] = GUICtrlRead($g_ahTxt_ConditionMax[$i])
-				$g_aiConditionMin[$i] = GUICtrlRead($g_ahTxt_ConditionMin[$i])
-			Next
-	EndSwitch
-EndFunc   ;==>ApplyConfig_600_35_3
 
 Func ApplyConfig_600_52_1($TypeReadSave)
 	; <><><> Attack Plan / Train Army / Troops/Spells <><><>

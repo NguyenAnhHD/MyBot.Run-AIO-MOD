@@ -90,7 +90,7 @@ Func getBuilderTime()
 	If IsMainPage() Then Click(293, 32) ; click builder's nose for poping out information
 	If _Sleep(1000) Then Return
 
-	Local $sBuilderTime = QuickMIS("OCR", @ScriptDir & "\imgxml\BuilderTime", 375, 109, 447, 125, True, $g_bDebugImageSave)
+	Local $sBuilderTime = QuickMIS("OCR", $g_sImgBuilderTime, 375, 109, 447, 125, True, $g_bDebugImageSave)
 	If $sBuilderTime <> "none" Then
 		$iBuilderTime = ConvertOCRTime("Builder Time", $sBuilderTime, False)
 		If $g_bDebugSetlog Then SetDebugLog("$sResult QuickMIS OCR: " & $sBuilderTime & " (" & Round($iBuilderTime,2) & " minutes)")

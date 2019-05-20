@@ -522,7 +522,7 @@ Func CreateAutoUpgradeSubTab()
 		$g_hChkUpgradesToIgnore[5] = GUICtrlCreateCheckbox("", $x + 305 - $xOff, $y + $yRow1 + $yChkOff, 17, 17)
 			GUICtrlSetOnEvent(-1, "chkUpgradesToIgnore")
 
-		_GUICtrlCreateIcon($g_sLibIconPath, $eWall13, $x + 365, $y + $yRow1, $iIconSize, $iIconSize)
+		_GUICtrlCreateIcon($g_sLibIconPath, $eIcnWall, $x + 365, $y + $yRow1, $iIconSize, $iIconSize)
 		$g_hChkUpgradesToIgnore[6] = GUICtrlCreateCheckbox("", $x + 380 - $xOff, $y + $yRow1 + $yChkOff, 17, 17)
 			GUICtrlSetOnEvent(-1, "chkUpgradesToIgnore")
 

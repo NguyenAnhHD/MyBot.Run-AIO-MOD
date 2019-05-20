@@ -233,8 +233,6 @@ Func SaveRegularConfig()
 	SaveConfig_600_35_1()
 	; <><><><> Bot / Profile / Switch Accounts <><><><>
 	SaveConfig_600_35_2()
-	; <><><><> Bot / Profile / Switch Profiles <><><><>
-	SaveConfig_600_35_3()
 	; <><><> Attack Plan / Train Army / Troops/Spells <><><>
 	; Quick train
 	SaveConfig_600_52_1()
@@ -249,8 +247,30 @@ Func SaveRegularConfig()
 	; <><><><> Bot / Debug <><><><>
 	SaveConfig_Debug()
 
-	;  <><><> Team AiO MOD++ (2018) <><><>
-	SaveConfig_MOD()
+	; <><><> Team AiO MOD++ (2019) <><><>
+	; <><><> SuperXP / GoblinXP <><><>
+	SaveConfig_MOD_SuperXP()
+	; <><><> ChatActions <><><>
+	SaveConfig_MOD_ChatActions()
+	; <><><> Daily Discounts + Builder Base Attack + Builder Base Drop Order <><><>
+	SaveConfig_MOD_600_6()
+	; <><><> Request CC for defense <><><>
+	SaveConfig_MOD_600_11()
+	; <><><> ClanHop <><><>
+	SaveConfig_MOD_600_12()
+	; <><><> Restart Search Legend league <><><>
+	SaveConfig_MOD_600_28()
+	; <><><> Classic Four Finger + CSV Deploy Speed <><><>
+	SaveConfig_MOD_600_29()
+	; <><><> Check Collectors Outside <><><>
+	SaveConfig_MOD_600_31()
+	; <><><> Auto Dock, Hide Emulator & Bot <><><>
+	SaveConfig_MOD_600_35_1()
+	; <><><><> Switch Profiles <><><><>
+	SaveConfig_MOD_600_35_2()
+	; <><><> Max logout time <><><>
+	SaveConfig_MOD_641_1()
+
 
 	; <><><><> Attack Plan / Strategies <><><><>
 	; <<< nothing here >>>
@@ -275,7 +295,10 @@ Func SaveConfig_Android()
 	_Ini_Add("android", "user.package", $g_sUserGamePackage)
 	_Ini_Add("android", "user.class", $g_sUserGameClass)
 	_Ini_Add("android", "backgroundmode", $g_iAndroidBackgroundMode)
+	_Ini_Add("android", "zoomoutmode", $g_iAndroidZoomoutMode)
+	_Ini_Add("android", "adb.replace", $g_iAndroidAdbReplace)
 	_Ini_Add("android", "check.time.lag.enabled", ($g_bAndroidCheckTimeLagEnabled ? "1" : "0"))
+	_Ini_Add("android", "adb.dedicated.instance", ($g_bAndroidAdbPortPerInstance ? "1" : "0"))
 	_Ini_Add("android", "adb.screencap.timeout.min", $g_iAndroidAdbScreencapTimeoutMin)
 	_Ini_Add("android", "adb.screencap.timeout.max", $g_iAndroidAdbScreencapTimeoutMax)
 	_Ini_Add("android", "adb.screencap.timeout.dynamic", $g_iAndroidAdbScreencapTimeoutDynamic)
@@ -299,6 +322,7 @@ Func SaveConfig_Android()
 	_Ini_Add("android", "close", ($g_bAndroidCloseWithBot ? "1" : "0"))
 	_Ini_Add("android", "shared_prefs.update", ($g_bUpdateSharedPrefs ? "1" : "0"))
 	_Ini_Add("android", "process.affinity.mask", $g_iAndroidProcessAffinityMask)
+	_Ini_Add("android", "click.additional.delay", $g_iAndroidControlClickAdditionalDelay)
 
 EndFunc   ;==>SaveConfig_Android
 
@@ -427,18 +451,6 @@ Func SaveConfig_600_11()
 		$string &= ($g_abRequestCCHours[$i] ? "1" : "0") & "|"
 	Next
 	_Ini_Add("planned", "RequestHours", $string)
-
-	; Request CC for defense - Team AiO MOD++
-	_Ini_Add("donate", "RequestDefenseEnable", $g_bRequestCCDefense ? 1 : 0)
-	_Ini_Add("donate", "RequestDefenseText", $g_sRequestCCDefenseText)
-	_Ini_Add("donate", "RequestDefenseWhenPB", $g_bRequestCCDefenseWhenPB ? 1 : 0)
-	_Ini_Add("donate", "RequestDefenseTime", $g_iRequestDefenseTime)
-	_Ini_Add("donate", "SaveCCTroopForDefense", $g_bSaveCCTroopForDefense ? 1 : 0)
-	For $i = 0 To 2
-		_Ini_Add("donate", "cmbCCTroopDefense" & $i, $g_aiCCTroopDefenseType[$i])
-		_Ini_Add("donate", "txtCCTroopDefense" & $i, $g_aiCCTroopDefenseQty[$i])
-	Next
-
 EndFunc   ;==>SaveConfig_600_11
 
 Func SaveConfig_600_12()
@@ -521,6 +533,10 @@ Func SaveConfig_600_13()
 	_Ini_Add("donate", "cmbFilterDonationsCC", $g_iCmbDonateFilter)
 	_Ini_Add("donate", "SkipDonateNearFulLTroopsEnable", $g_bDonateSkipNearFullEnable ? 1 : 0)
 	_Ini_Add("donate", "SkipDonateNearFulLTroopsPercentual", $g_iDonateSkipNearFullPercent)
+	_Ini_Add("donate", "BalanceCC", $g_bUseCCBalanced ? 1 : 0)
+	_Ini_Add("donate", "BalanceCCDonated", $g_iCCDonated)
+	_Ini_Add("donate", "BalanceCCReceived", $g_iCCReceived)
+	_Ini_Add("donate", "CheckDonateOften", $g_bCheckDonateOften ? 1 : 0)
 EndFunc   ;==>SaveConfig_600_13
 
 Func SaveConfig_600_15()
@@ -802,9 +818,6 @@ Func SaveConfig_600_29()
 	Next
 	_Ini_Add("planned", "attackHours", $string)
 	_Ini_Add("planned", "DropCCEnable", $g_bPlannedDropCCHoursEnable ? 1 : 0)
-	_Ini_Add("ClanClastle", "BalanceCC", $g_bUseCCBalanced ? 1 : 0)
-	_Ini_Add("ClanClastle", "BalanceCCDonated", $g_iCCDonated)
-	_Ini_Add("ClanClastle", "BalanceCCReceived", $g_iCCReceived)
 	Local $string = ""
 	For $i = 0 To 23
 		$string &= ($g_abPlannedDropCCHours[$i] ? 1 : 0) & "|"
@@ -1147,26 +1160,6 @@ Func SaveConfig_600_35_2()
 	EndIf
 
 EndFunc   ;==>SaveConfig_600_35_2
-
-Func SaveConfig_600_35_3()
-	; <><><><> Bot / Profile / Switch Profiles <><><><>
-	ApplyConfig_600_35_3(GetApplyConfigSaveAction())
-	For $i = 0 To 3
-		_Ini_Add("SwitchProfile", "SwitchProfileMax" & $i, $g_abChkSwitchMax[$i] ? 1 : 0)
-		_Ini_Add("SwitchProfile", "SwitchProfileMin" & $i, $g_abChkSwitchMin[$i] ? 1 : 0)
-		_Ini_Add("SwitchProfile", "TargetProfileMax" & $i, $g_aiCmbSwitchMax[$i])
-		_Ini_Add("SwitchProfile", "TargetProfileMin" & $i, $g_aiCmbSwitchMin[$i])
-
-		_Ini_Add("SwitchProfile", "ChangeBotTypeMax" & $i, $g_abChkBotTypeMax[$i] ? 1 : 0)
-		_Ini_Add("SwitchProfile", "ChangeBotTypeMin" & $i, $g_abChkBotTypeMin[$i] ? 1 : 0)
-		_Ini_Add("SwitchProfile", "TargetBotTypeMax" & $i, $g_aiCmbBotTypeMax[$i])
-		_Ini_Add("SwitchProfile", "TargetBotTypeMin" & $i, $g_aiCmbBotTypeMin[$i])
-
-		_Ini_Add("SwitchProfile", "ConditionMax" & $i, $g_aiConditionMax[$i])
-		_Ini_Add("SwitchProfile", "ConditionMin" & $i, $g_aiConditionMin[$i])
-	Next
-
-EndFunc   ;==>SaveConfig_600_35_3
 
 Func SaveConfig_600_52_1()
 	; <><><> Attack Plan / Train Army / Troops/Spells <><><>

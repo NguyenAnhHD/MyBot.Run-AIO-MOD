@@ -66,15 +66,6 @@ Func btnDonateSpell()
 	Next
 EndFunc   ;==>btnDonateSpell
 
-; ClanHop - Team AiO MOD++
-Func btnDonateOptions()
-	If GUICtrlGetState($g_hGrpDonateOptions) = BitOR($GUI_HIDE, $GUI_ENABLE) Then
-		_DonateBtn($g_hGrpDonateOptions, $g_hChkClanHop)
-	EndIf
-	GUICtrlSetState($g_hChkDonateQueueTroopOnly, $GUI_HIDE)
-	GUICtrlSetState($g_hChkDonateQueueSpellOnly, $GUI_HIDE)
-EndFunc   ;==>btnDonateOptions
-
 Func btnDonateBlacklist()
 	If GUICtrlGetState($g_hGrpDonateGeneralBlacklist) = BitOR($GUI_HIDE, $GUI_ENABLE) Then
 		_DonateBtn($g_hGrpDonateGeneralBlacklist, $g_hTxtGeneralBlacklist)

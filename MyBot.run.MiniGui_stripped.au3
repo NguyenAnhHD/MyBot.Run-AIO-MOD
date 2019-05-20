@@ -5,12 +5,12 @@
 #pragma compile(Icon, "Images\MyBot.ico")
 #pragma compile(FileDescription, Clash of Clans Bot - A Free Clash of Clans bot - https://mybot.run)
 #pragma compile(ProductVersion, 7.7)
-#pragma compile(FileVersion, 7.7.3)
+#pragma compile(FileVersion, 7.7.6)
 #pragma compile(LegalCopyright, © https://mybot.run)
 #Au3Stripper_Off
 #Au3Stripper_On
-Global $g_sBotVersion = "v7.7.3"
-Global $g_sModVersion = "v2.0"
+Global $g_sBotVersion = "v7.7.6"
+Global $g_sModVersion = "v2.0.1"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
 Global $g_hFrmBot = 0
@@ -228,6 +228,7 @@ EndFunc
 Global Const $BSF_IGNORECURRENTTASK = 0x0002
 Global Const $BSF_POSTMESSAGE = 0x0010
 Global Const $BSM_APPLICATIONS = 0x10
+Global Const $MSGFLT_ALLOW = 1
 Global Const $HANDLE_FLAG_INHERIT = 0x00000001
 Global Const $SE_PRIVILEGE_ENABLED = 0x00000002
 Global Enum $SECURITYANONYMOUS = 0, $SECURITYIDENTIFICATION, $SECURITYIMPERSONATION, $SECURITYDELEGATION
@@ -318,6 +319,7 @@ Global Const $IMAGE_ICON = 1
 Global Const $LOAD_LIBRARY_AS_DATAFILE = 0x02
 Global Const $S_OK = 0x00000000
 Global Const $LR_DEFAULTCOLOR = 0x0000
+Global Const $LR_LOADFROMFILE = 0x0010
 Global $__g_aInProcess_WinAPI[64][2] = [[0, 0]]
 Global Const $tagICONINFO = "bool Icon;dword XHotSpot;dword YHotSpot;handle hMask;handle hColor"
 Func _WinAPI_BitBlt($hDestDC, $iXDest, $iYDest, $iWidth, $iHeight, $hSrcDC, $iXSrc, $iYSrc, $iROP)
@@ -379,6 +381,11 @@ $iOptions = $DI_NOMIRROR
 EndSwitch
 Local $aResult = DllCall("user32.dll", "bool", "DrawIconEx", "handle", $hDC, "int", $iX, "int", $iY, "handle", $hIcon, "int", $iWidth, "int", $iHeight, "uint", $iStep, "handle", $hBrush, "uint", $iOptions)
 If @error Then Return SetError(@error, @extended, False)
+Return $aResult[0]
+EndFunc
+Func _WinAPI_ExtractIconEx($sFilePath, $iIndex, $paLarge, $paSmall, $iIcons)
+Local $aResult = DllCall("shell32.dll", "uint", "ExtractIconExW", "wstr", $sFilePath, "int", $iIndex, "struct*", $paLarge, "struct*", $paSmall, "uint", $iIcons)
+If @error Then Return SetError(@error, @extended, 0)
 Return $aResult[0]
 EndFunc
 Func _WinAPI_FreeLibrary($hModule)
@@ -559,6 +566,20 @@ Func _WinAPI_BroadcastSystemMessage($iMsg, $wParam = 0, $lParam = 0, $iFlags = 0
 Local $aRet = DllCall('user32.dll', 'long', 'BroadcastSystemMessageW', 'dword', $iFlags, 'dword*', $iRecipients, 'uint', $iMsg, 'wparam', $wParam, 'lparam', $lParam)
 If @error Or($aRet[0] = -1) Then Return SetError(@error, @extended, -1)
 Return SetExtended($aRet[2], $aRet[0])
+EndFunc
+Func _WinAPI_ChangeWindowMessageFilterEx($hWnd, $iMsg, $iAction)
+Local $tCFS, $aRet
+If $hWnd And($__WINVER > 0x0600) Then
+Local Const $tagCHANGEFILTERSTRUCT = 'dword cbSize; dword ExtStatus'
+$tCFS = DllStructCreate($tagCHANGEFILTERSTRUCT)
+DllStructSetData($tCFS, 1, DllStructGetSize($tCFS))
+$aRet = DllCall('user32.dll', 'bool', 'ChangeWindowMessageFilterEx', 'hwnd', $hWnd, 'uint', $iMsg, 'dword', $iAction, 'struct*', $tCFS)
+Else
+$tCFS = 0
+$aRet = DllCall('user32.dll', 'bool', 'ChangeWindowMessageFilter', 'uint', $iMsg, 'dword', $iAction)
+EndIf
+If @error Or Not $aRet[0] Then Return SetError(@error + 10, @extended, 0)
+Return SetExtended(DllStructGetData($tCFS, 2), 1)
 EndFunc
 Func _WinAPI_GetVersion()
 Return BitAND(BitShift($__WINVER, 8), 0xFF) & '.' & BitAND($__WINVER, 0xFF)
@@ -2572,6 +2593,7 @@ Global $g_bDebugContinueSearchElixir = False
 Global $g_bDebugOCRdonate = False
 Global $g_bDebugDisableZoomout = False
 Global $g_bDebugDisableVillageCentering = False
+Global $g_iAndroidZoomoutMode = 0
 Global $g_oDebugGDIHandles = ObjCreate("Scripting.Dictionary")
 Global Const $COLOR_ERROR = $COLOR_RED
 Global Const $COLOR_WARNING = $COLOR_MAROON
@@ -2610,6 +2632,7 @@ Global $g_iAndroidAdbClicksTroopDeploySize = 0
 Global $g_bAndroidAdbInstanceEnabled = True
 Global $g_iAndroidSuspendModeFlags = 1
 Global $g_bNoFocusTampering = False
+Global $g_bAndroidAdbPortPerInstance = False
 Global $g_avAndroidAppConfig[8][16] = [ ["Nox", "nox", "No", "[CLASS:subWin; INSTANCE:1]", "", $g_iDEFAULT_WIDTH, $g_iDEFAULT_HEIGHT - 48,$g_iDEFAULT_WIDTH + 4, $g_iDEFAULT_HEIGHT - 10,0, "127.0.0.1:62001", 1+2+4+8+16+32 +256+512, '# ', '(nox Virtual Input|Android Input|Android_Input)', 0, 2], ["MEmu", "MEmu", "MEmu ", "[CLASS:subWin; INSTANCE:1]", "", $g_iDEFAULT_WIDTH, $g_iDEFAULT_HEIGHT - 48,$g_iDEFAULT_WIDTH + 51,$g_iDEFAULT_HEIGHT - 12,0, "127.0.0.1:21503", 2+4+8+16+32 +512, '# ', '(Microvirt Virtual Input|User Input)', 0, 2], ["BlueStacks2","Android", "BlueStacks ", "[CLASS:BlueStacksApp; INSTANCE:1]","_ctl.Window", $g_iDEFAULT_WIDTH, $g_iDEFAULT_HEIGHT - 48,$g_iDEFAULT_WIDTH, $g_iDEFAULT_HEIGHT - 48,0, "127.0.0.1:5555", 1+2+4+8+16+32 +128, '$ ', 'BlueStacks Virtual Touch', 0, 1], ["BlueStacks", "Android", "BlueStacks App Player","[CLASS:BlueStacksApp; INSTANCE:1]","_ctl.Window", $g_iDEFAULT_WIDTH, $g_iDEFAULT_HEIGHT - 48,$g_iDEFAULT_WIDTH, $g_iDEFAULT_HEIGHT - 48,0, "127.0.0.1:5555", 1 +8+16+32 +128, '$ ', 'BlueStacks Virtual Touch', 0, 1], ["LeapDroid", "vm1", "Leapd", "[CLASS:subWin; INSTANCE:1]", "", $g_iDEFAULT_WIDTH, $g_iDEFAULT_HEIGHT - 48,$g_iDEFAULT_WIDTH, $g_iDEFAULT_HEIGHT - 48,0, "emulator-5554", 1 +8+16+32 +512, '# ', 'qwerty2', 1, 1], ["iTools", "iToolsVM","iTools ", "[CLASS:subWin; INSTANCE:1]", "", $g_iDEFAULT_WIDTH, $g_iDEFAULT_HEIGHT - 48,$g_iDEFAULT_WIDTH + 2, $g_iDEFAULT_HEIGHT - 13,0, "127.0.0.1:54001", 1+2+4+8+16+32+64 +512, '# ', 'iTools Virtual PassThrough Input', 0, 1], ["KOPLAYER", "KOPLAYER","KOPLAYER", "[CLASS:subWin; INSTANCE:1]", "", $g_iDEFAULT_WIDTH, $g_iDEFAULT_HEIGHT - 48,$g_iDEFAULT_WIDTH + 64,$g_iDEFAULT_HEIGHT - 8, 0, "127.0.0.1:6555", 1+2+4+8+16+32 +512, '# ', 'ttVM Virtual Input', 0, 2], ["Droid4X", "droid4x", "Droid4X ", "[CLASS:subWin; INSTANCE:1]", "", $g_iDEFAULT_WIDTH, $g_iDEFAULT_HEIGHT - 48,$g_iDEFAULT_WIDTH + 10,$g_iDEFAULT_HEIGHT + 50,0, "127.0.0.1:26944", 2+4+8+16+32 +512, '# ', 'droid4x Virtual Input', 0, 2] ]
 Global $__Nox_Idx = _ArraySearch($g_avAndroidAppConfig, "Nox", 0, 0, 0, 0, 1, 0)
 Global $__MEmu_Idx = _ArraySearch($g_avAndroidAppConfig, "MEmu", 0, 0, 0, 0, 1, 0)
@@ -2633,6 +2656,7 @@ Global $g_iAndroidClientWidth
 Global $g_iAndroidClientHeight
 Global $g_iAndroidWindowWidth
 Global $g_iAndroidWindowHeight
+Global $g_iAndroidAdbReplace = 2
 Global $g_sAndroidAdbPath
 Global $g_sAndroidAdbGlobalOptions
 Global $g_sAndroidAdbDevice
@@ -2650,9 +2674,10 @@ Global $g_bAndroidEmbed
 Global $g_iAndroidEmbedMode
 Global $g_bAndroidBackgroundLaunch
 Global $g_bAndroidBackgroundLaunched
+Global $g_iAndroidControlClickAdditionalDelay = 10
 Global $g_iAndroidAdbClickGroup = 50
 Global $g_bAndroidCloseWithBot = False
-Global $g_bUpdateSharedPrefs = False
+Global $g_bUpdateSharedPrefs = True
 Global $g_iAndroidProcessAffinityMask = 0
 Global $g_bInitAndroidActive = False
 Global $g_sAndroidProgramPath = ""
@@ -2705,7 +2730,7 @@ Global $g_hLibUser32DLL = DllOpen("user32.dll")
 Global Const $g_sLibIconPath = $g_sLibPath & "\MBRBOT.dll"
 Global $g_iRedrawBotWindowMode = 2
 Global Enum $eIcnArcher = 1, $eIcnDonArcher, $eIcnBalloon, $eIcnDonBalloon, $eIcnBarbarian, $eIcnDonBarbarian, $eBtnTest, $eIcnBuilder, $eIcnCC, $eIcnGUI, $eIcnDark, $eIcnDragon, $eIcnDonDragon, $eIcnDrill, $eIcnElixir, $eIcnCollector, $eIcnFreezeSpell, $eIcnGem, $eIcnGiant, $eIcnDonGiant, $eIcnTrap, $eIcnGoblin, $eIcnDonGoblin, $eIcnGold, $eIcnGolem, $eIcnDonGolem, $eIcnHealer, $eIcnDonHealer, $eIcnHogRider, $eIcnDonHogRider, $eIcnHealSpell, $eIcnInferno, $eIcnJumpSpell, $eIcnLavaHound, $eIcnDonLavaHound, $eIcnLightSpell, $eIcnMinion, $eIcnDonMinion, $eIcnPekka, $eIcnDonPekka, $eIcnTreasury, $eIcnRageSpell, $eIcnTroops, $eIcnHourGlass, $eIcnTH1, $eIcnTH10, $eIcnTrophy, $eIcnValkyrie, $eIcnDonValkyrie, $eIcnWall, $eIcnWallBreaker, $eIcnDonWallBreaker, $eIcnWitch, $eIcnDonWitch, $eIcnWizard, $eIcnDonWizard, $eIcnXbow, $eIcnBarrackBoost, $eIcnMine, $eIcnCamp, $eIcnBarrack, $eIcnSpellFactory, $eIcnDonBlacklist, $eIcnSpellFactoryBoost, $eIcnMortar, $eIcnWizTower, $eIcnPayPal, $eIcnNotify, $eIcnGreenLight, $eIcnLaboratory, $eIcnRedLight, $eIcnBlank, $eIcnYellowLight, $eIcnDonCustom, $eIcnTombstone, $eIcnSilverStar, $eIcnGoldStar, $eIcnDarkBarrack, $eIcnCollectorLocate, $eIcnDrillLocate, $eIcnMineLocate, $eIcnBarrackLocate, $eIcnDarkBarrackLocate, $eIcnDarkSpellFactoryLocate, $eIcnDarkSpellFactory, $eIcnEarthQuakeSpell, $eIcnHasteSpell, $eIcnPoisonSpell, $eIcnBldgTarget, $eIcnBldgX, $eIcnRecycle, $eIcnHeroes, $eIcnBldgElixir, $eIcnBldgGold, $eIcnMagnifier, $eIcnWallElixir, $eIcnWallGold, $eIcnKing, $eIcnQueen, $eIcnDarkSpellBoost, $eIcnQueenBoostLocate, $eIcnKingBoostLocate, $eIcnKingUpgr, $eIcnQueenUpgr, $eIcnWardenUpgr, $eIcnWarden, $eIcnWardenBoostLocate, $eIcnKingBoost, $eIcnQueenBoost, $eIcnWardenBoost, $eEmpty3, $eIcnReload, $eIcnCopy, $eIcnAddcvs, $eIcnEdit, $eIcnTreeSnow, $eIcnSleepingQueen, $eIcnSleepingKing, $eIcnGoldElixir, $eIcnBowler, $eIcnDonBowler, $eIcnCCDonate, $eIcnEagleArt, $eIcnGembox, $eIcnInferno4, $eIcnInfo, $eIcnMain, $eIcnTree, $eIcnProfile, $eIcnCCRequest, $eIcnTelegram, $eIcnTiles, $eIcnXbow3, $eIcnBark, $eIcnDailyProgram, $eIcnLootCart, $eIcnSleepMode, $eIcnTH11, $eIcnTrainMode, $eIcnSleepingWarden, $eIcnCloneSpell, $eIcnSkeletonSpell, $eIcnBabyDragon, $eIcnDonBabyDragon, $eIcnMiner, $eIcnDonMiner, $eIcnNoShield, $eIcnDonCustomB, $eIcnAirdefense, $eIcnDarkBarrackBoost, $eIcnDarkElixirStorage, $eIcnSpellsCost, $eIcnTroopsCost, $eIcnResetButton, $eIcnNewSmartZap, $eIcnTrain, $eIcnAttack, $eIcnDelay, $eIcnReOrder, $eIcn2Arrow, $eIcnArrowLeft, $eIcnArrowRight, $eIcnAndroid, $eHdV04, $eHdV05, $eHdV06, $eHdV07, $eHdV08, $eHdV09, $eHdV10, $eHdV11, $eUnranked, $eBronze, $eSilver, $eGold, $eCrystal, $eMaster, $eChampion, $eTitan, $eLegend, $eWall04, $eWall05, $eWall06, $eWall07, $eWall08, $eWall09, $eWall10, $eWall11, $eIcnPBNotify, $eIcnCCTroops, $eIcnCCSpells, $eIcnSpellsGroup, $eBahasaIND, $eChinese_S, $eChinese_T, $eEnglish, $eFrench, $eGerman, $eItalian, $ePersian, $eRussian, $eSpanish, $eTurkish, $eMissingLangIcon, $eWall12, $ePortuguese, $eIcnDonPoisonSpell, $eIcnDonEarthQuakeSpell, $eIcnDonHasteSpell, $eIcnDonSkeletonSpell, $eVietnamese, $eKorean, $eAzerbaijani, $eArabic, $eIcnBuilderHall, $eIcnClockTower, $eIcnElixirCollectorL5, $eIcnGemMine, $eIcnGoldMineL5, $eIcnElectroDragon, $eIcnTH12, $eHdV12, $eWall13, $eIcnBattleB, $eIcnWallW, $eIcnSiegeCost, $eIcnTrainingPotion, $eIcnBatSpell, $eIcnStoneS, $eIcnIceGolem, $eIcnStarLaboratory, $eIcnRagedBarbarian, $eIcnSneakyArcher, $eIcnBoxerGiant, $eIcnBetaMinion, $eIcnBomber, $eIcnBBBabyDragon, $eIcnCannonCart, $eIcnNightWitch, $eIcnDropShip, $eIcnSuperPekka, $eIcnBBWall01, $eIcnBBWall02, $eIcnBBWall03, $eIcnBBWall04, $eIcnBBWall05, $eIcnBBWall06, $eIcnBBWall07, $eIcnBBWall08, $eIcnKingGrayShield, $eIcnKingBlueShield, $eIcnKingGreenShield, $eIcnKingRedShield, $eIcnQueenGrayShield, $eIcnQueenBlueShield, $eIcnQueenGreenShield, $eIcnQueenRedShield, $eIcnWardenGrayShield, $eIcnWardenBlueShield, $eIcnWardenGreenShield, $eIcnWardenRedShield, $eIcnLabGrayShield, $eIcnLabGreenShield, $eIcnLabRedShield, _
-$eIcnClanHop, $eIcnChat, $eIcnRepeat, $eIcnClan, $eIcnTarget, $eIcnSettings, $eIcnClanGames, $eIcnDebug, $eIcnSwitchAcc, $eIcnSwitchProfiles, $eIcnFarmingSchedule, $eIcnAiOMOD, $eIcnMiscMod, $eIcnHumanization, $eIcnGoblinXP, $eIcnWarPreparation, $eIcnKingXP, $eIcnQueenXP, $eIcnWardenXP, $eIcnPrecise, $eIcnBattleBBoost, $eIcnWallWBoost, $eIcnPowerPotion, $eIcnResourcePotion
+$eIcnClanHop, $eIcnChat, $eIcnRepeat, $eIcnClan, $eIcnTarget, $eIcnSettings, $eIcnStrongMan, $eIcnDebug, $eIcnSwitchAcc, $eIcnSwitchProfiles, $eIcnFarmingSchedule, $eIcnAiOMOD, $eIcnMiscMod, $eIcnHumanization, $eIcnSuperXP, $eIcnWarPreparation, $eIcnBKingSX, $eIcnAQueenSX, $eIcnGWardenSX, $eIcnPrecise, $eIcnWorkshopBoost, $eIcnPowerPotion, $eIcnResourcePotion
 Global Enum $eBotNoAction, $eBotStart, $eBotStop, $eBotSearchMode, $eBotClose
 Global $g_iBotAction = $eBotNoAction
 Global $g_bBotMoveRequested = False
@@ -2826,7 +2851,7 @@ Global $g_aiWallsCurrentCount[14] = [-1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 Global $g_aiLastGoodWallPos[2] = [-1, -1]
 Global $g_bAutoUpgradeEnabled = False
 Global $g_iTxtSmartMinGold = 150000, $g_iTxtSmartMinElixir = 150000, $g_iTxtSmartMinDark = 1500
-Global $g_iChkUpgradesToIgnore[14] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+Global $g_iChkUpgradesToIgnore[14] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_iChkResourcesToIgnore[3] = [0, 0, 0]
 Global $g_iChkBBSuggestedUpgrades = 0, $g_iChkBBSuggestedUpgradesIgnoreGold = 0, $g_iChkBBSuggestedUpgradesIgnoreElixir = 0, $g_iChkBBSuggestedUpgradesIgnoreHall = 0
 Global $g_iChkPlacingNewBuildings = 0
@@ -2908,7 +2933,7 @@ Global $g_iDelayActivateQueen = 9000, $g_iDelayActivateKing = 9000, $g_iDelayAct
 Global $g_bAttackPlannerEnable = False, $g_bAttackPlannerCloseCoC = False, $g_bAttackPlannerCloseAll = False, $g_bAttackPlannerSuspendComputer = False, $g_bAttackPlannerRandomEnable = False, $g_iAttackPlannerRandomTime = 0, $g_iAttackPlannerRandomTime = 0, $g_bAttackPlannerDayLimit = False, $g_iAttackPlannerDayMin = 12, $g_iAttackPlannerDayMax = 15
 Global $g_abPlannedAttackWeekDays[7] = [True, True, True, True, True, True, True]
 Global $g_abPlannedattackHours[24] = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
-Global $g_bPlannedDropCCHoursEnable = False, $g_bUseCCBalanced = False, $g_iCCDonated = 0, $g_iCCReceived = 0
+Global $g_bPlannedDropCCHoursEnable = False, $g_bUseCCBalanced = False, $g_iCCDonated = 0, $g_iCCReceived = 0, $g_bCheckDonateOften = False
 Global $g_abPlannedDropCCHours[24] = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
 Global $g_bSmartZapEnable = False, $g_bEarthQuakeZap = False, $g_bNoobZap = False, $g_bSmartZapDB = True, $g_bSmartZapSaveHeroes = True, $g_bSmartZapFTW = False, $g_iSmartZapMinDE = 350, $g_iSmartZapExpectedDE = 320, $g_bDebugSmartZap = False
 Global $g_bShareAttackEnable = 0, $g_iShareMinGold = 300000, $g_iShareMinElixir = 300000, $g_iShareMinDark = 0, $g_sShareMessage = "Nice|Good|Thanks|Wowwww", $g_bTakeLootSnapShot = True, $g_bScreenshotLootInfo = False, $g_bShareAttackEnableNow = False
@@ -2932,8 +2957,6 @@ Global $g_bForceClanCastleDetection = 0
 Global $g_iCmbSwitchAcc = 0
 Global $g_bChkSharedPrefs = True, $g_bChkGooglePlay = False, $g_bChkSuperCellID = False, $g_bChkSwitchAcc = False, $g_bChkSmartSwitch = False, $g_bDonateLikeCrazy = False, $g_iTotalAcc = -1, $g_iTrainTimeToSkip = 0
 Global $g_abAccountNo[8], $g_asProfileName[8], $g_abDonateOnly[8], $g_aiAttackedCountSwitch[8], $g_iActiveSwitchCounter = 0, $g_iDonateSwitchCounter = 0, $g_asTrainTimeFinish[8], $g_abPBActive[8], $g_aiRunTime[8], $g_ahTimerSinceSwitched[8]
-Global $g_abChkSwitchMax[4] = [False, False, False, False], $g_abChkSwitchMin[4] = [False, False, False, False], $g_aiCmbSwitchMax[4] = [-1, -1, -1, -1], $g_aiCmbSwitchMin[4] = [-1, -1, -1, -1], $g_abChkBotTypeMax[4] = [False, False, False, False], $g_abChkBotTypeMin[4] = [False, False, False, False], $g_aiCmbBotTypeMax[4] = [1, 1, 1, 1], $g_aiCmbBotTypeMin[4] = [2, 2, 2, 2], $g_aiConditionMax[4] = ["12000000", "12000000", "240000", "5000"], $g_aiConditionMin[4] = ["1000000", "1000000", "20000", "3000"]
-Global $g_abChkSetFarm[8], $g_aiCmbAction1[8], $g_aiCmbCriteria1[8], $g_aiTxtResource1[8], $g_aiCmbTime1[8], $g_aiCmbAction2[8], $g_aiCmbCriteria2[8], $g_aiTxtResource2[8], $g_aiCmbTime2[8]
 Global Const $g_WIN_POS_DEFAULT = 0xFFFFFFF
 Global $g_iFrmBotPosX = $g_WIN_POS_DEFAULT
 Global $g_iFrmBotPosY = $g_WIN_POS_DEFAULT
@@ -3054,15 +3077,37 @@ Global $g_bChkCollectFreeMagicItems = True
 Global $g_bOnlySCIDAccounts = False
 Global $g_iWhatSCIDAccount2Use = 0
 Global $g_bUseStatistics = False
-Global $icmbCSVSpeed[2] = [2, 2]
-Global $g_CSVSpeedDivider[2] = [1, 1]
+Global $g_bEnableSuperXP = False, $g_bSkipZoomOutSX = False, $g_bFastSuperXP = False, $g_bSkipDragToEndSX = False, $g_iActivateOptionSX = 1, $g_iGoblinMapOptSX = 2, $g_sGoblinMapOptSX = "The Arena", $g_iMaxXPtoGain = 500, $g_bBKingSX = False, $g_bAQueenSX = False, $g_bGWardenSX = False
+Global $g_bChatGlobal = False, $g_sDelayTimeGlobal = 10, $g_bScrambleGlobal = False, $g_bSwitchLang = False, $g_iCmbLang = 0, $g_bRusLang = False, $g_iTxtGlobalMessages1 = "", $g_iTxtGlobalMessages2 = "", $TxtGlobal1, $TxtGlobal2
+Global $g_bChatClan = False, $g_sDelayTimeClan = 2, $g_bClanUseResponses = False, $g_bClanAlwaysMsg = False, $g_bCleverbot = False, $g_iTxtClanResponses = "", $g_iTxtClanMessages = "", $TxtResponse, $TxtGeneric
+Global $g_bUseNotify = False, $g_bPbSendNew = False
+Global $g_bEnableFriendlyChallenge = False, $g_sDelayTimeFC = 5, $g_bOnlyOnRequest = False, $g_iTxtChallengeText = "", $g_iTxtKeywordForRequest = ""
+Global $g_bFriendlyChallengeBase[6] = [False, False, False, False, False, False]
+Global $g_abFriendlyChallengeHours[24] = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
+Global $g_aIAVar[5] = [0, 0, 0, 0, 0], $g_sIAVar = '0|0|0|0|0'
+Global $g_iDDCount = 18
+Global $g_abChkDD_Deals[$g_iDDCount] = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
+Global $g_bDD_DealsSet = False
+Global $g_bChkEnableBBAttack = False, $g_bChkBBTrophyRange = False, $g_bChkBBAttIfLootAvail = False, $g_bChkBBWaitForMachine = False
+Global $g_iTxtBBTrophyLowerLimit = 0, $g_iTxtBBTrophyUpperLimit = 5000
+Global $g_bBBDropOrderSet = False
+Global Const $g_sBBDropOrderDefault = "BoxerGiant|SuperPekka|DropShip|Witch|BabyDrag|WallBreaker|Barbarian|CannonCart|Archer|Minion"
+Global $g_sBBDropOrder = $g_sBBDropOrderDefault
 Global $g_bRequestCCDefense = False, $g_sRequestCCDefenseText = "", $g_bRequestCCDefenseWhenPB, $g_iRequestDefenseTime, $g_bSaveCCTroopForDefense = True
 Global $g_aiCCTroopsExpectedForDefense[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_aiCCTroopDefenseType[3], $g_aiCCTroopDefenseQty[3]
-Global $g_bEnableAuto = False, $g_bChkAutoDock = False, $g_bChkAutoHideEmulator = True, $g_bChkAutoMinimizeBot = False
-Global $g_bTrainLogoutMaxTime = False, $g_iTrainLogoutMaxTime = 4
-Global $g_bIsSearchTimeout = False, $g_iSearchTimeout = 10, $g_iTotalSearchTime = 0
 Global $g_bChkClanHop = False
+Global $g_bIsSearchTimeout = False, $g_iSearchTimeout = 10, $g_iTotalSearchTime = 0
+Global $icmbCSVSpeed[2] = [2, 2]
+Global $g_CSVSpeedDivider[2] = [1, 1]
+Global $g_bDBMeetCollectorOutside = False, $g_iDBMinCollectorOutsidePercent = 80
+Global $g_bDBCollectorNearRedline = False, $g_iCmbRedlineTiles = 1
+Global $g_bSkipCollectorCheck = False, $g_iTxtSkipCollectorGold = 400000, $g_iTxtSkipCollectorElixir = 400000, $g_iTxtSkipCollectorDark = 0
+Global $g_bSkipCollectorCheckTH = False, $g_iCmbSkipCollectorCheckTH = 1
+Global $g_bEnableAuto = False, $g_bChkAutoDock = False, $g_bChkAutoHideEmulator = True, $g_bChkAutoMinimizeBot = False
+Global $g_abChkSwitchMax[4] = [False, False, False, False], $g_abChkSwitchMin[4] = [False, False, False, False], $g_aiCmbSwitchMax[4] = [-1, -1, -1, -1], $g_aiCmbSwitchMin[4] = [-1, -1, -1, -1], $g_abChkBotTypeMax[4] = [False, False, False, False], $g_abChkBotTypeMin[4] = [False, False, False, False], $g_aiCmbBotTypeMax[4] = [1, 1, 1, 1], $g_aiCmbBotTypeMin[4] = [2, 2, 2, 2], $g_aiConditionMax[4] = ["12000000", "12000000", "240000", "5000"], $g_aiConditionMin[4] = ["1000000", "1000000", "20000", "3000"]
+Global $g_abChkSetFarm[8], $g_aiCmbAction1[8], $g_aiCmbCriteria1[8], $g_aiTxtResource1[8], $g_aiCmbTime1[8], $g_aiCmbAction2[8], $g_aiCmbCriteria2[8], $g_aiTxtResource2[8], $g_aiCmbTime2[8]
+Global $g_bTrainLogoutMaxTime = False, $g_iTrainLogoutMaxTime = 4
 Func GetTranslatedParsedText($sText, $var1 = Default, $var2 = Default, $var3 = Default)
 Local $s = StringReplace(StringReplace($sText, "\r\n", @CRLF), "\n", @CRLF)
 If $var1 = Default Then Return $s
@@ -3666,8 +3711,7 @@ Return $aResult[0]
 EndFunc
 Global $g_RunPipe_hProcess = 0
 Global $g_RunPipe_hThread = 0
-Func LaunchConsole($cmd, $param, ByRef $process_killed, $timeout = 10000, $bUseSemaphore = False)
-Local $bDebug = $g_bDebugSetlog Or $g_bDebugAndroid
+Func LaunchConsole($cmd, $param, ByRef $process_killed, $timeout = 10000, $bUseSemaphore = False, $bNoLog = False)
 If $bUseSemaphore Then
 Local $hSemaphore = LockSemaphore(StringReplace($cmd, "\", "/"), "Waiting to launch: " & $cmd)
 EndIf
@@ -3675,11 +3719,10 @@ Local $data, $pid, $hStdIn[2], $hStdOut[2], $hTimer, $hProcess, $hThread
 If StringLen($param) > 0 Then $cmd &= " " & $param
 $hTimer = __TimerInit()
 $process_killed = False
-If $bDebug Then SetLog("Func LaunchConsole: " & $cmd, $COLOR_DEBUG)
+If Not $bNoLog Then SetDebugLog("Func LaunchConsole: " & $cmd, $COLOR_DEBUG)
 $pid = RunPipe($cmd, "", @SW_HIDE, $STDERR_MERGED, $hStdIn, $hStdOut, $hProcess, $hThread)
-If $bDebug Then SetLog("Func LaunchConsole: command launched", $COLOR_DEBUG)
 If $pid = 0 Then
-SetLog("Launch faild: " & $cmd, $COLOR_ERROR)
+SetLog("Launch failed: " & $cmd, $COLOR_ERROR)
 If $bUseSemaphore = True Then UnlockSemaphore($hSemaphore)
 Return
 EndIf
@@ -3691,7 +3734,7 @@ $data &= ReadPipe($hStdOut[0])
 Until($timeout > 0 And __TimerDiff($hTimer) > $timeout) Or $iWaitResult <> $WAIT_TIMEOUT
 If ProcessExists($pid) Then
 If ClosePipe($pid, $hStdIn, $hStdOut, $hProcess, $hThread) = 1 Then
-If $bDebug Then SetLog("Process killed: " & $cmd, $COLOR_ERROR)
+If Not $bNoLog Then SetDebugLog("Process killed: " & $cmd, $COLOR_ERROR)
 $process_killed = True
 EndIf
 Else
@@ -3700,7 +3743,7 @@ EndIf
 $g_RunPipe_hProcess = 0
 $g_RunPipe_hThread = 0
 CleanLaunchOutput($data)
-If $bDebug Then SetLog("Func LaunchConsole Output: " & $data, $COLOR_DEBUG)
+If Not $bNoLog Then SetDebugLog("Func LaunchConsole Output: " & $data, $COLOR_DEBUG)
 If $bUseSemaphore Then UnlockSemaphore($hSemaphore)
 Return $data
 EndFunc
@@ -4069,6 +4112,155 @@ Local $aRet = DllCall('Shell32.dll', 'LONG', 'SHGetPropertyStoreForWindow', 'HWN
 If @error Then Return SetError(@error, @extended, False)
 Return SetExtended($aRet[0],($aRet[0] = 0))
 EndFunc
+Global Const $THB_BITMAP = 0x00000001
+Global Const $THB_ICON = 0x00000002
+Global Const $THB_TOOLTIP = 0x00000004
+Global Const $THB_FLAGS = 0x00000008
+Global Const $THBF_ENABLED = 0x00000000
+Global Const $THBF_DISABLED = 0x00000001
+Global Const $THBN_CLICKED = 0x1800
+Global $g_ITBL_oTaskBar = 0
+Global $g_ITBL_oButtonIDs = ObjCreate("Scripting.Dictionary")
+Global $g_WM_TaskbarButtonCreated = _WinAPI_RegisterWindowMessage("TaskbarButtonCreated")
+Global $g_ITBL_bTaskBarReady = 0
+Global Enum $g_ITBL_DllStruct = 1, $g_ITBL_hGui
+Global Enum $g_ITBL_iID, $g_ITBL_hIcon, $g_ITBL_sToolTip, $g_ITBL_sCallFunc, $g_ITBL_iFlags, $g_ITBL_iBitmap, $g_ITBL_iMask, $g_ITBL_Max
+Global $g_ITBL_aButtons[1][$g_ITBL_Max] = [[0, 0]]
+Func _ITaskBar_Init($bRegisterWM_COMMAND = True)
+Global $g_ITBL_oErrorHandler
+If $bRegisterWM_COMMAND Then GUIRegisterMsg($WM_COMMAND, '__TaskbarWM_Command')
+GUIRegisterMsg($g_WM_TaskbarButtonCreated, "__TaskbarButtonCreated")
+OnAutoItExitRegister('__TaskbarExit')
+EndFunc
+Func _ITaskBar_CreateTaskBarObj($bInitiate = True, $bErrorHandler = True)
+If IsObj($g_ITBL_oTaskBar) Then Return $g_ITBL_oTaskBar
+If $bErrorHandler Then $g_ITBL_oErrorHandler = ObjEvent("AutoIt.Error", "__TaskbarErrFunc")
+Local $CLSID_TaskBarlist4 = "{56FDF344-FD6D-11D0-958A-006097C9A090}"
+Local $IID_ITaskbarList4 = "{56FDF342-FD6D-11d0-958A-006097C9A090}"
+Local $tagITaskbarList4 = "HrInit hresult();" & "AddTab hresult(hwnd);" & "DeleteTab hresult(hwnd);" & "ActivateTab hresult(hwnd);" & "SetActiveAlt hresult(hwnd);" & "MarkFullscreenWindow hresult(hwnd;bool);" & "SetProgressValue hresult(hwnd;uint64;uint64);" & "SetProgressState hresult(hwnd;int);" & "RegisterTab hresult(hwnd;hwnd);" & "UnregisterTab hresult(hwnd);" & "SetTabOrder hresult(hwnd;hwnd);" & "SetTabActive hresult(hwnd;hwnd;dword);" & "ThumbBarAddButtons hresult(hwnd;uint;ptr);" & "ThumbBarUpdateButtons hresult(hwnd;uint;ptr);" & "ThumbBarSetImageList hresult(hwnd;ptr);" & "SetOverlayIcon hresult(hwnd;ptr;wstr);" & "SetThumbnailTooltip hresult(hwnd;wstr);" & "SetThumbnailClip hresult(hwnd;ptr);" & "SetTabProperties hresult(hwnd;int);"
+$g_ITBL_oTaskBar = ObjCreateInterface($CLSID_TaskBarlist4, $IID_ITaskbarList4, $tagITaskbarList4)
+If @error Then Return SetError(1, 0, 0)
+If Not IsObj($g_ITBL_oTaskBar) Then Return SetError(3, 0, 0)
+If $bInitiate Then
+Local $iRet = $g_ITBL_oTaskBar.HrInit()
+If $iRet Then Return SetError($iRet, 0, 0)
+EndIf
+Local $time = TimerInit()
+While Not $g_ITBL_bTaskBarReady
+Sleep(10)
+If TimerDiff($time) > 5000 Then Return SetError(2, 0, 0)
+WEnd
+Return SetError(0, 0, $g_ITBL_oTaskBar)
+EndFunc
+Func _ITaskBar_AddTBButtons($hGui)
+If IsObj($g_ITBL_oTaskBar) = 0 Then Return SetError(1, 1, 0)
+If $g_ITBL_aButtons[0][0] = 0 Then Return SetError(1, 0, 0)
+$g_ITBL_aButtons[0][$g_ITBL_hGui] = $hGui
+Local $i, $tagTHUMBBUTTON = "dword;dword;dword;handle;WCHAR[260];dword_ptr"
+For $i = 1 To $g_ITBL_aButtons[0][0]
+$tagTHUMBBUTTON &= ';' & $tagTHUMBBUTTON
+Next
+$g_ITBL_aButtons[0][$g_ITBL_DllStruct] = DllStructCreate($tagTHUMBBUTTON)
+__SetThumbBarStructData()
+Local $iRet = $g_ITBL_oTaskBar.ThumbBarAddButtons($hGui, $g_ITBL_aButtons[0][0], DllStructGetPtr($g_ITBL_aButtons[0][$g_ITBL_DllStruct]))
+If $iRet Then Return SetError($iRet, 0, 0)
+Return 1
+EndFunc
+Func _ITaskBar_CreateTBButton($sToolTip = '', $hIcon = -1, $iBitmap = -1, $sFunctiontoCall = -1, $iFlags = -1, $iMask = -1)
+Local $iD = GUICtrlCreateDummy()
+If $g_ITBL_aButtons[0][0] = 7 Then Return SetError(3, 0, 0)
+If $hIcon <> -1 And Not IsPtr($hIcon) Then
+If Not FileExists($hIcon) Then Return SetError(1, 0, 0)
+If StringRight($hIcon, 3) = 'exe' Then
+$hIcon = __GetEXEIconHandle($hIcon)
+If @error Then Return SetError(2, 0, 0)
+Else
+$hIcon = _WinAPI_LoadImage(0, $hIcon, $IMAGE_ICON, 16, 16, $LR_LOADFROMFILE)
+If @error Then Return SetError(2, 0, 0)
+EndIf
+EndIf
+ReDim $g_ITBL_aButtons[UBound($g_ITBL_aButtons) + 1][$g_ITBL_Max]
+$g_ITBL_aButtons[0][0] += 1
+$g_ITBL_oButtonIDs.Add($iD, $g_ITBL_aButtons[0][0])
+If $hIcon = -1 Then $hIcon = 0
+If $iFlags = -1 Then $iFlags = $THBF_ENABLED
+$g_ITBL_aButtons[$g_ITBL_aButtons[0][0]][$g_ITBL_iID] = $iD
+$g_ITBL_aButtons[$g_ITBL_aButtons[0][0]][$g_ITBL_hIcon] = $hIcon
+$g_ITBL_aButtons[$g_ITBL_aButtons[0][0]][$g_ITBL_sToolTip] = $sToolTip
+$g_ITBL_aButtons[$g_ITBL_aButtons[0][0]][$g_ITBL_sCallFunc] = $sFunctiontoCall
+$g_ITBL_aButtons[$g_ITBL_aButtons[0][0]][$g_ITBL_iFlags] = $iFlags
+$g_ITBL_aButtons[$g_ITBL_aButtons[0][0]][$g_ITBL_iBitmap] = $iBitmap
+If $iMask <> -1 Then
+$g_ITBL_aButtons[$g_ITBL_aButtons[0][0]][$g_ITBL_iMask] = $iMask
+Else
+__UpdateTBMask($g_ITBL_aButtons[0][0])
+EndIf
+Return $iD
+EndFunc
+Func _ITaskBar_UpdateTBButton($iButton, $iFlags = -1, $sToolTip = -1, $sIcon = -1, $iBitmap = -1, $sFunctiontoCall = -1, $iMask = -1)
+If IsObj($g_ITBL_oTaskBar) = 0 Then Return SetError(1, 1, 0)
+If Not $g_ITBL_oButtonIDs.Exists($iButton) Then Return SetError(1, 0, 0)
+Local $iIndex = $g_ITBL_oButtonIDs.Item($iButton)
+If $sIcon <> -1 Then $g_ITBL_aButtons[$iIndex][$g_ITBL_hIcon] = $sIcon
+If $sFunctiontoCall <> -1 Then $g_ITBL_aButtons[$iIndex][$g_ITBL_sCallFunc] = $sFunctiontoCall
+If $iFlags <> -1 Then $g_ITBL_aButtons[$iIndex][$g_ITBL_iFlags] = $iFlags
+If $iBitmap <> -1 Then $g_ITBL_aButtons[$iIndex][$g_ITBL_iBitmap] = $iBitmap
+If $sToolTip <> -1 Then $g_ITBL_aButtons[$iIndex][$g_ITBL_sToolTip] = $sToolTip
+If $iMask <> -1 Then
+$g_ITBL_aButtons[$iIndex][$g_ITBL_iMask] = $iMask
+Else
+__UpdateTBMask($iIndex)
+EndIf
+__SetThumbBarStructData()
+Local $iRet = $g_ITBL_oTaskBar.ThumbBarUpdateButtons($g_ITBL_aButtons[0][$g_ITBL_hGui], $g_ITBL_aButtons[0][0], DllStructGetPtr($g_ITBL_aButtons[0][$g_ITBL_DllStruct]))
+If $iRet Then Return SetError($iRet, 0, 0)
+Return 1
+EndFunc
+Func __GetEXEIconHandle($sPath)
+Local $Icon = DllStructCreate("handle")
+Local $iIcon = _WinAPI_ExtractIconEx($sPath, 0, 0, DllStructGetPtr($Icon), 1)
+If @error Then Return SetError(1, 0, 0)
+Return DllStructGetData($Icon, 1)
+EndFunc
+Func __SetThumbBarStructData()
+Local $j = 1
+For $i = 1 To $g_ITBL_aButtons[0][0]
+DllStructSetData($g_ITBL_aButtons[0][$g_ITBL_DllStruct], $j, $g_ITBL_aButtons[$i][$g_ITBL_iMask])
+DllStructSetData($g_ITBL_aButtons[0][$g_ITBL_DllStruct], $j + 1, $g_ITBL_aButtons[$i][$g_ITBL_iID])
+DllStructSetData($g_ITBL_aButtons[0][$g_ITBL_DllStruct], $j + 2, $g_ITBL_aButtons[$i][$g_ITBL_iBitmap])
+DllStructSetData($g_ITBL_aButtons[0][$g_ITBL_DllStruct], $j + 3, $g_ITBL_aButtons[$i][$g_ITBL_hIcon])
+DllStructSetData($g_ITBL_aButtons[0][$g_ITBL_DllStruct], $j + 4, $g_ITBL_aButtons[$i][$g_ITBL_sToolTip])
+DllStructSetData($g_ITBL_aButtons[0][$g_ITBL_DllStruct], $j + 5, $g_ITBL_aButtons[$i][$g_ITBL_iFlags])
+$j += 6
+Next
+EndFunc
+Func __UpdateTBMask($iIndex)
+$g_ITBL_aButtons[$iIndex][$g_ITBL_iMask] = $THB_FLAGS
+If $g_ITBL_aButtons[$iIndex][$g_ITBL_hIcon] <> 0 Then $g_ITBL_aButtons[$iIndex][$g_ITBL_iMask] = BitOR($g_ITBL_aButtons[$iIndex][$g_ITBL_iMask], $THB_ICON)
+If $g_ITBL_aButtons[$iIndex][$g_ITBL_iBitmap] <> -1 Then $g_ITBL_aButtons[$iIndex][$g_ITBL_iMask] = BitOR($g_ITBL_aButtons[$iIndex][$g_ITBL_iMask], $THB_BITMAP)
+If $g_ITBL_aButtons[$iIndex][$g_ITBL_sToolTip] <> '' Then $g_ITBL_aButtons[$iIndex][$g_ITBL_iMask] = BitOR($g_ITBL_aButtons[$iIndex][$g_ITBL_iMask], $THB_TOOLTIP)
+EndFunc
+Func __TaskbarWM_Command($hWnd, $msg, $wParam, $lParam)
+Local $iMsg = _WinAPI_HiWord($wParam)
+If $iMsg = $THBN_CLICKED Then
+Local $iID = _WinAPI_LoWord($wParam)
+If $g_ITBL_oButtonIDs.Exists($iID) Then
+Local $iIndex = $g_ITBL_oButtonIDs.Item($iID)
+If $g_ITBL_aButtons[$iIndex][$g_ITBL_sCallFunc] <> -1 Then Execute($g_ITBL_aButtons[$iIndex][$g_ITBL_sCallFunc] & "()")
+EndIf
+EndIf
+Return $GUI_RUNDEFMSG
+EndFunc
+Func __TaskbarButtonCreated()
+$g_ITBL_bTaskBarReady = 1
+EndFunc
+Func __TaskbarExit()
+$g_ITBL_oTaskBar = 0
+$g_ITBL_oButtonIDs = 0
+EndFunc
+Func __TaskbarErrFunc()
+ConsoleWrite("! COM Error !  Number: 0x" & Hex($g_ITBL_oErrorHandler.number, 8) & "   ScriptLine: " & $g_ITBL_oErrorHandler.scriptline & " - " & $g_ITBL_oErrorHandler.windescription & @CRLF)
+EndFunc
 Global $g_hToolTip = 0
 Func _GUICtrlSetTip($controlID, $tiptext, $title = Default, $icon = Default, $options = Default, $useControlID = True)
 If $g_hToolTip = 0 Then
@@ -4126,6 +4318,7 @@ Global $g_hStatusBar = 0
 Global $g_hTiShow = 0, $g_hTiHide = 0, $g_hTiDonate = 0, $g_hTiAbout = 0, $g_hTiStartStop = 0, $g_hTiPause = 0, $g_hTiExit = 0
 Global $g_aFrmBotPosInit[8] = [0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_bFrmBotMinimized = False
+Global $g_hTblStart = 0, $g_hTblStop = 0, $g_hTblPause = 0, $g_hTblResume = 0, $g_hTblMakeScreenshot = 0
 Global $g_oCtrlIconData = ObjCreate("Scripting.Dictionary")
 Global $g_hBtnStart = 0, $g_hBtnStop = 0, $g_hBtnPause = 0, $g_hBtnResume = 0, $g_hBtnSearchMode = 0, $g_hBtnMakeScreenshot = 0, $g_hBtnHide = 0, $g_hBtnEmbed = 0, $g_hChkBackgroundMode = 0, $g_hLblDonate = 0, $g_hBtnAttackNowDB = 0, $g_hBtnAttackNowLB = 0, $g_hBtnAttackNowTS = 0
 Global $g_hPicTwoArrowShield = 0, $g_hLblVersion = 0, $g_hLblMod = 0, $g_hPicArrowLeft = 0, $g_hPicArrowRight = 0
@@ -4145,7 +4338,6 @@ Local $x = 10, $y = $y_bottom + 10
 GUICtrlCreateGroup("https://mybot.run " & GetTranslatedFileIni("MBR GUI Design Bottom", "Group_01", "- freeware bot -"), $x - 5, $y - 10, 190, 108)
 $g_hBtnStart = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnStart", "Start Bot"), $x, $y + 2 +5, 90, 40-5)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnStart_Info_01", "Use this to START the bot."))
-GUICtrlSetOnEvent(-1, "btnStart")
 If $g_bBtnColor then GUICtrlSetBkColor(-1, 0x5CAD85)
 GUICtrlSetState(-1, $GUI_DISABLE)
 $g_hBtnStop = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnStop", "Stop Bot"), -1, -1, 90, 40-5)
@@ -4177,17 +4369,16 @@ _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEmbed_Info_
 If $g_bBtnColor Then GUICtrlSetBkColor(-1, 0x22C4F5)
 GUICtrlSetState(-1, $GUI_DISABLE)
 GUICtrlSetOnEvent(-1, "btnEmbed")
-$g_hChkBackgroundMode = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode", "Background Mode"), $x + 1, $y + 72, 90, 24)
-GUICtrlSetFont(-1, 7)
+$g_hChkBackgroundMode = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode", "Background"), $x + 1, $y + 72, 87, 24)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode_Info_01", "Check this to ENABLE the Background Mode of the Bot.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Bottom", "ChkBackgroundMode_Info_02", "With this you can also hide the Android Emulator window out of sight."))
 If $g_bGuiRemote Then GUICtrlSetState(-1, $GUI_DISABLE)
 GUICtrlSetOnEvent(-1, "chkBackground")
 GUICtrlSetState(-1,(($g_bAndroidAdbScreencap = True) ?($GUI_CHECKED) :($GUI_UNCHECKED)))
-$g_hBtnEnableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI", "Enable GUI"), $x + 100, $y + 72, 80, 22)
-_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_01", "Enable GUI control while botting") & @CRLF & GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_02", "Warning: USE THIS WITH CAUTION!") & @CRLF & GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_03", "This function may create errors that require bot/PC restart") & @CRLF & GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_04", "Better to stop the Bot completely if you need to change the setting"))
+$g_hBtnEnableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI", "Enable GUI"), $x + 90, $y + 72, 90, 22)
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_01", "Enable GUI control while Botting.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_02", "This function may cause errors that require bot restart.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Bottom", "BtnEnableGUI_Info_03", "Better to stop the Bot completely to change the setting."))
 GUICtrlSetOnEvent(-1, "btnEnableGUI")
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hBtnDisableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnDisableGUI", "Disable GUI"), $x + 100, $y + 72, 80, 22)
+$g_hBtnDisableGUI = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnDisableGUI", "Disable GUI"), $x + 90, $y + 72, 90, 22)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "BtnDisableGUI_Info_01", "Disable GUI control to continue botting"))
 GUICtrlSetOnEvent(-1, "btnDisableGUI")
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -4197,7 +4388,7 @@ $g_hBtnAttackNowLB = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bo
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_hBtnAttackNowTS = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnAttackNowTS", "TH Snipe!"), $x + 195, $y + 50, 60, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hLblDonate = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate", "Support the Development"), $x + 293, $y + 85, 142, 18, $SS_RIGHT)
+$g_hLblDonate = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate", "Support the Development"), $x + 293, $y + 86, 142, 18, $SS_RIGHT)
 GUICtrlSetCursor(-1, 0)
 GUICtrlSetFont(-1, 8.5, $FW_BOLD)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate_Info_01", "Paypal Donate?"))
@@ -4208,7 +4399,7 @@ $g_hLblVersion = GUICtrlCreateLabel($g_sModVersion, $x + 200, $y + 62, 60, 17, $
 GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Arial", $CLEARTYPE_QUALITY)
 GUICtrlSetColor(-1, 0x804001)
 $g_hLblMod = GUICtrlCreateLabel("AiO++ MOD", $x + 195, $y + 78, 70, 17, $SS_CENTER)
-GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Arial", $CLEARTYPE_QUALITY)
+GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Trebuchet MS", $CLEARTYPE_QUALITY)
 GUICtrlSetColor(-1, 0x804001)
 $g_hPicArrowLeft = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnArrowLeft, $x + 269, $y + 30, 16, 16)
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpVillage_Info_01", "Switch between village info and stats")
@@ -4216,26 +4407,26 @@ _GUICtrlSetTip(-1, $sTxtTip)
 $g_hPicArrowRight = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnArrowRight, $x + 247 + 198, $y + 30, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 Local $x = 295, $y = $y_bottom + 20
-$g_hGrpVillage = GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Bottom", "GrpVillage", "Village"), $x - 0, $y - 20, 160, 94)
+$g_hGrpVillage = GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Bottom", "GrpVillage", "Village"), $x - 0, $y - 20, 160, 96)
 $y = $y_bottom + 17
 $g_hLblResultGoldNow = GUICtrlCreateLabel("", $x + 10, $y + 2, 60, 15, $SS_RIGHT)
 $g_hLblResultGoldHourNow = GUICtrlCreateLabel("", $x + 10, $y + 2, 60, 15, $SS_RIGHT)
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_hPicResultGoldNow = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 71, $y, 16, 16)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicResultGoldTemp = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 15, $y, 16, 16)
+$g_hPicResultGoldTemp = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 10, $y, 16, 16)
 $g_hLblResultElixirNow = GUICtrlCreateLabel("", $x + 10, $y + 22, 60, 15, $SS_RIGHT)
 $g_hLblResultElixirHourNow = GUICtrlCreateLabel("", $x + 10, $y + 22, 60, 15, $SS_RIGHT)
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_hPicResultElixirNow = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 71, $y + 20, 16, 16)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicResultElixirTemp = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 15, $y + 20, 16, 16)
+$g_hPicResultElixirTemp = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 10, $y + 20, 16, 16)
 $g_hLblResultDENow = GUICtrlCreateLabel("", $x + 10, $y + 42, 60, 15, $SS_RIGHT)
 $g_hLblResultDEHourNow = GUICtrlCreateLabel("", $x + 10, $y + 42, 60, 15, $SS_RIGHT)
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_hPicResultDENow = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 71, $y + 40, 16, 16)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicResultDETemp = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 15, $y + 40, 16, 16)
+$g_hPicResultDETemp = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 10, $y + 40, 16, 16)
 $x += 75
 $g_hLblResultTrophyNow = GUICtrlCreateLabel("", $x + 13, $y + 2, 43, 15, $SS_RIGHT)
 $g_hPicResultTrophyNow = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrophy, $x + 59, $y , 16, 16)
@@ -4257,46 +4448,46 @@ $g_hPicResultSkippedHourNow = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnBldgX, $x
 GUICtrlSetState(-1, $GUI_HIDE)
 $x -= 65
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpStatus_Info_01", "Gray - Not Read, Green - Ready to Use, Blue - Healing, Red - Upgrading")
-$g_hPicHeroGray[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingGrayShield, $x, $y + 59, 15, 15)
+$g_hPicHeroGray[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingGrayShield, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlue[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingBlueShield, $x, $y + 59, 15, 15)
-_GUICtrlSetTip(-1, $sTxtTip)
-GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreen[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingGreenShield, $x, $y + 59, 15, 15)
+$g_hPicHeroBlue[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingBlueShield, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRed[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingRedShield, $x, $y + 59, 15, 15)
+$g_hPicHeroGreen[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingGreenShield, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGray[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenGrayShield, $x + 24, $y + 59, 15, 15)
-_GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlue[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenBlueShield, $x + 24, $y + 59, 15, 15)
+$g_hPicHeroRed[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingRedShield, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreen[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenGreenShield, $x + 24, $y + 59, 15, 15)
+$g_hPicHeroGray[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenGrayShield, $x + 24, $y + 59, 16, 16)
+_GUICtrlSetTip(-1, $sTxtTip)
+$g_hPicHeroBlue[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenBlueShield, $x + 24, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRed[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenRedShield, $x + 24, $y + 59, 15, 15)
+$g_hPicHeroGreen[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenGreenShield, $x + 24, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGray[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenGrayShield, $x + 48, $y + 59, 15, 15)
-_GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlue[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenBlueShield, $x + 48, $y + 59, 15, 15)
+$g_hPicHeroRed[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenRedShield, $x + 24, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreen[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenGreenShield, $x + 48, $y + 59, 15, 15)
+$g_hPicHeroGray[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenGrayShield, $x + 48, $y + 59, 16, 16)
+_GUICtrlSetTip(-1, $sTxtTip)
+$g_hPicHeroBlue[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenBlueShield, $x + 48, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRed[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenRedShield, $x + 48, $y + 59, 15, 15)
+$g_hPicHeroGreen[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenGreenShield, $x + 48, $y + 59, 16, 16)
+_GUICtrlSetTip(-1, $sTxtTip)
+GUICtrlSetState(-1, $GUI_HIDE)
+$g_hPicHeroRed[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenRedShield, $x + 48, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpStatus_Info_02", "Green - Lab is Running, Red - Lab Has Stopped")
-$g_hPicLabGray = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabGrayShield, $x + 72, $y + 59, 15, 15)
+$g_hPicLabGray = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabGrayShield, $x + 72, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicLabGreen = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabGreenShield, $x + 72, $y + 59, 15, 15)
+$g_hPicLabGreen = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabGreenShield, $x + 72, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicLabRed = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabRedShield, $x + 72, $y + 59, 15, 15)
+$g_hPicLabRed = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabRedShield, $x + 72, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_hLblLabTime = GUICtrlCreateLabel("00:00:00", $x + 93, $y + 60, 50, 14, $SS_LEFT)
@@ -4319,6 +4510,8 @@ $_GUI_MAIN_WIDTH = $_MINIGUI_MAIN_WIDTH
 $_GUI_MAIN_HEIGHT = $_MINIGUI_MAIN_HEIGHT
 EndIf
 $g_hFrmBot = GUICreate($g_sBotTitle, $_GUI_MAIN_WIDTH, $_GUI_MAIN_HEIGHT + $_GUI_MAIN_TOP,($g_iFrmBotPosX = $g_WIN_POS_DEFAULT ? -1 : $g_iFrmBotPosX),($g_iFrmBotPosY = $g_WIN_POS_DEFAULT ? -1 : $g_iFrmBotPosY), BitOR($WS_MINIMIZEBOX, $WS_POPUP, $WS_SYSMENU, $WS_CLIPCHILDREN, $WS_CLIPSIBLINGS, $iStyle))
+_WinAPI_ChangeWindowMessageFilterEx($g_hFrmBot, $g_WM_TaskbarButtonCreated, $MSGFLT_ALLOW)
+_WinAPI_ChangeWindowMessageFilterEx($g_hFrmBot, $WM_COMMAND, $MSGFLT_ALLOW)
 If $g_iFrmBotPosX = $g_WIN_POS_DEFAULT Or $g_iFrmBotPosY = $g_WIN_POS_DEFAULT Then
 Local $a = WinGetPos($g_hFrmBot)
 If UBound($a) > 1 Then
@@ -4443,6 +4636,20 @@ If Not $g_bNoFocusTampering Then
 GUISetState(@SW_SHOW, $g_hFrmBot)
 Else
 GUISetState(@SW_SHOW, $g_hFrmBot)
+EndIf
+If IsObj($g_ITBL_oTaskBar) = 0 Then
+_ITaskBar_CreateTaskBarObj(True, False)
+If @error Then
+SetLog("Cannot create Taskbar icons, error: " & @error, $COLOR_ERROR)
+EndIf
+EndIf
+If IsObj($g_ITBL_oTaskBar) And $g_hTblStart = 0 Then
+$g_hTblStart = _ITaskBar_CreateTBButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnStart", "Start Bot"), @ScriptDir & '\images\Icons\TaskBar_start.ico')
+$g_hTblStop = _ITaskBar_CreateTBButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnStop", "Stop Bot"), @ScriptDir & '\images\Icons\TaskBar_stop.ico', -1, -1, $THBF_DISABLED)
+$g_hTblPause = _ITaskBar_CreateTBButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnPause", "Pause"), @ScriptDir & '\images\Icons\TaskBar_pause.ico', -1, -1, $THBF_DISABLED)
+$g_hTblResume = _ITaskBar_CreateTBButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnResume", "Resume"), @ScriptDir & '\images\Icons\TaskBar_resume.ico', -1, -1, $THBF_DISABLED)
+$g_hTblMakeScreenshot = _ITaskBar_CreateTBButton(GetTranslatedFileIni("MBR GUI Design Bottom", "BtnMakeScreenshot", "Photo"), @ScriptDir & '\images\Icons\TaskBar_photo.ico')
+_ITaskBar_AddTBButtons($g_hFrmBot)
 EndIf
 GUISetState(@SW_SHOWNOACTIVATE, $g_hFrmBotButtons)
 If $g_hFrmBotEx Then GUISetState(@SW_SHOWNOACTIVATE, $g_hFrmBotEx)
@@ -4629,13 +4836,22 @@ ReadConfig_600_32()
 ReadConfig_600_33()
 ReadConfig_600_35_1()
 ReadConfig_600_35_2()
-ReadConfig_600_35_3()
 ReadConfig_600_52_1()
 ReadConfig_600_52_2()
 ReadConfig_600_54()
 ReadConfig_600_56()
 ReadConfig_641_1()
-ReadConfig_MOD()
+ReadConfig_MOD_SuperXP()
+ReadConfig_MOD_ChatActions()
+ReadConfig_MOD_600_6()
+ReadConfig_MOD_600_11()
+ReadConfig_MOD_600_12()
+ReadConfig_MOD_600_28()
+ReadConfig_MOD_600_29()
+ReadConfig_MOD_600_31()
+ReadConfig_MOD_600_35_1()
+ReadConfig_MOD_600_35_2()
+ReadConfig_MOD_641_1()
 EndFunc
 Func ReadConfig_Debug()
 $g_bDebugSetlog = IniRead($g_sProfileConfigPath, "debug", "debugsetlog", 0) = 1 ? True : False
@@ -4669,7 +4885,10 @@ $g_sUserGameDistributor = IniRead($g_sProfileConfigPath, "android", "user.distri
 $g_sUserGamePackage = IniRead($g_sProfileConfigPath, "android", "user.package", $g_sUserGamePackage)
 $g_sUserGameClass = IniRead($g_sProfileConfigPath, "android", "user.class", $g_sUserGameClass)
 $g_iAndroidBackgroundMode = Int(IniRead($g_sProfileConfigPath, "android", "backgroundmode", $g_iAndroidBackgroundMode))
+$g_iAndroidZoomoutMode = Int(IniRead($g_sProfileConfigPath, "android", "zoomoutmode", $g_iAndroidZoomoutMode))
+$g_iAndroidAdbReplace = Int(IniRead($g_sProfileConfigPath, "android", "adb.replace", $g_iAndroidAdbReplace))
 $g_bAndroidCheckTimeLagEnabled = Int(IniRead($g_sProfileConfigPath, "android", "check.time.lag.enabled",($g_bAndroidCheckTimeLagEnabled ? 1 : 0))) = 1
+$g_bAndroidAdbPortPerInstance = Int(IniRead($g_sProfileConfigPath, "android", "adb.dedicated.instance", $g_bAndroidAdbPortPerInstance ? 1 : 0)) = 1
 $g_iAndroidAdbScreencapTimeoutMin = Int(IniRead($g_sProfileConfigPath, "android", "adb.screencap.timeout.min", $g_iAndroidAdbScreencapTimeoutMin))
 $g_iAndroidAdbScreencapTimeoutMax = Int(IniRead($g_sProfileConfigPath, "android", "adb.screencap.timeout.max", $g_iAndroidAdbScreencapTimeoutMax))
 $g_iAndroidAdbScreencapTimeoutDynamic = Int(IniRead($g_sProfileConfigPath, "android", "adb.screencap.timeout.dynamic", $g_iAndroidAdbScreencapTimeoutDynamic))
@@ -4691,6 +4910,7 @@ $g_iAndroidRebootHours = Int(IniRead($g_sProfilePath & "\Profile.ini", "android"
 $g_bAndroidCloseWithBot = Int(IniRead($g_sProfileConfigPath, "android", "close", $g_bAndroidCloseWithBot ? 1 : 0)) = 1
 $g_bUpdateSharedPrefs = Int(IniRead($g_sProfileConfigPath, "android", "shared_prefs.update", $g_bUpdateSharedPrefs ? 1 : 0)) = 1
 $g_iAndroidProcessAffinityMask = Int(IniRead($g_sProfileConfigPath, "android", "process.affinity.mask", $g_iAndroidProcessAffinityMask))
+$g_iAndroidControlClickAdditionalDelay = Int(IniRead($g_sProfileConfigPath, "android", "click.additional.delay", $g_iAndroidControlClickAdditionalDelay))
 If $g_bBotLaunchOption_Restart = True Or $g_asCmdLine[0] < 2 Then
 Local $sAndroidEmulator = IniRead($g_sProfileConfigPath, "android", "emulator", "")
 Local $sAndroidInstance = IniRead($g_sProfileConfigPath, "android", "instance", "")
@@ -4795,21 +5015,6 @@ Next
 $g_abRequestCCHours = StringSplit(IniRead($g_sProfileConfigPath, "planned", "RequestHours", "1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1"), "|", $STR_NOCOUNT)
 For $i = 0 To 23
 $g_abRequestCCHours[$i] =($g_abRequestCCHours[$i] = "1")
-Next
-$g_bRequestCCDefense =(IniRead($g_sProfileConfigPath, "donate", "RequestDefenseEnable", "0") = "1")
-$g_sRequestCCDefenseText = IniRead($g_sProfileConfigPath, "donate", "RequestDefenseText", "")
-$g_bRequestCCDefenseWhenPB =(IniRead($g_sProfileConfigPath, "donate", "RequestDefenseWhenPB", "1") = "1")
-$g_iRequestDefenseTime = Int(IniRead($g_sProfileConfigPath, "donate", "RequestDefenseTime", "30"))
-$g_bSaveCCTroopForDefense =(IniRead($g_sProfileConfigPath, "donate", "SaveCCTroopForDefense", "0") = "1")
-For $i = 0 To $eTroopCount - 1
-$g_aiCCTroopsExpectedForDefense[$i] = 0
-Next
-For $i = 0 To 2
-$g_aiCCTroopDefenseType[$i] = Int(IniRead($g_sProfileConfigPath, "donate", "cmbCCTroopDefense" & $i, $eTroopCount))
-$g_aiCCTroopDefenseQty[$i] = Int(IniRead($g_sProfileConfigPath, "donate", "txtCCTroopDefense" & $i, "0"))
-If $g_aiCCTroopDefenseType[$i] < $eTroopCount Then
-$g_aiCCTroopsExpectedForDefense[$g_aiCCTroopDefenseType[$i]] += $g_aiCCTroopDefenseQty[$i]
-EndIf
 Next
 EndFunc
 Func ReadConfig_600_12()
@@ -4960,6 +5165,10 @@ Next
 $g_iCmbDonateFilter = Int(IniRead($g_sProfileConfigPath, "donate", "cmbFilterDonationsCC", 0))
 $g_iDonateSkipNearFullPercent = Int(IniRead($g_sProfileConfigPath, "donate", "SkipDonateNearFulLTroopsPercentual", 90))
 $g_bDonateSkipNearFullEnable =(IniRead($g_sProfileConfigPath, "donate", "SkipDonateNearFulLTroopsEnable", "0") = "1")
+IniReadS($g_bUseCCBalanced, $g_sProfileConfigPath, "donate", "BalanceCC", False, "Bool")
+IniReadS($g_iCCDonated, $g_sProfileConfigPath, "donate", "BalanceCCDonated", 1, "int")
+IniReadS($g_iCCReceived, $g_sProfileConfigPath, "donate", "BalanceCCReceived", 1, "int")
+IniReadS($g_bCheckDonateOften, $g_sProfileConfigPath, "donate", "CheckDonateOften", False, "Bool")
 EndFunc
 Func ReadConfig_600_14()
 IniReadS($g_bAutoLabUpgradeEnable, $g_sProfileBuildingPath, "upgrade", "upgradetroops", False, "Bool")
@@ -5211,9 +5420,6 @@ $g_abPlannedDropCCHours = StringSplit(IniRead($g_sProfileConfigPath, "planned", 
 For $i = 0 To 23
 $g_abPlannedDropCCHours[$i] =($g_abPlannedDropCCHours[$i] = "1")
 Next
-IniReadS($g_bUseCCBalanced, $g_sProfileConfigPath, "ClanClastle", "BalanceCC", False, "Bool")
-IniReadS($g_iCCDonated, $g_sProfileConfigPath, "ClanClastle", "BalanceCCDonated", 1, "int")
-IniReadS($g_iCCReceived, $g_sProfileConfigPath, "ClanClastle", "BalanceCCReceived", 1, "int")
 EndFunc
 Func ReadConfig_600_29_DB()
 IniReadS($g_aiAttackAlgorithm[$DB], $g_sProfileConfigPath, "attack", "DBAtkAlgorithm", 0, "int")
@@ -5483,20 +5689,6 @@ $g_aiCmbTime2[$i - 1] = Int(IniRead($sSwitchAccFile, "FarmStrategy", "CmbTime2" 
 Next
 EndIf
 EndFunc
-Func ReadConfig_600_35_3()
-For $i = 0 To 3
-IniReadS($g_abChkSwitchMax[$i], $g_sProfileConfigPath, "SwitchProfile", "SwitchProfileMax" & $i, $g_abChkSwitchMax[$i], "Bool")
-IniReadS($g_abChkSwitchMin[$i], $g_sProfileConfigPath, "SwitchProfile", "SwitchProfileMin" & $i, $g_abChkSwitchMin[$i], "Bool")
-IniReadS($g_aiCmbSwitchMax[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetProfileMax" & $i, $g_aiCmbSwitchMax[$i], "Int")
-IniReadS($g_aiCmbSwitchMin[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetProfileMin" & $i, $g_aiCmbSwitchMin[$i], "Int")
-IniReadS($g_abChkBotTypeMax[$i], $g_sProfileConfigPath, "SwitchProfile", "ChangeBotTypeMax" & $i, $g_abChkBotTypeMax[$i], "Bool")
-IniReadS($g_abChkBotTypeMin[$i], $g_sProfileConfigPath, "SwitchProfile", "ChangeBotTypeMin" & $i, $g_abChkBotTypeMin[$i], "Bool")
-IniReadS($g_aiCmbBotTypeMax[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetBotTypeMax" & $i, $g_aiCmbBotTypeMax[$i], "Int")
-IniReadS($g_aiCmbBotTypeMin[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetBotTypeMin" & $i, $g_aiCmbBotTypeMin[$i], "Int")
-IniReadS($g_aiConditionMax[$i], $g_sProfileConfigPath, "SwitchProfile", "ConditionMax" & $i, $g_aiConditionMax[$i], "Int")
-IniReadS($g_aiConditionMin[$i], $g_sProfileConfigPath, "SwitchProfile", "ConditionMin" & $i, $g_aiConditionMin[$i], "Int")
-Next
-EndFunc
 Func ReadConfig_600_52_1()
 $g_bQuickTrainEnable =(IniRead($g_sProfileConfigPath, "other", "ChkUseQTrain", "0") = "1")
 $g_bQuickTrainArmy[0] =(IniRead($g_sProfileConfigPath, "troop", "QuickTrainArmy1", "0") = "1")
@@ -5602,6 +5794,133 @@ EndIf
 Case Else
 $variable = $readValue
 EndSwitch
+EndFunc
+Func ReadConfig_MOD_SuperXP()
+IniReadS($g_bEnableSuperXP, $g_sProfileConfigPath, "SuperXP", "EnableSuperXP", $g_bEnableSuperXP, "Bool")
+IniReadS($g_bSkipZoomOutSX, $g_sProfileConfigPath, "SuperXP", "SkipZoomOutSX", $g_bSkipZoomOutSX, "Bool")
+IniReadS($g_bFastSuperXP, $g_sProfileConfigPath, "SuperXP", "FastSuperXP", $g_bFastSuperXP, "Bool")
+IniReadS($g_bSkipDragToEndSX, $g_sProfileConfigPath, "SuperXP", "SkipDragToEndSX", $g_bSkipDragToEndSX, "Bool")
+IniReadS($g_iActivateOptionSX, $g_sProfileConfigPath, "SuperXP", "ActivateOptionSX", $g_iActivateOptionSX, "int")
+IniReadS($g_iGoblinMapOptSX, $g_sProfileConfigPath, "SuperXP", "GoblinMapOptSX", $g_iGoblinMapOptSX, "int")
+IniReadS($g_iMaxXPtoGain, $g_sProfileConfigPath, "SuperXP", "MaxXPtoGain", $g_iMaxXPtoGain, "int")
+IniReadS($g_bBKingSX, $g_sProfileConfigPath, "SuperXP", "BKingSX", $eHeroNone)
+IniReadS($g_bAQueenSX, $g_sProfileConfigPath, "SuperXP", "AQueenSX", $eHeroNone)
+IniReadS($g_bGWardenSX, $g_sProfileConfigPath, "SuperXP", "GWardenSX", $eHeroNone)
+EndFunc
+Func ReadConfig_MOD_ChatActions()
+IniReadS($g_bChatGlobal, $g_sProfileConfigPath, "ChatActions", "EnableChatGlobal", $g_bChatGlobal, "Bool")
+IniReadS($g_sDelayTimeGlobal, $g_sProfileConfigPath, "ChatActions", "DelayTimeGlobal", $g_sDelayTimeGlobal, "Int")
+IniReadS($g_bScrambleGlobal, $g_sProfileConfigPath, "ChatActions", "ScrambleGlobal", $g_bScrambleGlobal, "Bool")
+IniReadS($g_bSwitchLang, $g_sProfileConfigPath, "ChatActions", "SwitchLang", $g_bSwitchLang, "Bool")
+IniReadS($g_iCmbLang, $g_sProfileConfigPath, "ChatActions", "CmbLang", $g_iCmbLang, "int")
+IniReadS($g_bRusLang, $g_sProfileConfigPath, "ChatActions", "RusLang", $g_bRusLang, "Bool")
+IniReadS($g_bChatClan, $g_sProfileConfigPath, "ChatActions", "EnableChatClan", $g_bChatClan, "Bool")
+IniReadS($g_sDelayTimeClan, $g_sProfileConfigPath, "ChatActions", "DelayTimeClan", $g_sDelayTimeClan, "Int")
+IniReadS($g_bClanUseResponses, $g_sProfileConfigPath, "ChatActions", "UseResponsesClan", $g_bClanUseResponses, "Bool")
+IniReadS($g_bClanAlwaysMsg, $g_sProfileConfigPath, "ChatActions", "UseGenericClan", $g_bClanAlwaysMsg, "Bool")
+IniReadS($g_bCleverbot, $g_sProfileConfigPath, "ChatActions", "Cleverbot", $g_bCleverbot, "Bool")
+IniReadS($g_bUseNotify, $g_sProfileConfigPath, "ChatActions", "ChatNotify", $g_bUseNotify, "Bool")
+IniReadS($g_bPbSendNew, $g_sProfileConfigPath, "ChatActions", "PbSendNewChats", $g_bPbSendNew, "Bool")
+IniReadS($g_bEnableFriendlyChallenge, $g_sProfileConfigPath, "ChatActions", "EnableFriendlyChallenge", $g_bEnableFriendlyChallenge, "Bool")
+IniReadS($g_sDelayTimeFC, $g_sProfileConfigPath, "ChatActions", "DelayTimeFriendlyChallenge", $g_sDelayTimeFC, "Int")
+IniReadS($g_bOnlyOnRequest, $g_sProfileConfigPath, "ChatActions", "EnableOnlyOnRequest", $g_bOnlyOnRequest, "Bool")
+$g_iTxtChallengeText = StringReplace(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeText", "I am challenging help you|HaHaHaHa"), "|", @CRLF)
+$g_iTxtKeywordForRequest = StringReplace(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeKeyword", "friendly|challenge"), "|", @CRLF)
+$g_bFriendlyChallengeBase = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeBaseForShare", "0|0|0|0|0|0"), "|", $STR_NOCOUNT)
+For $i = 0 To 5
+$g_bFriendlyChallengeBase[$i] =($g_bFriendlyChallengeBase[$i] = "1")
+Next
+$g_abFriendlyChallengeHours = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengePlannedRequestHours", "1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1|1"), "|", $STR_NOCOUNT)
+For $i = 0 To 23
+$g_abFriendlyChallengeHours[$i] =($g_abFriendlyChallengeHours[$i] = "1")
+Next
+IniReadS($g_sIAVar, $g_sProfileConfigPath, "ChatActions", "String", '0|0|0|0|0', Default)
+$g_aIAVar = StringSplit($g_sIAVar, "|", $STR_NOCOUNT)
+EndFunc
+Func ReadConfig_MOD_600_6()
+For $i = 0 To $g_iDDCount - 1
+IniReadS($g_abChkDD_Deals[$i], $g_sProfileConfigPath, "DailyDiscounts", "ChkDD_Deals" & String($i), $g_abChkDD_Deals[$i], "Bool")
+Next
+IniReadS($g_bDD_DealsSet, $g_sProfileConfigPath, "DailyDiscounts", "DD_DealsSet", $g_bDD_DealsSet, "Bool")
+IniReadS($g_bChkEnableBBAttack, $g_sProfileConfigPath, "BBAttack", "ChkEnableBBAttack", $g_bChkEnableBBAttack, "Bool")
+IniReadS($g_bChkBBTrophyRange, $g_sProfileConfigPath, "BBAttack", "ChkBBTrophyRange", $g_bChkBBTrophyRange, "Bool")
+IniReadS($g_iTxtBBTrophyLowerLimit, $g_sProfileConfigPath, "BBAttack", "TxtBBTrophyLowerLimit", $g_iTxtBBTrophyLowerLimit, "int")
+IniReadS($g_iTxtBBTrophyUpperLimit, $g_sProfileConfigPath, "BBAttack", "TxtBBTrophyUpperLimit", $g_iTxtBBTrophyUpperLimit, "int")
+IniReadS($g_bChkBBAttIfLootAvail, $g_sProfileConfigPath, "BBAttack", "ChkBBAttIfLootAvail", $g_bChkBBAttIfLootAvail, "Bool")
+IniReadS($g_bChkBBWaitForMachine, $g_sProfileConfigPath, "BBAttack", "ChkBBWaitForMachine", $g_bChkBBWaitForMachine, "Bool")
+IniReadS($g_bBBDropOrderSet, $g_sProfileConfigPath, "BBAttack", "bBBDropOrderSet", $g_bBBDropOrderSet, "Bool")
+$g_sBBDropOrder = IniRead($g_sProfileConfigPath, "BBAttack", "sBBDropOrder", $g_sBBDropOrderDefault)
+EndFunc
+Func ReadConfig_MOD_600_11()
+$g_bRequestCCDefense =(IniRead($g_sProfileConfigPath, "donate", "RequestDefenseEnable", "0") = "1")
+$g_sRequestCCDefenseText = IniRead($g_sProfileConfigPath, "donate", "RequestDefenseText", "")
+$g_bRequestCCDefenseWhenPB =(IniRead($g_sProfileConfigPath, "donate", "RequestDefenseWhenPB", "1") = "1")
+$g_iRequestDefenseTime = Int(IniRead($g_sProfileConfigPath, "donate", "RequestDefenseTime", "30"))
+$g_bSaveCCTroopForDefense =(IniRead($g_sProfileConfigPath, "donate", "SaveCCTroopForDefense", "0") = "1")
+For $i = 0 To $eTroopCount - 1
+$g_aiCCTroopsExpectedForDefense[$i] = 0
+Next
+For $i = 0 To 2
+$g_aiCCTroopDefenseType[$i] = Int(IniRead($g_sProfileConfigPath, "donate", "cmbCCTroopDefense" & $i, $eTroopCount))
+$g_aiCCTroopDefenseQty[$i] = Int(IniRead($g_sProfileConfigPath, "donate", "txtCCTroopDefense" & $i, "0"))
+If $g_aiCCTroopDefenseType[$i] < $eTroopCount Then
+$g_aiCCTroopsExpectedForDefense[$g_aiCCTroopDefenseType[$i]] += $g_aiCCTroopDefenseQty[$i]
+EndIf
+Next
+EndFunc
+Func ReadConfig_MOD_600_12()
+IniReadS($g_bChkClanHop, $g_sProfileConfigPath, "donate", "chkClanHop", $g_bChkClanHop, "Bool")
+EndFunc
+Func ReadConfig_MOD_600_28()
+IniReadS($g_bIsSearchTimeout, $g_sProfileConfigPath, "other", "ChkSearchTimeout", $g_bIsSearchTimeout, "Bool")
+IniReadS($g_iSearchTimeout, $g_sProfileConfigPath, "other", "SearchTimeout", $g_iSearchTimeout, "int")
+EndFunc
+Func ReadConfig_MOD_600_29()
+IniReadS($icmbCSVSpeed[$LB], $g_sProfileConfigPath, "attack", "cmbCSVSpeedLB", $icmbCSVSpeed[$LB], "int")
+IniReadS($icmbCSVSpeed[$DB], $g_sProfileConfigPath, "attack", "cmbCSVSpeedDB", $icmbCSVSpeed[$DB], "int")
+For $i = $DB To $LB
+If $icmbCSVSpeed[$i] < 5 Then
+$g_CSVSpeedDivider[$i] = 0.5 + $icmbCSVSpeed[$i] * 0.25
+Else
+$g_CSVSpeedDivider[$i] = 2 + $icmbCSVSpeed[$i] - 5
+EndIf
+Next
+EndFunc
+Func ReadConfig_MOD_600_31()
+IniReadS($g_bDBMeetCollectorOutside, $g_sProfileConfigPath, "search", "DBMeetCollectorOutside", $g_bDBMeetCollectorOutside, "Bool")
+IniReadS($g_iDBMinCollectorOutsidePercent, $g_sProfileConfigPath, "search", "TxtDBMinCollectorOutsidePercent", $g_iDBMinCollectorOutsidePercent, "int")
+IniReadS($g_bDBCollectorNearRedline, $g_sProfileConfigPath, "search", "DBCollectorNearRedline", $g_bDBCollectorNearRedline, "Bool")
+IniReadS($g_iCmbRedlineTiles, $g_sProfileConfigPath, "search", "CmbRedlineTiles", $g_iCmbRedlineTiles, "int")
+IniReadS($g_bSkipCollectorCheck, $g_sProfileConfigPath, "search", "SkipCollectorCheck", $g_bSkipCollectorCheck, "Bool")
+IniReadS($g_iTxtSkipCollectorGold, $g_sProfileConfigPath, "search", "TxtSkipCollectorGold", $g_iTxtSkipCollectorGold, "int")
+IniReadS($g_iTxtSkipCollectorElixir, $g_sProfileConfigPath, "search", "TxtSkipCollectorElixir", $g_iTxtSkipCollectorElixir, "int")
+IniReadS($g_iTxtSkipCollectorDark, $g_sProfileConfigPath, "search", "TxtSkipCollectorDark", $g_iTxtSkipCollectorDark, "int")
+IniReadS($g_bSkipCollectorCheckTH, $g_sProfileConfigPath, "search", "SkipCollectorCheckTH", $g_bSkipCollectorCheckTH, "Bool")
+IniReadS($g_iCmbSkipCollectorCheckTH, $g_sProfileConfigPath, "search", "CmbSkipCollectorCheckTH", $g_iCmbSkipCollectorCheckTH, "int")
+EndFunc
+Func ReadConfig_MOD_600_35_1()
+IniReadS($g_bEnableAuto, $g_sProfileConfigPath, "general", "EnableAuto", $g_bEnableAuto, "Bool")
+IniReadS($g_bChkAutoDock, $g_sProfileConfigPath, "general", "AutoDock", $g_bChkAutoDock, "Bool")
+IniReadS($g_bChkAutoHideEmulator, $g_sProfileConfigPath, "general", "AutoHide", $g_bChkAutoHideEmulator, "Bool")
+IniReadS($g_bChkAutoMinimizeBot, $g_sProfileConfigPath, "general", "AutoMinimize", $g_bChkAutoMinimizeBot, "Bool")
+EndFunc
+Func ReadConfig_MOD_600_35_2()
+For $i = 0 To 3
+IniReadS($g_abChkSwitchMax[$i], $g_sProfileConfigPath, "SwitchProfile", "SwitchProfileMax" & $i, $g_abChkSwitchMax[$i], "Bool")
+IniReadS($g_abChkSwitchMin[$i], $g_sProfileConfigPath, "SwitchProfile", "SwitchProfileMin" & $i, $g_abChkSwitchMin[$i], "Bool")
+IniReadS($g_aiCmbSwitchMax[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetProfileMax" & $i, $g_aiCmbSwitchMax[$i], "Int")
+IniReadS($g_aiCmbSwitchMin[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetProfileMin" & $i, $g_aiCmbSwitchMin[$i], "Int")
+IniReadS($g_abChkBotTypeMax[$i], $g_sProfileConfigPath, "SwitchProfile", "ChangeBotTypeMax" & $i, $g_abChkBotTypeMax[$i], "Bool")
+IniReadS($g_abChkBotTypeMin[$i], $g_sProfileConfigPath, "SwitchProfile", "ChangeBotTypeMin" & $i, $g_abChkBotTypeMin[$i], "Bool")
+IniReadS($g_aiCmbBotTypeMax[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetBotTypeMax" & $i, $g_aiCmbBotTypeMax[$i], "Int")
+IniReadS($g_aiCmbBotTypeMin[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetBotTypeMin" & $i, $g_aiCmbBotTypeMin[$i], "Int")
+IniReadS($g_aiConditionMax[$i], $g_sProfileConfigPath, "SwitchProfile", "ConditionMax" & $i, $g_aiConditionMax[$i], "Int")
+IniReadS($g_aiConditionMin[$i], $g_sProfileConfigPath, "SwitchProfile", "ConditionMin" & $i, $g_aiConditionMin[$i], "Int")
+Next
+EndFunc
+Func ReadConfig_MOD_641_1()
+IniReadS($g_bTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime, "Bool")
+IniReadS($g_iTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime, "int")
 EndFunc
 Global $ResetStats = 0
 Func UpdateStats()
@@ -5814,26 +6133,6 @@ Return "- " & StringRegExpReplace(StringTrimLeft($Number, 1), "(\A\d{1,3}(?=(\d{
 Else
 Return StringRegExpReplace($Number, "(\A\d{1,3}(?=(\d{3})+\z)|\d{3}(?=\d))", "\1 ")
 EndIf
-EndFunc
-Func ReadConfig_MOD()
-IniReadS($icmbCSVSpeed[$LB], $g_sProfileConfigPath, "attack", "cmbCSVSpeedLB", $icmbCSVSpeed[$LB], "int")
-IniReadS($icmbCSVSpeed[$DB], $g_sProfileConfigPath, "attack", "cmbCSVSpeedDB", $icmbCSVSpeed[$DB], "int")
-For $i = $DB To $LB
-If $icmbCSVSpeed[$i] < 5 Then
-$g_CSVSpeedDivider[$i] = 0.5 + $icmbCSVSpeed[$i] * 0.25
-Else
-$g_CSVSpeedDivider[$i] = 2 + $icmbCSVSpeed[$i] - 5
-EndIf
-Next
-IniReadS($g_bEnableAuto, $g_sProfileConfigPath, "general", "EnableAuto", $g_bEnableAuto, "Bool")
-IniReadS($g_bChkAutoDock, $g_sProfileConfigPath, "general", "AutoDock", $g_bChkAutoDock, "Bool")
-IniReadS($g_bChkAutoHideEmulator, $g_sProfileConfigPath, "general", "AutoHide", $g_bChkAutoHideEmulator, "Bool")
-IniReadS($g_bChkAutoMinimizeBot, $g_sProfileConfigPath, "general", "AutoMinimize", $g_bChkAutoMinimizeBot, "Bool")
-IniReadS($g_bTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime, "Bool")
-IniReadS($g_iTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime, "int")
-IniReadS($g_bIsSearchTimeout, $g_sProfileConfigPath, "other", "ChkSearchTimeout", $g_bIsSearchTimeout, "Bool")
-IniReadS($g_iSearchTimeout, $g_sProfileConfigPath, "other", "SearchTimeout", $g_iSearchTimeout, "int")
-IniReadS($g_bChkClanHop, $g_sProfileConfigPath, "donate", "chkClanHop", $g_bChkClanHop, "Bool")
 EndFunc
 Global Enum $eBotUpdateStats = $eBotClose + 1
 Func SetLog($String, $Color = $COLOR_BLACK, $LogPrefix = "L ")
@@ -6324,15 +6623,17 @@ Case $g_hFrmBot_URL_PIC, $g_hFrmBot_URL_PIC2
 OpenURL_Label("https://mybot.run/forums")
 Case $g_hLblDonate
 ShellExecute("https://mybot.run/forums/index.php?/donate/make-donation/")
-Case $g_hBtnStop
+Case $g_hBtnStart, $g_hTblStart
+btnStart()
+Case $g_hBtnStop, $g_hTblStop
 btnStop()
-Case $g_hBtnPause
+Case $g_hBtnPause, $g_hTblPause
 btnPause()
-Case $g_hBtnResume
+Case $g_hBtnResume, $g_hTblResume
 btnResume()
 Case $g_hBtnHide
 btnHide()
-Case $g_hBtnMakeScreenshot
+Case $g_hBtnMakeScreenshot, $g_hTblMakeScreenshot
 btnMakeScreenshot()
 Case $g_hPicTwoArrowShield
 btnVillageStat()
@@ -6508,6 +6809,10 @@ GUICtrlSetState($g_hBtnStop, $GUI_ENABLE)
 TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Stop", "Stop bot"))
 TrayItemSetState($g_hTiPause, $TRAY_ENABLE)
 TrayItemSetText($g_hTiPause, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Pause", "Pause bot"))
+_ITaskBar_UpdateTBButton($g_hTblStop, $THBF_ENABLED)
+_ITaskBar_UpdateTBButton($g_hTblStart, $THBF_DISABLED)
+_ITaskBar_UpdateTBButton($g_hTblPause, $THBF_ENABLED)
+_ITaskBar_UpdateTBButton($g_hTblResume, $THBF_DISABLED)
 EndFunc
 Func BotStopped()
 SetDebugLog("Bot stopped")
@@ -6521,18 +6826,26 @@ GUICtrlSetState($g_hBtnStart, $GUI_ENABLE)
 GUICtrlSetState($g_hBtnStop, $GUI_ENABLE)
 TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Start", "Start bot"))
 TrayItemSetState($g_hTiPause, $TRAY_DISABLE)
+_ITaskBar_UpdateTBButton($g_hTblStart, $THBF_ENABLED)
+_ITaskBar_UpdateTBButton($g_hTblStop, $THBF_DISABLED)
+_ITaskBar_UpdateTBButton($g_hTblPause, $THBF_DISABLED)
+_ITaskBar_UpdateTBButton($g_hTblResume, $THBF_DISABLED)
 EndFunc
 Func BotPaused()
 SetDebugLog("Bot paused")
 GUICtrlSetState($g_hBtnPause, $GUI_HIDE)
 GUICtrlSetState($g_hBtnResume, $GUI_SHOW)
 TrayItemSetText($g_hTiPause, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Resume", "Resume bot"))
+_ITaskBar_UpdateTBButton($g_hTblPause, $THBF_DISABLED)
+_ITaskBar_UpdateTBButton($g_hTblResume, $THBF_ENABLED)
 EndFunc
 Func BotResumed()
 SetDebugLog("Bot resumed")
 GUICtrlSetState($g_hBtnPause, $GUI_SHOW)
 GUICtrlSetState($g_hBtnResume, $GUI_HIDE)
 TrayItemSetText($g_hTiPause, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Pause", "Pause bot"))
+_ITaskBar_UpdateTBButton($g_hTblPause, $THBF_ENABLED)
+_ITaskBar_UpdateTBButton($g_hTblResume, $THBF_DISABLED)
 EndFunc
 Func UpdateManagedMyBot($aBotDetails)
 If $g_iDebugWindowMessages Then SetDebugLog("UpdateManagedMyBot: " & $aBotDetails[$g_eBotDetailsBotForm])
@@ -6738,6 +7051,7 @@ Func ReferenceGlobals()
 If True Then Return
 EndFunc
 ProcessCommandLine()
+_ITaskBar_Init(False)
 _Crypt_Startup()
 _GDIPlus_Startup()
 $g_iGuiMode = 2

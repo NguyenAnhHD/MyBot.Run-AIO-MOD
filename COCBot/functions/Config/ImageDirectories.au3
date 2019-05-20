@@ -121,7 +121,6 @@ Global Const $g_sImgGoogleSelectAccount = @ScriptDir & "\imgxml\other\GoogleSele
 Global Const $g_sImgGoogleSelectEmail = @ScriptDir & "\imgxml\other\GoogleSelectEmail*"
 Global Const $g_sImgGoogleAccounts = @ScriptDir & "\imgxml\SwitchAccounts\GooglePlay\GooglePlay*"
 Global Const $g_sImgSupercellID = @ScriptDir & "\imgxml\SwitchAccounts\SuperCellID\SCID*"
-Global Const $g_sImgListAccountsSCID = @ScriptDir & "\imgxml\SwitchAccounts\ListAccounts"
 #EndRegion
 
 #Region ClanGames

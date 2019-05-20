@@ -18,6 +18,12 @@ Func cmbDBAlgorithm()
 	; Algorithm Alltroops
 	; show spells if milking because after milking you can continue to attack with thsnipe or standard attack where you can use spells
 	_GUI_Value_STATE($iCmbValue = 1 ? "SHOW" : "HIDE", $g_aGroupAttackDBSpell & "#" & $groupIMGAttackDBSpell)
+	If $iCmbValue = 2 Then
+		GUICtrlSetState($g_hChkDBMeetCollectorOutside, $GUI_DISABLE + $GUI_UNCHECKED)
+		chkDBMeetCollectorOutside()
+	Else
+		GUICtrlSetState($g_hChkDBMeetCollectorOutside, $GUI_ENABLE)
+	EndIf
 
 	If BitAND(GUICtrlGetState($g_hGUI_DEADBASE), $GUI_SHOW) And GUICtrlRead($g_hGUI_DEADBASE_TAB) = 1 Then ; fix ghosting during control applyConfig
 		Select

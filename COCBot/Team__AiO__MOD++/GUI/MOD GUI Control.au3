@@ -1,11 +1,11 @@
 ; #FUNCTION# ====================================================================================================================
-; Name ..........: MBR GUI Control MOD
+; Name ..........: MOD GUI Control
 ; Description ...: This file controls the "MOD" tab
 ; Syntax ........:
 ; Parameters ....: None
 ; Return values .: None
-; Author ........: Team AiO MOD++ (2018)
-; Modified ......:
+; Author ........: NguyenAnhHD
+; Modified ......: Team AiO MOD++ (2019)
 ; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2019
 ;                  MyBot is distributed under the terms of the GNU GPL
 ; Related .......:
@@ -53,31 +53,14 @@ Func cmbCCTroopDefense()
 	Next
 EndFunc   ;==>cmbCCTroopDefense
 
-; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
-Func chkEnableAuto()
-	If GUICtrlRead($g_hChkEnableAuto) = $GUI_CHECKED Then
-		$g_bEnableAuto = True
-		_GUI_Value_STATE("ENABLE", $g_hChkAutoDock & "#" & $g_hChkAutoHideEmulator)
-	Else
-		$g_bEnableAuto = False
-		_GUI_Value_STATE("DISABLE", $g_hChkAutoDock & "#" & $g_hChkAutoHideEmulator)
+; ClanHop - Team AiO MOD++
+Func btnDonateOptions()
+	If GUICtrlGetState($g_hGrpDonateOptions) = BitOR($GUI_HIDE, $GUI_ENABLE) Then
+		_DonateBtn($g_hGrpDonateOptions, $g_hChkClanHop)
 	EndIf
-EndFunc   ;==>chkEnableAuto
-
-Func btnEnableAuto()
-	If $g_bEnableAuto = True Then
-		If GUICtrlRead($g_hChkAutoDock) = $GUI_CHECKED Then
-			$g_bChkAutoDock = True
-			$g_bChkAutoHideEmulator = False
-		ElseIf GUICtrlRead($g_hChkAutoHideEmulator) = $GUI_CHECKED Then
-			$g_bChkAutoDock = False
-			$g_bChkAutoHideEmulator = True
-		EndIf
-	Else
-		$g_bChkAutoDock = False
-		$g_bChkAutoHideEmulator = False
-	EndIf
-EndFunc   ;==>btnEnableAuto
+	GUICtrlSetState($g_hChkDonateQueueTroopOnly, $GUI_HIDE)
+	GUICtrlSetState($g_hChkDonateQueueSpellOnly, $GUI_HIDE)
+EndFunc   ;==>btnDonateOptions
 
 ; Restart Search Legend league - Team AiO MOD++
 Func chkSearchTimeout()
@@ -108,3 +91,87 @@ Func cmbStandardDropSidesDB() ; avoid conflict between FourFinger and SmartAttac
 	EndIf
 	chkSmartAttackRedAreaDB()
 EndFunc   ;==>g_hCmbStandardDropSidesDB
+
+; Check Collectors Outside
+Func chkDBMeetCollectorOutside()
+	If GUICtrlRead($g_hChkDBMeetCollectorOutside) = $GUI_CHECKED Then
+		For $i = $g_hLblDBMinCollectorOutside To $g_hTxtDBMinCollectorOutsidePercent
+			GUICtrlSetState($i, $GUI_ENABLE)
+		Next
+		_GUI_Value_STATE("ENABLE", $g_hChkDBCollectorNearRedline & "#" & $g_hChkSkipCollectorCheck & "#" & $g_hChkSkipCollectorCheckTH)
+		chkDBCollectorNearRedline()
+		chkSkipCollectorCheck()
+		chkSkipCollectorCheckTH()
+	Else
+		For $i = $g_hLblDBMinCollectorOutside To $g_hCmbSkipCollectorCheckTH
+			GUICtrlSetState($i, $GUI_DISABLE + $GUI_UNCHECKED)
+		Next
+	EndIf
+EndFunc   ;==>chkDBMeetCollOutside
+
+Func chkDBCollectorNearRedline()
+	If GUICtrlRead($g_hChkDBCollectorNearRedline) = $GUI_CHECKED Then
+		_GUI_Value_STATE("ENABLE", $g_hLblRedlineTiles & "#" & $g_hCmbRedlineTiles)
+	Else
+		_GUI_Value_STATE("DISABLE", $g_hLblRedlineTiles & "#" & $g_hCmbRedlineTiles)
+	EndIf
+EndFunc   ;==>chkDBCollectorsNearRedline
+
+Func chkSkipCollectorCheck()
+	If GUICtrlRead($g_hChkSkipCollectorCheck) = $GUI_CHECKED Then
+		For $i = $g_hLblSkipCollectorCheck To $g_hTxtSkipCollectorDark
+			GUICtrlSetState($i, $GUI_ENABLE)
+		Next
+	Else
+		For $i = $g_hLblSkipCollectorCheck To $g_hTxtSkipCollectorDark
+			GUICtrlSetState($i, $GUI_DISABLE)
+		Next
+	EndIf
+EndFunc   ;==>chkSkipCollectorCheck
+
+Func chkSkipCollectorCheckTH()
+	If GUICtrlRead($g_hChkSkipCollectorCheckTH) = $GUI_CHECKED Then
+		For $i = $g_hLblSkipCollectorCheckTH To $g_hCmbSkipCollectorCheckTH
+			GUICtrlSetState($i, $GUI_ENABLE)
+		Next
+	Else
+		For $i = $g_hLblSkipCollectorCheckTH To $g_hCmbSkipCollectorCheckTH
+			GUICtrlSetState($i, $GUI_DISABLE)
+		Next
+	EndIf
+EndFunc   ;==>chkSkipCollectorCheckTH
+
+; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
+Func chkEnableAuto()
+	If GUICtrlRead($g_hChkEnableAuto) = $GUI_CHECKED Then
+		$g_bEnableAuto = True
+		_GUI_Value_STATE("ENABLE", $g_hChkAutoDock & "#" & $g_hChkAutoHideEmulator)
+	Else
+		$g_bEnableAuto = False
+		_GUI_Value_STATE("DISABLE", $g_hChkAutoDock & "#" & $g_hChkAutoHideEmulator)
+	EndIf
+EndFunc   ;==>chkEnableAuto
+
+Func btnEnableAuto()
+	If $g_bEnableAuto = True Then
+		If GUICtrlRead($g_hChkAutoDock) = $GUI_CHECKED Then
+			$g_bChkAutoDock = True
+			$g_bChkAutoHideEmulator = False
+		ElseIf GUICtrlRead($g_hChkAutoHideEmulator) = $GUI_CHECKED Then
+			$g_bChkAutoDock = False
+			$g_bChkAutoHideEmulator = True
+		EndIf
+	Else
+		$g_bChkAutoDock = False
+		$g_bChkAutoHideEmulator = False
+	EndIf
+EndFunc   ;==>btnEnableAuto
+
+; Max logout time - Team AiO MOD++
+Func chkTrainLogoutMaxTime()
+	If GUICtrlRead($g_hChkTrainLogoutMaxTime) = $GUI_CHECKED Then
+		_GUI_Value_STATE("ENABLE", $g_hTxtTrainLogoutMaxTime & "#" & $g_hLblTrainLogoutMaxTime)
+	Else
+		_GUI_Value_STATE("DISABLE", $g_hTxtTrainLogoutMaxTime & "#" & $g_hLblTrainLogoutMaxTime)
+	EndIf
+EndFunc   ;==>chkTrainLogoutMaxTime

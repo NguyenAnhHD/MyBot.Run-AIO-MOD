@@ -189,6 +189,7 @@ Func CreateAttackSearchOptionsSearch()
 			GUICtrlSetOnEvent(-1, "chkSearchTimeout")
 		$g_hLblSearchTimeout = GUICtrlCreateLabel(ChrW(62), $x + 5, $y + 17, -1, -1)
 		$g_hTxtSearchTimeout = GUICtrlCreateInput("10", $x + 15, $y + 15, 25, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "TxtSearchTimeout_01", "Bot will return home if waiting in the clouds exceeds this time."))
 		$g_hLblSearchTimeoutminutes = GUICtrlCreateLabel("minutes", $x + 50, $y + 17, -1, -1)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 

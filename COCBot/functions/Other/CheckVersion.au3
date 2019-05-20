@@ -54,7 +54,7 @@ Func CheckVersion()
 		Else
 			SetLog("YOU ARE USING A FUTURE VERSION CHIEF!", $COLOR_ACTION)
 		EndIf
-		SetLog("AIO++ MOD DEVELOPERS: NguyenAnhHD, Eloy", $COLOR_INFO)
+		SetLog("AIO++ MOD DEVELOPERS: NguyenAnhHD, Eloy, Boldina, Chill", $COLOR_INFO)
 	Else
 		SetDebugLog($Temp)
 	EndIf

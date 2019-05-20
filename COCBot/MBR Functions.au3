@@ -270,6 +270,7 @@
 #include "functions\Village\SwitchAccountVariablesReload.au3"
 #include "functions\Village\Clan Games\ClanGames.au3"
 #include "functions\Village\FreeMagicItems.au3"
+#include "functions\Village\Personal Challenges\OpenCloseChallenges.au3"
 
 #include "functions\Village\BuilderBase\Collect.au3"
 #include "functions\Village\BuilderBase\StartClockTowerBoost.au3"
@@ -289,5 +290,5 @@
 #include "functions\Config\readConfig.au3"
 #include "functions\Config\saveConfig.au3"
 
-; Team AiO MOD++ (2018)
+; Team AiO MOD++ (2019)
 #include "Team__AiO__MOD++\Functions_Team__AiO__MOD++.au3"

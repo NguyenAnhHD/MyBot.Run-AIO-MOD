@@ -36,7 +36,7 @@ Func getArmySiegeMachines($bOpenArmyWindow = False, $bCloseArmyWindow = False, $
 		If $bSetLog Then SetLog("Detected Clan Castle Message Blocking Troop Images. Waiting until it's gone", $COLOR_INFO)
 		_CaptureRegion2()
 		While _CheckPixel($aRecievedTroops, False)
-			_Sleep($DELAYTRAIN1)
+			If _Sleep($DELAYTRAIN1) Then Return
 		WEnd
 	EndIf
 
@@ -48,7 +48,7 @@ Func getArmySiegeMachines($bOpenArmyWindow = False, $bCloseArmyWindow = False, $
 	Local $aTempSiegeArray, $aSiegeCoords
 	Local $sSiegeName = ""
 	Local $iSiegeIndex = -1
-	Local $aCurrentTroopsEmpty[$eSiegeMachineCount] = [0, 0] ; Local Copy to reset Siege Machine Array
+	Local $aCurrentTroopsEmpty[$eSiegeMachineCount] = [0, 0, 0] ; Local Copy to reset Siege Machine Array
 
 	; Get Siege Capacities
 	Local $sSiegeInfo = getArmyCampCap(758, 164, $bNeedCapture) ; OCR read Siege built and total

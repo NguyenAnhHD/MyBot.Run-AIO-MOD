@@ -101,6 +101,7 @@ Func BotCommand()
 		If $g_bMeetCondStop Then
 			Switch $iCmbBotCommand
 				Case 0
+					If $g_bChatGlobal Or $g_bChatClan Then ChatActions() ; ChatActions - Team AiO MOD++
 					If $g_bDonationEnabled = False Then
 						SetLog("Halt Attack, Stay Online/Collect...", $COLOR_INFO)
 					ElseIf $g_bTrainEnabled = False Then

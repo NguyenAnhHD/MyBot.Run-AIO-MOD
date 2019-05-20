@@ -47,8 +47,13 @@ Global $g_hFrmBot_WNDPROC_ptr = 0
 #include "GUI\MBR GUI Control Child Misc.au3"
 #include "GUI\MBR GUI Control Android.au3"
 #include "MBR GUI Action.au3"
-; Team AiO MOD++ (2018)
+; Team AiO MOD++ (2019)
 #include "Team__AiO__MOD++\GUI\MOD GUI Control.au3"
+#include "Team__AiO__MOD++\GUI\MOD GUI Control - Daily-Discounts.au3"
+#include "Team__AiO__MOD++\GUI\MOD GUI Control - BuilderBase-Attack.au3"
+#include "Team__AiO__MOD++\GUI\MOD GUI Control - Switch-Options.au3"
+#include "Team__AiO__MOD++\GUI\MOD GUI Control - SuperXP.au3"
+#include "Team__AiO__MOD++\GUI\MOD GUI Control - ChatActions.au3"
 
 Func InitializeMainGUI($bGuiModeUpdate = False)
 	InitializeControlVariables()
@@ -502,11 +507,13 @@ Func GUIControl_WM_COMMAND($hWind, $iMsg, $wParam, $lParam)
 		Case $g_hLblDonate
 			; Donate URL is not in text nor tooltip
 			ShellExecute("https://mybot.run/forums/index.php?/donate/make-donation/")
-		Case $g_hBtnStop
+		Case $g_hBtnStart, $g_hTblStart
+			btnStart()
+		Case $g_hBtnStop, $g_hTblStop
 			btnStop()
-		Case $g_hBtnPause
+		Case $g_hBtnPause, $g_hTblPause
 			btnPause()
-		Case $g_hBtnResume
+		Case $g_hBtnResume, $g_hTblResume
 			btnResume()
 		Case $g_hBtnHide
 			btnHide()
@@ -520,7 +527,7 @@ Func GUIControl_WM_COMMAND($hWind, $iMsg, $wParam, $lParam)
 			btnAttackNowTS()
 			;Case $idMENU_DONATE_SUPPORT
 			;	ShellExecute("https://mybot.run/forums/index.php?/donate/make-donation/")
-		Case $g_hBtnMakeScreenshot
+		Case $g_hBtnMakeScreenshot, $g_hTblMakeScreenshot
 			If $g_bRunState Then
 				; call with flag when bot is running to execute on _sleep() idle
 				btnMakeScreenshot()
@@ -746,6 +753,8 @@ Func GUIControl_WM_NOTIFY($hWind, $iMsg, $wParam, $lParam)
 	Local $bCheckEmbeddedShield = True
 
 	Switch $nID
+		Case $g_hSldAdditionalClickDelay
+			sldAdditionalClickDelay()
 		Case $g_hTabMain
 			; Handle RichText controls
 			tabMain()
@@ -1615,7 +1624,7 @@ Func CheckRedrawBotWindow($bForceRedraw = Default, $RedrawControlIDs = Default, 
 EndFunc   ;==>CheckRedrawBotWindow
 
 Func CheckRedrawControls($ForceCheck = Default, $sSource = "") ; ... that require additional redraw is executed like restore from minimized state
-	If $g_iRedrawBotWindowMode = 0 Then Return False ; disabled
+	If $g_iRedrawBotWindowMode = 0 Or $g_iGuiMode <> 1 Then Return False ; disabled
 	If $ForceCheck = Default Then $ForceCheck = False
 	If Not $g_bRedrawBotWindow[2] And Not $ForceCheck Then Return False
 	If GUICtrlRead($g_hTabMain, 1) = $g_hTabLog Then
@@ -1713,35 +1722,35 @@ Func SetTime($bForceUpdate = False)
 EndFunc   ;==>SetTime
 
 Func tabMain()
-	If $g_iGuiMode = 0 Then Return
+	If $g_iGuiMode <> 1 Then Return
 	Local $tabidx = GUICtrlRead($g_hTabMain)
 	Select
 		Case $tabidx = 0 ; Log
 			GUISetState(@SW_HIDE, $g_hGUI_VILLAGE)
 			GUISetState(@SW_HIDE, $g_hGUI_ATTACK)
+			GUISetState(@SW_HIDE, $g_hGUI_MOD)
 			GUISetState(@SW_HIDE, $g_hGUI_BOT)
 			GUISetState(@SW_HIDE, $g_hGUI_ABOUT)
-;~			GUISetState(@SW_HIDE, $g_hGUI_MOD)
 			GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_LOG)
 
 		Case $tabidx = 1 ; Village
 			GUISetState(@SW_HIDE, $g_hGUI_LOG)
 			GUISetState(@SW_HIDE, $g_hGUI_ATTACK)
+			GUISetState(@SW_HIDE, $g_hGUI_MOD)
 			GUISetState(@SW_HIDE, $g_hGUI_BOT)
 			GUISetState(@SW_HIDE, $g_hGUI_ABOUT)
-;~			GUISetState(@SW_HIDE, $g_hGUI_MOD)
 			GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_VILLAGE)
 			tabVillage()
 
 		Case $tabidx = 2 ; Attack
 			GUISetState(@SW_HIDE, $g_hGUI_LOG)
 			GUISetState(@SW_HIDE, $g_hGUI_VILLAGE)
+			GUISetState(@SW_HIDE, $g_hGUI_MOD)
 			GUISetState(@SW_HIDE, $g_hGUI_BOT)
 			GUISetState(@SW_HIDE, $g_hGUI_ABOUT)
-;~			GUISetState(@SW_HIDE, $g_hGUI_MOD)
 			GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_ATTACK)
 			tabAttack()
-#cs
+
 		Case $tabidx = 3 ; Mods
 			GUISetState(@SW_HIDE, $g_hGUI_LOG)
 			GUISetState(@SW_HIDE, $g_hGUI_VILLAGE)
@@ -1750,35 +1759,37 @@ Func tabMain()
 			GUISetState(@SW_HIDE, $g_hGUI_ABOUT)
 			GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_MOD)
 			tabMod()
-#ce
-		Case $tabidx = 3 ; Options
+
+		Case $tabidx = 4 ; Options
 			GUISetState(@SW_HIDE, $g_hGUI_LOG)
 			GUISetState(@SW_HIDE, $g_hGUI_VILLAGE)
 			GUISetState(@SW_HIDE, $g_hGUI_ATTACK)
+			GUISetState(@SW_HIDE, $g_hGUI_MOD)
 			GUISetState(@SW_HIDE, $g_hGUI_ABOUT)
-;~			GUISetState(@SW_HIDE, $g_hGUI_MOD)
 			GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_BOT)
 			tabBot()
 
-		Case $tabidx = 4 ; About
+		Case $tabidx = 5 ; About
 			GUISetState(@SW_HIDE, $g_hGUI_LOG)
 			GUISetState(@SW_HIDE, $g_hGUI_VILLAGE)
 			GUISetState(@SW_HIDE, $g_hGUI_ATTACK)
+			GUISetState(@SW_HIDE, $g_hGUI_MOD)
 			GUISetState(@SW_HIDE, $g_hGUI_BOT)
-;~			GUISetState(@SW_HIDE, $g_hGUI_MOD)
 			GUISetState(@SW_SHOWNOACTIVATE, $g_hGUI_ABOUT)
 
 		Case Else
 			GUISetState(@SW_HIDE, $g_hGUI_LOG)
 			GUISetState(@SW_HIDE, $g_hGUI_VILLAGE)
 			GUISetState(@SW_HIDE, $g_hGUI_ATTACK)
-;~			GUISetState(@SW_HIDE, $g_hGUI_MOD)
+			GUISetState(@SW_HIDE, $g_hGUI_MOD)
 			GUISetState(@SW_HIDE, $g_hGUI_BOT)
+			GUISetState(@SW_HIDE, $g_hGUI_ABOUT)
 	EndSelect
 
 EndFunc   ;==>tabMain
 
 Func tabVillage()
+	If $g_iGuiMode <> 1 Then Return
 	Local $tabidx = GUICtrlRead($g_hGUI_VILLAGE_TAB)
 	Select
 		Case $tabidx = 0 ; Misc Tab
@@ -1811,6 +1822,7 @@ Func tabVillage()
 EndFunc   ;==>tabVillage
 
 Func tabAttack()
+	If $g_iGuiMode <> 1 Then Return
 	Local $tabidx = GUICtrlRead($g_hGUI_ATTACK_TAB)
 	Select
 		Case $tabidx = 0 ; ARMY tab
@@ -1830,6 +1842,7 @@ Func tabAttack()
 EndFunc   ;==>tabAttack
 
 Func tabSEARCH()
+	If $g_iGuiMode <> 1 Then Return
 	Local $tabidx = GUICtrlRead($g_hGUI_SEARCH_TAB)
 	Local $tabdbx = _GUICtrlTab_GetItemRect($g_hGUI_SEARCH_TAB, 0) ;get array of deadbase Tabitem rectangle coordinates, index 2,3 will be lower right X,Y coordinates (not needed: 0,1 = top left x,y)
 	Local $tababx = _GUICtrlTab_GetItemRect($g_hGUI_SEARCH_TAB, 1) ;idem for activebase
@@ -1934,6 +1947,7 @@ Func tabSEARCH()
 EndFunc   ;==>tabSEARCH
 
 Func tabDONATE()
+	If $g_iGuiMode <> 1 Then Return
 	Local $tabidx = GUICtrlRead($g_hGUI_DONATE_TAB)
 	Local $tabdonx = _GUICtrlTab_GetItemRect($g_hGUI_DONATE_TAB, 1)
 
@@ -1972,22 +1986,24 @@ Func tabDONATE()
 
 EndFunc   ;==>tabDONATE
 
-; Team AiO MOD++ (2018)
+; Team AiO MOD++ (2019)
 Func tabMod()
+	If $g_iGuiMode <> 1 Then Return
 	Local $tabidx = GUICtrlRead($g_hGUI_MOD_TAB)
 	Select
 		Case $tabidx = 0
-			; Tab Misc
+
 		Case $tabidx = 1
-			; Tab Bot Humanization
+
 		Case $tabidx = 2
-			; Tab GoblinXP
+
 		Case $tabidx = 3
-			; Tab War Preparation
+
 	EndSelect
 EndFunc   ;==>tabMod
 
 Func tabBot()
+	If $g_iGuiMode <> 1 Then Return
 	Local $tabidx = GUICtrlRead($g_hGUI_BOT_TAB)
 	Select
 		Case $tabidx = 0 ; Options tab
@@ -2016,6 +2032,7 @@ Func tabBot()
 EndFunc   ;==>tabBot
 
 Func tabSwitchOptions()
+	If $g_iGuiMode <> 1 Then Return
 	Local $tabidx = GUICtrlRead($g_hGUI_SWITCH_OPTIONS_TAB)
 	Select
 		Case $tabidx = 0
@@ -2026,6 +2043,7 @@ Func tabSwitchOptions()
 EndFunc   ;==>tabSwitchOptions
 
 Func tabDeadbase()
+	If $g_iGuiMode <> 1 Then Return
 	Local $tabidx = GUICtrlRead($g_hGUI_DEADBASE_TAB)
 	Select
 		;			Case $tabidx = 0 ; Search tab
@@ -2044,6 +2062,7 @@ Func tabDeadbase()
 EndFunc   ;==>tabDeadbase
 
 Func tabActivebase()
+	If $g_iGuiMode <> 1 Then Return
 	Local $tabidx = GUICtrlRead($g_hGUI_ACTIVEBASE_TAB)
 	Select
 		;			Case $tabidx = 0 ; Search tab
@@ -2062,6 +2081,7 @@ Func tabActivebase()
 EndFunc   ;==>tabActivebase
 
 Func tabTHSnipe()
+	If $g_iGuiMode <> 1 Then Return
 	Local $tabidx = GUICtrlRead($g_hGUI_THSNIPE_TAB)
 	Select
 		;			Case $tabidx = 0 ; Search tab
@@ -2094,7 +2114,7 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 	Switch $nCtrl
 		Case $g_hTabMain
 			; the icons for main tab
-			Local $aIconIndex = [$eIcnHourGlass, $eIcnTH12, $eIcnAttack, $eIcnGUI, $eIcnInfo] ;$eIcnAiOMOD
+			Local $aIconIndex = [$eIcnHourGlass, $eIcnTH12, $eIcnAttack, $eIcnAiOMOD, $eIcnGUI, $eIcnInfo]
 
 		Case $g_hGUI_VILLAGE_TAB
 			; the icons for village tab
@@ -2105,7 +2125,7 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 			Local $aIconIndex = [$eIcnTrain, $eIcnGem, $eIcnReOrder, $eIcnOptions]
 
 		Case $g_hGUI_MISC_TAB
-			Local $aIconIndex = [$eIcnTH1, $eIcnBuilderHall, $eIcnClanGames]
+			Local $aIconIndex = [$eIcnTH1, $eIcnBuilderHall, $eIcnStrongMan]
 
 		Case $g_hGUI_DONATE_TAB
 			; the icons for donate tab
@@ -2143,10 +2163,11 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 			; the icons for Attack Options tab
 			Local $aIconIndex = [$eIcnMagnifier, $eIcnCamp, $eIcnLightSpell, $eIcnSilverStar, $eIcnTrophy]
 
-		; Team AiO MOD++ (2018)
+		; Team AiO MOD++ (2019)
 		Case $g_hGUI_MOD_TAB
 			; the icons for Mods tab
-			Local $aIconIndex = [$eIcnMiscMod, $eIcnHumanization, $eIcnGoblinXP, $eIcnWarPreparation]
+			; $eIcnMiscMod, $eIcnWarPreparation
+			Local $aIconIndex = [$eIcnSuperXP, $eIcnTroops]
 
 		Case $g_hGUI_BOT_TAB
 			; the icons for Bot tab

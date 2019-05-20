@@ -250,8 +250,6 @@ Func ReadRegularConfig()
 	ReadConfig_600_35_1()
 	; <><><><> Bot / Profile / Switch Accounts <><><><>
 	ReadConfig_600_35_2()
-	; <><><><> Bot / Profile / Switch Profiles <><><><>
-	ReadConfig_600_35_3()
 	; <><><> Attack Plan / Train Army / Troops/Spells <><><>
 	; Quick train
 	ReadConfig_600_52_1()
@@ -264,8 +262,29 @@ Func ReadRegularConfig()
 	; <><><> Attack Plan / Train Army / Options <><><>
 	ReadConfig_641_1()
 
-	;  <><><> Team AiO MOD++ (2018) <><><>
-	ReadConfig_MOD()
+	; <><><> Team AiO MOD++ (2019) <><><>
+	; <><><> SuperXP / GoblinXP <><><>
+	ReadConfig_MOD_SuperXP()
+	; <><><> ChatActions <><><>
+	ReadConfig_MOD_ChatActions()
+	; <><><> Daily Discounts + Builder Base Attack + Builder Base Drop Order <><><>
+	ReadConfig_MOD_600_6()
+	; <><><> Request CC for defense <><><>
+	ReadConfig_MOD_600_11()
+	; <><><> ClanHop <><><>
+	ReadConfig_MOD_600_12()
+	; <><><> Restart Search Legend league <><><>
+	ReadConfig_MOD_600_28()
+	; <><><> Classic Four Finger + CSV Deploy Speed <><><>
+	ReadConfig_MOD_600_29()
+	; <><><> Check Collectors Outside <><><>
+	ReadConfig_MOD_600_31()
+	; <><><> Auto Dock, Hide Emulator & Bot <><><>
+	ReadConfig_MOD_600_35_1()
+	; <><><><> Switch Profiles <><><><>
+	ReadConfig_MOD_600_35_2()
+	; <><><> Max logout time <><><>
+	ReadConfig_MOD_641_1()
 
 	; <><><><> Attack Plan / Strategies <><><><>
 	; <<< nothing here >>>
@@ -318,7 +337,10 @@ Func ReadConfig_Android()
 	$g_sUserGamePackage = IniRead($g_sProfileConfigPath, "android", "user.package", $g_sUserGamePackage)
 	$g_sUserGameClass = IniRead($g_sProfileConfigPath, "android", "user.class", $g_sUserGameClass)
 	$g_iAndroidBackgroundMode = Int(IniRead($g_sProfileConfigPath, "android", "backgroundmode", $g_iAndroidBackgroundMode))
+	$g_iAndroidZoomoutMode = Int(IniRead($g_sProfileConfigPath, "android", "zoomoutmode", $g_iAndroidZoomoutMode))
+	$g_iAndroidAdbReplace = Int(IniRead($g_sProfileConfigPath, "android", "adb.replace", $g_iAndroidAdbReplace))
 	$g_bAndroidCheckTimeLagEnabled = Int(IniRead($g_sProfileConfigPath, "android", "check.time.lag.enabled", ($g_bAndroidCheckTimeLagEnabled ? 1 : 0))) = 1
+	$g_bAndroidAdbPortPerInstance = Int(IniRead($g_sProfileConfigPath, "android", "adb.dedicated.instance", $g_bAndroidAdbPortPerInstance ? 1 : 0)) = 1
 	$g_iAndroidAdbScreencapTimeoutMin = Int(IniRead($g_sProfileConfigPath, "android", "adb.screencap.timeout.min", $g_iAndroidAdbScreencapTimeoutMin))
 	$g_iAndroidAdbScreencapTimeoutMax = Int(IniRead($g_sProfileConfigPath, "android", "adb.screencap.timeout.max", $g_iAndroidAdbScreencapTimeoutMax))
 	$g_iAndroidAdbScreencapTimeoutDynamic = Int(IniRead($g_sProfileConfigPath, "android", "adb.screencap.timeout.dynamic", $g_iAndroidAdbScreencapTimeoutDynamic))
@@ -340,6 +362,7 @@ Func ReadConfig_Android()
 	$g_bAndroidCloseWithBot = Int(IniRead($g_sProfileConfigPath, "android", "close", $g_bAndroidCloseWithBot ? 1 : 0)) = 1
 	$g_bUpdateSharedPrefs = Int(IniRead($g_sProfileConfigPath, "android", "shared_prefs.update", $g_bUpdateSharedPrefs ? 1 : 0)) = 1
 	$g_iAndroidProcessAffinityMask = Int(IniRead($g_sProfileConfigPath, "android", "process.affinity.mask", $g_iAndroidProcessAffinityMask))
+	$g_iAndroidControlClickAdditionalDelay = Int(IniRead($g_sProfileConfigPath, "android", "click.additional.delay", $g_iAndroidControlClickAdditionalDelay))
 
 	If $g_bBotLaunchOption_Restart = True Or $g_asCmdLine[0] < 2 Then
 		; for now only read when bot crashed and restarted through watchdog or nofify event
@@ -489,25 +512,6 @@ Func ReadConfig_600_11()
 	For $i = 0 To 23
 		$g_abRequestCCHours[$i] = ($g_abRequestCCHours[$i] = "1")
 	Next
-
-	; Request CC for defense - Team AiO MOD++
-	$g_bRequestCCDefense = (IniRead($g_sProfileConfigPath, "donate", "RequestDefenseEnable", "0") = "1")
-	$g_sRequestCCDefenseText = IniRead($g_sProfileConfigPath, "donate", "RequestDefenseText", "")
-	$g_bRequestCCDefenseWhenPB = (IniRead($g_sProfileConfigPath, "donate", "RequestDefenseWhenPB", "1") = "1")
-	$g_iRequestDefenseTime = Int(IniRead($g_sProfileConfigPath, "donate", "RequestDefenseTime", "30"))
-	$g_bSaveCCTroopForDefense = (IniRead($g_sProfileConfigPath, "donate", "SaveCCTroopForDefense", "0") = "1")
-
-	For $i = 0 To $eTroopCount - 1
-		$g_aiCCTroopsExpectedForDefense[$i] = 0
-	Next
-	For $i = 0 To 2
-		$g_aiCCTroopDefenseType[$i] = Int(IniRead($g_sProfileConfigPath, "donate", "cmbCCTroopDefense" & $i, $eTroopCount))
-		$g_aiCCTroopDefenseQty[$i] = Int(IniRead($g_sProfileConfigPath, "donate", "txtCCTroopDefense" & $i, "0"))
-		If $g_aiCCTroopDefenseType[$i] < $eTroopCount Then ; Barb - IceG
-			$g_aiCCTroopsExpectedForDefense[$g_aiCCTroopDefenseType[$i]] += $g_aiCCTroopDefenseQty[$i]
-		EndIf
-	Next
-
 EndFunc   ;==>ReadConfig_600_11
 
 Func ReadConfig_600_12()
@@ -708,6 +712,10 @@ Func ReadConfig_600_13()
 	$g_iCmbDonateFilter = Int(IniRead($g_sProfileConfigPath, "donate", "cmbFilterDonationsCC", 0))
 	$g_iDonateSkipNearFullPercent = Int(IniRead($g_sProfileConfigPath, "donate", "SkipDonateNearFulLTroopsPercentual", 90))
 	$g_bDonateSkipNearFullEnable = (IniRead($g_sProfileConfigPath, "donate", "SkipDonateNearFulLTroopsEnable", "0") = "1")
+	IniReadS($g_bUseCCBalanced, $g_sProfileConfigPath, "donate", "BalanceCC", False, "Bool")
+	IniReadS($g_iCCDonated, $g_sProfileConfigPath, "donate", "BalanceCCDonated", 1, "int")
+	IniReadS($g_iCCReceived, $g_sProfileConfigPath, "donate", "BalanceCCReceived", 1, "int")
+	IniReadS($g_bCheckDonateOften, $g_sProfileConfigPath, "donate", "CheckDonateOften", False, "Bool")
 EndFunc   ;==>ReadConfig_600_13
 
 Func ReadConfig_600_14()
@@ -1001,9 +1009,6 @@ Func ReadConfig_600_29()
 	For $i = 0 To 23
 		$g_abPlannedDropCCHours[$i] = ($g_abPlannedDropCCHours[$i] = "1")
 	Next
-	IniReadS($g_bUseCCBalanced, $g_sProfileConfigPath, "ClanClastle", "BalanceCC", False, "Bool")
-	IniReadS($g_iCCDonated, $g_sProfileConfigPath, "ClanClastle", "BalanceCCDonated", 1, "int")
-	IniReadS($g_iCCReceived, $g_sProfileConfigPath, "ClanClastle", "BalanceCCReceived", 1, "int")
 EndFunc   ;==>ReadConfig_600_29
 
 Func ReadConfig_600_29_DB()
@@ -1319,24 +1324,6 @@ Func ReadConfig_SwitchAccounts()
 		Next
 	EndIf
 EndFunc   ;==>ReadConfig_SwitchAccounts
-
-Func ReadConfig_600_35_3()
-	; <><><><> Bot / Profile / Switch Profiles <><><><>
-	For $i = 0 To 3
-		IniReadS($g_abChkSwitchMax[$i], $g_sProfileConfigPath, "SwitchProfile", "SwitchProfileMax" & $i, $g_abChkSwitchMax[$i], "Bool")
-		IniReadS($g_abChkSwitchMin[$i], $g_sProfileConfigPath, "SwitchProfile", "SwitchProfileMin" & $i, $g_abChkSwitchMin[$i], "Bool")
-		IniReadS($g_aiCmbSwitchMax[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetProfileMax" & $i, $g_aiCmbSwitchMax[$i], "Int")
-		IniReadS($g_aiCmbSwitchMin[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetProfileMin" & $i, $g_aiCmbSwitchMin[$i], "Int")
-
-		IniReadS($g_abChkBotTypeMax[$i], $g_sProfileConfigPath, "SwitchProfile", "ChangeBotTypeMax" & $i, $g_abChkBotTypeMax[$i], "Bool")
-		IniReadS($g_abChkBotTypeMin[$i], $g_sProfileConfigPath, "SwitchProfile", "ChangeBotTypeMin" & $i, $g_abChkBotTypeMin[$i], "Bool")
-		IniReadS($g_aiCmbBotTypeMax[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetBotTypeMax" & $i, $g_aiCmbBotTypeMax[$i], "Int")
-		IniReadS($g_aiCmbBotTypeMin[$i], $g_sProfileConfigPath, "SwitchProfile", "TargetBotTypeMin" & $i, $g_aiCmbBotTypeMin[$i], "Int")
-
-		IniReadS($g_aiConditionMax[$i], $g_sProfileConfigPath, "SwitchProfile", "ConditionMax" & $i, $g_aiConditionMax[$i], "Int")
-		IniReadS($g_aiConditionMin[$i], $g_sProfileConfigPath, "SwitchProfile", "ConditionMin" & $i, $g_aiConditionMin[$i], "Int")
-	Next
-EndFunc   ;==>ReadConfig_600_35_3
 
 Func ReadConfig_600_52_1()
 	; <><><><> Attack Plan / Train Army / Troops/Spells <><><><>

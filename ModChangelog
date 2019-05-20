@@ -5,6 +5,22 @@
 
                     Based on MyBot.run v7.7.x
 
+	**V2.0.1**
+	* Update:
+		- Update Official v7.7.6
+		- Vietnamese language
+
+	* Added:
+		- Add Colllector Outside check feature
+		- Add Super XP feature
+		- Add Daily Discounts feature
+		- Add Builder Base Attack feature
+		- Add Chat Actions feature
+
+	* Improve:
+		- Improve Auto Hide & Dock & Minimize the Emultor/Bot
+		- Improve Clan Hop
+
 	**V2.0**
 	* Update:
 		- Update Official v7.7.3

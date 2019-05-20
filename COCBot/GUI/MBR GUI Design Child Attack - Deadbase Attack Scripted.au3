@@ -33,8 +33,8 @@ Func CreateAttackSearchDeadBaseScripted()
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "IconReload_Info_01", "Reload Script Files"))
 			GUICtrlSetOnEvent(-1, 'UpdateComboScriptNameDB') ; Run this function when the secondary GUI [X] is clicked
 
-	$y += 25
-		$g_hLblNotesScriptDB =  GUICtrlCreateLabel("", $x, $y + 3, 200, 195)
+	$y += 20
+		$g_hLblNotesScriptDB =  GUICtrlCreateLabel("", $x, $y + 4, 200, 195)
 
 		$g_hBtnAttNowDB = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "btnAttNow", "Attack Now"), $x + 70, $y + 198, 91, 23)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "btnAttNow_Info_01", "Attack now Button Which it will make CSV Makers/testers life Easy. You should be in Attack Screen"))
@@ -55,8 +55,8 @@ Func CreateAttackSearchDeadBaseScripted()
 			GUICtrlSetOnEvent(-1, "cmbScriptDroplineDB")
 
 		; CSV Deploy Speed - Team AiO MOD++
-		GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "CSVSpeed", "CSV Deployment Speed"), $x + 25, $y + 280, -1, 18)
-			$cmbCSVSpeed[$DB] = GUICtrlCreateCombo("", $x + 150, $y + 276, 50, 20, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+		GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Attack Scripted", "CSVSpeed", "CSV Deployment Speed"), $x + 25, $y + 282, -1, 18)
+			$cmbCSVSpeed[$DB] = GUICtrlCreateCombo("", $x + 150, $y + 278, 50, 20, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 			GUICtrlSetData(-1, "0.5x|0.75x|1x|1.25x|1.5x|2x|3x|4x|5x", "1x")
 
 		_GUICtrlCreateIcon($g_sLibIconPath, $eIcnEdit, $x + 210, $y + 2, 16, 16)

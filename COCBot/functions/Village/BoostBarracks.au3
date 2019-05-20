@@ -1,7 +1,7 @@
 ; #FUNCTION# ====================================================================================================================
 ; Name ..........: BoostBarracks.au3
 ; Description ...:
-; Syntax ........: BoostBarracks(), BoostSpellFactory()
+; Syntax ........: BoostBarracks(), BoostSpellFactory(), BoostWorkshop(), BoostTrainingPotion(), BoostResourcePotion()
 ; Parameters ....:
 ; Return values .: None
 ; Author ........: MR.ViPER (9/9/2016)
@@ -117,7 +117,7 @@ Func BoostTrainingPotion()
 				ClickP($aAway, 2, 0, "#0161")
 				If _Sleep(1000) Then Return
 
-				Local $bChecked = BoostPotion("Training Potion", "Town", $g_aiTownHallPos, $g_iCmbBoostTrainingPotion, $g_hCmbBoostTrainingPotion) = _NowCalc()
+				Local $bChecked = BoostPotion("Training Potion", "Town Hall", $g_aiTownHallPos, $g_iCmbBoostTrainingPotion, $g_hCmbBoostTrainingPotion) = _NowCalc()
 				If Not $bChecked Then Return False
 				$g_aiTimeTrain[0] = 0 ; reset Troop remaining time
 				$g_aiTimeTrain[1] = 0 ; reset Spells remaining time
@@ -156,7 +156,7 @@ Func BoostResourcePotion()
 			ClickP($g_aiResourcesPos, 1, 0, "#Resources")
 			If _Sleep($DELAYBOOSTHEROES2) Then Return
 			ForceCaptureRegion()
-			Local $aResult = BuildingInfo(242, 491 + $g_iBottomOffsetY)
+			Local $aResult = BuildingInfo(242, 490 + $g_iBottomOffsetY)
 			If $aResult[0] > 1 Then
 				Local $sN = $aResult[1] ; Store bldg name
 				Local $sL = $aResult[2] ; Sotre bdlg level
@@ -183,7 +183,7 @@ Func BoostResourcePotion()
 				ClickP($aAway, 2, 0, "#0161")
 				If _Sleep($DELAYBOOSTBARRACKS1) Then Return
 
-				Local $bChecked = BoostPotion("Resource Potion", "Town", $g_aiTownHallPos, $g_iCmbBoostResourcePotion, $g_hCmbBoostResourcePotion) = _NowCalc()
+				Local $bChecked = BoostPotion("Resource Potion", "Town Hall", $g_aiTownHallPos, $g_iCmbBoostResourcePotion, $g_hCmbBoostResourcePotion) = _NowCalc()
 				If Not $bChecked Then Return False
 				$iLastTimeChecked[$g_iCurAccount] = _NowCalc() ; Reset the Check Timer
 				Return True

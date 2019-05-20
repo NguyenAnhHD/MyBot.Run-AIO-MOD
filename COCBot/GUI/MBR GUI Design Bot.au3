@@ -21,7 +21,7 @@ Global $g_hGUI_BOT = 0
 #include "MBR GUI Design Child Bot - Debug.au3"
 #include "MBR GUI Design Child Bot - Profiles.au3"
 #include "MBR GUI Design Child Bot - Stats.au3"
-#include "MBR GUI Design Child Bot - SwitchOptions.au3"
+#include "..\Team__AiO__MOD++\GUI\MOD GUI Design - Switch-Options.au3"
 
 Global $g_hGUI_BOT_TAB = 0, $g_hGUI_BOT_TAB_ITEM1 = 0, $g_hGUI_BOT_TAB_ITEM2 = 0, $g_hGUI_BOT_TAB_ITEM3 = 0, $g_hGUI_BOT_TAB_ITEM4 = 0, $g_hGUI_BOT_TAB_ITEM5 = 0
 

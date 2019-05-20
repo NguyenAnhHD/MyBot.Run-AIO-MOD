@@ -23,24 +23,21 @@ Func BotStart($bAutostartDelay = 0)
 	EndIf
 	SetLogCentered(" BOT LOG ", Default, Default, True)
 
-	If Not ForumAuthentication() Then
-		; not authenticated exit now, but restore controls first
-		EnableControls($g_hFrmBotBottom, Default, $g_aFrmBotBottomCtrlState)
-		SetRedrawBotWindow(True, Default, Default, Default, "BotStart")
-		Return FuncReturn()
-	EndIf
-
 	ResumeAndroid()
 	CleanSecureFiles()
 	CalCostCamp()
 	CalCostSpell()
 	CalCostSiege()
+	sldAdditionalClickDelay(True)
 
 	$g_bRunState = True
 	$g_bTogglePauseAllowed = True
 	$g_bSkipFirstZoomout = False
 	$g_bIsSearchLimit = False
 	$g_bIsClientSyncError = False
+	$g_bZoomoutFailureNotRestartingAnything = False
+	$g_bRestart = False
+	$g_bStayOnBuilderBase = False
 
 	EnableControls($g_hFrmBotBottom, False, $g_aFrmBotBottomCtrlState)
 	;$g_iFirstAttack = 0
@@ -73,6 +70,12 @@ Func BotStart($bAutostartDelay = 0)
 	GUICtrlSetState($g_hBtnSearchMode, $GUI_HIDE)
 	GUICtrlSetState($g_hChkBackgroundMode, $GUI_DISABLE)
 
+	; update task bar buttons
+	_ITaskBar_UpdateTBButton($g_hTblStop, $THBF_ENABLED)
+	_ITaskBar_UpdateTBButton($g_hTblStart, $THBF_DISABLED)
+	_ITaskBar_UpdateTBButton($g_hTblPause, $THBF_ENABLED)
+	_ITaskBar_UpdateTBButton($g_hTblResume, $THBF_DISABLED)
+
 	; update try items
 	TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Stop", "Stop bot"))
 	TrayItemSetState($g_hTiPause, $TRAY_ENABLE)
@@ -83,6 +86,11 @@ Func BotStart($bAutostartDelay = 0)
 	DisableGuiControls()
 
 	SetRedrawBotWindow(True, Default, Default, Default, "BotStart")
+
+	If Not ForumAuthentication() Then
+		btnStop()
+		Return FuncReturn()
+	EndIf
 
 	If $bAutostartDelay Then
 		SetLog("Bot Auto Starting in " & Round($bAutostartDelay / 1000, 0) & " seconds", $COLOR_ERROR)
@@ -123,43 +131,7 @@ Func BotStart($bAutostartDelay = 0)
 		EndIf
 		If Not $g_bRunState Then Return FuncReturn()
 		If $hWndActive = $g_hAndroidWindow And ($g_bAndroidBackgroundLaunched = True Or AndroidControlAvailable())  Then ; Really?
-
-			; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
-			If $g_bChkAutoDock Then
-				If Not $g_bAndroidEmbedded Then
-					SetLog("Auto use Dock Android Window", $COLOR_INFO)
-					btnEmbed()
-				EndIf
-				If _Sleep($DELAYRUNBOT5) Then Return
-			ElseIf $g_bChkAutoHideEmulator Then
-				If Not $g_bIsHidden Then
-					SetLog("Auto hidden the Emulator", $COLOR_INFO)
-					btnHide()
-					$g_bIsHidden = True
-				EndIf
-				If _Sleep($DELAYRUNBOT5) Then Return
-			EndIf
-
-			If $g_bChkAutoMinimizeBot Then
-				SetLog("Auto Minimize the Bot", $COLOR_INFO)
-				If $g_bUpdatingWhenMinimized Then
-					If $g_bHideWhenMinimized Then
-						WinMove2($g_hFrmBot, "", -32000, -32000, -1, -1, 0, $SWP_HIDEWINDOW, False)
-						_WinAPI_SetWindowLong($g_hFrmBot, $GWL_EXSTYLE, BitOR(_WinAPI_GetWindowLong($g_hFrmBot, $GWL_EXSTYLE), $WS_EX_TOOLWINDOW))
-					EndIf
-					If _WinAPI_IsIconic($g_hFrmBot) Then WinSetState($g_hFrmBot, "", @SW_RESTORE)
-					If _WinAPI_IsIconic($g_hAndroidWindow) Then WinSetState($g_hAndroidWindow, "", @SW_RESTORE)
-					WinMove2($g_hFrmBot, "", -32000, -32000, -1, -1, 0, BitOR($SWP_SHOWWINDOW, $SWP_NOACTIVATE), False)
-				Else
-					If $g_bHideWhenMinimized Then
-						WinMove2($g_hFrmBot, "", -1, -1, -1, -1, 0, $SWP_HIDEWINDOW, False)
-						_WinAPI_SetWindowLong($g_hFrmBot, $GWL_EXSTYLE, BitOR(_WinAPI_GetWindowLong($g_hFrmBot, $GWL_EXSTYLE), $WS_EX_TOOLWINDOW))
-					EndIf
-					WinSetState($g_hFrmBot, "", @SW_MINIMIZE)
-				EndIf
-				If _Sleep($DELAYRUNBOT5) Then Return
-			EndIf
-
+			autoHideAndDockAndMinimize() ; Auto Dock, Hide Emulator & Bot - Team AiO MOD++
 			Initiate() ; Initiate and run bot
 		Else
 			SetLog("Cannot use " & $g_sAndroidEmulator & ", please check log", $COLOR_ERROR)
@@ -185,6 +157,7 @@ Func BotStop()
 	$g_bRunState = False
 	$g_bBotPaused = False
 	$g_bTogglePauseAllowed = True
+	$g_bRestart = False
 
 	;WinSetState($g_hFrmBotBottom, "", @SW_DISABLE)
 	Local $aCtrlState
@@ -205,12 +178,19 @@ Func BotStop()
 	; update bottom buttons
 	GUICtrlSetState($g_hChkBackgroundMode, $GUI_ENABLE)
 	GUICtrlSetState($g_hBtnStart, $GUI_SHOW)
+	GUICtrlSetState($g_hBtnStart, $GUI_ENABLE)
 	GUICtrlSetState($g_hBtnStop, $GUI_HIDE)
 	GUICtrlSetState($g_hBtnPause, $GUI_HIDE)
 	GUICtrlSetState($g_hBtnResume, $GUI_HIDE)
 	If $g_iTownHallLevel > 2 Then GUICtrlSetState($g_hBtnSearchMode, $GUI_ENABLE)
 	GUICtrlSetState($g_hBtnSearchMode, $GUI_SHOW)
 	;GUICtrlSetState($g_hBtnMakeScreenshot, $GUI_ENABLE)
+
+	; update task bar buttons
+	_ITaskBar_UpdateTBButton($g_hTblStart, $THBF_ENABLED)
+	_ITaskBar_UpdateTBButton($g_hTblStop, $THBF_DISABLED)
+	_ITaskBar_UpdateTBButton($g_hTblPause, $THBF_DISABLED)
+	_ITaskBar_UpdateTBButton($g_hTblResume, $THBF_DISABLED)
 
 	; Enable/Disable GUI while botting - Team AiO MOD++
 	GUICtrlSetState($g_hBtnEnableGUI, $GUI_HIDE)
@@ -223,6 +203,7 @@ Func BotStop()
 	GUICtrlSetState($g_hPicTwoArrowShield, $GUI_SHOW)
 	GUICtrlSetState($g_hLblVersion, $GUI_SHOW)
 	GUICtrlSetState($g_hLblMod, $GUI_SHOW)
+	$g_bBtnAttackNowPressed = False
 
 	; update try items
 	TrayItemSetText($g_hTiStartStop, GetTranslatedFileIni("MBR GUI Design - Loading", "StatusBar_Item_Start", "Start bot"))
@@ -233,7 +214,7 @@ Func BotStop()
 		If Not $g_bBotPaused Then $g_iTimePassed += Int(__TimerDiff($g_hTimerSinceStarted))
 		If ProfileSwitchAccountEnabled() And Not $g_bBotPaused Then $g_aiRunTime[$g_iCurAccount] += Int(__TimerDiff($g_ahTimerSinceSwitched[$g_iCurAccount]))
 		;AdlibUnRegister("SetTime")
-		$g_bRestart = True
+		;$g_bRestart = True
 
 	   If $g_hLogFile <> 0 Then
 		  FileClose($g_hLogFile)

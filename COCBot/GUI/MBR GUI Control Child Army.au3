@@ -338,15 +338,6 @@ Func chkCloseWaitEnable()
 	EndIf
 EndFunc   ;==>chkCloseWaitEnable
 
-; Max logout time - Team AiO MOD++
-Func chkTrainLogoutMaxTime()
-	If GUICtrlRead($g_hChkTrainLogoutMaxTime) = $GUI_CHECKED Then
-		_GUI_Value_STATE("ENABLE", $g_hTxtTrainLogoutMaxTime & "#" & $g_hLblTrainLogoutMaxTime)
-	Else
-		_GUI_Value_STATE("DISABLE", $g_hTxtTrainLogoutMaxTime & "#" & $g_hLblTrainLogoutMaxTime)
-	EndIf
-EndFunc   ;==>chkTrainLogoutMaxTime
-
 Func chkCloseWaitTrain()
 	$g_bCloseWithoutShield = (GUICtrlRead($g_hChkCloseWithoutShield) = $GUI_CHECKED)
 EndFunc   ;==>chkCloseWaitTrain

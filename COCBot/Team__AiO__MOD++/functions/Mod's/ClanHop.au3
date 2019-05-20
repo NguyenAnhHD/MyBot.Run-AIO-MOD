@@ -21,18 +21,6 @@ Func ClanHop()
 
 	Local $iPosJoinedClans = 0, $iScrolls = 0, $iHopLoops = 0, $iErrors = 0
 
-	Local $aJoinClanBtn[4] = [157, 510, 0x6CBB1F, 20] ; Green Join Button on Chat Tab when you are not in a Clan
-	Local $aClanPage[4] = [725, 410, 0xEF5D5F, 20] ; Red Leave Clan Button on Clan Page
-	Local $aClanPageJoin[4] = [720, 407, 0xBCE764, 20] ; Green Join Clan Button on Clan Page
-	Local $aJoinClanPage[4] = [755, 319, 0xE8C672, 20] ; Trophy Amount of Clan Background of first Clan
-	Local $aClanChat[4] = [83, 650, 0x8BD004, 30] ; *Your Name* joined the Clan Message Check to verify loaded Clan Chat
-	Local $aChatTab[4] = [170, 16, 0x79755B, 20] ; Clan Chat Tab on Top, check if right one is selected
-	Local $aGlobalTab[4] = [170, 16, 0x383828, 10] ; Global Chat Tab on Top, check if right one is selected
-	Local $aClanBadgeNoClan[4] = [150, 315, 0xEB4C30, 20]; Orange Tile of Clan Logo on Chat Tab if you are not in a Clan
-	Local $aClanChatRules[4] = [158, 493, 0x6CB531, 20]
-
-	Local $aClanNameBtn[2] = [89, 63] ; Button to open Clan Page from Chat Tab
-
 	$g_iCommandStop = 0 ; Halt Attacking
 
 	If Not IsMainPage() Then
@@ -74,17 +62,17 @@ Func ClanHop()
 		EndIf
 
 		ForceCaptureRegion()
-		If Not _CheckPixel($aChatTab, $g_bCapturePixel) Then ClickP($aOpenChat, 1, 0) ; Clicks chat tab
+		If Not _CheckPixel($aChatTab, $g_bCapturePixel) Or Not _CheckPixel($aChatTab2, $g_bCapturePixel) Or Not _CheckPixel($aChatTab3, $g_bCapturePixel) Then ClickP($aOpenChat, 1, 0, "#0168") ; Clicks chat tab
 		If _Sleep($DELAYDONATECC4) Then Return
 
 		Local $iCount = 0
 		While 1
 			;If Clan tab is selected.
-			If _CheckPixel($aChatTab, $g_bCapturePixel) Then ; color med gray
+			If _CheckPixel($aClanChatTab, $g_bCapturePixel) Then ; color med gray
 				ExitLoop
 			EndIf
 			;If Global tab is selected.
-			If _CheckPixel($aGlobalTab, $g_bCapturePixel) Then ; Darker gray
+			If _CheckPixel($aGlobalChatTab, $g_bCapturePixel) Then ; Darker gray
 				If _Sleep($DELAYDONATECC1) Then Return ;small delay to allow tab to completely open
 				ClickP($aClanTab, 1, 0, "#0169") ; clicking clan tab
 				If _Sleep(500) Then Return ; Delay to wait till Clan Page is fully up and visible so the next Color Check won't fail ;)
@@ -97,6 +85,7 @@ Func ClanHop()
 				AndroidPageError("ClanHop")
 				Return
 			EndIf
+			If _Sleep($DELAYDONATECC1) Then Return ; delay Allow 15x
 		WEnd
 
 		If Not _CheckPixel($aClanBadgeNoClan, $g_bCapturePixel) Then ; If Still in Clan
@@ -173,7 +162,7 @@ Func ClanHop()
 		DonateCC()
 
 		ForceCaptureRegion()
-		If Not _CheckPixel($aChatTab, $g_bCapturePixel) Then ClickP($aOpenChat, 1, 0, "#0168") ; Clicks chat tab
+		If Not _CheckPixel($aChatTab, $g_bCapturePixel) Or Not _CheckPixel($aChatTab2, $g_bCapturePixel) Or Not _CheckPixel($aChatTab3, $g_bCapturePixel) Then ClickP($aOpenChat, 1, 0, "#0168") ; Clicks chat tab
 		If _Sleep($DELAYDONATECC4) Then Return
 
 		ClickP($aClanNameBtn) ;  Click the Clan Banner in Top left corner of donate window

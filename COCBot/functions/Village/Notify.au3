@@ -483,8 +483,32 @@ Func NotifyRemoteControlProc()
 						$bHibernate = False
 						$bStandby = False
 					Case Else
-						NotifyPushToTelegram(GetTranslatedFileIni("MBR Func_Notify", "ELSE_Info_01", "Sorry Chief!,") & " " & $TGActionMSG & " " & _
+						; ChatActions - Team AiO MOD++
+						Local $bFoundChatMessage = False
+						If StringInStr($TGActionMSG, "SENDCHAT") Then
+							$bFoundChatMessage = True
+							Local $chatMessage = StringRight($TGActionMSG, StringLen($TGActionMSG) - StringLen("SENDCHAT"))
+							$chatMessage = StringLower($chatMessage)
+							ChatbotNotifyQueueChat($chatMessage)
+							NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Chat queued, will send on next idle")
+						ElseIf StringInStr($TGActionMSG, "GETCHATS") Then
+							$bFoundChatMessage = True
+							Local $Interval = 1
+							$Interval = StringRight($TGActionMSG, StringLen($TGActionMSG) - StringLen("GETCHATS"))
+							If $Interval = "STOP" Then
+								ChatbotNotifyStopChatRead()
+								NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Stopping interval sending")
+							Else
+								If $Interval = "NOW" Then
+									ChatbotNotifySendChat()
+									NotifyPushToTelegram($g_sNotifyOrigin & " | " & "Command queued, will send clan chat image on next idle")
+								EndIf
+							EndIf
+						EndIf
+						If Not $bFoundChatMessage Then
+							NotifyPushToTelegram(GetTranslatedFileIni("MBR Func_Notify", "ELSE_Info_01", "Sorry Chief!,") & " " & $TGActionMSG & " " & _
 								GetTranslatedFileIni("MBR Func_Notify", "ELSE_Info_02", "is not a valid command."))
+						EndIf
 				EndSwitch
 			EndIf
 		EndIf
@@ -631,7 +655,7 @@ Func NotifyPushMessageToBoth($Message, $Source = "")
 			ClickP($aAway, 1, 0, "#0112") ;Click Away to close the upgrade window
 			; open the builders menu
 			Click(295, 30)
-			_Sleep(750)
+			If _Sleep(750) Then Return
 			Local $Date = @YEAR & "-" & @MON & "-" & @MDAY
 			Local $Time = @HOUR & "." & @MIN
 			_CaptureRegion(224, 74, 446, 240)
@@ -654,7 +678,7 @@ Func NotifyPushMessageToBoth($Message, $Source = "")
 		Case "ShieldInfo"
 			ClickP($aAway, 1, 0, "#0112") ;Click Away to close the upgrade window
 			Click(435, 8)
-			_Sleep(500)
+			If _Sleep(500) Then Return
 			Local $Date = @YEAR & "-" & @MON & "-" & @MDAY
 			Local $Time = @HOUR & "." & @MIN
 			_CaptureRegion(200, 165, 660, 568)

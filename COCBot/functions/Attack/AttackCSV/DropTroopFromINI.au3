@@ -102,6 +102,7 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 		debugAttackCSV("New troop position: " & $troopPosition)
 	EndIf
 
+	Local $bSelectTroop = True
 	Local $bUseSpell = True
 	Switch $iTroopIndex
 		Case $eLSpell
@@ -126,6 +127,8 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 			If Not $g_abAttackUseSkeletonSpell[$g_iMatchMode] Then $bUseSpell = False
 		Case $eBtSpell
 			If Not $g_abAttackUseBatSpell[$g_iMatchMode] Then $bUseSpell = False
+		Case $eKing, $eQueen, $eWarden, $eCastle, $eWallW, $eBattleB, $eStoneS
+			$bSelectTroop = False ; avoid double select
 	EndSwitch
 
 	If $troopPosition = -1 Or Not $bUseSpell Then
@@ -143,10 +146,12 @@ Func DropTroopFromINI($vectors, $indexStart, $indexEnd, $indexArray, $qtaMin, $q
 
 		If $g_iCSVLastTroopPositionDropTroopFromINI <> $troopSlotConst Then
 			ReleaseClicks()
-			SelectDropTroop($troopPosition) ; select the troop...
+			If $bSelectTroop Then
+				SelectDropTroop($troopPosition) ; select the troop...
+				ReleaseClicks()
+				KeepClicks()
+			EndIf
 			$g_iCSVLastTroopPositionDropTroopFromINI = $troopSlotConst
-			ReleaseClicks()
-			KeepClicks()
 		EndIf
 		;sleep time Before deploy all troops
 		Local $sleepBefore = 0
