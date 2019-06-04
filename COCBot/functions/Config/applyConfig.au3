@@ -147,7 +147,7 @@ Func applyConfig($bRedrawAtExit = True, $TypeReadSave = "Read") ;Applies the dat
 	ApplyConfig_MOD_600_11($TypeReadSave)
 	; <><><> ClanHop <><><>
 	ApplyConfig_MOD_600_12($TypeReadSave)
-	; <><><> Restart Search Legend league <><><>
+	; <><><> Max logout time + Restart Search Legend league <><><>
 	ApplyConfig_MOD_600_28($TypeReadSave)
 	; <><><> Classic Four Finger + CSV Deploy Speed <><><>
 	ApplyConfig_MOD_600_29($TypeReadSave)
@@ -157,8 +157,6 @@ Func applyConfig($bRedrawAtExit = True, $TypeReadSave = "Read") ;Applies the dat
 	ApplyConfig_MOD_600_35_1($TypeReadSave)
 	; <><><><> Switch Profiles <><><><>
 	ApplyConfig_MOD_600_35_2($TypeReadSave)
-	; <><><> Max logout time <><><>
-	ApplyConfig_MOD_641_1($TypeReadSave)
 
 	; <><><><> Attack Plan / Strategies <><><><>
 	; <<< nothing here >>>

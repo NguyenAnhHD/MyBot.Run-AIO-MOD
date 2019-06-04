@@ -173,14 +173,14 @@ Func CreateMainGUI()
 	EndIf
 
 	; Set Main Window icon
-	GUISetIcon($g_sLibIconPath, $eIcnAiOMOD)
+	GUISetIcon($g_sLibModIconPath, $eIcnAIOMod)
 	If $g_iGuiMode = 0 Then
 		UpdateBotTitle()
 		Return
 	EndIf
 
 	; Create tray icon
-	TraySetIcon($g_sLibIconPath, $eIcnAiOMOD)
+	TraySetIcon($g_sLibModIconPath, $eIcnAIOMod)
 	Opt("TrayMenuMode", 3)
 	Opt("TrayOnEventMode", 1)
 	Opt("TrayIconHide", 0)

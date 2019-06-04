@@ -20,6 +20,10 @@ Func chkEnableBBAttack()
 		GUICtrlSetState($g_hChkBBAttIfLootAvail, $GUI_ENABLE)
 		GUICtrlSetState($g_hChkBBWaitForMachine, $GUI_ENABLE)
 		GUICtrlSetState($g_hBtnBBDropOrder, $GUI_ENABLE)
+		GUICtrlSetState($g_hLblBBNextTroopDelay, $GUI_ENABLE)
+		GUICtrlSetState($g_hCmbBBNextTroopDelay, $GUI_ENABLE)
+		GUICtrlSetState($g_hLblBBSameTroopDelay, $GUI_ENABLE)
+		GUICtrlSetState($g_hCmbBBSameTroopDelay, $GUI_ENABLE)
 		chkBBTrophyRange()
 	Else
 		GUICtrlSetState($g_hChkBBTrophyRange, $GUI_DISABLE)
@@ -28,7 +32,23 @@ Func chkEnableBBAttack()
 		GUICtrlSetState($g_hTxtBBTrophyUpperLimit, $GUI_DISABLE)
 		GUICtrlSetState($g_hChkBBWaitForMachine, $GUI_DISABLE)
 		GUICtrlSetState($g_hBtnBBDropOrder, $GUI_DISABLE)
+		GUICtrlSetState($g_hLblBBNextTroopDelay, $GUI_DISABLE)
+		GUICtrlSetState($g_hCmbBBNextTroopDelay, $GUI_DISABLE)
+		GUICtrlSetState($g_hLblBBSameTroopDelay, $GUI_DISABLE)
+		GUICtrlSetState($g_hCmbBBSameTroopDelay, $GUI_DISABLE)
 	EndIf
+EndFunc
+
+Func cmbBBNextTroopDelay()
+	$g_iBBNextTroopDelay  = $g_iBBNextTroopDelayDefault + ((_GUICtrlComboBox_GetCurSel($g_hCmbBBNextTroopDelay) + 1) - 5)*$g_iBBNextTroopDelayIncrement ; +- n*increment
+	SetDebugLog("Next Troop Delay: " & $g_iBBNextTroopDelay)
+	SetDebugLog((_GUICtrlComboBox_GetCurSel($g_hCmbBBNextTroopDelay) + 1) - 5)
+EndFunc
+
+Func cmbBBSameTroopDelay()
+	$g_iBBSameTroopDelay  = $g_iBBSameTroopDelayDefault + ((_GUICtrlComboBox_GetCurSel($g_hCmbBBSameTroopDelay) + 1) - 5)*$g_iBBSameTroopDelayIncrement ; +- n*increment
+	SetDebugLog("Same Troop Delay: " & $g_iBBSameTroopDelay)
+	SetDebugLog((_GUICtrlComboBox_GetCurSel($g_hCmbBBSameTroopDelay) + 1) - 5)
 EndFunc
 
 Func chkBBTrophyRange()

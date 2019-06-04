@@ -15,19 +15,18 @@
 #include-once
 
 Global $g_hChkGlobalChat = 0, $g_hChkGlobalScramble = 0, $g_hChkRusLang = 0, $g_hChkSwitchLang = 0, _
-		$g_hCmblang = 0, $g_hTxtDelayTimeGlobal = 0, $g_hTxtEditGlobalMessages1 = 0, $g_hTxtEditGlobalMessages2 = 0
+	$g_hCmblang = 0, $g_hTxtDelayTimeGlobal = 0, $g_hTxtEditGlobalMessages1 = 0, $g_hTxtEditGlobalMessages2 = 0, $g_hLblEditGlobalMessages1 = 0, $g_hLblEditGlobalMessages2 = 0
 
 Global $g_hChkClanChat = 0, $g_hChkUseResponses = 0, $g_hChkUseGeneric = 0, $g_hChkCleverbot = 0, _
-		$g_hTxtDelayTimeClan = 0, $g_hTxtEditResponses = 0, $g_hTxtEditGeneric = 0, $g_hLblEditResponses = 0, $g_hLblEditGeneric = 0
+	$g_hTxtDelayTimeClan = 0, $g_hTxtEditResponses = 0, $g_hTxtEditGeneric = 0, $g_hLblEditResponses = 0, $g_hLblEditGeneric = 0
 
 Global $g_hChkEnableFriendlyChallenge = 0, $g_hChkOnlyOnRequest = 0, $g_hChkFriendlyChallengeBase[6] = [0, 0, 0, 0, 0, 0], _
-		$g_hTxtDelayTimeFC = 0, $g_hTxtChallengeText = 0, $g_hTxtKeywordForRequest = 0, _
-		$g_hLblChallengeText = 0, $g_hLblKeywordForRequest = 0
+	$g_hTxtDelayTimeFC = 0, $g_hTxtChallengeText = 0, $g_hTxtKeywordForRequest = 0, $g_hLblChallengeText = 0, $g_hLblKeywordForRequest = 0
 
 Global $g_hLblFriendlyChallengeHours[12] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_ahChkFriendlyChallengeHours[24] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_hChkFriendlyChallengeHoursE1 = 0, $g_hChkFriendlyChallengeHoursE2 = 0, _
-		$g_hLblChatActionsOnlyDuringHours = 0, $g_ahLblFriendlyChallengeHoursE = 0, $g_hLblFriendlyChallengeHoursAM = 0, $g_hLblFriendlyChallengeHoursPM = 0
+	$g_hLblChatActionsOnlyDuringHours = 0, $g_ahLblFriendlyChallengeHoursE = 0, $g_hLblFriendlyChallengeHoursAM = 0, $g_hLblFriendlyChallengeHoursPM = 0
 
 Global $g_hChkChatNotify = 0, $g_hChkPbSendNewChats = 0
 
@@ -67,14 +66,14 @@ Func TabChatActionsGUI()
 
 	$y -= 39
 	$x += 120
-		GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages1", "Messages 1"), $x + 2, $y, -1, -1)
-		$g_hTxtEditGlobalMessages1 = GUICtrlCreateEdit(_ArrayToString($g_iTxtGlobalMessages1, @CRLF), $x, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
+		$g_hLblEditGlobalMessages1 = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages1", "Messages 1"), $x + 2, $y, -1, -1)
+		$g_hTxtEditGlobalMessages1 = GUICtrlCreateEdit(_ArrayToString($g_sGlobalMessages1, @CRLF), $x, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages1_Info_01", "Take one item randomly from this list (one per line) and add it to create a message to send to global"))
 			GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
 
-		GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages2", "Messages 2"), $x + 159, $y, -1, -1)
-		$g_hTxtEditGlobalMessages2 = GUICtrlCreateEdit(_ArrayToString($g_iTxtGlobalMessages2, @CRLF), $x + 157, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
-			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages2_Info_01", "Take one item randomly from this list (one per line) and add it to create a message to send to global"))
+		$g_hLblEditGlobalMessages2 = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages2", "Messages 2"), $x + 159, $y, -1, -1)
+		$g_hTxtEditGlobalMessages2 = GUICtrlCreateEdit(_ArrayToString($g_sGlobalMessages2, @CRLF), $x + 157, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
+			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages1_Info_01", -1))
 			GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
@@ -111,12 +110,12 @@ Func TabChatActionsGUI()
 	$y -= 39
 	$x += 120
 		$g_hLblEditResponses = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "EditResponses", "Responses Messages"), $x + 2, $y, -1, -1)
-		$g_hTxtEditResponses = GUICtrlCreateEdit(_ArrayToString($g_iTxtClanResponses, ":", -1, -1, @CRLF), $x, $y + 15, 150, 57, $GUI_SS_DEFAULT_EDIT)
+		$g_hTxtEditResponses = GUICtrlCreateEdit(_ArrayToString($g_sClanResponses, ":", -1, -1, @CRLF), $x, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "EditResponses_Info_01", "Look for the specified keywords in clan messages and respond with the responses. One item per line, in the format keyword:response"))
 			GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
 
 		$g_hLblEditGeneric = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "EditGeneric", "Generic Messages"), $x + 159, $y, -1, -1)
-		$g_hTxtEditGeneric = GUICtrlCreateEdit(_ArrayToString($g_iTxtClanMessages, @CRLF), $x + 157, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
+		$g_hTxtEditGeneric = GUICtrlCreateEdit(_ArrayToString($g_sClanGeneric, @CRLF), $x + 157, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "EditGeneric_Info_01", "Generic messages to send, one per line"))
 			GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -161,11 +160,12 @@ Func TabChatActionsGUI()
 	$y -= 57
 	$x += 120
 		$g_hLblChallengeText = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "LblChallengeText", "Challenge Text"), $x + 2, $y, -1, -1)
-		$g_hTxtChallengeText = GUICtrlCreateEdit("", $x, $y + 15, 150, 57, BitOR($ES_WANTRETURN, $ES_CENTER, $ES_AUTOVSCROLL))
-			GUICtrlSetData(-1, "txtChallengeText")
+		$g_hTxtChallengeText = GUICtrlCreateEdit(_ArrayToString($g_sChallengeText, @CRLF), $x, $y + 15, 150, 57, BitOR($ES_WANTRETURN, $ES_CENTER))
+			GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
 
 		$g_hLblKeywordForRequest = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "LblKeywordForRequest", "Keyword For Request"), $x + 159, $y, -1, -1)
-		$g_hTxtKeywordForRequest = GUICtrlCreateEdit("", $x + 157, $y + 15, 150, 57, BitOR($ES_WANTRETURN, $ES_CENTER, $ES_AUTOVSCROLL))
+		$g_hTxtKeywordForRequest = GUICtrlCreateEdit(_ArrayToString($g_sKeywordForRequest, @CRLF), $x + 157, $y + 15, 150, 57, BitOR($ES_WANTRETURN, $ES_CENTER))
+			GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 	Local $x = 25, $y = 392

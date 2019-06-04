@@ -10,7 +10,7 @@
 #Au3Stripper_Off
 #Au3Stripper_On
 Global $g_sBotVersion = "v7.7.6"
-Global $g_sModVersion = "v2.0.1"
+Global $g_sModVersion = "v2.0.2"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
 Global $g_hFrmBot = 0
@@ -2729,8 +2729,7 @@ Global $g_hLibNTDLL = DllOpen("ntdll.dll")
 Global $g_hLibUser32DLL = DllOpen("user32.dll")
 Global Const $g_sLibIconPath = $g_sLibPath & "\MBRBOT.dll"
 Global $g_iRedrawBotWindowMode = 2
-Global Enum $eIcnArcher = 1, $eIcnDonArcher, $eIcnBalloon, $eIcnDonBalloon, $eIcnBarbarian, $eIcnDonBarbarian, $eBtnTest, $eIcnBuilder, $eIcnCC, $eIcnGUI, $eIcnDark, $eIcnDragon, $eIcnDonDragon, $eIcnDrill, $eIcnElixir, $eIcnCollector, $eIcnFreezeSpell, $eIcnGem, $eIcnGiant, $eIcnDonGiant, $eIcnTrap, $eIcnGoblin, $eIcnDonGoblin, $eIcnGold, $eIcnGolem, $eIcnDonGolem, $eIcnHealer, $eIcnDonHealer, $eIcnHogRider, $eIcnDonHogRider, $eIcnHealSpell, $eIcnInferno, $eIcnJumpSpell, $eIcnLavaHound, $eIcnDonLavaHound, $eIcnLightSpell, $eIcnMinion, $eIcnDonMinion, $eIcnPekka, $eIcnDonPekka, $eIcnTreasury, $eIcnRageSpell, $eIcnTroops, $eIcnHourGlass, $eIcnTH1, $eIcnTH10, $eIcnTrophy, $eIcnValkyrie, $eIcnDonValkyrie, $eIcnWall, $eIcnWallBreaker, $eIcnDonWallBreaker, $eIcnWitch, $eIcnDonWitch, $eIcnWizard, $eIcnDonWizard, $eIcnXbow, $eIcnBarrackBoost, $eIcnMine, $eIcnCamp, $eIcnBarrack, $eIcnSpellFactory, $eIcnDonBlacklist, $eIcnSpellFactoryBoost, $eIcnMortar, $eIcnWizTower, $eIcnPayPal, $eIcnNotify, $eIcnGreenLight, $eIcnLaboratory, $eIcnRedLight, $eIcnBlank, $eIcnYellowLight, $eIcnDonCustom, $eIcnTombstone, $eIcnSilverStar, $eIcnGoldStar, $eIcnDarkBarrack, $eIcnCollectorLocate, $eIcnDrillLocate, $eIcnMineLocate, $eIcnBarrackLocate, $eIcnDarkBarrackLocate, $eIcnDarkSpellFactoryLocate, $eIcnDarkSpellFactory, $eIcnEarthQuakeSpell, $eIcnHasteSpell, $eIcnPoisonSpell, $eIcnBldgTarget, $eIcnBldgX, $eIcnRecycle, $eIcnHeroes, $eIcnBldgElixir, $eIcnBldgGold, $eIcnMagnifier, $eIcnWallElixir, $eIcnWallGold, $eIcnKing, $eIcnQueen, $eIcnDarkSpellBoost, $eIcnQueenBoostLocate, $eIcnKingBoostLocate, $eIcnKingUpgr, $eIcnQueenUpgr, $eIcnWardenUpgr, $eIcnWarden, $eIcnWardenBoostLocate, $eIcnKingBoost, $eIcnQueenBoost, $eIcnWardenBoost, $eEmpty3, $eIcnReload, $eIcnCopy, $eIcnAddcvs, $eIcnEdit, $eIcnTreeSnow, $eIcnSleepingQueen, $eIcnSleepingKing, $eIcnGoldElixir, $eIcnBowler, $eIcnDonBowler, $eIcnCCDonate, $eIcnEagleArt, $eIcnGembox, $eIcnInferno4, $eIcnInfo, $eIcnMain, $eIcnTree, $eIcnProfile, $eIcnCCRequest, $eIcnTelegram, $eIcnTiles, $eIcnXbow3, $eIcnBark, $eIcnDailyProgram, $eIcnLootCart, $eIcnSleepMode, $eIcnTH11, $eIcnTrainMode, $eIcnSleepingWarden, $eIcnCloneSpell, $eIcnSkeletonSpell, $eIcnBabyDragon, $eIcnDonBabyDragon, $eIcnMiner, $eIcnDonMiner, $eIcnNoShield, $eIcnDonCustomB, $eIcnAirdefense, $eIcnDarkBarrackBoost, $eIcnDarkElixirStorage, $eIcnSpellsCost, $eIcnTroopsCost, $eIcnResetButton, $eIcnNewSmartZap, $eIcnTrain, $eIcnAttack, $eIcnDelay, $eIcnReOrder, $eIcn2Arrow, $eIcnArrowLeft, $eIcnArrowRight, $eIcnAndroid, $eHdV04, $eHdV05, $eHdV06, $eHdV07, $eHdV08, $eHdV09, $eHdV10, $eHdV11, $eUnranked, $eBronze, $eSilver, $eGold, $eCrystal, $eMaster, $eChampion, $eTitan, $eLegend, $eWall04, $eWall05, $eWall06, $eWall07, $eWall08, $eWall09, $eWall10, $eWall11, $eIcnPBNotify, $eIcnCCTroops, $eIcnCCSpells, $eIcnSpellsGroup, $eBahasaIND, $eChinese_S, $eChinese_T, $eEnglish, $eFrench, $eGerman, $eItalian, $ePersian, $eRussian, $eSpanish, $eTurkish, $eMissingLangIcon, $eWall12, $ePortuguese, $eIcnDonPoisonSpell, $eIcnDonEarthQuakeSpell, $eIcnDonHasteSpell, $eIcnDonSkeletonSpell, $eVietnamese, $eKorean, $eAzerbaijani, $eArabic, $eIcnBuilderHall, $eIcnClockTower, $eIcnElixirCollectorL5, $eIcnGemMine, $eIcnGoldMineL5, $eIcnElectroDragon, $eIcnTH12, $eHdV12, $eWall13, $eIcnBattleB, $eIcnWallW, $eIcnSiegeCost, $eIcnTrainingPotion, $eIcnBatSpell, $eIcnStoneS, $eIcnIceGolem, $eIcnStarLaboratory, $eIcnRagedBarbarian, $eIcnSneakyArcher, $eIcnBoxerGiant, $eIcnBetaMinion, $eIcnBomber, $eIcnBBBabyDragon, $eIcnCannonCart, $eIcnNightWitch, $eIcnDropShip, $eIcnSuperPekka, $eIcnBBWall01, $eIcnBBWall02, $eIcnBBWall03, $eIcnBBWall04, $eIcnBBWall05, $eIcnBBWall06, $eIcnBBWall07, $eIcnBBWall08, $eIcnKingGrayShield, $eIcnKingBlueShield, $eIcnKingGreenShield, $eIcnKingRedShield, $eIcnQueenGrayShield, $eIcnQueenBlueShield, $eIcnQueenGreenShield, $eIcnQueenRedShield, $eIcnWardenGrayShield, $eIcnWardenBlueShield, $eIcnWardenGreenShield, $eIcnWardenRedShield, $eIcnLabGrayShield, $eIcnLabGreenShield, $eIcnLabRedShield, _
-$eIcnClanHop, $eIcnChat, $eIcnRepeat, $eIcnClan, $eIcnTarget, $eIcnSettings, $eIcnStrongMan, $eIcnDebug, $eIcnSwitchAcc, $eIcnSwitchProfiles, $eIcnFarmingSchedule, $eIcnAiOMOD, $eIcnMiscMod, $eIcnHumanization, $eIcnSuperXP, $eIcnWarPreparation, $eIcnBKingSX, $eIcnAQueenSX, $eIcnGWardenSX, $eIcnPrecise, $eIcnWorkshopBoost, $eIcnPowerPotion, $eIcnResourcePotion
+Global Enum $eIcnArcher = 1, $eIcnDonArcher, $eIcnBalloon, $eIcnDonBalloon, $eIcnBarbarian, $eIcnDonBarbarian, $eBtnTest, $eIcnBuilder, $eIcnCC, $eIcnGUI, $eIcnDark, $eIcnDragon, $eIcnDonDragon, $eIcnDrill, $eIcnElixir, $eIcnCollector, $eIcnFreezeSpell, $eIcnGem, $eIcnGiant, $eIcnDonGiant, $eIcnTrap, $eIcnGoblin, $eIcnDonGoblin, $eIcnGold, $eIcnGolem, $eIcnDonGolem, $eIcnHealer, $eIcnDonHealer, $eIcnHogRider, $eIcnDonHogRider, $eIcnHealSpell, $eIcnInferno, $eIcnJumpSpell, $eIcnLavaHound, $eIcnDonLavaHound, $eIcnLightSpell, $eIcnMinion, $eIcnDonMinion, $eIcnPekka, $eIcnDonPekka, $eIcnTreasury, $eIcnRageSpell, $eIcnTroops, $eIcnHourGlass, $eIcnTH1, $eIcnTH10, $eIcnTrophy, $eIcnValkyrie, $eIcnDonValkyrie, $eIcnWall, $eIcnWallBreaker, $eIcnDonWallBreaker, $eIcnWitch, $eIcnDonWitch, $eIcnWizard, $eIcnDonWizard, $eIcnXbow, $eIcnBarrackBoost, $eIcnMine, $eIcnCamp, $eIcnBarrack, $eIcnSpellFactory, $eIcnDonBlacklist, $eIcnSpellFactoryBoost, $eIcnMortar, $eIcnWizTower, $eIcnPayPal, $eIcnNotify, $eIcnGreenLight, $eIcnLaboratory, $eIcnRedLight, $eIcnBlank, $eIcnYellowLight, $eIcnDonCustom, $eIcnTombstone, $eIcnSilverStar, $eIcnGoldStar, $eIcnDarkBarrack, $eIcnCollectorLocate, $eIcnDrillLocate, $eIcnMineLocate, $eIcnBarrackLocate, $eIcnDarkBarrackLocate, $eIcnDarkSpellFactoryLocate, $eIcnDarkSpellFactory, $eIcnEarthQuakeSpell, $eIcnHasteSpell, $eIcnPoisonSpell, $eIcnBldgTarget, $eIcnBldgX, $eIcnRecycle, $eIcnHeroes, $eIcnBldgElixir, $eIcnBldgGold, $eIcnMagnifier, $eIcnWallElixir, $eIcnWallGold, $eIcnKing, $eIcnQueen, $eIcnDarkSpellBoost, $eIcnQueenBoostLocate, $eIcnKingBoostLocate, $eIcnKingUpgr, $eIcnQueenUpgr, $eIcnWardenUpgr, $eIcnWarden, $eIcnWardenBoostLocate, $eIcnKingBoost, $eIcnQueenBoost, $eIcnWardenBoost, $eEmpty3, $eIcnReload, $eIcnCopy, $eIcnAddcvs, $eIcnEdit, $eIcnTreeSnow, $eIcnSleepingQueen, $eIcnSleepingKing, $eIcnGoldElixir, $eIcnBowler, $eIcnDonBowler, $eIcnCCDonate, $eIcnEagleArt, $eIcnGembox, $eIcnInferno4, $eIcnInfo, $eIcnMain, $eIcnTree, $eIcnProfile, $eIcnCCRequest, $eIcnTelegram, $eIcnTiles, $eIcnXbow3, $eIcnBark, $eIcnDailyProgram, $eIcnLootCart, $eIcnSleepMode, $eIcnTH11, $eIcnTrainMode, $eIcnSleepingWarden, $eIcnCloneSpell, $eIcnSkeletonSpell, $eIcnBabyDragon, $eIcnDonBabyDragon, $eIcnMiner, $eIcnDonMiner, $eIcnNoShield, $eIcnDonCustomB, $eIcnAirdefense, $eIcnDarkBarrackBoost, $eIcnDarkElixirStorage, $eIcnSpellsCost, $eIcnTroopsCost, $eIcnResetButton, $eIcnNewSmartZap, $eIcnTrain, $eIcnAttack, $eIcnDelay, $eIcnReOrder, $eIcn2Arrow, $eIcnArrowLeft, $eIcnArrowRight, $eIcnAndroid, $eHdV04, $eHdV05, $eHdV06, $eHdV07, $eHdV08, $eHdV09, $eHdV10, $eHdV11, $eUnranked, $eBronze, $eSilver, $eGold, $eCrystal, $eMaster, $eChampion, $eTitan, $eLegend, $eWall04, $eWall05, $eWall06, $eWall07, $eWall08, $eWall09, $eWall10, $eWall11, $eIcnPBNotify, $eIcnCCTroops, $eIcnCCSpells, $eIcnSpellsGroup, $eBahasaIND, $eChinese_S, $eChinese_T, $eEnglish, $eFrench, $eGerman, $eItalian, $ePersian, $eRussian, $eSpanish, $eTurkish, $eMissingLangIcon, $eWall12, $ePortuguese, $eIcnDonPoisonSpell, $eIcnDonEarthQuakeSpell, $eIcnDonHasteSpell, $eIcnDonSkeletonSpell, $eVietnamese, $eKorean, $eAzerbaijani, $eArabic, $eIcnBuilderHall, $eIcnClockTower, $eIcnElixirCollectorL5, $eIcnGemMine, $eIcnGoldMineL5, $eIcnElectroDragon, $eIcnTH12, $eHdV12, $eWall13, $eIcnGrayShield, $eIcnBlueShield, $eIcnGreenShield, $eIcnRedShield, $eIcnBattleB, $eIcnWallW, $eIcnSiegeCost, $eIcnBoostPotion, $eIcnBatSpell, $eIcnStoneS, $eIcnIceGolem, $eIcnStarLaboratory, $eIcnRagedBarbarian, $eIcnSneakyArcher, $eIcnBoxerGiant, $eIcnBetaMinion, $eIcnBomber, $eIcnBBBabyDragon, $eIcnCannonCart, $eIcnNightWitch, $eIcnDropShip, $eIcnSuperPekka, $eIcnBBWall01, $eIcnBBWall02, $eIcnBBWall03, $eIcnBBWall04, $eIcnBBWall05, $eIcnBBWall06, $eIcnBBWall07, $eIcnBBWall08, $eIcnWorkshopBoost, $eIcnStrongMan, $eIcnPowerPotion
 Global Enum $eBotNoAction, $eBotStart, $eBotStop, $eBotSearchMode, $eBotClose
 Global $g_iBotAction = $eBotNoAction
 Global $g_bBotMoveRequested = False
@@ -3077,11 +3076,13 @@ Global $g_bChkCollectFreeMagicItems = True
 Global $g_bOnlySCIDAccounts = False
 Global $g_iWhatSCIDAccount2Use = 0
 Global $g_bUseStatistics = False
+Global Const $g_sLibModIconPath = $g_sLibPath & "\AIOMod.dll"
+Global Enum $eIcnModKingGray = 1, $eIcnModKingBlue, $eIcnModKingGreen, $eIcnModKingRed, $eIcnModQueenGray, $eIcnModQueenBlue, $eIcnModQueenGreen, $eIcnModQueenRed, $eIcnModWardenGray, $eIcnModWardenBlue, $eIcnModWardenGreen, $eIcnModWardenRed, $eIcnModLabGray, $eIcnModLabGreen, $eIcnModLabRed, $eIcnModArrowLeft, $eIcnModArrowRight, $eIcnModTrainingP, $eIcnModResourceP, $eIcnModHeroP, $eIcnModClockTowerP, $eIcnModBuilderP, $eIcnModPowerP, $eIcnModChat, $eIcnModRepeat, $eIcnModClan, $eIcnModTarget, $eIcnModSettings, $eIcnModBKingSX, $eIcnModAQueenSX, $eIcnModGWardenSX, $eIcnModDebug, $eIcnModClanHop, $eIcnModPrecise, $eIcnModAccountsS, $eIcnModProfilesS, $eIcnModFarmingS, $eIcnMiscMod, $eIcnSuperXP, $eIcnChatActions, $eIcnHumanization, $eIcnAIOMod
 Global $g_bEnableSuperXP = False, $g_bSkipZoomOutSX = False, $g_bFastSuperXP = False, $g_bSkipDragToEndSX = False, $g_iActivateOptionSX = 1, $g_iGoblinMapOptSX = 2, $g_sGoblinMapOptSX = "The Arena", $g_iMaxXPtoGain = 500, $g_bBKingSX = False, $g_bAQueenSX = False, $g_bGWardenSX = False
-Global $g_bChatGlobal = False, $g_sDelayTimeGlobal = 10, $g_bScrambleGlobal = False, $g_bSwitchLang = False, $g_iCmbLang = 0, $g_bRusLang = False, $g_iTxtGlobalMessages1 = "", $g_iTxtGlobalMessages2 = "", $TxtGlobal1, $TxtGlobal2
-Global $g_bChatClan = False, $g_sDelayTimeClan = 2, $g_bClanUseResponses = False, $g_bClanAlwaysMsg = False, $g_bCleverbot = False, $g_iTxtClanResponses = "", $g_iTxtClanMessages = "", $TxtResponse, $TxtGeneric
+Global $g_bChatGlobal = False, $g_sDelayTimeGlobal = 10, $g_bScrambleGlobal = False, $g_bSwitchLang = False, $g_iCmbLang = 0, $g_bRusLang = False, $g_sGlobalMessages1 = "", $g_sGlobalMessages2 = ""
+Global $g_bChatClan = False, $g_sDelayTimeClan = 2, $g_bClanUseResponses = False, $g_bClanUseGeneric = False, $g_bCleverbot = False, $g_sClanResponses = "", $g_sClanGeneric = ""
 Global $g_bUseNotify = False, $g_bPbSendNew = False
-Global $g_bEnableFriendlyChallenge = False, $g_sDelayTimeFC = 5, $g_bOnlyOnRequest = False, $g_iTxtChallengeText = "", $g_iTxtKeywordForRequest = ""
+Global $g_bEnableFriendlyChallenge = False, $g_sDelayTimeFC = 5, $g_bOnlyOnRequest = False, $g_sChallengeText = "", $g_sKeywordForRequest = ""
 Global $g_bFriendlyChallengeBase[6] = [False, False, False, False, False, False]
 Global $g_abFriendlyChallengeHours[24] = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
 Global $g_aIAVar[5] = [0, 0, 0, 0, 0], $g_sIAVar = '0|0|0|0|0'
@@ -3090,9 +3091,12 @@ Global $g_abChkDD_Deals[$g_iDDCount] = [False, False, False, False, False, False
 Global $g_bDD_DealsSet = False
 Global $g_bChkEnableBBAttack = False, $g_bChkBBTrophyRange = False, $g_bChkBBAttIfLootAvail = False, $g_bChkBBWaitForMachine = False
 Global $g_iTxtBBTrophyLowerLimit = 0, $g_iTxtBBTrophyUpperLimit = 5000
+Global Const $g_iBBNextTroopDelayDefault = 2000, $g_iBBSameTroopDelayDefault = 300
+Global $g_iBBNextTroopDelay = $g_iBBNextTroopDelayDefault, $g_iBBSameTroopDelay = $g_iBBSameTroopDelayDefault
 Global $g_bBBDropOrderSet = False
 Global Const $g_sBBDropOrderDefault = "BoxerGiant|SuperPekka|DropShip|Witch|BabyDrag|WallBreaker|Barbarian|CannonCart|Archer|Minion"
 Global $g_sBBDropOrder = $g_sBBDropOrderDefault
+Global $g_bChkBBIgnoreWalls = False
 Global $g_bRequestCCDefense = False, $g_sRequestCCDefenseText = "", $g_bRequestCCDefenseWhenPB, $g_iRequestDefenseTime, $g_bSaveCCTroopForDefense = True
 Global $g_aiCCTroopsExpectedForDefense[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_aiCCTroopDefenseType[3], $g_aiCCTroopDefenseQty[3]
@@ -4394,17 +4398,17 @@ GUICtrlSetFont(-1, 8.5, $FW_BOLD)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate_Info_01", "Paypal Donate?"))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 If $g_bAndroidAdbScreencap Then chkBackground()
-$g_hPicTwoArrowShield = _GUICtrlCreateIcon($g_sLibIconPath, $eIcn2Arrow, $x + 205, $y + 7, 48, 48)
+$g_hPicTwoArrowShield = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnAIOMod, $x + 205, $y + 7, 48, 48)
 $g_hLblVersion = GUICtrlCreateLabel($g_sModVersion, $x + 200, $y + 62, 60, 17, $SS_CENTER)
 GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Arial", $CLEARTYPE_QUALITY)
 GUICtrlSetColor(-1, 0x804001)
 $g_hLblMod = GUICtrlCreateLabel("AiO++ MOD", $x + 195, $y + 78, 70, 17, $SS_CENTER)
 GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Trebuchet MS", $CLEARTYPE_QUALITY)
 GUICtrlSetColor(-1, 0x804001)
-$g_hPicArrowLeft = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnArrowLeft, $x + 269, $y + 30, 16, 16)
+$g_hPicArrowLeft = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModArrowLeft, $x + 269, $y + 30, 16, 16)
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpVillage_Info_01", "Switch between village info and stats")
 _GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicArrowRight = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnArrowRight, $x + 247 + 198, $y + 30, 16, 16)
+$g_hPicArrowRight = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModArrowRight, $x + 247 + 198, $y + 30, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 Local $x = 295, $y = $y_bottom + 20
 $g_hGrpVillage = GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Bottom", "GrpVillage", "Village"), $x - 0, $y - 20, 160, 96)
@@ -4448,46 +4452,46 @@ $g_hPicResultSkippedHourNow = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnBldgX, $x
 GUICtrlSetState(-1, $GUI_HIDE)
 $x -= 65
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpStatus_Info_01", "Gray - Not Read, Green - Ready to Use, Blue - Healing, Red - Upgrading")
-$g_hPicHeroGray[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingGrayShield, $x, $y + 59, 16, 16)
+$g_hPicHeroGray[0] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingGray, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlue[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingBlueShield, $x, $y + 59, 16, 16)
-_GUICtrlSetTip(-1, $sTxtTip)
-GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreen[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingGreenShield, $x, $y + 59, 16, 16)
+$g_hPicHeroBlue[0] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingBlue, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRed[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingRedShield, $x, $y + 59, 16, 16)
+$g_hPicHeroGreen[0] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingGreen, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGray[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenGrayShield, $x + 24, $y + 59, 16, 16)
-_GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlue[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenBlueShield, $x + 24, $y + 59, 16, 16)
+$g_hPicHeroRed[0] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingRed, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreen[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenGreenShield, $x + 24, $y + 59, 16, 16)
+$g_hPicHeroGray[1] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenGray, $x + 24, $y + 59, 16, 16)
+_GUICtrlSetTip(-1, $sTxtTip)
+$g_hPicHeroBlue[1] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenBlue, $x + 24, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRed[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenRedShield, $x + 24, $y + 59, 16, 16)
+$g_hPicHeroGreen[1] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenGreen, $x + 24, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGray[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenGrayShield, $x + 48, $y + 59, 16, 16)
-_GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlue[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenBlueShield, $x + 48, $y + 59, 16, 16)
+$g_hPicHeroRed[1] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenRed, $x + 24, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreen[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenGreenShield, $x + 48, $y + 59, 16, 16)
+$g_hPicHeroGray[2] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenGray, $x + 48, $y + 59, 16, 16)
+_GUICtrlSetTip(-1, $sTxtTip)
+$g_hPicHeroBlue[2] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenBlue, $x + 48, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRed[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenRedShield, $x + 48, $y + 59, 16, 16)
+$g_hPicHeroGreen[2] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenGreen, $x + 48, $y + 59, 16, 16)
+_GUICtrlSetTip(-1, $sTxtTip)
+GUICtrlSetState(-1, $GUI_HIDE)
+$g_hPicHeroRed[2] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenRed, $x + 48, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpStatus_Info_02", "Green - Lab is Running, Red - Lab Has Stopped")
-$g_hPicLabGray = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabGrayShield, $x + 72, $y + 59, 16, 16)
+$g_hPicLabGray = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModLabGray, $x + 72, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicLabGreen = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabGreenShield, $x + 72, $y + 59, 16, 16)
+$g_hPicLabGreen = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModLabGreen, $x + 72, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicLabRed = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabRedShield, $x + 72, $y + 59, 16, 16)
+$g_hPicLabRed = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModLabRed, $x + 72, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_hLblLabTime = GUICtrlCreateLabel("00:00:00", $x + 93, $y + 60, 50, 14, $SS_LEFT)
@@ -4522,8 +4526,8 @@ $g_iFrmBotPosX = 100
 $g_iFrmBotPosY = 100
 EndIf
 EndIf
-GUISetIcon($g_sLibIconPath, $eIcnAiOMOD)
-TraySetIcon($g_sLibIconPath, $eIcnAiOMOD)
+GUISetIcon($g_sLibModIconPath, $eIcnAIOMod)
+TraySetIcon($g_sLibModIconPath, $eIcnAIOMod)
 Opt("TrayMenuMode", 3)
 Opt("TrayOnEventMode", 1)
 Opt("TrayIconHide", 0)
@@ -4851,7 +4855,6 @@ ReadConfig_MOD_600_29()
 ReadConfig_MOD_600_31()
 ReadConfig_MOD_600_35_1()
 ReadConfig_MOD_600_35_2()
-ReadConfig_MOD_641_1()
 EndFunc
 Func ReadConfig_Debug()
 $g_bDebugSetlog = IniRead($g_sProfileConfigPath, "debug", "debugsetlog", 0) = 1 ? True : False
@@ -5817,15 +5820,13 @@ IniReadS($g_bRusLang, $g_sProfileConfigPath, "ChatActions", "RusLang", $g_bRusLa
 IniReadS($g_bChatClan, $g_sProfileConfigPath, "ChatActions", "EnableChatClan", $g_bChatClan, "Bool")
 IniReadS($g_sDelayTimeClan, $g_sProfileConfigPath, "ChatActions", "DelayTimeClan", $g_sDelayTimeClan, "Int")
 IniReadS($g_bClanUseResponses, $g_sProfileConfigPath, "ChatActions", "UseResponsesClan", $g_bClanUseResponses, "Bool")
-IniReadS($g_bClanAlwaysMsg, $g_sProfileConfigPath, "ChatActions", "UseGenericClan", $g_bClanAlwaysMsg, "Bool")
+IniReadS($g_bClanUseGeneric, $g_sProfileConfigPath, "ChatActions", "UseGenericClan", $g_bClanUseGeneric, "Bool")
 IniReadS($g_bCleverbot, $g_sProfileConfigPath, "ChatActions", "Cleverbot", $g_bCleverbot, "Bool")
 IniReadS($g_bUseNotify, $g_sProfileConfigPath, "ChatActions", "ChatNotify", $g_bUseNotify, "Bool")
 IniReadS($g_bPbSendNew, $g_sProfileConfigPath, "ChatActions", "PbSendNewChats", $g_bPbSendNew, "Bool")
 IniReadS($g_bEnableFriendlyChallenge, $g_sProfileConfigPath, "ChatActions", "EnableFriendlyChallenge", $g_bEnableFriendlyChallenge, "Bool")
 IniReadS($g_sDelayTimeFC, $g_sProfileConfigPath, "ChatActions", "DelayTimeFriendlyChallenge", $g_sDelayTimeFC, "Int")
 IniReadS($g_bOnlyOnRequest, $g_sProfileConfigPath, "ChatActions", "EnableOnlyOnRequest", $g_bOnlyOnRequest, "Bool")
-$g_iTxtChallengeText = StringReplace(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeText", "I am challenging help you|HaHaHaHa"), "|", @CRLF)
-$g_iTxtKeywordForRequest = StringReplace(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeKeyword", "friendly|challenge"), "|", @CRLF)
 $g_bFriendlyChallengeBase = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeBaseForShare", "0|0|0|0|0|0"), "|", $STR_NOCOUNT)
 For $i = 0 To 5
 $g_bFriendlyChallengeBase[$i] =($g_bFriendlyChallengeBase[$i] = "1")
@@ -5848,8 +5849,11 @@ IniReadS($g_iTxtBBTrophyLowerLimit, $g_sProfileConfigPath, "BBAttack", "TxtBBTro
 IniReadS($g_iTxtBBTrophyUpperLimit, $g_sProfileConfigPath, "BBAttack", "TxtBBTrophyUpperLimit", $g_iTxtBBTrophyUpperLimit, "int")
 IniReadS($g_bChkBBAttIfLootAvail, $g_sProfileConfigPath, "BBAttack", "ChkBBAttIfLootAvail", $g_bChkBBAttIfLootAvail, "Bool")
 IniReadS($g_bChkBBWaitForMachine, $g_sProfileConfigPath, "BBAttack", "ChkBBWaitForMachine", $g_bChkBBWaitForMachine, "Bool")
+IniReadS($g_iBBNextTroopDelay, $g_sProfileConfigPath, "BBAttack", "iBBNextTroopDelay", $g_iBBNextTroopDelayDefault, "int")
+IniReadS($g_iBBSameTroopDelay, $g_sProfileConfigPath, "BBAttack", "iBBSameTroopDelay", $g_iBBSameTroopDelayDefault, "int")
 IniReadS($g_bBBDropOrderSet, $g_sProfileConfigPath, "BBAttack", "bBBDropOrderSet", $g_bBBDropOrderSet, "Bool")
 $g_sBBDropOrder = IniRead($g_sProfileConfigPath, "BBAttack", "sBBDropOrder", $g_sBBDropOrderDefault)
+IniReadS($g_bChkBBIgnoreWalls, $g_sProfileConfigPath, "other", "ChkBBIgnoreWalls", $g_bChkBBIgnoreWalls, "Bool")
 EndFunc
 Func ReadConfig_MOD_600_11()
 $g_bRequestCCDefense =(IniRead($g_sProfileConfigPath, "donate", "RequestDefenseEnable", "0") = "1")
@@ -5872,6 +5876,8 @@ Func ReadConfig_MOD_600_12()
 IniReadS($g_bChkClanHop, $g_sProfileConfigPath, "donate", "chkClanHop", $g_bChkClanHop, "Bool")
 EndFunc
 Func ReadConfig_MOD_600_28()
+IniReadS($g_bTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime, "Bool")
+IniReadS($g_iTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime, "int")
 IniReadS($g_bIsSearchTimeout, $g_sProfileConfigPath, "other", "ChkSearchTimeout", $g_bIsSearchTimeout, "Bool")
 IniReadS($g_iSearchTimeout, $g_sProfileConfigPath, "other", "SearchTimeout", $g_iSearchTimeout, "int")
 EndFunc
@@ -5917,10 +5923,6 @@ IniReadS($g_aiCmbBotTypeMin[$i], $g_sProfileConfigPath, "SwitchProfile", "Target
 IniReadS($g_aiConditionMax[$i], $g_sProfileConfigPath, "SwitchProfile", "ConditionMax" & $i, $g_aiConditionMax[$i], "Int")
 IniReadS($g_aiConditionMin[$i], $g_sProfileConfigPath, "SwitchProfile", "ConditionMin" & $i, $g_aiConditionMin[$i], "Int")
 Next
-EndFunc
-Func ReadConfig_MOD_641_1()
-IniReadS($g_bTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime, "Bool")
-IniReadS($g_iTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime, "int")
 EndFunc
 Global $ResetStats = 0
 Func UpdateStats()
@@ -6160,7 +6162,7 @@ GUICtrlSetData($g_hLblBotTitle, $g_sBotTitle)
 EndIf
 DllCall("kernel32.dll", "bool", "SetConsoleTitle", "str", "Console " & $g_sBotTitle)
 TraySetToolTip($g_sBotTitle)
-GUISetIcon($g_sLibIconPath, $eIcnAiOMOD)
+GUISetIcon($g_sLibModIconPath, $eIcnAIOMod)
 SetDebugLog("Bot title updated to: " & $g_sBotTitle)
 EndFunc
 Func _SleepMilli($iMilliSec)

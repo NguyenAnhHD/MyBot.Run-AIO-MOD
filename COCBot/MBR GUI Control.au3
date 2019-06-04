@@ -2114,7 +2114,7 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 	Switch $nCtrl
 		Case $g_hTabMain
 			; the icons for main tab
-			Local $aIconIndex = [$eIcnHourGlass, $eIcnTH12, $eIcnAttack, $eIcnAiOMOD, $eIcnGUI, $eIcnInfo]
+			Local $aIconIndex = [$eIcnHourGlass, $eIcnTH12, $eIcnAttack, $eIcnAIOMod, $eIcnGUI, $eIcnInfo]
 
 		Case $g_hGUI_VILLAGE_TAB
 			; the icons for village tab
@@ -2167,16 +2167,16 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 		Case $g_hGUI_MOD_TAB
 			; the icons for Mods tab
 			; $eIcnMiscMod, $eIcnWarPreparation
-			Local $aIconIndex = [$eIcnSuperXP, $eIcnTroops]
+			Local $aIconIndex = [$eIcnSuperXP, $eIcnChatActions]
 
 		Case $g_hGUI_BOT_TAB
 			; the icons for Bot tab
-			Local $aIconIndex = [$eIcnOptions, $eIcnAndroid, $eIcnDebug, $eIcnProfile, $eIcnGold]
+			Local $aIconIndex = [$eIcnOptions, $eIcnAndroid, $eIcnModDebug, $eIcnProfile, $eIcnGold]
 			; The Android Robot is a Google Trademark and follows Creative Common Attribution 3.0
 
 		Case $g_hGUI_SWITCH_OPTIONS_TAB
 			; the icons for Switch Options tab
-			Local $aIconIndex = [$eIcnSwitchAcc, $eIcnSwitchProfiles, $eIcnFarmingSchedule]
+			Local $aIconIndex = [$eIcnModAccountsS, $eIcnModProfilesS, $eIcnModFarmingS]
 
 		Case $g_hGUI_STRATEGIES_TAB
 			; the icons for strategies tab
@@ -2193,7 +2193,25 @@ Func Bind_ImageList($nCtrl, ByRef $hImageList)
 	If IsArray($aIconIndex) Then ; if array is filled then $nCtrl was a valid control
 		For $i = 0 To UBound($aIconIndex) - 1
 			DllStructSetData($tTcItem, 6, $i)
-			AddImageToTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibIconPath, $aIconIndex[$i] - 1)
+			If $nCtrl = $g_hGUI_MOD_TAB Then
+				AddImageToModTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibModIconPath, $aIconIndex[$i] - 1)
+			ElseIf $nCtrl = $g_hGUI_SWITCH_OPTIONS_TAB Then
+				AddImageToModTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibModIconPath, $aIconIndex[$i] - 1)
+			ElseIf $nCtrl = $g_hTabMain Then
+				If $i <> 3 Then
+					AddImageToTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibIconPath, $aIconIndex[$i] - 1)
+				Else
+					AddImageToModTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibModIconPath, $aIconIndex[$i] - 1)
+				EndIf
+			ElseIf $nCtrl = $g_hGUI_BOT_TAB Then
+				If $i <> 2 Then
+					AddImageToTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibIconPath, $aIconIndex[$i] - 1)
+				Else
+					AddImageToModTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibModIconPath, $aIconIndex[$i] - 1)
+				EndIf
+			Else
+				AddImageToTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibIconPath, $aIconIndex[$i] - 1)
+			EndIf
 		Next
 		$aIconIndex = 0 ; empty array
 	EndIf
@@ -2213,7 +2231,18 @@ Func AddImageToTab($nCtrl, ByRef $hImageList, $nTabIndex, $nItem, $g_sLibIconPat
 	EndIf
 EndFunc   ;==>AddImageToTab
 
-
+Func AddImageToModTab($nCtrl, ByRef $hImageList, $nTabIndex, $nItem, $g_sLibModIconPath, $nIconID)
+	Local $hIcon = DllStructCreate("int")
+	Local $Result = DllCall("shell32.dll", "int", "ExtractIconEx", "str", $g_sLibModIconPath, "int", $nIconID, "hwnd", 0, "ptr", DllStructGetPtr($hIcon), "int", 1)
+	If UBound($Result) > 0 Then
+		$Result = $Result[0]
+		If $Result > 0 Then
+			DllCall("comctl32.dll", "int", "ImageList_AddIcon", "hwnd", $hImageList, "hwnd", DllStructGetData($hIcon, 1))
+			DllCall("user32.dll", "int", "SendMessage", "hwnd", ControlGetHandle($g_hFrmBot, "", $nCtrl), "int", $TCM_SETITEM, "int", $nTabIndex, "ptr", DllStructGetPtr($nItem))
+			DllCall("user32.dll", "int", "DestroyIcon", "hwnd", DllStructGetData($hIcon, 1))
+		EndIf
+	EndIf
+EndFunc   ;==>AddImageToTab
 
 Func _GUICtrlListView_SetItemHeightByFont($hListView, $iHeight)
 	; Get font of ListView control

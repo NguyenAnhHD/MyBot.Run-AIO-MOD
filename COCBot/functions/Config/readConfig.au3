@@ -273,7 +273,7 @@ Func ReadRegularConfig()
 	ReadConfig_MOD_600_11()
 	; <><><> ClanHop <><><>
 	ReadConfig_MOD_600_12()
-	; <><><> Restart Search Legend league <><><>
+	; <><><> Max logout time + Restart Search Legend league <><><>
 	ReadConfig_MOD_600_28()
 	; <><><> Classic Four Finger + CSV Deploy Speed <><><>
 	ReadConfig_MOD_600_29()
@@ -283,8 +283,6 @@ Func ReadRegularConfig()
 	ReadConfig_MOD_600_35_1()
 	; <><><><> Switch Profiles <><><><>
 	ReadConfig_MOD_600_35_2()
-	; <><><> Max logout time <><><>
-	ReadConfig_MOD_641_1()
 
 	; <><><><> Attack Plan / Strategies <><><><>
 	; <<< nothing here >>>

@@ -13,6 +13,14 @@
 ; Example .......: No
 ; ===============================================================================================================================
 
+Global Const $g_sLibModIconPath = $g_sLibPath & "\AIOMod.dll" ; Mod icon library - Team AiO MOD++
+; enumerated Icons 1-based index to IconLibMod
+Global Enum $eIcnModKingGray = 1, $eIcnModKingBlue, $eIcnModKingGreen, $eIcnModKingRed, $eIcnModQueenGray, $eIcnModQueenBlue, $eIcnModQueenGreen, $eIcnModQueenRed, _
+		$eIcnModWardenGray, $eIcnModWardenBlue, $eIcnModWardenGreen, $eIcnModWardenRed, $eIcnModLabGray, $eIcnModLabGreen, $eIcnModLabRed, _
+		$eIcnModArrowLeft, $eIcnModArrowRight, $eIcnModTrainingP, $eIcnModResourceP, $eIcnModHeroP, $eIcnModClockTowerP, $eIcnModBuilderP, $eIcnModPowerP, _
+		$eIcnModChat, $eIcnModRepeat, $eIcnModClan, $eIcnModTarget, $eIcnModSettings, $eIcnModBKingSX, $eIcnModAQueenSX, $eIcnModGWardenSX, $eIcnModDebug, $eIcnModClanHop, $eIcnModPrecise, _
+		$eIcnModAccountsS, $eIcnModProfilesS, $eIcnModFarmingS, $eIcnMiscMod, $eIcnSuperXP, $eIcnChatActions, $eIcnHumanization, $eIcnAIOMod
+
 ; SuperXP / GoblinXP - Team AiO MOD++
 Global $g_bEnableSuperXP = False, $g_bSkipZoomOutSX = False, $g_bFastSuperXP = False, $g_bSkipDragToEndSX = False, _
 	$g_iActivateOptionSX = 1, $g_iGoblinMapOptSX = 2, $g_sGoblinMapOptSX = "The Arena", $g_iMaxXPtoGain = 500, _
@@ -31,18 +39,19 @@ Global $bCanGainXP = False
 
 ; ChatActions - Team AiO MOD++
 Global $g_bChatGlobal = False, $g_sDelayTimeGlobal = 10, $g_bScrambleGlobal = False, $g_bSwitchLang = False, $g_iCmbLang = 0, $g_bRusLang = False, _
-	$g_iTxtGlobalMessages1 = "", $g_iTxtGlobalMessages2 = "", $TxtGlobal1, $TxtGlobal2
-Global $g_bChatClan = False, $g_sDelayTimeClan = 2, $g_bClanUseResponses = False, $g_bClanAlwaysMsg = False, $g_bCleverbot = False, _
-	$g_iTxtClanResponses = "", $g_iTxtClanMessages = "", $TxtResponse, $TxtGeneric
+	$g_sGlobalMessages1 = "", $g_sGlobalMessages2 = ""
+Global $g_bChatClan = False, $g_sDelayTimeClan = 2, $g_bClanUseResponses = False, $g_bClanUseGeneric = False, $g_bCleverbot = False, _
+	$g_sClanResponses = "", $g_sClanGeneric = ""
 Global $g_bUseNotify = False, $g_bPbSendNew = False
 Global $g_bEnableFriendlyChallenge = False, $g_sDelayTimeFC = 5, $g_bOnlyOnRequest = False, _
-	$g_iTxtChallengeText = "", $g_iTxtKeywordForRequest = ""
+	$g_sChallengeText = "", $g_sKeywordForRequest = ""
 Global $g_bFriendlyChallengeBase[6] = [False, False, False, False, False, False]
 Global $g_abFriendlyChallengeHours[24] = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
+Global $g_sGlobal1, $g_sGlobal2, $g_sResponse, $g_sGeneric, $g_sWriteFriendlyChallengeText, $g_sWriteFriendlyChallengeKeyword
 Global $ChatbotStartTime, $ChatbotQueuedChats[0], $ChatbotReadQueued = False, $ChatbotReadInterval = 0, $ChatbotIsOnInterval = False, _
 	$g_sMessage = "", $g_sGlobalChatLastMsgSentTime = "", $g_sClanChatLastMsgSentTime = "", $g_sFCLastMsgSentTime = ""
 Global $g_aIAVar[5] = [0, 0, 0, 0, 0], $g_sIAVar = '0|0|0|0|0'
-Global $g_sGetOcrMod = ""
+Global $g_sGetOcrMod = "", $g_aImageSearchXML = -1
 
 ; Daily Discounts - Team AiO MOD++
 #Region
@@ -62,8 +71,9 @@ Global $g_iTxtBBTrophyLowerLimit = 0, $g_iTxtBBTrophyUpperLimit = 5000
 Global $g_bBBMachineReady = False
 Global $g_aBBMachine = [0,0] ; x,y coordinates of where to click for Battle machine on attack bar
 Global $g_iBBMachAbilityTime = 14000 ; in milliseconds, so 14 seconds between abilities
-Global $g_iBBBattleStartedTimeout = 300000 ; time before we cancel the BB search
-Global $g_iBBNextTroopDelay = 2000, $g_iBBSameTroopDelay = 300 ; delay time between different and same troops
+Global Const $g_iBBNextTroopDelayDefault = 2000, $g_iBBSameTroopDelayDefault = 300 ; default delay times
+Global $g_iBBNextTroopDelay = $g_iBBNextTroopDelayDefault, $g_iBBSameTroopDelay = $g_iBBSameTroopDelayDefault; delay time between different and same troops
+Global $g_iBBNextTroopDelayIncrement = 400, $g_iBBSameTroopDelayIncrement = 60 ; used for math to calculate delays based on selection
 Global $g_apTL[10][2] = [ [22, 374], [59, 348], [102, 319], [137, 288], [176, 259], [209, 232], [239, 212], [270, 188], [307, 164], [347, 139] ]
 Global $g_apTR[10][2] = [ [831, 368], [791, 334], [747, 306], [714, 277], [684, 252], [647, 227], [615, 203], [577, 177], [539, 149], [506, 123] ]
 ; BB Drop Order
@@ -71,6 +81,8 @@ Global $g_bBBDropOrderSet = False
 Global Const $g_iBBTroopCount = 10
 Global Const $g_sBBDropOrderDefault = "BoxerGiant|SuperPekka|DropShip|Witch|BabyDrag|WallBreaker|Barbarian|CannonCart|Archer|Minion"
 Global $g_sBBDropOrder = $g_sBBDropOrderDefault
+; BB Suggested Upgrades
+Global $g_bChkBBIgnoreWalls = False
 
 ; Request CC for defense - Team AiO MOD++
 Global $g_bRequestCCDefense = False, $g_sRequestCCDefenseText = "", $g_bRequestCCDefenseWhenPB, $g_iRequestDefenseTime, $g_bSaveCCTroopForDefense = True
@@ -121,3 +133,6 @@ Global $g_asNextBuilderReadyTime[8] = ["", "", "", "", "", "", "", ""]
 
 ; Max logout time - Team AiO MOD++
 Global $g_bTrainLogoutMaxTime = False, $g_iTrainLogoutMaxTime = 4
+
+; Multipixel solution
+Global $g_iMultiPixelOffSet[2]

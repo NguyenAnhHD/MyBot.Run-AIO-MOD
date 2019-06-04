@@ -40,7 +40,7 @@ Func ReadConfig_MOD_ChatActions()
 	IniReadS($g_bChatClan, $g_sProfileConfigPath, "ChatActions", "EnableChatClan", $g_bChatClan, "Bool")
 	IniReadS($g_sDelayTimeClan, $g_sProfileConfigPath, "ChatActions", "DelayTimeClan", $g_sDelayTimeClan, "Int")
 	IniReadS($g_bClanUseResponses, $g_sProfileConfigPath, "ChatActions", "UseResponsesClan", $g_bClanUseResponses, "Bool")
-	IniReadS($g_bClanAlwaysMsg, $g_sProfileConfigPath, "ChatActions", "UseGenericClan", $g_bClanAlwaysMsg, "Bool")
+	IniReadS($g_bClanUseGeneric, $g_sProfileConfigPath, "ChatActions", "UseGenericClan", $g_bClanUseGeneric, "Bool")
 	IniReadS($g_bCleverbot, $g_sProfileConfigPath, "ChatActions", "Cleverbot", $g_bCleverbot, "Bool")
 	IniReadS($g_bUseNotify, $g_sProfileConfigPath, "ChatActions", "ChatNotify", $g_bUseNotify, "Bool")
 	IniReadS($g_bPbSendNew, $g_sProfileConfigPath, "ChatActions", "PbSendNewChats", $g_bPbSendNew, "Bool")
@@ -48,8 +48,6 @@ Func ReadConfig_MOD_ChatActions()
 	IniReadS($g_bEnableFriendlyChallenge, $g_sProfileConfigPath, "ChatActions", "EnableFriendlyChallenge", $g_bEnableFriendlyChallenge, "Bool")
 	IniReadS($g_sDelayTimeFC, $g_sProfileConfigPath, "ChatActions", "DelayTimeFriendlyChallenge", $g_sDelayTimeFC, "Int")
 	IniReadS($g_bOnlyOnRequest, $g_sProfileConfigPath, "ChatActions", "EnableOnlyOnRequest", $g_bOnlyOnRequest, "Bool")
-	$g_iTxtChallengeText = StringReplace(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeText", "I am challenging help you|HaHaHaHa"), "|", @CRLF)
-	$g_iTxtKeywordForRequest = StringReplace(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeKeyword", "friendly|challenge"), "|", @CRLF)
 	$g_bFriendlyChallengeBase = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeBaseForShare", "0|0|0|0|0|0"), "|", $STR_NOCOUNT)
 	For $i = 0 To 5
 		$g_bFriendlyChallengeBase[$i] = ($g_bFriendlyChallengeBase[$i] = "1")
@@ -76,9 +74,14 @@ Func ReadConfig_MOD_600_6()
 	IniReadS($g_iTxtBBTrophyUpperLimit, $g_sProfileConfigPath, "BBAttack", "TxtBBTrophyUpperLimit", $g_iTxtBBTrophyUpperLimit, "int")
 	IniReadS($g_bChkBBAttIfLootAvail, $g_sProfileConfigPath, "BBAttack", "ChkBBAttIfLootAvail", $g_bChkBBAttIfLootAvail, "Bool")
 	IniReadS($g_bChkBBWaitForMachine, $g_sProfileConfigPath, "BBAttack", "ChkBBWaitForMachine", $g_bChkBBWaitForMachine, "Bool")
+	IniReadS($g_iBBNextTroopDelay, $g_sProfileConfigPath, "BBAttack", "iBBNextTroopDelay", $g_iBBNextTroopDelayDefault, "int")
+	IniReadS($g_iBBSameTroopDelay, $g_sProfileConfigPath, "BBAttack", "iBBSameTroopDelay", $g_iBBSameTroopDelayDefault, "int")
 
 	IniReadS($g_bBBDropOrderSet, $g_sProfileConfigPath, "BBAttack", "bBBDropOrderSet", $g_bBBDropOrderSet, "Bool")
 	$g_sBBDropOrder = IniRead($g_sProfileConfigPath, "BBAttack", "sBBDropOrder", $g_sBBDropOrderDefault)
+
+	; BB Suggested Upgrades
+	IniReadS($g_bChkBBIgnoreWalls, $g_sProfileConfigPath, "other", "ChkBBIgnoreWalls", $g_bChkBBIgnoreWalls, "Bool")
 EndFunc   ;==>ReadConfig_MOD_600_6
 
 Func ReadConfig_MOD_600_11()
@@ -107,7 +110,10 @@ Func ReadConfig_MOD_600_12()
 EndFunc   ;==>ReadConfig_MOD_600_12
 
 Func ReadConfig_MOD_600_28()
-	; <><><> Restart Search Legend league <><><>
+	; <><><> Max logout time + Restart Search Legend league <><><>
+	IniReadS($g_bTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime, "Bool")
+	IniReadS($g_iTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime, "int")
+
 	IniReadS($g_bIsSearchTimeout, $g_sProfileConfigPath, "other", "ChkSearchTimeout", $g_bIsSearchTimeout, "Bool")
 	IniReadS($g_iSearchTimeout, $g_sProfileConfigPath, "other", "SearchTimeout", $g_iSearchTimeout, "int")
 EndFunc   ;==>ReadConfig_MOD_600_28
@@ -167,9 +173,3 @@ Func ReadConfig_MOD_600_35_2()
 		IniReadS($g_aiConditionMin[$i], $g_sProfileConfigPath, "SwitchProfile", "ConditionMin" & $i, $g_aiConditionMin[$i], "Int")
 	Next
 EndFunc   ;==>ReadConfig_MOD_600_35_2
-
-Func ReadConfig_MOD_641_1()
-	; <><><> Max logout time <><><>
-	IniReadS($g_bTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime, "Bool")
-	IniReadS($g_iTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime, "int")
-EndFunc   ;==>ReadConfig_MOD_641_1

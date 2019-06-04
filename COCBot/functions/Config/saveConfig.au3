@@ -258,7 +258,7 @@ Func SaveRegularConfig()
 	SaveConfig_MOD_600_11()
 	; <><><> ClanHop <><><>
 	SaveConfig_MOD_600_12()
-	; <><><> Restart Search Legend league <><><>
+	; <><><> Max logout time + Restart Search Legend league <><><>
 	SaveConfig_MOD_600_28()
 	; <><><> Classic Four Finger + CSV Deploy Speed <><><>
 	SaveConfig_MOD_600_29()
@@ -268,8 +268,6 @@ Func SaveRegularConfig()
 	SaveConfig_MOD_600_35_1()
 	; <><><><> Switch Profiles <><><><>
 	SaveConfig_MOD_600_35_2()
-	; <><><> Max logout time <><><>
-	SaveConfig_MOD_641_1()
 
 
 	; <><><><> Attack Plan / Strategies <><><><>

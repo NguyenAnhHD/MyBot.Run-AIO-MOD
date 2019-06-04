@@ -37,6 +37,10 @@ Global $g_sImgDirBBTroops = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\Builde
 
 #Region DailyDiscounts
 Global $g_sImgDirDailyDiscounts = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\DailyDiscounts"
-Global $g_sImgDDWallRingx5 = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\DailyDiscounts\WallRingAmount\x5_0_90.bmp"
-Global $g_sImgDDWallRingx10 = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\DailyDiscounts\WallRingAmount\x10_0_90.bmp"
+Global $g_sImgDDWallRingx5 = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\DailyDiscounts\WallRingAmount\x5_92.png"
+Global $g_sImgDDWallRingx10 = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\DailyDiscounts\WallRingAmount\x10_92.png"
+#EndRegion
+
+#Region ChatActions
+Global $g_sImgChatObstacles = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\ChatActions\FriendlyChallenge"
 #EndRegion

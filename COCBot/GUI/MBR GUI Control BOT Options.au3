@@ -1011,6 +1011,27 @@ Func btnTestGetLocationBuildingImage()
 EndFunc   ;==>btnTestGetLocationBuildingImage
 
 Func btnTestFindButton()
+	#AIO
+	Local $currentRunState = $g_bRunState
+	$g_bRunState = True
+
+	Local $result
+	Local $sButton = GUICtrlRead($g_hTxtTestFindButton)
+	SetLog("Execute : " & $sButton, $COLOR_INFO)
+
+	Local $saExecResult = Execute($sButton)
+
+	If $saExecResult = "" And @error <> 0 Then
+		Setlog("Result : Error", $COLOR_ERROR)
+	ElseIf IsArray($saExecResult) Then
+		Setlog("Result (IsArray) : " & _ArrayToString($saExecResult, ","), $COLOR_INFO)
+		_ArrayDisplay($saExecResult, "Debug Func. Result")
+	Else
+		Setlog("Result : " & $saExecResult, $COLOR_INFO)
+	EndIf
+
+	$g_bRunState = $currentRunState
+#cs
 	BeginImageTest()
 	Local $result
 	Local $sButton = GUICtrlRead($g_hTxtTestFindButton)
@@ -1021,6 +1042,7 @@ Func btnTestFindButton()
 	SetLog("Result findButton(""" & $sButton & """) = " & $result, $COLOR_INFO)
 	SetLog("Testing findButton(""" & $sButton & """) DONE", $COLOR_INFO)
 	EndImageTest()
+#ce
 EndFunc   ;==>btnTestFindButton
 
 Func btnTestCleanYard()

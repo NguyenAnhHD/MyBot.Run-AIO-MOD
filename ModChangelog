@@ -4,9 +4,24 @@
             |_| |___/_/ \_\_|  |_|   /_/ \_\_|\___/
 
                     Based on MyBot.run v7.7.x
+	**V2.0.2**
+	* Added:
+		- Add empty siege support﻿
+		- Add BB Attack Sliders
+		- Add option to ignore walls on BB
+
+	* Fixed:
+		- Fix Train Logout Maxtime not save config
+		- Fix get AttackBar when 11+ slots for SuperXP (no need to drag AttackBar)
+
+	* Improved:
+		- Improve pixel color on the attack button for Super XP
+		- Improve allows SuperXP to run when Halt Attack enabled
+		- Improve language switch for Chat Actions
+		- Improve pixel color on the buttons for Chat Actions
 
 	**V2.0.1**
-	* Update:
+	* Updated:
 		- Update Official v7.7.6
 		- Vietnamese language
 
@@ -17,12 +32,12 @@
 		- Add Builder Base Attack feature
 		- Add Chat Actions feature
 
-	* Improve:
+	* Improved:
 		- Improve Auto Hide & Dock & Minimize the Emultor/Bot
 		- Improve Clan Hop
 
 	**V2.0**
-	* Update:
+	* Updated:
 		- Update Official v7.7.3
 
 	* Added:
@@ -55,6 +70,6 @@
 		- April Update Fixed Builder time
 		- April Update Added Auto upgrade wall exclude
 
-	* Improve:
+	* Improved:
 		- Improve Switch Accounts for Supercell ID option
 		- And improve many other features....

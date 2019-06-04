@@ -23,10 +23,9 @@
 #include "functions\Mod's\SuperXP\SuperXP.au3"
 
 ; ChatActions - Team AiO MOD++
-#include "functions\Mod's\ChatActions\Chatbot.au3"
 #include "functions\Mod's\ChatActions\MultyLang.au3"
 #include "functions\Mod's\ChatActions\IAChat.au3"
-#include "functions\Mod's\ChatActions\FriendlyChallenge.au3"
+#include "functions\Mod's\ChatActions\ChatActions.au3"
 
 ; Daily Discounts - Team AiO MOD++
 #include "functions\Mod's\DailyDiscounts.au3"

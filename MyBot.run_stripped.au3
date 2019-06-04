@@ -10,7 +10,7 @@
 #Au3Stripper_Off
 #Au3Stripper_On
 Global $g_sBotVersion = "v7.7.6"
-Global $g_sModVersion = "v2.0.1"
+Global $g_sModVersion = "v2.0.2"
 Global $g_sModSupportUrl = "https://github.com/NguyenAnhHD/MyBot.Run-AIO-MOD/releases"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
@@ -155,6 +155,7 @@ Global Const $FLTAR_RELPATH = 1
 Global Const $MB_OK = 0
 Global Const $MB_OKCANCEL = 1
 Global Const $MB_YESNO = 4
+Global Const $MB_ICONERROR = 16
 Global Const $MB_ICONWARNING = 48
 Global Const $MB_ICONINFORMATION = 64
 Global Const $MB_APPLMODAL = 0
@@ -3288,6 +3289,404 @@ Return SetError(2, 0, False)
 EndSwitch
 Return UBound($aArray, $UBOUND_ROWS)
 EndFunc
+Func _ArrayDisplay(Const ByRef $aArray, $sTitle = Default, $sArrayRange = Default, $iFlags = Default, $vUser_Separator = Default, $sHeader = Default, $iMax_ColWidth = Default, $iAlt_Color = Default, $hUser_Function = Default)
+If $sTitle = Default Then $sTitle = "ArrayDisplay"
+If $sArrayRange = Default Then $sArrayRange = ""
+If $iFlags = Default Then $iFlags = 0
+If $vUser_Separator = Default Then $vUser_Separator = ""
+If $sHeader = Default Then $sHeader = ""
+If $iMax_ColWidth = Default Then $iMax_ColWidth = 350
+If $iAlt_Color = Default Then $iAlt_Color = 0
+If $hUser_Function = Default Then $hUser_Function = 0
+Local $iTranspose = BitAND($iFlags, 1)
+Local $iColAlign = BitAND($iFlags, 6)
+Local $iVerbose = BitAND($iFlags, 8)
+Local $iButtonMargin =((BitAND($iFlags, 32)) ?(0) :((BitAND($iFlags, 16)) ?(20) :(40)))
+Local $iNoRow = BitAND($iFlags, 64)
+Local $sMsg = "", $iRet = 1
+If IsArray($aArray) Then
+Local $iDimension = UBound($aArray, $UBOUND_DIMENSIONS), $iRowCount = UBound($aArray, $UBOUND_ROWS), $iColCount = UBound($aArray, $UBOUND_COLUMNS)
+If $iDimension > 2 Then
+$sMsg = "Larger than 2D array passed to function"
+$iRet = 2
+EndIf
+Else
+$sMsg = "No array variable passed to function"
+EndIf
+If $sMsg Then
+If $iVerbose And MsgBox($MB_SYSTEMMODAL + $MB_ICONERROR + $MB_YESNO, "ArrayDisplay Error: " & $sTitle, $sMsg & @CRLF & @CRLF & "Exit the script?") = $IDYES Then
+Exit
+Else
+Return SetError($iRet, 0, "")
+EndIf
+EndIf
+Local $iCW_ColWidth = Number($vUser_Separator)
+Local $sAD_Separator = ChrW(0xFAB1)
+Local $sCurr_Separator = Opt("GUIDataSeparatorChar", $sAD_Separator)
+If $vUser_Separator = "" Then $vUser_Separator = $sCurr_Separator
+Local $vTmp, $iRowLimit = 65525, $iColLimit = 250
+Local $iDataRow = $iRowCount
+Local $iDataCol = $iColCount
+Local $iItem_Start = 0, $iItem_End = $iRowCount - 1, $iSubItem_Start = 0, $iSubItem_End =(($iDimension = 2) ?($iColCount - 1) :(0))
+Local $bRange_Flag = False, $avRangeSplit
+If $sArrayRange Then
+Local $aArray_Range = StringRegExp($sArrayRange & "||", "(?U)(.*)\|", 3)
+If $aArray_Range[0] Then
+$avRangeSplit = StringSplit($aArray_Range[0], ":")
+If @error Then
+$iItem_End = Number($avRangeSplit[1])
+Else
+$iItem_Start = Number($avRangeSplit[1])
+$iItem_End = Number($avRangeSplit[2])
+EndIf
+EndIf
+If $iItem_Start > $iItem_End Then
+$vTmp = $iItem_Start
+$iItem_Start = $iItem_End
+$iItem_End = $vTmp
+EndIf
+If $iItem_Start < 0 Then $iItem_Start = 0
+If $iItem_End > $iRowCount - 1 Then $iItem_End = $iRowCount - 1
+If $iItem_Start <> 0 Or $iItem_End <> $iRowCount - 1 Then $bRange_Flag = True
+If $iDimension = 2 And $aArray_Range[1] Then
+$avRangeSplit = StringSplit($aArray_Range[1], ":")
+If @error Then
+$iSubItem_End = Number($avRangeSplit[1])
+Else
+$iSubItem_Start = Number($avRangeSplit[1])
+$iSubItem_End = Number($avRangeSplit[2])
+EndIf
+If $iSubItem_Start > $iSubItem_End Then
+$vTmp = $iSubItem_Start
+$iSubItem_Start = $iSubItem_End
+$iSubItem_End = $vTmp
+EndIf
+If $iSubItem_Start < 0 Then $iSubItem_Start = 0
+If $iSubItem_End > $iColCount - 1 Then $iSubItem_End = $iColCount - 1
+If $iSubItem_Start <> 0 Or $iSubItem_End <> $iColCount - 1 Then $bRange_Flag = True
+EndIf
+EndIf
+Local $sDisplayData = "[" & $iDataRow
+Local $bTruncated = False
+If $iTranspose Then
+If $iItem_End - $iItem_Start > $iColLimit Then
+$bTruncated = True
+$iItem_End = $iItem_Start + $iColLimit - 1
+EndIf
+Else
+If $iItem_End - $iItem_Start > $iRowLimit Then
+$bTruncated = True
+$iItem_End = $iItem_Start + $iRowLimit - 1
+EndIf
+EndIf
+If $bTruncated Then
+$sDisplayData &= "*]"
+Else
+$sDisplayData &= "]"
+EndIf
+If $iDimension = 2 Then
+$sDisplayData &= " [" & $iDataCol
+If $iTranspose Then
+If $iSubItem_End - $iSubItem_Start > $iRowLimit Then
+$bTruncated = True
+$iSubItem_End = $iSubItem_Start + $iRowLimit - 1
+EndIf
+Else
+If $iSubItem_End - $iSubItem_Start > $iColLimit Then
+$bTruncated = True
+$iSubItem_End = $iSubItem_Start + $iColLimit - 1
+EndIf
+EndIf
+If $bTruncated Then
+$sDisplayData &= "*]"
+Else
+$sDisplayData &= "]"
+EndIf
+EndIf
+Local $sTipData = ""
+If $bTruncated Then $sTipData &= "Truncated"
+If $bRange_Flag Then
+If $sTipData Then $sTipData &= " - "
+$sTipData &= "Range set"
+EndIf
+If $iTranspose Then
+If $sTipData Then $sTipData &= " - "
+$sTipData &= "Transposed"
+EndIf
+Local $asHeader = StringSplit($sHeader, $sCurr_Separator, $STR_NOCOUNT)
+If UBound($asHeader) = 0 Then Local $asHeader[1] = [""]
+$sHeader = "Row"
+Local $iIndex = $iSubItem_Start
+If $iTranspose Then
+For $j = $iItem_Start To $iItem_End
+$sHeader &= $sAD_Separator & "Col " & $j
+Next
+Else
+If $asHeader[0] Then
+For $iIndex = $iSubItem_Start To $iSubItem_End
+If $iIndex >= UBound($asHeader) Then ExitLoop
+$sHeader &= $sAD_Separator & $asHeader[$iIndex]
+Next
+EndIf
+For $j = $iIndex To $iSubItem_End
+$sHeader &= $sAD_Separator & "Col " & $j
+Next
+EndIf
+If $iNoRow Then $sHeader = StringTrimLeft($sHeader, 4)
+If $iVerbose And($iItem_End - $iItem_Start + 1) *($iSubItem_End - $iSubItem_Start + 1) > 10000 Then
+SplashTextOn("ArrayDisplay", "Preparing display" & @CRLF & @CRLF & "Please be patient", 300, 100)
+EndIf
+Local $iBuffer = 4094
+If $iTranspose Then
+$vTmp = $iItem_Start
+$iItem_Start = $iSubItem_Start
+$iSubItem_Start = $vTmp
+$vTmp = $iItem_End
+$iItem_End = $iSubItem_End
+$iSubItem_End = $vTmp
+EndIf
+Local $avArrayText[$iItem_End - $iItem_Start + 1]
+For $i = $iItem_Start To $iItem_End
+If Not $iNoRow Then $avArrayText[$i - $iItem_Start] = "[" & $i & "]"
+For $j = $iSubItem_Start To $iSubItem_End
+If $iDimension = 1 Then
+If $iTranspose Then
+Switch VarGetType($aArray[$j])
+Case "Array"
+$vTmp = "{Array}"
+Case Else
+$vTmp = $aArray[$j]
+EndSwitch
+Else
+Switch VarGetType($aArray[$i])
+Case "Array"
+$vTmp = "{Array}"
+Case Else
+$vTmp = $aArray[$i]
+EndSwitch
+EndIf
+Else
+If $iTranspose Then
+Switch VarGetType($aArray[$j][$i])
+Case "Array"
+$vTmp = "{Array}"
+Case Else
+$vTmp = $aArray[$j][$i]
+EndSwitch
+Else
+Switch VarGetType($aArray[$i][$j])
+Case "Array"
+$vTmp = "{Array}"
+Case Else
+$vTmp = $aArray[$i][$j]
+EndSwitch
+EndIf
+EndIf
+If StringLen($vTmp) > $iBuffer Then $vTmp = StringLeft($vTmp, $iBuffer)
+$avArrayText[$i - $iItem_Start] &= $sAD_Separator & $vTmp
+Next
+If $iNoRow Then $avArrayText[$i - $iItem_Start] = StringTrimLeft($avArrayText[$i - $iItem_Start], 1)
+Next
+Local Const $_ARRAYCONSTANT_GUI_DOCKBOTTOM = 64
+Local Const $_ARRAYCONSTANT_GUI_DOCKBORDERS = 102
+Local Const $_ARRAYCONSTANT_GUI_DOCKHEIGHT = 512
+Local Const $_ARRAYCONSTANT_GUI_DOCKLEFT = 2
+Local Const $_ARRAYCONSTANT_GUI_DOCKRIGHT = 4
+Local Const $_ARRAYCONSTANT_GUI_DOCKHCENTER = 8
+Local Const $_ARRAYCONSTANT_GUI_EVENT_CLOSE = -3
+Local Const $_ARRAYCONSTANT_GUI_FOCUS = 256
+Local Const $_ARRAYCONSTANT_GUI_BKCOLOR_LV_ALTERNATE = 0xFE000000
+Local Const $_ARRAYCONSTANT_SS_CENTER = 0x1
+Local Const $_ARRAYCONSTANT_SS_CENTERIMAGE = 0x0200
+Local Const $_ARRAYCONSTANT_LVM_GETITEMCOUNT =(0x1000 + 4)
+Local Const $_ARRAYCONSTANT_LVM_GETITEMRECT =(0x1000 + 14)
+Local Const $_ARRAYCONSTANT_LVM_GETCOLUMNWIDTH =(0x1000 + 29)
+Local Const $_ARRAYCONSTANT_LVM_SETCOLUMNWIDTH =(0x1000 + 30)
+Local Const $_ARRAYCONSTANT_LVM_GETITEMSTATE =(0x1000 + 44)
+Local Const $_ARRAYCONSTANT_LVM_GETSELECTEDCOUNT =(0x1000 + 50)
+Local Const $_ARRAYCONSTANT_LVM_SETEXTENDEDLISTVIEWSTYLE =(0x1000 + 54)
+Local Const $_ARRAYCONSTANT_LVS_EX_GRIDLINES = 0x1
+Local Const $_ARRAYCONSTANT_LVIS_SELECTED = 0x2
+Local Const $_ARRAYCONSTANT_LVS_SHOWSELALWAYS = 0x8
+Local Const $_ARRAYCONSTANT_LVS_EX_FULLROWSELECT = 0x20
+Local Const $_ARRAYCONSTANT_WS_EX_CLIENTEDGE = 0x0200
+Local Const $_ARRAYCONSTANT_WS_MAXIMIZEBOX = 0x00010000
+Local Const $_ARRAYCONSTANT_WS_MINIMIZEBOX = 0x00020000
+Local Const $_ARRAYCONSTANT_WS_SIZEBOX = 0x00040000
+Local Const $_ARRAYCONSTANT_WM_SETREDRAW = 11
+Local Const $_ARRAYCONSTANT_LVSCW_AUTOSIZE = -1
+Local $iCoordMode = Opt("GUICoordMode", 1)
+Local $iOrgWidth = 210, $iHeight = 200, $iMinSize = 250
+Local $hGUI = GUICreate($sTitle, $iOrgWidth, $iHeight, Default, Default, BitOR($_ARRAYCONSTANT_WS_SIZEBOX, $_ARRAYCONSTANT_WS_MINIMIZEBOX, $_ARRAYCONSTANT_WS_MAXIMIZEBOX))
+Local $aiGUISize = WinGetClientSize($hGUI)
+Local $iButtonWidth_2 = $aiGUISize[0] / 2
+Local $iButtonWidth_3 = $aiGUISize[0] / 3
+Local $idListView = GUICtrlCreateListView($sHeader, 0, 0, $aiGUISize[0], $aiGUISize[1] - $iButtonMargin, $_ARRAYCONSTANT_LVS_SHOWSELALWAYS)
+GUICtrlSetBkColor($idListView, $_ARRAYCONSTANT_GUI_BKCOLOR_LV_ALTERNATE)
+GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_SETEXTENDEDLISTVIEWSTYLE, $_ARRAYCONSTANT_LVS_EX_GRIDLINES, $_ARRAYCONSTANT_LVS_EX_GRIDLINES)
+GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_SETEXTENDEDLISTVIEWSTYLE, $_ARRAYCONSTANT_LVS_EX_FULLROWSELECT, $_ARRAYCONSTANT_LVS_EX_FULLROWSELECT)
+GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_SETEXTENDEDLISTVIEWSTYLE, $_ARRAYCONSTANT_WS_EX_CLIENTEDGE, $_ARRAYCONSTANT_WS_EX_CLIENTEDGE)
+Local $idCopy_ID = 9999, $idCopy_Data = 99999, $idData_Label = 99999, $idUser_Func = 99999, $idExit_Script = 99999
+If $iButtonMargin Then
+$idCopy_ID = GUICtrlCreateButton("Copy Data && Hdr/Row", 0, $aiGUISize[1] - $iButtonMargin, $iButtonWidth_2, 20)
+$idCopy_Data = GUICtrlCreateButton("Copy Data Only", $iButtonWidth_2, $aiGUISize[1] - $iButtonMargin, $iButtonWidth_2, 20)
+If $iButtonMargin = 40 Then
+Local $iButtonWidth_Var = $iButtonWidth_2
+Local $iOffset = $iButtonWidth_2
+If IsFunc($hUser_Function) Then
+$idUser_Func = GUICtrlCreateButton("Run User Func", $iButtonWidth_3, $aiGUISize[1] - 20, $iButtonWidth_3, 20)
+$iButtonWidth_Var = $iButtonWidth_3
+$iOffset = $iButtonWidth_3 * 2
+EndIf
+$idExit_Script = GUICtrlCreateButton("Exit Script", $iOffset, $aiGUISize[1] - 20, $iButtonWidth_Var, 20)
+$idData_Label = GUICtrlCreateLabel($sDisplayData, 0, $aiGUISize[1] - 20, $iButtonWidth_Var, 18, BitOR($_ARRAYCONSTANT_SS_CENTER, $_ARRAYCONSTANT_SS_CENTERIMAGE))
+Select
+Case $bTruncated Or $iTranspose Or $bRange_Flag
+GUICtrlSetColor($idData_Label, 0xFF0000)
+GUICtrlSetTip($idData_Label, $sTipData)
+EndSelect
+EndIf
+EndIf
+GUICtrlSetResizing($idListView, $_ARRAYCONSTANT_GUI_DOCKBORDERS)
+GUICtrlSetResizing($idCopy_ID, $_ARRAYCONSTANT_GUI_DOCKLEFT + $_ARRAYCONSTANT_GUI_DOCKBOTTOM + $_ARRAYCONSTANT_GUI_DOCKHEIGHT)
+GUICtrlSetResizing($idCopy_Data, $_ARRAYCONSTANT_GUI_DOCKRIGHT + $_ARRAYCONSTANT_GUI_DOCKBOTTOM + $_ARRAYCONSTANT_GUI_DOCKHEIGHT)
+GUICtrlSetResizing($idData_Label, $_ARRAYCONSTANT_GUI_DOCKLEFT + $_ARRAYCONSTANT_GUI_DOCKBOTTOM + $_ARRAYCONSTANT_GUI_DOCKHEIGHT)
+GUICtrlSetResizing($idUser_Func, $_ARRAYCONSTANT_GUI_DOCKHCENTER + $_ARRAYCONSTANT_GUI_DOCKBOTTOM + $_ARRAYCONSTANT_GUI_DOCKHEIGHT)
+GUICtrlSetResizing($idExit_Script, $_ARRAYCONSTANT_GUI_DOCKRIGHT + $_ARRAYCONSTANT_GUI_DOCKBOTTOM + $_ARRAYCONSTANT_GUI_DOCKHEIGHT)
+GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_WM_SETREDRAW, 0, 0)
+Local $idItem
+For $i = 0 To UBound($avArrayText) - 1
+$idItem = GUICtrlCreateListViewItem($avArrayText[$i], $idListView)
+If $iAlt_Color Then
+GUICtrlSetBkColor($idItem, $iAlt_Color)
+EndIf
+Next
+If $iColAlign Then
+Local Const $_ARRAYCONSTANT_LVCF_FMT = 0x01
+Local Const $_ARRAYCONSTANT_LVM_SETCOLUMNW =(0x1000 + 96)
+Local $tColumn = DllStructCreate("uint Mask;int Fmt;int CX;ptr Text;int TextMax;int SubItem;int Image;int Order;int cxMin;int cxDefault;int cxIdeal")
+DllStructSetData($tColumn, "Mask", $_ARRAYCONSTANT_LVCF_FMT)
+DllStructSetData($tColumn, "Fmt", $iColAlign / 2)
+Local $pColumn = DllStructGetPtr($tColumn)
+For $i = 1 To $iSubItem_End - $iSubItem_Start + 1
+GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_SETCOLUMNW, $i, $pColumn)
+Next
+EndIf
+GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_WM_SETREDRAW, 1, 0)
+Local $iBorder = 45
+If UBound($avArrayText) > 20 Then
+$iBorder += 20
+EndIf
+Local $iWidth = $iBorder, $iColWidth = 0, $aiColWidth[$iSubItem_End - $iSubItem_Start + 2], $iMin_ColWidth = 55
+For $i = 0 To $iSubItem_End - $iSubItem_Start + 1
+GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_SETCOLUMNWIDTH, $i, $_ARRAYCONSTANT_LVSCW_AUTOSIZE)
+$iColWidth = GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_GETCOLUMNWIDTH, $i, 0)
+If $iColWidth < $iMin_ColWidth Then
+GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_SETCOLUMNWIDTH, $i, $iMin_ColWidth)
+$iColWidth = $iMin_ColWidth
+EndIf
+$iWidth += $iColWidth
+$aiColWidth[$i] = $iColWidth
+Next
+If $iNoRow Then $iWidth -= 55
+If $iWidth > @DesktopWidth - 100 Then
+$iWidth = $iBorder
+For $i = 0 To $iSubItem_End - $iSubItem_Start + 1
+If $aiColWidth[$i] > $iMax_ColWidth Then
+GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_SETCOLUMNWIDTH, $i, $iMax_ColWidth)
+$iWidth += $iMax_ColWidth
+Else
+$iWidth += $aiColWidth[$i]
+EndIf
+Next
+EndIf
+If $iWidth > @DesktopWidth - 100 Then
+$iWidth = @DesktopWidth - 100
+ElseIf $iWidth < $iMinSize Then
+$iWidth = $iMinSize
+EndIf
+Local $tRECT = DllStructCreate("struct; long Left;long Top;long Right;long Bottom; endstruct")
+DllCall("user32.dll", "struct*", "SendMessageW", "hwnd", GUICtrlGetHandle($idListView), "uint", $_ARRAYCONSTANT_LVM_GETITEMRECT, "wparam", 0, "struct*", $tRECT)
+Local $aiWin_Pos = WinGetPos($hGUI)
+Local $aiLV_Pos = ControlGetPos($hGUI, "", $idListView)
+$iHeight =((UBound($avArrayText) + 2) *(DllStructGetData($tRECT, "Bottom") - DllStructGetData($tRECT, "Top"))) + $aiWin_Pos[3] - $aiLV_Pos[3]
+If $iHeight > @DesktopHeight - 100 Then
+$iHeight = @DesktopHeight - 100
+ElseIf $iHeight < $iMinSize Then
+$iHeight = $iMinSize
+EndIf
+If $iVerbose Then SplashOff()
+GUISetState(@SW_HIDE, $hGUI)
+WinMove($hGUI, "",(@DesktopWidth - $iWidth) / 2,(@DesktopHeight - $iHeight) / 2, $iWidth, $iHeight)
+GUISetState(@SW_SHOW, $hGUI)
+Local $iOnEventMode = Opt("GUIOnEventMode", 0), $iMsg
+While 1
+$iMsg = GUIGetMsg()
+Switch $iMsg
+Case $_ARRAYCONSTANT_GUI_EVENT_CLOSE
+ExitLoop
+Case $idCopy_ID, $idCopy_Data
+Local $iSel_Count = GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_GETSELECTEDCOUNT, 0, 0)
+If $iVerbose And(Not $iSel_Count) And($iItem_End - $iItem_Start) *($iSubItem_End - $iSubItem_Start) > 10000 Then
+SplashTextOn("ArrayDisplay", "Copying data" & @CRLF & @CRLF & "Please be patient", 300, 100)
+EndIf
+Local $sClip = "", $sItem, $aSplit
+For $i = 0 To $iItem_End - $iItem_Start
+If $iSel_Count And Not(GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_GETITEMSTATE, $i, $_ARRAYCONSTANT_LVIS_SELECTED)) Then
+ContinueLoop
+EndIf
+$sItem = $avArrayText[$i]
+If $iMsg = $idCopy_Data Then
+$sItem = StringRegExpReplace($sItem, "^\[\d+\].(.*)$", "$1")
+EndIf
+If $iCW_ColWidth Then
+$aSplit = StringSplit($sItem, $sAD_Separator)
+$sItem = ""
+For $j = 1 To $aSplit[0]
+$sItem &= StringFormat("%-" & $iCW_ColWidth + 1 & "s", StringLeft($aSplit[$j], $iCW_ColWidth))
+Next
+Else
+$sItem = StringReplace($sItem, $sAD_Separator, $vUser_Separator)
+EndIf
+$sClip &= $sItem & @CRLF
+Next
+If $iMsg = $idCopy_ID Then
+If $iCW_ColWidth Then
+$aSplit = StringSplit($sHeader, $sAD_Separator)
+$sItem = ""
+For $j = 1 To $aSplit[0]
+$sItem &= StringFormat("%-" & $iCW_ColWidth + 1 & "s", StringLeft($aSplit[$j], $iCW_ColWidth))
+Next
+Else
+$sItem = StringReplace($sHeader, $sAD_Separator, $vUser_Separator)
+EndIf
+$sClip = $sItem & @CRLF & $sClip
+EndIf
+ClipPut($sClip)
+SplashOff()
+GUICtrlSetState($idListView, $_ARRAYCONSTANT_GUI_FOCUS)
+Case $idUser_Func
+Local $aiSelItems[$iRowLimit] = [0]
+For $i = 0 To GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_GETITEMCOUNT, 0, 0)
+If GUICtrlSendMsg($idListView, $_ARRAYCONSTANT_LVM_GETITEMSTATE, $i, $_ARRAYCONSTANT_LVIS_SELECTED) Then
+$aiSelItems[0] += 1
+$aiSelItems[$aiSelItems[0]] = $i + $iItem_Start
+EndIf
+Next
+ReDim $aiSelItems[$aiSelItems[0] + 1]
+$hUser_Function($aArray, $aiSelItems)
+GUICtrlSetState($idListView, $_ARRAYCONSTANT_GUI_FOCUS)
+Case $idExit_Script
+GUIDelete($hGUI)
+Exit
+EndSwitch
+WEnd
+GUIDelete($hGUI)
+Opt("GUICoordMode", $iCoordMode)
+Opt("GUIOnEventMode", $iOnEventMode)
+Opt("GUIDataSeparatorChar", $sCurr_Separator)
+Return 1
+EndFunc
 Func _ArrayExtract(Const ByRef $aArray, $iStart_Row = -1, $iEnd_Row = -1, $iStart_Col = -1, $iEnd_Col = -1)
 If $iStart_Row = Default Then $iStart_Row = -1
 If $iEnd_Row = Default Then $iEnd_Row = -1
@@ -3351,6 +3750,170 @@ $iStart = _ArraySearch($aArray, $vValue, $iStart + 1, $iEnd, $iCase, $iCompare, 
 Until @error
 ReDim $avResult[$iIndex]
 Return $avResult
+EndFunc
+Func _ArrayInsert(ByRef $aArray, $vRange, $vValue = "", $iStart = 0, $sDelim_Item = "|", $sDelim_Row = @CRLF, $iForce = $ARRAYFILL_FORCE_DEFAULT)
+If $vValue = Default Then $vValue = ""
+If $iStart = Default Then $iStart = 0
+If $sDelim_Item = Default Then $sDelim_Item = "|"
+If $sDelim_Row = Default Then $sDelim_Row = @CRLF
+If $iForce = Default Then $iForce = $ARRAYFILL_FORCE_DEFAULT
+If Not IsArray($aArray) Then Return SetError(1, 0, -1)
+Local $iDim_1 = UBound($aArray, $UBOUND_ROWS) - 1
+Local $hDataType = 0
+Switch $iForce
+Case $ARRAYFILL_FORCE_INT
+$hDataType = Int
+Case $ARRAYFILL_FORCE_NUMBER
+$hDataType = Number
+Case $ARRAYFILL_FORCE_PTR
+$hDataType = Ptr
+Case $ARRAYFILL_FORCE_HWND
+$hDataType = Hwnd
+Case $ARRAYFILL_FORCE_STRING
+$hDataType = String
+EndSwitch
+Local $aSplit_1, $aSplit_2
+If IsArray($vRange) Then
+If UBound($vRange, $UBOUND_DIMENSIONS) <> 1 Or UBound($vRange, $UBOUND_ROWS) < 2 Then Return SetError(4, 0, -1)
+Else
+Local $iNumber
+$vRange = StringStripWS($vRange, 8)
+$aSplit_1 = StringSplit($vRange, ";")
+$vRange = ""
+For $i = 1 To $aSplit_1[0]
+If Not StringRegExp($aSplit_1[$i], "^\d+(-\d+)?$") Then Return SetError(3, 0, -1)
+$aSplit_2 = StringSplit($aSplit_1[$i], "-")
+Switch $aSplit_2[0]
+Case 1
+$vRange &= $aSplit_2[1] & ";"
+Case 2
+If Number($aSplit_2[2]) >= Number($aSplit_2[1]) Then
+$iNumber = $aSplit_2[1] - 1
+Do
+$iNumber += 1
+$vRange &= $iNumber & ";"
+Until $iNumber = $aSplit_2[2]
+EndIf
+EndSwitch
+Next
+$vRange = StringSplit(StringTrimRight($vRange, 1), ";")
+EndIf
+If $vRange[1] < 0 Or $vRange[$vRange[0]] > $iDim_1 Then Return SetError(5, 0, -1)
+For $i = 2 To $vRange[0]
+If $vRange[$i] < $vRange[$i - 1] Then Return SetError(3, 0, -1)
+Next
+Local $iCopyTo_Index = $iDim_1 + $vRange[0]
+Local $iInsertPoint_Index = $vRange[0]
+Local $iInsert_Index = $vRange[$iInsertPoint_Index]
+Switch UBound($aArray, $UBOUND_DIMENSIONS)
+Case 1
+If $iForce = $ARRAYFILL_FORCE_SINGLEITEM Then
+ReDim $aArray[$iDim_1 + $vRange[0] + 1]
+For $iReadFromIndex = $iDim_1 To 0 Step -1
+$aArray[$iCopyTo_Index] = $aArray[$iReadFromIndex]
+$iCopyTo_Index -= 1
+$iInsert_Index = $vRange[$iInsertPoint_Index]
+While $iReadFromIndex = $iInsert_Index
+$aArray[$iCopyTo_Index] = $vValue
+$iCopyTo_Index -= 1
+$iInsertPoint_Index -= 1
+If $iInsertPoint_Index < 1 Then ExitLoop 2
+$iInsert_Index = $vRange[$iInsertPoint_Index]
+WEnd
+Next
+Return $iDim_1 + $vRange[0] + 1
+EndIf
+ReDim $aArray[$iDim_1 + $vRange[0] + 1]
+If IsArray($vValue) Then
+If UBound($vValue, $UBOUND_DIMENSIONS) <> 1 Then Return SetError(5, 0, -1)
+$hDataType = 0
+Else
+Local $aTmp = StringSplit($vValue, $sDelim_Item, $STR_NOCOUNT + $STR_ENTIRESPLIT)
+If UBound($aTmp, $UBOUND_ROWS) = 1 Then
+$aTmp[0] = $vValue
+$hDataType = 0
+EndIf
+$vValue = $aTmp
+EndIf
+For $iReadFromIndex = $iDim_1 To 0 Step -1
+$aArray[$iCopyTo_Index] = $aArray[$iReadFromIndex]
+$iCopyTo_Index -= 1
+$iInsert_Index = $vRange[$iInsertPoint_Index]
+While $iReadFromIndex = $iInsert_Index
+If $iInsertPoint_Index <= UBound($vValue, $UBOUND_ROWS) Then
+If IsFunc($hDataType) Then
+$aArray[$iCopyTo_Index] = $hDataType($vValue[$iInsertPoint_Index - 1])
+Else
+$aArray[$iCopyTo_Index] = $vValue[$iInsertPoint_Index - 1]
+EndIf
+Else
+$aArray[$iCopyTo_Index] = ""
+EndIf
+$iCopyTo_Index -= 1
+$iInsertPoint_Index -= 1
+If $iInsertPoint_Index = 0 Then ExitLoop 2
+$iInsert_Index = $vRange[$iInsertPoint_Index]
+WEnd
+Next
+Case 2
+Local $iDim_2 = UBound($aArray, $UBOUND_COLUMNS)
+If $iStart < 0 Or $iStart > $iDim_2 - 1 Then Return SetError(6, 0, -1)
+Local $iValDim_1, $iValDim_2
+If IsArray($vValue) Then
+If UBound($vValue, $UBOUND_DIMENSIONS) <> 2 Then Return SetError(7, 0, -1)
+$iValDim_1 = UBound($vValue, $UBOUND_ROWS)
+$iValDim_2 = UBound($vValue, $UBOUND_COLUMNS)
+$hDataType = 0
+Else
+$aSplit_1 = StringSplit($vValue, $sDelim_Row, $STR_NOCOUNT + $STR_ENTIRESPLIT)
+$iValDim_1 = UBound($aSplit_1, $UBOUND_ROWS)
+StringReplace($aSplit_1[0], $sDelim_Item, "")
+$iValDim_2 = @extended + 1
+Local $aTmp[$iValDim_1][$iValDim_2]
+For $i = 0 To $iValDim_1 - 1
+$aSplit_2 = StringSplit($aSplit_1[$i], $sDelim_Item, $STR_NOCOUNT + $STR_ENTIRESPLIT)
+For $j = 0 To $iValDim_2 - 1
+$aTmp[$i][$j] = $aSplit_2[$j]
+Next
+Next
+$vValue = $aTmp
+EndIf
+If UBound($vValue, $UBOUND_COLUMNS) + $iStart > UBound($aArray, $UBOUND_COLUMNS) Then Return SetError(8, 0, -1)
+ReDim $aArray[$iDim_1 + $vRange[0] + 1][$iDim_2]
+For $iReadFromIndex = $iDim_1 To 0 Step -1
+For $j = 0 To $iDim_2 - 1
+$aArray[$iCopyTo_Index][$j] = $aArray[$iReadFromIndex][$j]
+Next
+$iCopyTo_Index -= 1
+$iInsert_Index = $vRange[$iInsertPoint_Index]
+While $iReadFromIndex = $iInsert_Index
+For $j = 0 To $iDim_2 - 1
+If $j < $iStart Then
+$aArray[$iCopyTo_Index][$j] = ""
+ElseIf $j - $iStart > $iValDim_2 - 1 Then
+$aArray[$iCopyTo_Index][$j] = ""
+Else
+If $iInsertPoint_Index - 1 < $iValDim_1 Then
+If IsFunc($hDataType) Then
+$aArray[$iCopyTo_Index][$j] = $hDataType($vValue[$iInsertPoint_Index - 1][$j - $iStart])
+Else
+$aArray[$iCopyTo_Index][$j] = $vValue[$iInsertPoint_Index - 1][$j - $iStart]
+EndIf
+Else
+$aArray[$iCopyTo_Index][$j] = ""
+EndIf
+EndIf
+Next
+$iCopyTo_Index -= 1
+$iInsertPoint_Index -= 1
+If $iInsertPoint_Index = 0 Then ExitLoop 2
+$iInsert_Index = $vRange[$iInsertPoint_Index]
+WEnd
+Next
+Case Else
+Return SetError(2, 0, -1)
+EndSwitch
+Return UBound($aArray, $UBOUND_ROWS)
 EndFunc
 Func _ArrayMax(Const ByRef $aArray, $iCompNumeric = 0, $iStart = -1, $iEnd = -1, $iSubItem = 0)
 Local $iResult = _ArrayMaxIndex($aArray, $iCompNumeric, $iStart, $iEnd, $iSubItem)
@@ -6104,8 +6667,7 @@ Global Const $g_sIcnBldElixir = @ScriptDir & "\Images\elixir.png"
 Global Const $g_sIcnBldTrophy = @ScriptDir & "\Images\trophy.png"
 Global Const $g_sIcnSuperXP = @ScriptDir & "\Images\Stats\SuperXP.png"
 Global $g_iRedrawBotWindowMode = 2
-Global Enum $eIcnArcher = 1, $eIcnDonArcher, $eIcnBalloon, $eIcnDonBalloon, $eIcnBarbarian, $eIcnDonBarbarian, $eBtnTest, $eIcnBuilder, $eIcnCC, $eIcnGUI, $eIcnDark, $eIcnDragon, $eIcnDonDragon, $eIcnDrill, $eIcnElixir, $eIcnCollector, $eIcnFreezeSpell, $eIcnGem, $eIcnGiant, $eIcnDonGiant, $eIcnTrap, $eIcnGoblin, $eIcnDonGoblin, $eIcnGold, $eIcnGolem, $eIcnDonGolem, $eIcnHealer, $eIcnDonHealer, $eIcnHogRider, $eIcnDonHogRider, $eIcnHealSpell, $eIcnInferno, $eIcnJumpSpell, $eIcnLavaHound, $eIcnDonLavaHound, $eIcnLightSpell, $eIcnMinion, $eIcnDonMinion, $eIcnPekka, $eIcnDonPekka, $eIcnTreasury, $eIcnRageSpell, $eIcnTroops, $eIcnHourGlass, $eIcnTH1, $eIcnTH10, $eIcnTrophy, $eIcnValkyrie, $eIcnDonValkyrie, $eIcnWall, $eIcnWallBreaker, $eIcnDonWallBreaker, $eIcnWitch, $eIcnDonWitch, $eIcnWizard, $eIcnDonWizard, $eIcnXbow, $eIcnBarrackBoost, $eIcnMine, $eIcnCamp, $eIcnBarrack, $eIcnSpellFactory, $eIcnDonBlacklist, $eIcnSpellFactoryBoost, $eIcnMortar, $eIcnWizTower, $eIcnPayPal, $eIcnNotify, $eIcnGreenLight, $eIcnLaboratory, $eIcnRedLight, $eIcnBlank, $eIcnYellowLight, $eIcnDonCustom, $eIcnTombstone, $eIcnSilverStar, $eIcnGoldStar, $eIcnDarkBarrack, $eIcnCollectorLocate, $eIcnDrillLocate, $eIcnMineLocate, $eIcnBarrackLocate, $eIcnDarkBarrackLocate, $eIcnDarkSpellFactoryLocate, $eIcnDarkSpellFactory, $eIcnEarthQuakeSpell, $eIcnHasteSpell, $eIcnPoisonSpell, $eIcnBldgTarget, $eIcnBldgX, $eIcnRecycle, $eIcnHeroes, $eIcnBldgElixir, $eIcnBldgGold, $eIcnMagnifier, $eIcnWallElixir, $eIcnWallGold, $eIcnKing, $eIcnQueen, $eIcnDarkSpellBoost, $eIcnQueenBoostLocate, $eIcnKingBoostLocate, $eIcnKingUpgr, $eIcnQueenUpgr, $eIcnWardenUpgr, $eIcnWarden, $eIcnWardenBoostLocate, $eIcnKingBoost, $eIcnQueenBoost, $eIcnWardenBoost, $eEmpty3, $eIcnReload, $eIcnCopy, $eIcnAddcvs, $eIcnEdit, $eIcnTreeSnow, $eIcnSleepingQueen, $eIcnSleepingKing, $eIcnGoldElixir, $eIcnBowler, $eIcnDonBowler, $eIcnCCDonate, $eIcnEagleArt, $eIcnGembox, $eIcnInferno4, $eIcnInfo, $eIcnMain, $eIcnTree, $eIcnProfile, $eIcnCCRequest, $eIcnTelegram, $eIcnTiles, $eIcnXbow3, $eIcnBark, $eIcnDailyProgram, $eIcnLootCart, $eIcnSleepMode, $eIcnTH11, $eIcnTrainMode, $eIcnSleepingWarden, $eIcnCloneSpell, $eIcnSkeletonSpell, $eIcnBabyDragon, $eIcnDonBabyDragon, $eIcnMiner, $eIcnDonMiner, $eIcnNoShield, $eIcnDonCustomB, $eIcnAirdefense, $eIcnDarkBarrackBoost, $eIcnDarkElixirStorage, $eIcnSpellsCost, $eIcnTroopsCost, $eIcnResetButton, $eIcnNewSmartZap, $eIcnTrain, $eIcnAttack, $eIcnDelay, $eIcnReOrder, $eIcn2Arrow, $eIcnArrowLeft, $eIcnArrowRight, $eIcnAndroid, $eHdV04, $eHdV05, $eHdV06, $eHdV07, $eHdV08, $eHdV09, $eHdV10, $eHdV11, $eUnranked, $eBronze, $eSilver, $eGold, $eCrystal, $eMaster, $eChampion, $eTitan, $eLegend, $eWall04, $eWall05, $eWall06, $eWall07, $eWall08, $eWall09, $eWall10, $eWall11, $eIcnPBNotify, $eIcnCCTroops, $eIcnCCSpells, $eIcnSpellsGroup, $eBahasaIND, $eChinese_S, $eChinese_T, $eEnglish, $eFrench, $eGerman, $eItalian, $ePersian, $eRussian, $eSpanish, $eTurkish, $eMissingLangIcon, $eWall12, $ePortuguese, $eIcnDonPoisonSpell, $eIcnDonEarthQuakeSpell, $eIcnDonHasteSpell, $eIcnDonSkeletonSpell, $eVietnamese, $eKorean, $eAzerbaijani, $eArabic, $eIcnBuilderHall, $eIcnClockTower, $eIcnElixirCollectorL5, $eIcnGemMine, $eIcnGoldMineL5, $eIcnElectroDragon, $eIcnTH12, $eHdV12, $eWall13, $eIcnBattleB, $eIcnWallW, $eIcnSiegeCost, $eIcnTrainingPotion, $eIcnBatSpell, $eIcnStoneS, $eIcnIceGolem, $eIcnStarLaboratory, $eIcnRagedBarbarian, $eIcnSneakyArcher, $eIcnBoxerGiant, $eIcnBetaMinion, $eIcnBomber, $eIcnBBBabyDragon, $eIcnCannonCart, $eIcnNightWitch, $eIcnDropShip, $eIcnSuperPekka, $eIcnBBWall01, $eIcnBBWall02, $eIcnBBWall03, $eIcnBBWall04, $eIcnBBWall05, $eIcnBBWall06, $eIcnBBWall07, $eIcnBBWall08, $eIcnKingGrayShield, $eIcnKingBlueShield, $eIcnKingGreenShield, $eIcnKingRedShield, $eIcnQueenGrayShield, $eIcnQueenBlueShield, $eIcnQueenGreenShield, $eIcnQueenRedShield, $eIcnWardenGrayShield, $eIcnWardenBlueShield, $eIcnWardenGreenShield, $eIcnWardenRedShield, $eIcnLabGrayShield, $eIcnLabGreenShield, $eIcnLabRedShield, _
-$eIcnClanHop, $eIcnChat, $eIcnRepeat, $eIcnClan, $eIcnTarget, $eIcnSettings, $eIcnStrongMan, $eIcnDebug, $eIcnSwitchAcc, $eIcnSwitchProfiles, $eIcnFarmingSchedule, $eIcnAiOMOD, $eIcnMiscMod, $eIcnHumanization, $eIcnSuperXP, $eIcnWarPreparation, $eIcnBKingSX, $eIcnAQueenSX, $eIcnGWardenSX, $eIcnPrecise, $eIcnWorkshopBoost, $eIcnPowerPotion, $eIcnResourcePotion
+Global Enum $eIcnArcher = 1, $eIcnDonArcher, $eIcnBalloon, $eIcnDonBalloon, $eIcnBarbarian, $eIcnDonBarbarian, $eBtnTest, $eIcnBuilder, $eIcnCC, $eIcnGUI, $eIcnDark, $eIcnDragon, $eIcnDonDragon, $eIcnDrill, $eIcnElixir, $eIcnCollector, $eIcnFreezeSpell, $eIcnGem, $eIcnGiant, $eIcnDonGiant, $eIcnTrap, $eIcnGoblin, $eIcnDonGoblin, $eIcnGold, $eIcnGolem, $eIcnDonGolem, $eIcnHealer, $eIcnDonHealer, $eIcnHogRider, $eIcnDonHogRider, $eIcnHealSpell, $eIcnInferno, $eIcnJumpSpell, $eIcnLavaHound, $eIcnDonLavaHound, $eIcnLightSpell, $eIcnMinion, $eIcnDonMinion, $eIcnPekka, $eIcnDonPekka, $eIcnTreasury, $eIcnRageSpell, $eIcnTroops, $eIcnHourGlass, $eIcnTH1, $eIcnTH10, $eIcnTrophy, $eIcnValkyrie, $eIcnDonValkyrie, $eIcnWall, $eIcnWallBreaker, $eIcnDonWallBreaker, $eIcnWitch, $eIcnDonWitch, $eIcnWizard, $eIcnDonWizard, $eIcnXbow, $eIcnBarrackBoost, $eIcnMine, $eIcnCamp, $eIcnBarrack, $eIcnSpellFactory, $eIcnDonBlacklist, $eIcnSpellFactoryBoost, $eIcnMortar, $eIcnWizTower, $eIcnPayPal, $eIcnNotify, $eIcnGreenLight, $eIcnLaboratory, $eIcnRedLight, $eIcnBlank, $eIcnYellowLight, $eIcnDonCustom, $eIcnTombstone, $eIcnSilverStar, $eIcnGoldStar, $eIcnDarkBarrack, $eIcnCollectorLocate, $eIcnDrillLocate, $eIcnMineLocate, $eIcnBarrackLocate, $eIcnDarkBarrackLocate, $eIcnDarkSpellFactoryLocate, $eIcnDarkSpellFactory, $eIcnEarthQuakeSpell, $eIcnHasteSpell, $eIcnPoisonSpell, $eIcnBldgTarget, $eIcnBldgX, $eIcnRecycle, $eIcnHeroes, $eIcnBldgElixir, $eIcnBldgGold, $eIcnMagnifier, $eIcnWallElixir, $eIcnWallGold, $eIcnKing, $eIcnQueen, $eIcnDarkSpellBoost, $eIcnQueenBoostLocate, $eIcnKingBoostLocate, $eIcnKingUpgr, $eIcnQueenUpgr, $eIcnWardenUpgr, $eIcnWarden, $eIcnWardenBoostLocate, $eIcnKingBoost, $eIcnQueenBoost, $eIcnWardenBoost, $eEmpty3, $eIcnReload, $eIcnCopy, $eIcnAddcvs, $eIcnEdit, $eIcnTreeSnow, $eIcnSleepingQueen, $eIcnSleepingKing, $eIcnGoldElixir, $eIcnBowler, $eIcnDonBowler, $eIcnCCDonate, $eIcnEagleArt, $eIcnGembox, $eIcnInferno4, $eIcnInfo, $eIcnMain, $eIcnTree, $eIcnProfile, $eIcnCCRequest, $eIcnTelegram, $eIcnTiles, $eIcnXbow3, $eIcnBark, $eIcnDailyProgram, $eIcnLootCart, $eIcnSleepMode, $eIcnTH11, $eIcnTrainMode, $eIcnSleepingWarden, $eIcnCloneSpell, $eIcnSkeletonSpell, $eIcnBabyDragon, $eIcnDonBabyDragon, $eIcnMiner, $eIcnDonMiner, $eIcnNoShield, $eIcnDonCustomB, $eIcnAirdefense, $eIcnDarkBarrackBoost, $eIcnDarkElixirStorage, $eIcnSpellsCost, $eIcnTroopsCost, $eIcnResetButton, $eIcnNewSmartZap, $eIcnTrain, $eIcnAttack, $eIcnDelay, $eIcnReOrder, $eIcn2Arrow, $eIcnArrowLeft, $eIcnArrowRight, $eIcnAndroid, $eHdV04, $eHdV05, $eHdV06, $eHdV07, $eHdV08, $eHdV09, $eHdV10, $eHdV11, $eUnranked, $eBronze, $eSilver, $eGold, $eCrystal, $eMaster, $eChampion, $eTitan, $eLegend, $eWall04, $eWall05, $eWall06, $eWall07, $eWall08, $eWall09, $eWall10, $eWall11, $eIcnPBNotify, $eIcnCCTroops, $eIcnCCSpells, $eIcnSpellsGroup, $eBahasaIND, $eChinese_S, $eChinese_T, $eEnglish, $eFrench, $eGerman, $eItalian, $ePersian, $eRussian, $eSpanish, $eTurkish, $eMissingLangIcon, $eWall12, $ePortuguese, $eIcnDonPoisonSpell, $eIcnDonEarthQuakeSpell, $eIcnDonHasteSpell, $eIcnDonSkeletonSpell, $eVietnamese, $eKorean, $eAzerbaijani, $eArabic, $eIcnBuilderHall, $eIcnClockTower, $eIcnElixirCollectorL5, $eIcnGemMine, $eIcnGoldMineL5, $eIcnElectroDragon, $eIcnTH12, $eHdV12, $eWall13, $eIcnGrayShield, $eIcnBlueShield, $eIcnGreenShield, $eIcnRedShield, $eIcnBattleB, $eIcnWallW, $eIcnSiegeCost, $eIcnBoostPotion, $eIcnBatSpell, $eIcnStoneS, $eIcnIceGolem, $eIcnStarLaboratory, $eIcnRagedBarbarian, $eIcnSneakyArcher, $eIcnBoxerGiant, $eIcnBetaMinion, $eIcnBomber, $eIcnBBBabyDragon, $eIcnCannonCart, $eIcnNightWitch, $eIcnDropShip, $eIcnSuperPekka, $eIcnBBWall01, $eIcnBBWall02, $eIcnBBWall03, $eIcnBBWall04, $eIcnBBWall05, $eIcnBBWall06, $eIcnBBWall07, $eIcnBBWall08, $eIcnWorkshopBoost, $eIcnStrongMan, $eIcnPowerPotion
 Global $eIcnDonBlank = $eIcnDonBlacklist
 Global $eIcnOptions = $eIcnDonBlacklist
 Global $eIcnAchievements = $eIcnMain
@@ -6804,6 +7366,8 @@ Global $g_sStarsEarned = Null
 Func _ArrayIndexValid(Const ByRef $a, Const $idx)
 Return $idx >= 0 And $idx < UBound($a)
 EndFunc
+Global Const $g_sLibModIconPath = $g_sLibPath & "\AIOMod.dll"
+Global Enum $eIcnModKingGray = 1, $eIcnModKingBlue, $eIcnModKingGreen, $eIcnModKingRed, $eIcnModQueenGray, $eIcnModQueenBlue, $eIcnModQueenGreen, $eIcnModQueenRed, $eIcnModWardenGray, $eIcnModWardenBlue, $eIcnModWardenGreen, $eIcnModWardenRed, $eIcnModLabGray, $eIcnModLabGreen, $eIcnModLabRed, $eIcnModArrowLeft, $eIcnModArrowRight, $eIcnModTrainingP, $eIcnModResourceP, $eIcnModHeroP, $eIcnModClockTowerP, $eIcnModBuilderP, $eIcnModPowerP, $eIcnModChat, $eIcnModRepeat, $eIcnModClan, $eIcnModTarget, $eIcnModSettings, $eIcnModBKingSX, $eIcnModAQueenSX, $eIcnModGWardenSX, $eIcnModDebug, $eIcnModClanHop, $eIcnModPrecise, $eIcnModAccountsS, $eIcnModProfilesS, $eIcnModFarmingS, $eIcnMiscMod, $eIcnSuperXP, $eIcnChatActions, $eIcnHumanization, $eIcnAIOMod
 Global $g_bEnableSuperXP = False, $g_bSkipZoomOutSX = False, $g_bFastSuperXP = False, $g_bSkipDragToEndSX = False, $g_iActivateOptionSX = 1, $g_iGoblinMapOptSX = 2, $g_sGoblinMapOptSX = "The Arena", $g_iMaxXPtoGain = 500, $g_bBKingSX = False, $g_bAQueenSX = False, $g_bGWardenSX = False
 Global $g_iStartXP = 0, $g_iCurrentXP = 0, $g_iGainedXP = 0, $g_iGainedHourXP = 0, $g_sRunTimeXP = 0
 Global $g_bDebugSX = False
@@ -6814,15 +7378,16 @@ Global $g_aiBdTheArena[2] = [0, "5000-7000"]
 Global $g_bActivatedHeroes[3] = [False, False, False]
 Global Const $g_iMinStarsToEnd = 1
 Global $bCanGainXP = False
-Global $g_bChatGlobal = False, $g_sDelayTimeGlobal = 10, $g_bScrambleGlobal = False, $g_bSwitchLang = False, $g_iCmbLang = 0, $g_bRusLang = False, $g_iTxtGlobalMessages1 = "", $g_iTxtGlobalMessages2 = "", $TxtGlobal1, $TxtGlobal2
-Global $g_bChatClan = False, $g_sDelayTimeClan = 2, $g_bClanUseResponses = False, $g_bClanAlwaysMsg = False, $g_bCleverbot = False, $g_iTxtClanResponses = "", $g_iTxtClanMessages = "", $TxtResponse, $TxtGeneric
+Global $g_bChatGlobal = False, $g_sDelayTimeGlobal = 10, $g_bScrambleGlobal = False, $g_bSwitchLang = False, $g_iCmbLang = 0, $g_bRusLang = False, $g_sGlobalMessages1 = "", $g_sGlobalMessages2 = ""
+Global $g_bChatClan = False, $g_sDelayTimeClan = 2, $g_bClanUseResponses = False, $g_bClanUseGeneric = False, $g_bCleverbot = False, $g_sClanResponses = "", $g_sClanGeneric = ""
 Global $g_bUseNotify = False, $g_bPbSendNew = False
-Global $g_bEnableFriendlyChallenge = False, $g_sDelayTimeFC = 5, $g_bOnlyOnRequest = False, $g_iTxtChallengeText = "", $g_iTxtKeywordForRequest = ""
+Global $g_bEnableFriendlyChallenge = False, $g_sDelayTimeFC = 5, $g_bOnlyOnRequest = False, $g_sChallengeText = "", $g_sKeywordForRequest = ""
 Global $g_bFriendlyChallengeBase[6] = [False, False, False, False, False, False]
 Global $g_abFriendlyChallengeHours[24] = [True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True, True]
+Global $g_sGlobal1, $g_sGlobal2, $g_sResponse, $g_sGeneric, $g_sWriteFriendlyChallengeText, $g_sWriteFriendlyChallengeKeyword
 Global $ChatbotStartTime, $ChatbotQueuedChats[0], $ChatbotReadQueued = False, $ChatbotReadInterval = 0, $ChatbotIsOnInterval = False, $g_sMessage = "", $g_sGlobalChatLastMsgSentTime = "", $g_sClanChatLastMsgSentTime = "", $g_sFCLastMsgSentTime = ""
 Global $g_aIAVar[5] = [0, 0, 0, 0, 0], $g_sIAVar = '0|0|0|0|0'
-Global $g_sGetOcrMod = ""
+Global $g_sGetOcrMod = "", $g_aImageSearchXML = -1
 Global $g_iDDCount = 18
 Global $g_abChkDD_Deals[$g_iDDCount] = [False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False, False]
 Global $g_aiDD_DealsCosts[$g_iDDCount] = [25, 75, 115, 285, 300, 300, 500, 1000, 500, 500, 925, 925, 925, 1500, 1500, 3000, 1500, 1500]
@@ -6832,14 +7397,16 @@ Global $g_bChkEnableBBAttack = False, $g_bChkBBTrophyRange = False, $g_bChkBBAtt
 Global $g_iTxtBBTrophyLowerLimit = 0, $g_iTxtBBTrophyUpperLimit = 5000
 Global $g_bBBMachineReady = False
 Global $g_iBBMachAbilityTime = 14000
-Global $g_iBBBattleStartedTimeout = 300000
-Global $g_iBBNextTroopDelay = 2000, $g_iBBSameTroopDelay = 300
+Global Const $g_iBBNextTroopDelayDefault = 2000, $g_iBBSameTroopDelayDefault = 300
+Global $g_iBBNextTroopDelay = $g_iBBNextTroopDelayDefault, $g_iBBSameTroopDelay = $g_iBBSameTroopDelayDefault
+Global $g_iBBNextTroopDelayIncrement = 400, $g_iBBSameTroopDelayIncrement = 60
 Global $g_apTL[10][2] = [ [22, 374], [59, 348], [102, 319], [137, 288], [176, 259], [209, 232], [239, 212], [270, 188], [307, 164], [347, 139] ]
 Global $g_apTR[10][2] = [ [831, 368], [791, 334], [747, 306], [714, 277], [684, 252], [647, 227], [615, 203], [577, 177], [539, 149], [506, 123] ]
 Global $g_bBBDropOrderSet = False
 Global Const $g_iBBTroopCount = 10
 Global Const $g_sBBDropOrderDefault = "BoxerGiant|SuperPekka|DropShip|Witch|BabyDrag|WallBreaker|Barbarian|CannonCart|Archer|Minion"
 Global $g_sBBDropOrder = $g_sBBDropOrderDefault
+Global $g_bChkBBIgnoreWalls = False
 Global $g_bRequestCCDefense = False, $g_sRequestCCDefenseText = "", $g_bRequestCCDefenseWhenPB, $g_iRequestDefenseTime, $g_bSaveCCTroopForDefense = True
 Global $g_aiCCTroopsExpectedForDefense[$eTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_aiCCTroopDefenseType[3], $g_aiCCTroopDefenseQty[3]
@@ -7245,7 +7812,6 @@ Global $aDoubRowAttackBar[4] = [68, 486, 0xFC5D64, 20]
 Global $aTroopIsDeployed[4] = [0, 0, 0x404040, 20]
 Global Const $aIsAttackPage[4] = [56, 548 + $g_iBottomOffsetY, 0xcf0d0e, 20]
 Global $aRequestTroopsAO[6] = [761, 592, 0x565656, 0x71BA2F, 0xFFFFFE, 25]
-Global Const $aOpenChatTab[4] = [19, 335 + $g_iMidOffsetY, 0xE88D27, 20]
 Global Const $aCloseChat[4] = [331, 330 + $g_iMidOffsetY, 0xF0951D, 20]
 Global Const $aChatDonateBtnColors[4][4] = [[0x0d0d0d, 0, -4, 20], [0xdaf582, 10, 0, 20], [0xcdef75, 10, 5, 20], [0xFFFFFF, 24, 9, 10]]
 Global Const $aAtkRprtDECheck[4] = [459, 372 + $g_iMidOffsetY, 0x433350, 20]
@@ -7327,14 +7893,14 @@ Global $aClanChat[4] = [83, 650, 0x8BD004, 30]
 Global $aClanBadgeNoClan[4] = [150, 315, 0xEB4C30, 20]
 Global $aClanChatRules[4] = [158, 493, 0x6CB531, 20]
 Global $aClanNameBtn[2] = [89, 63]
-Global $aGlobalChatTab[4] = [41, 24, 0x706C50, 20]
-Global $aClanChatTab[4] = [189, 24, 0x706C50, 20]
+Global $aGlobalChatTab[4] = [20, 24, 0x706C50, 20]
+Global $aClanChatTab[4] = [170, 24, 0x706C50, 20]
+Global $aChatRules[4] = [75, 495, 0xB4E35C, 20]
 Global $aChatSelectTextBox[4] = [277, 700, 0xFFFFFF, 10]
 Global $aOpenedChatSelectTextBox[4] = [100, 700, 0xFFFFFF, 10]
 Global $aChatSendBtn[4] = [840, 700, 0xFFFFFF, 10]
 Global $aSelectLangBtn[2] = [260, 415]
 Global $aOpenedSelectLang[4] = [90, 113, 0xD7F37F, 20]
-Global $aLangSelected[4] = [118, 185, 0xCAFF40, 20]
 Global $aLangSettingOK[4] = [506, 446, 0x6DBC1F, 20]
 Global Const $aButtonLanguageEN[2] = [163, 180]
 Global Const $aButtonLanguageFRA[2] = [163, 229]
@@ -7346,11 +7912,20 @@ Global Const $aButtonLanguageNO[2] = [163, 473]
 Global Const $aButtonLanguagePR[2] = [163, 521]
 Global Const $aButtonLanguageTR[2] = [163, 570]
 Global Const $aButtonLanguageRU[2] = [163, 608]
+Global Const $aLangSelectedEN[4] = [118, 185, 0xCAFF40, 20]
+Global Const $aLangSelectedFRA[4] = [118, 234, 0xCAFF40, 20]
+Global Const $aLangSelectedDE[4] = [118, 283, 0xCAFF40, 20]
+Global Const $aLangSelectedES[4] = [118, 332, 0xCAFF40, 20]
+Global Const $aLangSelectedITA[4] = [118, 380, 0xCAFF40, 20]
+Global Const $aLangSelectedNL[4] = [118, 429, 0xCAFF40, 20]
+Global Const $aLangSelectedNO[4] = [118, 478, 0xCAFF40, 20]
+Global Const $aLangSelectedPR[4] = [118, 526, 0xCAFF40, 20]
+Global Const $aLangSelectedTR[4] = [118, 575, 0xCAFF40, 20]
+Global Const $aLangSelectedRU[4] = [125, 615, 0xCAFF40, 20]
 Global $aButtonFriendlyChallenge[4] = [200, 695, 0xDDF685, 20]
 Global $aButtonFCChangeLayout[4] = [240, 286, 0XDDF685, 20]
 Global $aButtonFCBack[4] = [160, 106, 0xD5F27D, 20]
 Global $aButtonFCStart[4] = [523, 286, 0xDDF685, 20]
-Global $aButtonFCClose[4] = [688, 102, 0xFF8D95, 20]
 Global $g_sImgImgLocButtons = @ScriptDir & "\imgxml\imglocbuttons"
 Global Const $g_sImgAnyoneThere = @ScriptDir & "\imgxml\other\AnyoneThere[[Android]]*"
 Global Const $g_sImgPersonalBreak = @ScriptDir & "\imgxml\other\break*"
@@ -7447,8 +8022,9 @@ Global $g_sImgBBBattleStarted = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\Bu
 Global $g_sImgOkButton = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\BuilderBase\OkayButton\OkayButton_0_90.bmp"
 Global $g_sImgDirBBTroops = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\BuilderBase\BBTroops"
 Global $g_sImgDirDailyDiscounts = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\DailyDiscounts"
-Global $g_sImgDDWallRingx5 = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\DailyDiscounts\WallRingAmount\x5_0_90.bmp"
-Global $g_sImgDDWallRingx10 = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\DailyDiscounts\WallRingAmount\x10_0_90.bmp"
+Global $g_sImgDDWallRingx5 = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\DailyDiscounts\WallRingAmount\x5_92.png"
+Global $g_sImgDDWallRingx10 = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\DailyDiscounts\WallRingAmount\x10_92.png"
+Global $g_sImgChatObstacles = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\ChatActions\FriendlyChallenge"
 Func _StringSize($sText, $iSize = 8.5, $iWeight = 400, $iAttrib = 0, $sName = "", $iMaxWidth = 0, $hWnd = 0)
 If $iSize = Default Then $iSize = 8.5
 If $iWeight = Default Then $iWeight = 400
@@ -12358,17 +12934,17 @@ GUICtrlSetFont(-1, 8.5, $FW_BOLD)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Bottom", "LblDonate_Info_01", "Paypal Donate?"))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 If $g_bAndroidAdbScreencap Then chkBackground()
-$g_hPicTwoArrowShield = _GUICtrlCreateIcon($g_sLibIconPath, $eIcn2Arrow, $x + 205, $y + 7, 48, 48)
+$g_hPicTwoArrowShield = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnAIOMod, $x + 205, $y + 7, 48, 48)
 $g_hLblVersion = GUICtrlCreateLabel($g_sModVersion, $x + 200, $y + 62, 60, 17, $SS_CENTER)
 GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Arial", $CLEARTYPE_QUALITY)
 GUICtrlSetColor(-1, 0x804001)
 $g_hLblMod = GUICtrlCreateLabel("AiO++ MOD", $x + 195, $y + 78, 70, 17, $SS_CENTER)
 GUICtrlSetFont(-1, 9, $FW_BOLD, Default, "Trebuchet MS", $CLEARTYPE_QUALITY)
 GUICtrlSetColor(-1, 0x804001)
-$g_hPicArrowLeft = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnArrowLeft, $x + 269, $y + 30, 16, 16)
+$g_hPicArrowLeft = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModArrowLeft, $x + 269, $y + 30, 16, 16)
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpVillage_Info_01", "Switch between village info and stats")
 _GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicArrowRight = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnArrowRight, $x + 247 + 198, $y + 30, 16, 16)
+$g_hPicArrowRight = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModArrowRight, $x + 247 + 198, $y + 30, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 Local $x = 295, $y = $y_bottom + 20
 $g_hGrpVillage = GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Bottom", "GrpVillage", "Village"), $x - 0, $y - 20, 160, 96)
@@ -12412,46 +12988,46 @@ $g_hPicResultSkippedHourNow = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnBldgX, $x
 GUICtrlSetState(-1, $GUI_HIDE)
 $x -= 65
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpStatus_Info_01", "Gray - Not Read, Green - Ready to Use, Blue - Healing, Red - Upgrading")
-$g_hPicHeroGray[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingGrayShield, $x, $y + 59, 16, 16)
+$g_hPicHeroGray[0] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingGray, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlue[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingBlueShield, $x, $y + 59, 16, 16)
-_GUICtrlSetTip(-1, $sTxtTip)
-GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreen[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingGreenShield, $x, $y + 59, 16, 16)
+$g_hPicHeroBlue[0] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingBlue, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRed[0] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingRedShield, $x, $y + 59, 16, 16)
+$g_hPicHeroGreen[0] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingGreen, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGray[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenGrayShield, $x + 24, $y + 59, 16, 16)
-_GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlue[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenBlueShield, $x + 24, $y + 59, 16, 16)
+$g_hPicHeroRed[0] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingRed, $x, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreen[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenGreenShield, $x + 24, $y + 59, 16, 16)
+$g_hPicHeroGray[1] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenGray, $x + 24, $y + 59, 16, 16)
+_GUICtrlSetTip(-1, $sTxtTip)
+$g_hPicHeroBlue[1] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenBlue, $x + 24, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRed[1] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenRedShield, $x + 24, $y + 59, 16, 16)
+$g_hPicHeroGreen[1] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenGreen, $x + 24, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGray[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenGrayShield, $x + 48, $y + 59, 16, 16)
-_GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlue[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenBlueShield, $x + 48, $y + 59, 16, 16)
+$g_hPicHeroRed[1] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenRed, $x + 24, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreen[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenGreenShield, $x + 48, $y + 59, 16, 16)
+$g_hPicHeroGray[2] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenGray, $x + 48, $y + 59, 16, 16)
+_GUICtrlSetTip(-1, $sTxtTip)
+$g_hPicHeroBlue[2] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenBlue, $x + 48, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRed[2] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenRedShield, $x + 48, $y + 59, 16, 16)
+$g_hPicHeroGreen[2] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenGreen, $x + 48, $y + 59, 16, 16)
+_GUICtrlSetTip(-1, $sTxtTip)
+GUICtrlSetState(-1, $GUI_HIDE)
+$g_hPicHeroRed[2] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenRed, $x + 48, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpStatus_Info_02", "Green - Lab is Running, Red - Lab Has Stopped")
-$g_hPicLabGray = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabGrayShield, $x + 72, $y + 59, 16, 16)
+$g_hPicLabGray = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModLabGray, $x + 72, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicLabGreen = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabGreenShield, $x + 72, $y + 59, 16, 16)
+$g_hPicLabGreen = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModLabGreen, $x + 72, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicLabRed = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabRedShield, $x + 72, $y + 59, 16, 16)
+$g_hPicLabRed = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModLabRed, $x + 72, $y + 59, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_hLblLabTime = GUICtrlCreateLabel("00:00:00", $x + 93, $y + 60, 50, 14, $SS_LEFT)
@@ -12557,32 +13133,48 @@ EndFunc
 Global $g_hGUI_BBDropOrder = 0
 Global $g_hChkEnableBBAttack = 0
 Global $g_hBtnBBDropOrder = 0, $g_hChkBBTrophyRange = 0, $g_hTxtBBTrophyLowerLimit = 0, $g_hTxtBBTrophyUpperLimit = 0, $g_hChkBBAttIfLootAvail = 0, $g_hChkBBWaitForMachine = 0
+Global $g_hCmbBBNextTroopDelay = 0, $g_hCmbBBSameTroopDelay = 0, $g_hLblBBNextTroopDelay = 0, $g_hLblBBSameTroopDelay = 0
 Global $g_hChkBBCustomDropOrderEnable = 0
 Global $g_ahCmbBBDropOrder[$g_iBBTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 Global $g_hBtnBBDropOrderSet = 0, $g_hBtnBBRemoveDropOrder = 0, $g_hBtnBBClose = 0
 Func CreateBBAttackGUI()
 Local $x = 15, $y = 115
 GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "Group_01", "Builders Base Attacking"), $x - 10, $y - 20, $g_iSizeWGrpTab3, 100)
-$g_hChkEnableBBAttack = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkEnableBBAttack", "Attack"), $x + 60, $y + 5, -1, -1)
+$g_hChkEnableBBAttack = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkEnableBBAttack", "Attack"), $x + 20, $y, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkEnableBBAttack_Info_01", "Uses the currently queued army to attack."))
 GUICtrlSetOnEvent(-1, "chkEnableBBAttack")
-$g_hBtnBBDropOrder = GUICtrlCreateButton(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "BtnBBDropOrder", "Drop Order"), $x + 40, $y + 30, 75, 25)
+$g_hBtnBBDropOrder = GUICtrlCreateButton(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "BtnBBDropOrder", "Drop Order"), $x + 10, $y + 30, 65, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "BtnBBDropOrder_Info", "Set a custom dropping order for your troops."))
 GUICtrlSetBkColor(-1, $COLOR_RED)
 GUICtrlSetOnEvent(-1, "btnBBDropOrder")
-$g_hChkBBTrophyRange = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBTrophyRange", "Trophies:"), $x + 180, $y + 5, -1, -1)
+$x += 90
+$g_hLblBBNextTroopDelay = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "LblBBNextTroopDelay", "Next Troop Delay"), $x, $y + 20, -1, -1)
+$g_hCmbBBNextTroopDelay = GUICtrlCreateCombo("", $x + 100, $y + 17, 30, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "CmbBBNextTroopDelay_Info_01", "Set the delay between different troops. 1 fastest to 9 slowest."))
+GUICtrlSetOnEvent(-1, "cmbBBNextTroopDelay")
+GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9")
+_GUICtrlComboBox_SetCurSel($g_hCmbBBNextTroopDelay, 4)
+$g_hLblBBSameTroopDelay = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "LblBBSameTroopDelay", "Same Troop Delay"), $x, $y + 50, -1, -1)
+$g_hCmbBBSameTroopDelay = GUICtrlCreateCombo("", $x + 100, $y + 47, 30, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "CmbBBSameTroopDelay_Info_01", "Set the delay between same troops. 1 fastest to 9 slowest."))
+GUICtrlSetOnEvent(-1, "cmbBBSameTroopDelay")
+GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9")
+_GUICtrlComboBox_SetCurSel($g_hCmbBBSameTroopDelay, 4)
+$x += 160
+$g_hChkBBTrophyRange = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBTrophyRange", "Trophies:"), $x, $y, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBTrophyRange_Info_01", "Enable ability to set a trophy range."))
 GUICtrlSetOnEvent(-1, "chkBBTrophyRange")
-$g_hTxtBBTrophyLowerLimit = GUICtrlCreateInput($g_iTxtBBTrophyLowerLimit, $x + 250, $y + 5, 40, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetState(-1, $GUI_DISABLE)
+$g_hTxtBBTrophyLowerLimit = GUICtrlCreateInput($g_iTxtBBTrophyLowerLimit, $x + 70, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "TxtBBTrophyLimit_Info_01", "If your trophies go below this number then attacking is stopped."))
 GUICtrlSetState(-1, $GUI_DISABLE)
-GUICtrlCreateLabel("-", $x + 293, $y + 9, -1, -1)
-$g_hTxtBBTrophyUpperLimit = GUICtrlCreateInput($g_iTxtBBTrophyUpperLimit, $x + 300, $y + 5, 40, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+$g_hTxtBBTrophyUpperLimit = GUICtrlCreateInput($g_iTxtBBTrophyUpperLimit, $x + 120, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "TxtBBTrophyLimit_Info_02", "If your trophies go above this number then the bot drops trophies"))
 GUICtrlSetState(-1, $GUI_DISABLE)
-$g_hChkBBAttIfLootAvail = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBAttIfLootAvail", "Only if loot is available"), $x + 180, $y + 30, -1, -1)
+$g_hChkBBAttIfLootAvail = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBAttIfLootAvail", "Only if loot is available"), $x, $y + 25, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBAttIfLootAvail_Info_01", "Only attack if there is loot available."))
-$g_hChkBBWaitForMachine = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBWaitForMachine", "Wait For Battle Machine"), $x + 180, $y + 55, -1, -1)
+GUICtrlSetState(-1, $GUI_DISABLE)
+$g_hChkBBWaitForMachine = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBWaitForMachine", "Wait For Battle Machine"), $x, $y + 50, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBWaitForMachine_Info_01", "Makes the bot not attack while Machine is down."))
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
@@ -12637,7 +13229,7 @@ Global $g_hBtnLocateKingAltar = 0, $g_hBtnLocateQueenAltar = 0, $g_hBtnLocateWar
 Global $g_hChkTreasuryCollect = 0, $g_hTxtTreasuryGold = 0, $g_hTxtTreasuryElixir = 0, $g_hTxtTreasuryDark = 0, $g_hChkFreeMagicItems = 0, $g_hBtnDailyDiscounts = 0
 Global $g_alblBldBaseStats[4] = ["", "", ""]
 Global $g_hChkCollectBuilderBase = 0, $g_hChkStartClockTowerBoost = 0, $g_hChkCTBoostBlderBz = 0, $g_hChkCleanBBYard = 0
-Global $g_hChkBBSuggestedUpgrades = 0, $g_hChkBBSuggestedUpgradesIgnoreGold = 0, $g_hChkBBSuggestedUpgradesIgnoreElixir = 0, $g_hChkBBSuggestedUpgradesIgnoreHall = 0
+Global $g_hChkBBSuggestedUpgrades = 0, $g_hChkBBSuggestedUpgradesIgnoreGold = 0, $g_hChkBBSuggestedUpgradesIgnoreElixir = 0, $g_hChkBBSuggestedUpgradesIgnoreHall = 0, $g_hChkBBIgnoreWalls = 0
 Global $g_hChkPlacingNewBuildings = 0
 Global $g_hChkClanGamesAir = 0, $g_hChkClanGamesGround = 0, $g_hChkClanGamesMisc = 0
 Global $g_hChkClanGamesEnabled = 0, $g_hChkClanGames60 = 0
@@ -12693,18 +13285,21 @@ _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 84, $y, 16, 16)
 $g_hTxtRestartGold = GUICtrlCreateInput("10000", $x + 32, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtRestartGold_Info_01", "Minimum Gold value for the bot to resume attacking after halting because of low gold."))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $x += 90
 GUICtrlCreateLabel(ChrW(8805), $x + 22, $y + 2, -1, -1)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 84, $y, 16, 16)
 $g_hTxtRestartElixir = GUICtrlCreateInput("25000", $x + 32, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtRestartElixir_Info_01", "Minimum Elixir value for the bot to resume attacking after halting because of low elixir."))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $x += 90
 GUICtrlCreateLabel(ChrW(8805), $x + 22, $y + 2, -1, -1)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 84, $y, 16, 16)
 $g_hTxtRestartDark = GUICtrlCreateInput("500", $x + 32, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtRestartDark_Info_01", "Minimum Dark Elixir value for the bot to resume attacking after halting because of low dark elixir."))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Local $x = 15, $y = 145
 GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "Group_02", "Collect, Clear, Remove"), $x - 10, $y - 20, $g_iSizeWGrpTab3, 217)
@@ -12727,6 +13322,7 @@ $g_hTxtCollectGold = GUICtrlCreateInput("0", $x + 10, $y, 50, 18, BitOR($GUI_SS_
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectGold_Info_01", "Minimum Gold Storage amount to collect Gold.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectGold_Info_02", "Set same as Resume Attack values to collect when 'out of gold' error") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectGold_Info_03", "happens while searching for attack.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectGold_Info_04", "Set to zero to always collect."))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $x += 90
 GUICtrlCreateLabel("<", $x, $y + 2, -1, -1)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 62, $y, 16, 16)
@@ -12734,6 +13330,7 @@ $g_hTxtCollectElixir = GUICtrlCreateInput("0", $x + 10, $y, 50, 18, BitOR($GUI_S
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectElixir_Info_01", "Minimum Elixir Storage amount to collect Elixier.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectElixir_Info_02", "Set same as Resume Attack values to collect when 'out of elixir' error") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectElixir_Info_03", "happens during troop training.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectGold_Info_04", -1))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $x += 90
 GUICtrlCreateLabel("<", $x, $y + 2, -1, -1)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 62, $y, 16, 16)
@@ -12741,6 +13338,7 @@ $g_hTxtCollectDark = GUICtrlCreateInput("0", $x + 10, $y, 50, 18, BitOR($GUI_SS_
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectDark_Info_01", "Minimum Dark Elixir Storage amount to collect Dark Elixier.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectDark_Info_02", "Set same as Resume Attack values to collect when 'out of dark elixir' error") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectElixir_Info_03", -1) & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtCollectGold_Info_04", -1))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $x -=(120 + 180)
 $y += 25
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnTreasury, $x + 22, $y - 10, 48, 48)
@@ -12756,6 +13354,7 @@ $g_hTxtTreasuryGold = GUICtrlCreateInput("1000000", $x + 10, $y, 50, 18, BitOR($
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtTreasuryGold_Info_01", "Minimum Gold Storage amount to collect Treasury.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtTreasuryGold_Info_02", "Set same as Resume Attack values to collect when 'out of gold' error") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtTreasuryGold_Info_03", "happens while searching for attack") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkTreasuryCollect_Info_01", -1))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $x += 90
 GUICtrlCreateLabel("<", $x, $y + 2, -1, -1)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 62, $y, 16, 16)
@@ -12763,6 +13362,7 @@ $g_hTxtTreasuryElixir = GUICtrlCreateInput("1000000", $x + 10, $y, 50, 18, BitOR
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtTreasuryElixir_Info_01", "Minimum Elixir Storage amount to collect Treasury.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtTreasuryElixir_Info_02", "Set same as Resume Attack values to collect when 'out of elixir' error") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtTreasuryElixir_Info_03", "happens during troop training") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkTreasuryCollect_Info_01", -1))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $x += 90
 GUICtrlCreateLabel("<", $x, $y + 2, -1, -1)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 62, $y, 16, 16)
@@ -12770,6 +13370,7 @@ $g_hTxtTreasuryDark = GUICtrlCreateInput("1000", $x + 10, $y, 50, 18, BitOR($GUI
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtTreasuryDark_Info_01", "Minimum Dark Elixir Storage amount to collect Treasury.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtTreasuryDark_Info_02", "Set same as Resume Attack values to collect when 'out of dark elixir' error") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "TxtTreasuryElixir_Info_03", -1) & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkTreasuryCollect_Info_01", -1))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $x -=(120 + 180)
 $y += 22
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnTombstone, $x + 32 , $y, 24, 24)
@@ -12787,12 +13388,12 @@ _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGembox, $x + 32, $y, 24, 24)
 $g_hChkGemsBox = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkGemsBox", "Remove GemBox"), $x + 100, $y + 4, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkGemsBox_Info_01", "Check this to automatically clear GemBox."))
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-_GUICtrlCreateIcon($g_sLibIconPath, $eIcnPowerPotion, $x + 300, $y - 42, 48, 48)
+_GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModPowerP, $x + 300, $y - 42, 48, 48)
 $g_hChkFreeMagicItems = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkFreeMagicItems", "Collect Free Magic Items"), $x + 250, $y + 4, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkFreeMagicItems_Info", "Check this to automatically collect free magic items.\r\nMust be at least Th8."))
 GUICtrlSetOnEvent(-1, "ChkFreeMagicItems")
-$y += 28
-$g_hBtnDailyDiscounts = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "SetDailyDiscounts", "Daily Discounts"), $x + 280, $y, -1, -1)
+$y += 32
+$g_hBtnDailyDiscounts = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "SetDailyDiscounts", "Daily Discounts"), $x + 280, $y, -1, 22)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "SetDailyDiscounts", "Custom select magic items you would like from trader."))
 GUICtrlSetOnEvent(-1, "btnDailyDiscounts")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -12879,8 +13480,9 @@ $g_hChkBBSuggestedUpgradesIgnoreGold = GUICtrlCreateCheckbox(GetTranslatedFileIn
 GUICtrlSetOnEvent(-1, "chkActivateBBSuggestedUpgradesGold")
 $g_hChkBBSuggestedUpgradesIgnoreElixir = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkBBSuggestedUpgradesIgnore_02", "Ignore Elixir values"), $x + 200, $y + 40, -1, -1)
 GUICtrlSetOnEvent(-1, "chkActivateBBSuggestedUpgradesElixir")
-$g_hChkBBSuggestedUpgradesIgnoreHall = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkBBSuggestedUpgradesIgnore_03", "Ignore Builder Hall"), $x + 315, $y + 28, -1, -1)
+$g_hChkBBSuggestedUpgradesIgnoreHall = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkBBSuggestedUpgradesIgnore_03", "Ignore Builder Hall"), $x + 315, $y + 15, -1, -1)
 GUICtrlSetOnEvent(-1, "chkActivateBBSuggestedUpgradesGold")
+$g_hChkBBIgnoreWalls = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkBBSuggestedUpgradesIgnore_04", "Ignore Walls"), $x + 315, $y + 40, -1, -1)
 Local $x = 15, $y = 315
 $g_hChkPlacingNewBuildings = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Misc", "ChkPlacingNewBuildings", "Build 'New' tagged buildings"), $x + 70, $y + 60, -1, -1)
 GUICtrlSetOnEvent(-1, "chkPlacingNewBuildings")
@@ -13013,6 +13615,7 @@ _GUICtrlCreateIcon($g_sLibIconPath, $eIcnCCRequest, $x - 5, $y - 7, 48, 48, $BS_
 $g_hChkRequestTroopsEnable = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "ChkRequestTroopsEnable", "Request Troops / Spells"), $x + 70, $y - 6)
 GUICtrlSetOnEvent(-1, "chkRequestCCHours")
 $g_hTxtRequestCC = GUICtrlCreateInput(GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "TxtRequestCC", "Anything please"), $x + 70, $y + 15, 214, 20, BitOR($ES_CENTER, $ES_AUTOHSCROLL))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "TxtRequestCC_Info_01", "This text is used on your request for troops in the Clan chat."))
 $y += 20
@@ -13034,6 +13637,7 @@ $y += 23
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "LblIfLessThan", "If Less Than"), $x - 5, $y + 23)
 $g_hTxtRequestCountCCTroop = GUICtrlCreateInput("0", $x + 70, $y + 20, 25, 16, BitOR($ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "LblIfLessThan_Info_01", "Do not request when already received that many CC Troops. \r\nSet to either ""0"" or ""40+"" when full CC Troop wanted."))
 If GUICtrlRead($g_hChkRequestType_Troops) = $GUI_CHECKED Then
 GUICtrlSetState(-1, $GUI_ENABLE)
@@ -13042,6 +13646,7 @@ GUICtrlSetState(-1, $GUI_DISABLE)
 EndIf
 $g_hTxtRequestCountCCSpell = GUICtrlCreateInput("0", $x + 210, $y + 20, 25, 16, BitOR($ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "LblIfLessThan_Info_02", "Do not request when already received that many CC Spells. \r\nSet to either ""0"" or ""2+"" when full CC Spell wanted"))
 If GUICtrlRead($g_hChkRequestType_Spells) = $GUI_CHECKED Then
 GUICtrlSetState(-1, $GUI_ENABLE)
@@ -13055,6 +13660,7 @@ For $i = 0 To 2
 $g_ahTxtClanCastleTroop[$i] = GUICtrlCreateInput("0", $x + 70, $y + $i * 25, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetState(-1, $GUI_DISABLE)
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "Onlytake_Info_01", "Set the maximum quantity to stay. \r\nExcessive quantity shall be removed. \r\nSet to ""0"" or ""40+"" means unlimited."))
 $g_ahCmbClanCastleTroop[$i] = GUICtrlCreateCombo("", $x + 100, $y + $i * 25, 70, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, $sCmbTroopList, "Any")
@@ -13082,6 +13688,7 @@ $y += 82
 $g_hChkRequestCCDefense = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "ChkRequestCCDefense", "Request Defense Troops"), $x + 70, $y - 6)
 GUICtrlSetOnEvent(-1, "chkRequestCCDefense")
 $g_hTxtRequestCCDefense = GUICtrlCreateInput(GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "TxtRequestCCDefense", "Defense troop please"), $x + 70, $y + 15, 214, 20, BitOR($ES_CENTER, $ES_AUTOHSCROLL))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "TxtRequestCCDefense_Info_01", "This text is used on your request for defensive troops in the Clan chat."))
 $y += 40
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "LblRequestCCDefenseWhen", "When Time"), $x - 5, $y + 4)
@@ -13090,7 +13697,7 @@ GUICtrlSetData(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Donate-C
 GUICtrlCreateLabel("<", $x + 185, $y + 4, 20, 15)
 $g_hTxtRequestCCDefenseTime = GUICtrlCreateInput("30", $x + 197, $y, 25, 20, BitOR($ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 3)
-GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hLblRequestCCDefenseTime = GUICtrlCreateLabel("min", $x + 227, $y + 4, 17, 15)
 $g_hChkSaveCCTroopForDefense = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "ChkSaveCCTroopForDefense", "Save CC Troops for Defense"), $x + 70, $y + 25)
 GUICtrlSetState(-1, $GUI_CHECKED)
@@ -13102,6 +13709,7 @@ For $i = 0 To 2
 $g_ahTxtCCTroopDefense[$i] = GUICtrlCreateInput("0", $x + 70 + $i * 122, $y, 25, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetState(-1, $GUI_DISABLE)
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Donate-CC", "Onlytake_Info_01", -1))
 $g_ahCmbCCTroopDefense[$i] = GUICtrlCreateCombo("", $x + 100 + $i * 122, $y, 70, -1, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, $sCmbTroopList, "Any")
@@ -13568,7 +14176,7 @@ $g_hLblDonateTroopCustomD = GUICtrlCreateLabel("", $x, $y - 2, $Offx + 2, $Offx 
 GUICtrlSetBkColor(-1, $GUI_BKCOLOR_TRANSPARENT)
 GUICtrlSetState(-1, $GUI_DISABLE)
 GUICtrlCreateButton("", $x + 2, $y, $Offx - 2, $Offx - 2, $BS_ICON)
-_GUICtrlSetImage(-1, $g_sLibIconPath, $eIcnClanHop, 1)
+_GUICtrlSetImage(-1, $g_sLibModIconPath, $eIcnModClanHop, 1)
 GUICtrlSetOnEvent(-1, "btnDonateOptions")
 $x += $Offx
 GUICtrlCreateButton("", $x + 2, $y, $Offx - 2, $Offx - 2, $BS_ICON)
@@ -14669,6 +15277,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomA")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomA[0] = GUICtrlCreateInput("2", $x + 165, $y, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Donate", "LblDonateCustom_02", "2nd") & ":", $x, $y + 29, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -14680,6 +15289,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomA")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomA[1] = GUICtrlCreateInput("3", $x + 165, $y + 25, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Donate", "LblDonateCustom_03", "3rd") & ":", $x, $y + 54, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -14691,6 +15301,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomA")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomA[2] = GUICtrlCreateInput("1", $x + 165, $y + 50, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel($sTxtKeywordsNo & ":", $x + 215, $y + 80, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -14733,6 +15344,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomB")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomB[0] = GUICtrlCreateInput("1", $x + 165, $y, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Donate", "LblDonateCustom_02", -1) & ":", $x, $y + 29, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -14744,6 +15356,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomB")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomB[1] = GUICtrlCreateInput("3", $x + 165, $y + 25, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Donate", "LblDonateCustom_03", -1) & ":", $x, $y + 54, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -14755,6 +15368,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomB")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomB[2] = GUICtrlCreateInput("5", $x + 165, $y + 50, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel($sTxtKeywordsNo & ":", $x + 215, $y + 80, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -14797,6 +15411,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomC")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomC[0] = GUICtrlCreateInput("1", $x + 165, $y, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Donate", "LblDonateCustom_02", -1) & ":", $x, $y + 29, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -14808,6 +15423,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomC")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomC[1] = GUICtrlCreateInput("3", $x + 165, $y + 25, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Donate", "LblDonateCustom_03", -1) & ":", $x, $y + 54, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -14819,6 +15435,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomC")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomC[2] = GUICtrlCreateInput("5", $x + 165, $y + 50, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel($sTxtKeywordsNo & ":", $x + 215, $y + 80, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -14861,6 +15478,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomD")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomD[0] = GUICtrlCreateInput("1", $x + 165, $y, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Donate", "LblDonateCustom_02", -1) & ":", $x, $y + 29, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -14872,6 +15490,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomD")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomD[1] = GUICtrlCreateInput("3", $x + 165, $y + 25, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Donate", "LblDonateCustom_03", -1) & ":", $x, $y + 54, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -14883,6 +15502,7 @@ GUICtrlSetOnEvent(-1, "cmbDonateCustomD")
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_ahTxtDonateCustomD[2] = GUICtrlCreateInput("5", $x + 165, $y + 50, 30, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 GUICtrlCreateLabel($sTxtKeywordsNo & ":", $x + 215, $y + 80, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -15054,6 +15674,7 @@ $g_hLblSkipDonateNearFullTroopsText = GUICtrlCreateLabel(GetTranslatedFileIni("M
 $x += 110
 $g_hTxtSkipDonateNearFullTroopsPercentage = GUICtrlCreateInput("90", $x + 40 + 30, $y - 2, 20, 20, BitOR($SS_CENTER, $ES_AUTOHSCROLL))
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $x += 95
 $g_hLblSkipDonateNearFullTroopsText1 = GUICtrlCreateLabel("%", $x, $y)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -15251,17 +15872,22 @@ $g_hChkUpgrade[$i] = GUICtrlCreateCheckbox($i + 1 & ":", $x + 5, $y + 1, 34, 15)
 _GUICtrlSetTip(-1, $sTxtCheckBox & " #" & $i + 1 & " " & $sTxtAfterUsing)
 GUICtrlSetOnEvent(-1, "btnchkbxUpgrade")
 $g_hTxtUpgradeName[$i] = GUICtrlCreateInput("", $x + 40, $y, 107, 17, BitOR($ES_CENTER, $GUI_SS_DEFAULT_INPUT, $ES_READONLY, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, $sTxtShowName)
 $g_hTxtUpgradeLevel[$i] = GUICtrlCreateInput("", $x + 150, $y, 23, 17, BitOR($ES_CENTER, $GUI_SS_DEFAULT_INPUT, $ES_READONLY, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1E7D5)
 _GUICtrlSetTip(-1, $sTxtShowLevel)
 $g_hPicUpgradeType[$i]= _GUICtrlCreateIcon($g_sLibIconPath, $eIcnBlank, $x + 178, $y + 1, 15, 15)
 _GUICtrlSetTip(-1, $sTxtShowType)
 GUICtrlSetOnEvent(-1, "picUpgradeTypeLocation")
 $g_hTxtUpgradeValue[$i] = GUICtrlCreateInput("", $x + 197, $y, 65, 17, BitOR($ES_CENTER, $GUI_SS_DEFAULT_INPUT, $ES_READONLY, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, $sTxtShowCost)
 $g_hTxtUpgradeTime[$i] = GUICtrlCreateInput("", $x + 266, $y, 35, 17, BitOR($ES_CENTER, $GUI_SS_DEFAULT_INPUT, $ES_READONLY, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1E7D5)
 _GUICtrlSetTip(-1, $sTxtShowTime)
 $g_hTxtUpgradeEndTime[$i] = GUICtrlCreateInput("", $x + 305, $y, 85, 17, BitOR($ES_LEFT, $GUI_SS_DEFAULT_INPUT, $ES_READONLY, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetFont(-1, 7)
 _GUICtrlSetTip(-1, $sTxtShowEndTime)
 $g_hChkUpgradeRepeat[$i] = GUICtrlCreateCheckbox("", $x + 395, $y + 1, 15, 15)
@@ -15275,12 +15901,14 @@ $y += 8
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x - 15, $y, 15, 15)
 GUICtrlCreateLabel( GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "LblUpgrMinGold", "Min. Gold") & ":", $x + 5, $y + 3, -1, -1)
 $g_hTxtUpgrMinGold = GUICtrlCreateInput("250000", $x + 55, $y, 61, 17, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "TxtUpgrMinGold_Info_01", "Save this much Gold after the upgrade completes.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "TxtUpgrMinGold_Info_02", "Set this value as needed to save for searching, or wall upgrades."))
 GUICtrlSetLimit(-1, 7)
 $y += 18
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x - 15, $y, 15, 15)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "LblUpgrMinElixir", "Min. Elixir") & ":", $x + 5, $y + 3, -1, -1)
 $g_hTxtUpgrMinElixir = GUICtrlCreateInput("250000", $x + 55, $y, 61, 17, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "TxtUpgrMinElixir_Info_01", "Save this much Elixir after the upgrade completes") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "TxtUpgrMinElixir_Info_02", "Set this value as needed to save for making troops or wall upgrades."))
 GUICtrlSetLimit(-1, 7)
 $x -= 15
@@ -15288,6 +15916,7 @@ $y -= 8
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 140, $y, 15, 15)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "LblUpgrMinDark", "Min. Dark") & ":", $x + 160, $y + 3, -1, -1)
 $g_hTxtUpgrMinDark = GUICtrlCreateInput("3000", $x + 210, $y, 61, 17, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "TxtUpgrMinDark_Info_01", "Save this amount of Dark Elixir after the upgrade completes.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Buildings", "TxtUpgrMinDark_Info_02", "Set this value higher if you want make war troops."))
 GUICtrlSetLimit(-1, 6)
 $y -= 8
@@ -15341,8 +15970,10 @@ $g_hLblWallCost = GUICtrlCreateLabel("30 000", $x + 110, $y + 25, 50, -1, $SS_RI
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x, $y + 47, 16, 16)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "LblMin.Goldtosave", "Min. Gold to save"), $x + 20, $y + 47, -1, -1)
 $g_hTxtWallMinGold = GUICtrlCreateInput("250000", $x + 110, $y + 45, 61, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "LblMin.Goldtosave_Info_01", "Save this much Gold after the wall upgrade completes,") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "LblMin.Goldtosave_Info_02", "Set this value to save Gold for other upgrades, or searching."))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_DISABLE)
 $y += 2
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x, $y + 67, 16, 16)
@@ -15350,48 +15981,59 @@ GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_
 $g_hTxtWallMinElixir = GUICtrlCreateInput("250000", $x + 110, $y + 65, 61, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "LblMin.Elixirtosave_Info_01", "Save this much Elixir after the wall upgrade completes,") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "LblMin.Elixirtosave_Info_02", "Set this value to save Elixir for other upgrades or troop making."))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_DISABLE)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Local $x = 25, $y = 175
 GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "Group_02", "Walls counter"), $x - 20, $y - 20, $g_iSizeWGrpTab3, 95)
 $g_ahWallsCurrentCount[4] = GUICtrlCreateInput("0", $x, $y, 25, 19, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_01", "Input number of Walls level") & " 4 " & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_02", "you have."))
 $g_ahPicWallsLevel[4] = _GUICtrlCreateIcon($g_sLibIconPath, $eWall04, $x + 27, $y - 2, 24, 24)
 $x += 80
 $g_ahWallsCurrentCount[5] = GUICtrlCreateInput("0", $x, $y, 25, 19, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_01", -1) & " 5 " & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_02", -1))
 $g_ahPicWallsLevel[5] = _GUICtrlCreateIcon($g_sLibIconPath, $eWall05, $x + 27, $y - 2, 24, 24)
 $x += 80
 $g_ahWallsCurrentCount[6] = GUICtrlCreateInput("0", $x, $y, 25, 19, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_01", -1) & " 6 " & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_02", -1))
 $g_ahPicWallsLevel[6] = _GUICtrlCreateIcon($g_sLibIconPath, $eWall06, $x + 27, $y - 2, 24, 24)
 $x += 80
 $g_ahWallsCurrentCount[7] = GUICtrlCreateInput("0", $x, $y, 25, 19, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_01", -1) & " 7 " & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_02", -1))
 $g_ahPicWallsLevel[7] = _GUICtrlCreateIcon($g_sLibIconPath, $eWall07, $x + 27, $y - 2, 24, 24)
 $x += 80
 $g_ahWallsCurrentCount[8] = GUICtrlCreateInput("0", $x, $y, 25, 19, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_01", -1) & " 8 " & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_02", -1))
 $g_ahPicWallsLevel[8] = _GUICtrlCreateIcon($g_sLibIconPath, $eWall08, $x + 27, $y - 2, 24, 24)
 Local $x = 25
 $y += 40
 $g_ahWallsCurrentCount[9] = GUICtrlCreateInput("0", $x, $y, 25, 19, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_01", -1) & " 9 " & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_02", -1))
 $g_ahPicWallsLevel[9] = _GUICtrlCreateIcon($g_sLibIconPath, $eWall09, $x + 27, $y - 2, 24, 24)
 $x += 80
 $g_ahWallsCurrentCount[10] = GUICtrlCreateInput("0", $x, $y, 25, 19, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_01", -1) & " 10 " & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_02", -1))
 $g_ahPicWallsLevel[10] = _GUICtrlCreateIcon($g_sLibIconPath, $eWall10, $x + 27, $y - 2, 24, 24)
 $x += 80
 $g_ahWallsCurrentCount[11] = GUICtrlCreateInput("0", $x, $y, 25, 19, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_01", -1) & " 11 " & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_02", -1))
 $g_ahPicWallsLevel[11] = _GUICtrlCreateIcon($g_sLibIconPath, $eWall11, $x + 27, $y - 2, 24, 24)
 $x += 80
 $g_ahWallsCurrentCount[12] = GUICtrlCreateInput("0", $x, $y, 25, 19, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_01", -1) & " 12 " & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_02", -1))
 $g_ahPicWallsLevel[12] = _GUICtrlCreateIcon($g_sLibIconPath, $eWall12, $x + 27, $y - 2, 24, 24)
 $x += 80
 $g_ahWallsCurrentCount[13] = GUICtrlCreateInput("0", $x, $y, 25, 19, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_01", -1) & " 13 " & GetTranslatedFileIni("MBR GUI Design Child Village - Upgrade_Walls", "WallsCurrentCount_Info_02", -1))
 $g_ahPicWallsLevel[13] = _GUICtrlCreateIcon($g_sLibIconPath, $eWall13, $x + 27, $y - 2, 24, 24)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -15404,10 +16046,13 @@ _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design - AutoUpgrade", "ChkAuto
 GUICtrlSetOnEvent(-1, "chkAutoUpgrade")
 $g_hLblAutoUpgrade = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design - AutoUpgrade", "Label_01", "Save"), $x, $y + 32, -1, -1)
 $g_hTxtSmartMinGold = GUICtrlCreateInput("150000", $x + 33, $y + 29, 60, 21, BitOR($ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 98, $y + 32, 16, 16)
 $g_hTxtSmartMinElixir = GUICtrlCreateInput("150000", $x + 118, $y + 29, 60, 21, BitOR($ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 183, $y + 32, 16, 16)
 $g_hTxtSmartMinDark = GUICtrlCreateInput("1500", $x + 203, $y + 29, 60, 21, BitOR($ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 268, $y + 32, 16, 16)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design - AutoUpgrade", "Label_02", "after launching upgrade"), $x + 290, $y + 32, -1, -1)
 $g_hChkResourcesToIgnore[0] = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design - AutoUpgrade", "Ignore_01", "Ignore Gold Upgrades"), $x, $y + 55, -1, -1)
@@ -15489,6 +16134,7 @@ $g_hTxtUnbreakable = GUICtrlCreateInput("5", $x + 80, $y, 30, 20, BitOR($GUI_SS_
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnbreakable_Info_01", "Set the amount of time to stop CoC and wait for enemy attacks to gain defense wins. (1-99 minutes)"))
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "Minutes", "Minutes"), $x + 113, $y + 3, -1, -1)
 $y += 28
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "Lbl_FarmMin._Info_01", "Farm Min."), $x + 25, $y, -1, -1)
@@ -15498,33 +16144,39 @@ $g_hTxtUnBrkMinGold = GUICtrlCreateInput("50000", $x + 20, $y, 58, 21, BitOR($GU
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMinGold_Info_01", "Amount of Gold that stops Defense farming, switches to normal farming if below.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMinGold_Info_02", "Set this value to amount of Gold you need for searching or upgrades."))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 80, $y + 2, 16, 16)
 $g_hTxtUnBrkMaxGold = GUICtrlCreateInput("600000", $x + 110, $y, 58, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMaxGold_Info_01", "Amount of Gold in Storage Required to Enable Defense Farming.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMaxGold_Info_02", "Input amount of Gold you need to attract enemy or for upgrades."))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 170, $y + 2, 16, 16)
 $y += 26
 $g_hTxtUnBrkMinElixir = GUICtrlCreateInput("50000", $x + 20, $y, 58, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMinElixir_Info_01", "Amount of Elixir that stops Defense farming, switches to normal farming if below.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMinElixir_Info_02", "Set this value to amount of Elixir you need for making troops or upgrades."))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 80, $y, 16, 16)
 $g_hTxtUnBrkMaxElixir = GUICtrlCreateInput("600000", $x + 110, $y, 58, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMaxElixir_Info_01", "Amount of Elixir in Storage Required to Enable Defense Farming.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMaxElixir_Info_02", "Input amount of Elixir you need to attract enemy or for upgrades."))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 170, $y, 16, 16)
 $y += 24
 $g_hTxtUnBrkMinDark = GUICtrlCreateInput("5000", $x + 20, $y, 58, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMinDark_Info_01", "Amount of Dark Elixir that stops Defense farming, switches to normal farming if below.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMinDark_Info_02", "Set this value to amount of Dark Elixir you need for making troops or upgrades."))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 80, $y, 16, 16)
 $g_hTxtUnBrkMaxDark = GUICtrlCreateInput("6000", $x + 110, $y, 58, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMaxDark_Info_01", "Amount of Dark Elixir in Storage Required to Enable Defense Farming.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Village - Achievements", "TxtUnBrkMaxDark_Info_02", "Input amount of Dark Elixir you need to attract enemy or for upgrades."))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 170, $y, 16, 16)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $x = 25
@@ -15568,6 +16220,7 @@ $y += 40
 $x -= 10
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Notify", "LblNotifyTGToken", "Token (Telegram)") & ":", $x, $y, -1, -1, $SS_RIGHT)
 $g_hTxtNotifyTGToken = GUICtrlCreateInput("", $x + 120, $y - 3, 280, 19)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Village - Notify", "LblNotifyTGToken_Info_01", "You need a Token to use Telegram notifications. Get a token from Telegram.com"))
 GUICtrlSetState(-1, $GUI_DISABLE)
 $y += 25
@@ -15578,6 +16231,7 @@ GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Village - Notify",
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Village - Notify", "LblNotifyOrigin_Info_01", "Origin - Village name.")
 _GUICtrlSetTip(-1, $sTxtTip)
 $g_hTxtNotifyOrigin = GUICtrlCreateInput("", $x + 170, $y, 230, 19)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_DISABLE)
 $y += 25
@@ -16146,6 +16800,7 @@ $g_hTxtFullTroop = GUICtrlCreateInput("100", $x + 82, $y - 10, 35, 20, BitOR($GU
 GUICtrlSetOnEvent(-1, "SetComboTroopComp")
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "TxtFullTroop_Info_01", "Army camps are 'Full' when reaching this %, then start attack."))
 GUICtrlSetLimit(-1, 3)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 GUICtrlCreateLabel("%", $x + 120, $y - 7, -1, 17)
 $x += 180
 $y -= 23
@@ -16173,6 +16828,7 @@ _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", 
 $g_hTxtTotalCampForced = GUICtrlCreateInput("220", $x + 137, $y + 3, 30, 17, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetOnEvent(-1, "SetComboTroopComp")
 GUICtrlSetLimit(-1, 3)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 $g_hCalTotalTroops = GUICtrlCreateProgress($x, $y + 22, 407, 10)
 $g_hLblTotalProgress = GUICtrlCreateLabel("", $x, $y + 22, 407, 10)
 GUICtrlSetBkColor(-1, $COLOR_RED)
@@ -16362,7 +17018,7 @@ _GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrain, $x + 153, $y, 28, 28)
 $g_hChkDoubleTrain = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "ChkDoubleTrain", "Double Train Army"), $x + 187, $y + 4, -1, 15)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR Global GUI Design", "DoubleTrainTip", "Train 2nd set of Troops & Spells after training 1st combo") & @CRLF & GetTranslatedFileIni("MBR Global GUI Design", "DoubleTrainTip1", "Make sure to enter exactly the 'Total Camp',") & @CRLF & GetTranslatedFileIni("MBR Global GUI Design", "DoubleTrainTip2", "'Total Spell' and number of Troops/Spells in your Setting") & @CRLF & GetTranslatedFileIni("MBR Global GUI Design", "DoubleTrainTip3", "Note: Donations + Double Train can produce an unbalanced army!"))
 GUICtrlSetOnEvent(-1, "chkUseQTrain")
-_GUICtrlCreateIcon($g_sLibIconPath, $eIcnPrecise, $x + 303, $y, 28, 28)
+_GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModPrecise, $x + 303, $y, 28, 28)
 $g_hChkPreciseArmy = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "ChkPreciseArmy", "Precise Army"), $x + 337, $y + 4, -1, 15)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "ChkPreciseArmy_Info_01", "Check precision of Troops & Spells before training.") & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Troops", "ChkPreciseArmy_Info_02", "Will remove wrong Troops or Spells if any"))
 EndFunc
@@ -16429,7 +17085,7 @@ GUICtrlSetOnEvent(-1, "chkUpgradeWarden")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $y += 55
 GUICtrlCreateGroup(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Boost", "Group_03", "Boost Everything"), $x - 20, $y - 20, $g_iSizeWGrpTab3, 70)
-_GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrainingPotion, $x - 10, $y - 4, 24, 24)
+_GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModTrainingP, $x - 10, $y - 4, 24, 24)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design Names Troops", "Potion_01", "Training Potion") & " " & $sTextBoostLeft, $x + 20, $y + 2, -1, -1)
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Boost", "LblBoostPotion_Info_01", "Use this to boost everything with Training POTIONS! Use with caution!")
 _GUICtrlSetTip(-1, $sTxtTip)
@@ -16437,7 +17093,7 @@ $g_hCmbBoostTrainingPotion = GUICtrlCreateCombo("", $x + 185, $y - 2, 65, 25, Bi
 GUICtrlSetData(-1, "0|1|2|3|4|5|No limit", "0")
 _GUICtrlSetTip(-1, $sTxtTip)
 $y += 25
-_GUICtrlCreateIcon($g_sLibIconPath, $eIcnResourcePotion, $x - 10, $y - 4, 24, 24)
+_GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModResourceP, $x - 10, $y - 4, 24, 24)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design Names Troops", "Potion_02", "Resource Potion") & " " & $sTextBoostLeft, $x + 20, $y + 2, -1, -1)
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Boost", "LblBoostPotion_Info_02", "Use this to boost everything with Resource POTIONS! Use with caution!")
 _GUICtrlSetTip(-1, $sTxtTip)
@@ -16698,6 +17354,7 @@ GUICtrlSetOnEvent(-1, "chkTrainLogoutMaxTime")
 $g_hTxtTrainLogoutMaxTime = GUICtrlCreateInput("4", $x + 95, $y + 2, 25, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hLblTrainLogoutMaxTime = GUICtrlCreateLabel("min.", $x + 127, $y + 4, -1, -1)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $y += 51
@@ -16732,9 +17389,11 @@ $y += 18
 $g_hLblAddDelayIdlePhaseBetween = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Options", "LblTrainAddRandomDelay_Info_01", "Between"), $x - 12, $y, 50, 30)
 $g_hTxtAddRandomDelayMin = GUICtrlCreateInput($g_iTrainAddRandomDelayMin, $x + 32, $y - 2, 25, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 999)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Troops_Options", "LblTrainAddRandomDelay_Info_02", "And"), $x + 61, $y, 20, 30)
 $g_hTxtAddRandomDelayMax = GUICtrlCreateInput($g_iTrainAddRandomDelayMax, $x + 82, $y - 2, 25, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetLimit(-1, 999)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hLblAddDelayIdlePhaseSec = GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "sec.", "sec."), $x + 110, $y, 20, 30)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
@@ -16956,10 +17615,12 @@ GUICtrlSetOnEvent(-1, "chkDBActivateSearches")
 $g_hTxtDBSearchesMin = GUICtrlCreateInput("1", $x + 70, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "LblActivateMinSearches_Info_01", "Set the Min. number of searches to activate this attack option") & @CRLF & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateSearches_Info_01", -1) & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateSearches_Info_02", -1))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hLblDBSearches = GUICtrlCreateLabel("-", $x + 113, $y + 2, -1, -1)
 $g_hTxtDBSearchesMax = GUICtrlCreateInput("9999", $x + 120, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "LblActivateMaxSearches_Info_01", "Set the Max number of searches to activate this attack option") & @CRLF & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateSearches_Info_01", -1) & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateSearches_Info_02", -1))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnMagnifier, $x + 163, $y + 1, 16, 16)
 $y += 21
 $g_hChkDBActivateTropies = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateTropies", "Trophies"), $x, $y, 68, 18)
@@ -16969,12 +17630,14 @@ $g_hTxtDBTropiesMin = GUICtrlCreateInput("0", $x + 70, $y, 40, 18, BitOR($GUI_SS
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "LblActivateMinTropies_Info_01", "Set the Min. number of tropies where this attack will be used") & @CRLF & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateSearches_Info_01", -1) & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateTropies_Info_01", -1))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hLblDBTropies = GUICtrlCreateLabel("-", $x + 113, $y + 2, -1, -1)
 GUICtrlSetState(-1, $GUI_DISABLE)
 $g_hTxtDBTropiesMax = GUICtrlCreateInput("6000", $x + 120, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "LblActivateMaxTropies_Info_01", "Set the Max number of tropies where this attack will be used") & @CRLF & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateSearches_Info_01", -1) & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateTropies_Info_01", -1))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrophy, $x + 163, $y + 1, 16, 16)
 $y += 21
 $g_hChkDBActivateCamps = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateCamps", "Army Camps"), $x, $y, 110, 18)
@@ -16988,6 +17651,7 @@ $g_hTxtDBArmyCamps = GUICtrlCreateInput("80", $x + 120, $y, 40, 18, BitOR($GUI_S
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_DISABLE)
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlCreateLabel("%", $x + 163 + 3, $y + 4, -1, -1)
 GUICtrlSetState(-1, $GUI_DISABLE)
 $y += 23
@@ -17060,6 +17724,7 @@ $g_hTxtDBMinGold = GUICtrlCreateInput("80000", $x + 85, $y, 50, 18, BitOR($GUI_S
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "TxtMinGold_Info_01", "Set the Min. amount of Gold to search for on a village to attack.")
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hPicDBMinGold = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 140, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 $y += 21
@@ -17067,6 +17732,7 @@ $g_hTxtDBMinElixir = GUICtrlCreateInput("80000", $x + 85, $y, 50, 18, BitOR($GUI
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "TxtMinElixir_Info_01", "Set the Min. amount of Elixir to search for on a village to attack.")
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hPicDBMinElixir = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 140, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 $y -= 11
@@ -17074,6 +17740,7 @@ $g_hTxtDBMinGoldPlusElixir = GUICtrlCreateInput("160000", $x + 85, $y, 50, 18, B
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "TxtMinGoldPlusElixir_Info_01", "Set the Min. amount of Gold + Elixir to search for on a village to attack.")
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_hPicDBMinGPEGold = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGoldElixir, $x + 140, $y + 1, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
@@ -17086,6 +17753,7 @@ $g_hTxtDBMinDarkElixir = GUICtrlCreateInput("0", $x + 85, $y, 50, 18, BitOR($GUI
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "TxtMinDarkElixir_Info_01", "Set the Min. amount of Dark Elixir to search for on a village to attack.")
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 5)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlEdit_SetReadOnly(-1, True)
 $g_hPicDBMinDarkElixir = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 140, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
@@ -17098,12 +17766,14 @@ $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkMeet
 _GUICtrlSetTip(-1, $sTxtTip)
 _GUICtrlEdit_SetReadOnly(-1, True)
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlCreateLabel("-", $x + 109, $y + 2, -1, -1)
 $g_hTxtDBMaxTrophy = GUICtrlCreateInput("0", $x + 115, $y, 20, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkMeetTrophy_Info_03", "Set the Max. amount of Trophies to search for on a village to attack.")
 _GUICtrlSetTip(-1, $sTxtTip)
 _GUICtrlEdit_SetReadOnly(-1, True)
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hPicDBMinTrophies = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrophy, $x + 140, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 $y += 24
@@ -17517,6 +18187,7 @@ _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-
 _GUICtrlSlider_SetTipSide(-1, $TBTS_BOTTOM)
 _GUICtrlSlider_SetTicFreq(-1, 1)
 GUICtrlSetLimit(-1, 15, -15)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetData(-1, 0)
 GUICtrlSetOnEvent(-1, "sldCollectorTolerance")
 GUICtrlSetState(-1, $GUI_HIDE)
@@ -17537,6 +18208,7 @@ GUICtrlCreateLabel("%", $x + 85, $y, -1, -1)
 $g_hTxtDBMinCollectorOutsidePercent = GUICtrlCreateInput("80", $x + 50, $y - 3, 31, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "ChkDBMeetCollectorOutside_Info_02", "Set the Min. % of collectors outside to search for on a village to attack."))
 GUICtrlSetLimit(-1, 3)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $y += 20
 $g_hChkDBCollectorNearRedline = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "ChkDBCollectorNearRedline", "Collectors Near Redline"), $x, $y, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "ChkDBCollectorNearRedline_Info_01", "Check how many collectors are near redline. If more than % you set then attack."))
@@ -17560,18 +18232,21 @@ _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 60, $y, 16, 16)
 $g_hTxtSkipCollectorGold = GUICtrlCreateInput("400000", $x + 8, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "TxtSkipCollectorGold", "Skip outside collectors check IF target Gold value over"))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $x += 90
 $g_hLblSkipCollectorElixir = GUICtrlCreateLabel(ChrW(8805), $x, $y + 2, -1, -1)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 60, $y, 16, 16)
 $g_hTxtSkipCollectorElixir = GUICtrlCreateInput("400000", $x + 8, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "TxtSkipCollectorElixir", "Skip outside collectors check IF target Elixir value over"))
 GUICtrlSetLimit(-1, 7)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $y += 25
 $g_hLblSkipCollectorDark = GUICtrlCreateLabel(ChrW(8805), $x - 40, $y + 2, -1, -1)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 20, $y, 16, 16)
 $g_hTxtSkipCollectorDark = GUICtrlCreateInput("0", $x - 32, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "TxtSkipCollectorDark", "Skip outside collectors check IF target Dark Elixir value over"))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $y += 25
 $x -= 90
 $g_hChkSkipCollectorCheckTH = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "ChkSkipCollectorCheckTH", "Skip Outside Collectors Check IF"), $x, $y, -1, -1)
@@ -17769,10 +18444,12 @@ GUICtrlSetOnEvent(-1, "chkABActivateSearches")
 $g_hTxtABSearchesMin = GUICtrlCreateInput("1", $x + 70, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "LblActivateMinSearches_Info_01", -1) & @CRLF & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateSearches_Info_01", -1) & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateSearches_Info_02", -1))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hLblABSearches = GUICtrlCreateLabel("-", $x + 113, $y + 2, -1, -1)
 $g_hTxtABSearchesMax = GUICtrlCreateInput("9999", $x + 120, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "LblActivateMaxSearches_Info_01", -1) & @CRLF & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateSearches_Info_01", -1) & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkMeetTrophy_Info_01", -1))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnMagnifier, $x + 163, $y + 1, 16, 16)
 $y += 21
 $g_hChkABActivateTropies = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateTropies", -1), $x, $y, 68, 18)
@@ -17782,12 +18459,14 @@ $g_hTxtABTropiesMin = GUICtrlCreateInput("0", $x + 70, $y, 40, 18, BitOR($GUI_SS
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "LblActivateMinTropies_Info_01", -1) & @CRLF & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateSearches_Info_01", -1) & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateTropies_Info_01", -1))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hLblABTropies = GUICtrlCreateLabel("-", $x + 113, $y + 2, -1, -1)
 GUICtrlSetState(-1, $GUI_DISABLE)
 $g_hTxtABTropiesMax = GUICtrlCreateInput("6000", $x + 120, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetState(-1, $GUI_DISABLE)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "LblActivateMaxTropies_Info_01", -1) & @CRLF & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateSearches_Info_01", -1) & @CRLF & GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateTropies_Info_01", -1))
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrophy, $x + 163, $y + 1, 16, 16)
 $y += 21
 $g_hChkABActivateCamps = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkActivateCamps", -1), $x, $y, 110, 18)
@@ -17801,6 +18480,7 @@ $g_hTxtABArmyCamps = GUICtrlCreateInput("100", $x + 120, $y, 40, 18, BitOR($GUI_
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_DISABLE)
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlCreateLabel("%", $x + 163 + 3, $y + 4, -1, -1)
 GUICtrlSetState(-1, $GUI_DISABLE)
 $y += 23
@@ -17872,6 +18552,7 @@ $g_hTxtABMinGold = GUICtrlCreateInput("80000", $x + 85, $y, 50, 18, BitOR($GUI_S
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "TxtMinGold_Info_01", -1)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hPicABMinGold = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 137, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 $y += 21
@@ -17879,6 +18560,7 @@ $g_hTxtABMinElixir = GUICtrlCreateInput("80000", $x + 85, $y, 50, 18, BitOR($GUI
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "TxtMinElixir_Info_01", -1)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hPicABMinElixir = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 137, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 $y -= 11
@@ -17886,6 +18568,7 @@ $g_hTxtABMinGoldPlusElixir = GUICtrlCreateInput("160000", $x + 85, $y, 50, 20, B
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "TxtMinGoldPlusElixir_Info_01", -1)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 6)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_hPicABMinGPEGold = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGoldElixir, $x + 137, $y + 1, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
@@ -17898,6 +18581,7 @@ $g_hTxtABMinDarkElixir = GUICtrlCreateInput("0", $x + 85, $y, 50, 18, BitOR($GUI
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "TxtMinDarkElixir_Info_01", -1)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 5)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlEdit_SetReadOnly(-1, True)
 $g_hPicABMinDarkElixir = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 137, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
@@ -17910,12 +18594,14 @@ $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkMeet
 _GUICtrlSetTip(-1, $sTxtTip)
 _GUICtrlEdit_SetReadOnly(-1, True)
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlCreateLabel("-", $x + 109, $y + 2, -1, -1)
 $g_hTxtABMaxTrophy = GUICtrlCreateInput("0", $x + 115, $y, 20, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Attack - Search", "ChkMeetTrophy_Info_03", -1)
 _GUICtrlSetTip(-1, $sTxtTip)
 _GUICtrlEdit_SetReadOnly(-1, True)
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $g_hPicABMinTrophies = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrophy, $x + 137, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 $y += 24
@@ -18674,6 +19360,7 @@ _GUICtrlSetTip(-1, $sTxtTip)
 $g_hTxtSearchReduceCount = GUICtrlCreateInput("20", $x + 115, $y + 2, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 3)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "search(es).", -1), $x + 160, $y + 3, -1, -1)
 $y += 21
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "LblSearchReduceGold", "- Reduce Gold"), $x, $y + 3, -1, 17)
@@ -18682,6 +19369,7 @@ _GUICtrlSetTip(-1, $sTxtTip)
 $g_hTxtSearchReduceGold = GUICtrlCreateInput("2000", $x + 115, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 5)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 160, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 $y += 21
@@ -18691,6 +19379,7 @@ _GUICtrlSetTip(-1, $sTxtTip)
 $g_hTxtSearchReduceElixir = GUICtrlCreateInput("2000", $x + 115, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 5)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 160, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 $y += 21
@@ -18700,6 +19389,7 @@ _GUICtrlSetTip(-1, $sTxtTip)
 $g_hTxtSearchReduceGoldPlusElixir = GUICtrlCreateInput("4000", $x + 115, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 5)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnGold, $x + 160, $y + 1, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlCreateLabel("+", $x + 176, $y + 1, -1, -1)
@@ -18713,6 +19403,7 @@ _GUICtrlSetTip(-1, $sTxtTip)
 $g_hTxtSearchReduceDark = GUICtrlCreateInput("100", $x + 115, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 3)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 160, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 $y += 21
@@ -18722,6 +19413,7 @@ _GUICtrlSetTip(-1, $sTxtTip)
 $g_hTxtSearchReduceTrophy = GUICtrlCreateInput("2", $x + 115, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 1)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrophy, $x + 160, $y, 16, 16)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -18787,6 +19479,7 @@ GUICtrlSetOnEvent(-1, "chkRestartSearchLimit")
 $g_hTxtRestartSearchlimit = GUICtrlCreateInput("50", $x + 15, $y + 15, 25, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 3)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "search(es).", -1), $x + 47, $y + 17, -1, -1)
 $y += 45
 $g_hChkRestartSearchPickupHero = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "ChkRestartSearchPickupHero", "Restart to pickup healed hero"), $x - 5, $y, -1, -1)
@@ -18801,6 +19494,7 @@ _GUICtrlSetTip(-1,GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Se
 GUICtrlSetOnEvent(-1, "chkSearchTimeout")
 $g_hLblSearchTimeout = GUICtrlCreateLabel(ChrW(62), $x + 5, $y + 17, -1, -1)
 $g_hTxtSearchTimeout = GUICtrlCreateInput("10", $x + 15, $y + 15, 25, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Options-Search", "TxtSearchTimeout_01", "Bot will return home if waiting in the clouds exceeds this time."))
 $g_hLblSearchTimeoutminutes = GUICtrlCreateLabel("minutes", $x + 50, $y + 17, -1, -1)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -19722,6 +20416,7 @@ GUICtrlSetOnEvent(-1, "chkDeleteLogs")
 $g_hTxtDeleteLogsDays = GUICtrlCreateInput("2", $x + 120, $y + 2, 25, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "days", "days"), $x + 150, $y + 4, 27, 15)
 $y += 20
 $g_hChkDeleteTemp = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkDeleteTemp", "Delete Temp Files") & ":", $x - 10, $y, -1, -1)
@@ -19731,6 +20426,7 @@ GUICtrlSetOnEvent(-1, "chkDeleteTemp")
 $g_hTxtDeleteTempDays = GUICtrlCreateInput("5", $x + 120, $y + 2, 25, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "days", -1), $x + 150, $y + 4, 27, 15)
 $y += 20
 $g_hChkDeleteLoots = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkDeleteLoots", "Delete Loot Images") & ":", $x - 10, $y, -1, -1)
@@ -19741,6 +20437,7 @@ GUICtrlSetOnEvent(-1, "chkDeleteLoots")
 $g_hTxtDeleteLootsDays = GUICtrlCreateInput("2", $x + 120, $y + 2, 25, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "days", -1), $x + 150, $y + 4, 27, 15)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $y += 44
@@ -19751,6 +20448,7 @@ _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "C
 GUICtrlSetOnEvent(-1, "chkAutostart")
 $g_hTxtAutostartDelay = GUICtrlCreateInput("10", $x + 120, $y + 2, 25, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetState(-1, $GUI_DISABLE)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "sec.", -1), $x + 150, $y + 4, 27, 18)
 $y += 20
 $g_hChkEnableAuto = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkEnableAuto", "Enable Auto Dock/Hide for Emulator") & ":", $x - 10, $y, -1, -1)
@@ -19784,9 +20482,11 @@ GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "L
 $g_hTxtAlignOffsetX = GUICtrlCreateInput("", $x + 120, $y + 2, 25, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "TxtAlignOffsetX_Info_01", "Offset horizontal pixels between Android Emulator and BOT windows."))
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 $g_hTxtAlignOffsetY= GUICtrlCreateInput("", $x + 150, $y + 2, 25, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "TxtAlignOffsetY_Info_01", "Offset vertical pixels between Android Emulator and BOT windows."))
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 $y += 20
 $g_hCmbAlignmentOptions = GUICtrlCreateCombo("", $x - 10, $y + 1, 185, 20, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
 GUICtrlSetData(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "CmbAlignmentOptions_Item_01", "0,0: Android Emulator-Bot") & "|" & GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "CmbAlignmentOptions_Item_02", "0,0: Bot-Android Emulator") & "|" & GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "CmbAlignmentOptions_Item_03", "SNAP: Bot TopRight to Android") &"|" & GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "CmbAlignmentOptions_Item_04", "SNAP: Bot TopLeft to Android") & "|" & GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "CmbAlignmentOptions_Item_05", "SNAP: Bot BottomRight to Android") & "|" & GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "CmbAlignmentOptions_Item_06", "SNAP: Bot BottomLeft to Android") & "|" & GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "CmbAlignmentOptions_Item_07", "DOCK: Android into Bot"), GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "CmbAlignmentOptions_Item_07", -1))
@@ -19800,6 +20500,7 @@ $g_hTxtGlobalActiveBotsAllowed = GUICtrlCreateInput($g_iGlobalActiveBotsAllowed,
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "TxtGlobalActiveBotsAllowed_Info_01", "When running multiple bots, specify how many can run at the same time.\r\nThis reduces your CPU utilization significantly.\r\nHalf of available logical processors is a good number.\r\nThis configuration is shared across all profiles/instances and a restart of all bots is required (close all, wait, and start all again!).")
 GUICtrlSetOnEvent(-1, "txtGlobalActiveBotsAllowed")
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "LblGlobalActiveBotsAllowed_Info_01", "Bots can run at the same time"), $x + 20, $y + 3)
 _GUICtrlSetTip(-1, $sTxtTip)
@@ -19808,6 +20509,7 @@ $g_hTxtGlobalThreads = GUICtrlCreateInput($g_iGlobalThreads, $x - 10, $y + 2, 25
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "TxtGlobalThreads_Info_01", "When running multiple bots, specify how many global threads for image processing tasks can run at the same time.\r\nThis reduces your CPU utilization significantly.\r\nHalf of available logical processors is a good number.\r\nThis configuration is shared across all profiles/instances and a restart of all bots is required (close all, wait, and start all again!).")
 GUICtrlSetOnEvent(-1, "txtGlobalThreads")
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "LblGlobalThreads_Info_01", "Image Threads for all bots"), $x + 30, $y + 3)
 _GUICtrlSetTip(-1, $sTxtTip)
@@ -19816,6 +20518,7 @@ $g_hTxtThreads = GUICtrlCreateInput($g_iThreads, $x - 10, $y + 2, 25, 16, BitOR(
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "TxtThreads_Info_01", "When images are processed, multiple threads are used. Here you specifiy how many threads this bot can use.\r\nLess threads reduce your CPU utilization significantly.\r\nHalf of available logical processors is a good number. Use 0 for all available. Global threads setting has priority.")
 GUICtrlSetOnEvent(-1, "txtThreads")
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "LblThreads_Info_01", "Image Threads for this bot"), $x + 30, $y + 3)
 _GUICtrlSetTip(-1, $sTxtTip)
@@ -19842,6 +20545,7 @@ _GUICtrlSetTip(-1,GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "Ch
 GUICtrlSetOnEvent(-1, "chkAutoResume")
 $g_hTxtAutoResumeTime = GUICtrlCreateInput("5",$x + 132, $y + 2, 30, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 GUICtrlSetState(-1, $GUI_DISABLE)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "min.", -1), $x + 167, $y + 3, -1, -1)
 $y += 19
 $g_hChkDisableNotifications = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Options", "ChkDisableNotifications", "Disable Notifications"), $x - 10, $y, -1, -1)
@@ -19870,6 +20574,7 @@ _GUICtrlSetTip(-1, $sTxtTip)
 $g_hTxtTimeAnotherDevice = GUICtrlCreateInput("2", $x + 132, $y, 30, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 3)
+GUICtrlSetBkColor(-1, $COLOR_MONEYGREEN)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "min.", -1), $x + 167, $y + 2, -1, -1)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $y += 51
@@ -19985,6 +20690,7 @@ _GUICtrlSetTip(-1, $sTxtTip)
 $g_hTxtAndroidRebootHours = GUICtrlCreateInput($g_iAndroidRebootHours, $x + 327, $y + 1, 30, 16, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetLimit(-1, 4)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlCreateLabel(GetTranslatedFileIni("MBR Global GUI Design", "hrs", -1), $x + 362, $y + 2, -1, -1)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 $y = $y2 + $h + 5
@@ -20138,8 +20844,8 @@ $g_hBtnTestOcrMemory = GUICtrlCreateButton("OCR Memory Test", $x, $y, 140, 25)
 $y += $yNext
 $g_hBtnTestSmartWait = GUICtrlCreateButton("Smart Wait Test", $x, $y, 140, 25)
 $x -= 145
-$g_hTxtTestFindButton = GUICtrlCreateInput("BoostOne", $x - 90, $y + 3, 85, 20)
-$g_hBtnTestFindButton = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Bot - Debug", "TestFindButton", "Test Find Button"), $x, $y, 140, 25)
+$g_hTxtTestFindButton = GUICtrlCreateInput("Execute()", $x - 90, $y + 3, 85, 20)
+$g_hBtnTestFindButton = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Bot - Debug", "Execute", "Execute func/math"), $x, $y, 140, 25)
 $y -= $yNext
 $g_hBtnTestDeadBaseFolder = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Bot - Debug", "BtnTestDeadBaseFolder", "Test Dead Base Folder"), $x, $y, 140, 25)
 $g_hBtnTestCleanYard = GUICtrlCreateButton(GetTranslatedFileIni("MBR GUI Design Child Bot - Debug", "BtnTestCleanYard", "Test Clean Yard"), $x - 145, $y, 140, 25)
@@ -21606,46 +22312,46 @@ $g_ahPicResultSkipped[$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnBldgX, $x +
 $g_ahLblTroopTime[$i] = GUICtrlCreateLabel("", $x + $delX + $i_X * $delX2, $y + 4 + $delY * 4 + $i_Y * $delY2, 55, 17, $SS_RIGHT)
 $g_ahPicTroopTime[$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnTrain, $x + 60 + $delX + $i_X * $delX2, $y + 2 + $delY * 4 + $i_Y * $delY2, 16, 16)
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpStatus_Info_01", -1)
-$g_hPicHeroGrayStatus[0][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingGrayShield, $x + 2 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicHeroGrayStatus[0][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingGray, $x + 2 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlueStatus[0][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingBlueShield, $x + 2 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
-_GUICtrlSetTip(-1, $sTxtTip)
-GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreenStatus[0][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingGreenShield, $x + 2 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicHeroBlueStatus[0][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingBlue, $x + 2 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRedStatus[0][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnKingRedShield, $x + 2 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicHeroGreenStatus[0][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingGreen, $x + 2 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGrayStatus[1][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenGrayShield, $x + 26 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
-_GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlueStatus[1][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenBlueShield, $x + 26 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicHeroRedStatus[0][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModKingRed, $x + 2 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreenStatus[1][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenGreenShield, $x + 26 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicHeroGrayStatus[1][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenGray, $x + 26 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+_GUICtrlSetTip(-1, $sTxtTip)
+$g_hPicHeroBlueStatus[1][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenBlue, $x + 26 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRedStatus[1][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnQueenRedShield, $x + 26 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicHeroGreenStatus[1][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenGreen, $x + 26 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGrayStatus[2][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenGrayShield, $x + 51 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
-_GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicHeroBlueStatus[2][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenBlueShield, $x + 51 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicHeroRedStatus[1][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModQueenRed, $x + 26 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroGreenStatus[2][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenGreenShield, $x + 51 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicHeroGrayStatus[2][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenGray, $x + 51 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+_GUICtrlSetTip(-1, $sTxtTip)
+$g_hPicHeroBlueStatus[2][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenBlue, $x + 51 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicHeroRedStatus[2][$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnWardenRedShield, $x + 51 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicHeroGreenStatus[2][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenGreen, $x + 51 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+_GUICtrlSetTip(-1, $sTxtTip)
+GUICtrlSetState(-1, $GUI_HIDE)
+$g_hPicHeroRedStatus[2][$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModWardenRed, $x + 51 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
 $sTxtTip = GetTranslatedFileIni("MBR GUI Design Bottom", "GrpStatus_Info_02", -1)
-$g_hPicLabGrayStatus[$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabGrayShield, $x + 75 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicLabGrayStatus[$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModLabGray, $x + 75 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
-$g_hPicLabGreenStatus[$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabGreenShield, $x + 75 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicLabGreenStatus[$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModLabGreen, $x + 75 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
-$g_hPicLabRedStatus[$i] = _GUICtrlCreateIcon($g_sLibIconPath, $eIcnLabRedShield, $x + 75 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
+$g_hPicLabRedStatus[$i] = _GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModLabRed, $x + 75 + $i_X * $delX2, $y + 3 + $delY * 4 + $i_Y * $delY2, 15, 15)
 _GUICtrlSetTip(-1, $sTxtTip)
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_hLblLabTimeStatus[$i] = GUICtrlCreateLabel("00:00:00", $x + 95 + $i_X * $delX2, $y + 4 + $delY * 4 + $i_Y * $delY2, 90, 17, $SS_LEFT)
@@ -21762,6 +22468,7 @@ $g_ahLbl_SwitchMax[$i] = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design
 $g_ahTxt_ConditionMax[$i] = GUICtrlCreateInput($aiValueMax[$i], $x + 352, $y + 7 + $i * 51, 55, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_01", "Set the amount of") & " " & $asText[$i] & " " & GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_02", "to trigger switching Profile & Bot Type."))
 GUICtrlSetLimit(-1, $aiLimitMax[$i])
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $y += 30
 $g_ahChk_SwitchMin[$i] = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Switch", -1), $x - 10, $y + 5 + $i * 51, -1, -1)
 GUICtrlSetOnEvent(-1, "chkSwitchProfile")
@@ -21775,6 +22482,7 @@ $g_ahLbl_SwitchMin[$i] = GUICtrlCreateLabel(GetTranslatedFileIni("MBR GUI Design
 $g_ahTxt_ConditionMin[$i] = GUICtrlCreateInput($aiValueMin[$i], $x + 352, $y + 5 + $i * 51, 55, 21, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_01", -1) & " " & $asText[$i] & " " & GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_02", -1))
 GUICtrlSetLimit(-1, $aiLimitMin[$i])
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Next
 EndFunc
@@ -21984,12 +22692,12 @@ GUICtrlSetState(-1, $GUI_UNCHECKED)
 $g_hChkSkipDragToEndSX = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - SuperXP", "ChkSkipDragToEndSX", "Skip Drag To End"), $x + 310, $y, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - SuperXP", "ChkSkipDragToEndSX_Info_01", "Skip End Drag To Start Finding 'Goblin Picnic/The Arena' From Current Mission.") & @CRLF & GetTranslatedFileIni("MOD GUI Design - SuperXP", "ChkSkipDragToEndSX_Info_02", "Note: Uncheck When You Have Unlocked All 'Goblin Picnic/The Arena'. It will be fast.") & @CRLF & GetTranslatedFileIni("MOD GUI Design - SuperXP", "ChkSkipDragToEndSX_Info_03", "Note: Check When You Have New Missions Locked. It will be fast."))
 GUICtrlSetState(-1, $GUI_UNCHECKED)
-$y += 22
+$y += 25
 GUICtrlCreateGroup("", $x - 11, $y - 7, $g_iSizeWGrpTab2 - 8, 70)
-GUICtrlCreateGraphic($x - 9, $y + 15, $g_iSizeWGrpTab2 - 12, 1, $SS_GRAYRECT)
+GUICtrlCreateGraphic($x - 9, $y + 18, $g_iSizeWGrpTab2 - 12, 1, $SS_GRAYRECT)
 GUICtrlCreateGraphic($x + 202, $y + 2, 5, 57, $SS_GRAYRECT)
-GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_02", "Farm XP Options"), $x - 10, $y + 1, 210, -1, $SS_CENTER)
-GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_03", "Goblin Map Options"), $x + 210, $y + 1, 210, -1, $SS_CENTER)
+GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_02", "Farm XP Options"), $x - 10, $y + 4, 210, -1, $SS_CENTER)
+GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_03", "Goblin Map Options"), $x + 210, $y + 4, 210, -1, $SS_CENTER)
 $y += 20
 GUIStartGroup()
 $g_hRdoTrainingSX = GUICtrlCreateRadio(GetTranslatedFileIni("MOD GUI Design - SuperXP", "RdoTrainingSX", "Farm XP during troops Training"), $x, $y, -1, -1)
@@ -22008,9 +22716,9 @@ GUICtrlSetLimit(-1, 8)
 GUICtrlSetBkColor(-1, 0xD1DFE7)
 $x += 85
 $y += 28
-_GUICtrlCreateIcon($g_sLibIconPath, $eIcnBKingSX, $x, $y, 64, 64)
-_GUICtrlCreateIcon($g_sLibIconPath, $eIcnAQueenSX, $x + 85, $y, 64, 64)
-_GUICtrlCreateIcon($g_sLibIconPath, $eIcnGWardenSX, $x + 170, $y, 64, 64)
+_GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModBKingSX, $x, $y, 64, 64)
+_GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModAQueenSX, $x + 85, $y, 64, 64)
+_GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModGWardenSX, $x + 170, $y, 64, 64)
 $y += 68
 GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_04", "Pick Hero/es:"), $x - 85, $y, -1, -1)
 $g_hChkBKingSX = GUICtrlCreateCheckbox("", $x + 25, $y, 13, 13)
@@ -22020,7 +22728,7 @@ GUICtrlSetState(-1, $GUI_UNCHECKED)
 $g_hChkGWardenSX = GUICtrlCreateCheckbox("", $x + 195, $y, 13, 13)
 GUICtrlSetState(-1, $GUI_UNCHECKED)
 $x -= 85
-$y += 20
+$y += 28
 $g_hLblGoblinPicnic1 = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_05", "Super XP attacks continuously the TH of 'Goblin Picnic' to farm XP."), $x, $y, -1, -1)
 GUICtrlSetState(-1, $GUI_HIDE)
 $g_hLblGoblinPicnic2 = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_06", "At each attack, you win 5 XP"), $x, $y + 18, -1, -1)
@@ -22043,7 +22751,7 @@ _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_11_In
 GUICtrlSetFont(-1, 10, 800, 0, "Candara")
 GUICtrlSetColor(-1, 0x282800)
 GUICtrlSetBkColor(-1, 0xFFCC00)
-GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_12", "XP Won/Hour"), $x + 248, $y, 87, 19)
+GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_12", "XP/Hour"), $x + 248, $y, 87, 19)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_12_Info_01", "Average Earning XP."))
 GUICtrlSetFont(-1, 10, 800, 0, "Candara")
 GUICtrlSetColor(-1, 0x282800)
@@ -22079,11 +22787,11 @@ _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_13_In
 GUICtrlSetFont(-1, 18, 800, 0, "Candara")
 GUICtrlSetColor(-1, 0xFFCC00)
 GUICtrlSetBkColor(-1, 0x333300)
-$y += 32
-_GUICtrlCreatePic($g_sIcnSuperXP, $x - 7, $y, 424, 97)
+$y += 36
+_GUICtrlCreatePic($g_sIcnSuperXP, $x - 7, $y, 426, 80)
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 EndFunc
-Global $g_hChkGlobalChat = 0, $g_hChkGlobalScramble = 0, $g_hChkRusLang = 0, $g_hChkSwitchLang = 0, $g_hCmblang = 0, $g_hTxtDelayTimeGlobal = 0, $g_hTxtEditGlobalMessages1 = 0, $g_hTxtEditGlobalMessages2 = 0
+Global $g_hChkGlobalChat = 0, $g_hChkGlobalScramble = 0, $g_hChkRusLang = 0, $g_hChkSwitchLang = 0, $g_hCmblang = 0, $g_hTxtDelayTimeGlobal = 0, $g_hTxtEditGlobalMessages1 = 0, $g_hTxtEditGlobalMessages2 = 0, $g_hLblEditGlobalMessages1 = 0, $g_hLblEditGlobalMessages2 = 0
 Global $g_hChkClanChat = 0, $g_hChkUseResponses = 0, $g_hChkUseGeneric = 0, $g_hChkCleverbot = 0, $g_hTxtDelayTimeClan = 0, $g_hTxtEditResponses = 0, $g_hTxtEditGeneric = 0, $g_hLblEditResponses = 0, $g_hLblEditGeneric = 0
 Global $g_hChkEnableFriendlyChallenge = 0, $g_hChkOnlyOnRequest = 0, $g_hChkFriendlyChallengeBase[6] = [0, 0, 0, 0, 0, 0], $g_hTxtDelayTimeFC = 0, $g_hTxtChallengeText = 0, $g_hTxtKeywordForRequest = 0, $g_hLblChallengeText = 0, $g_hLblKeywordForRequest = 0
 Global $g_hLblFriendlyChallengeHours[12] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -22120,13 +22828,13 @@ _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "ChkRusL
 GUICtrlSetState(-1, $GUI_UNCHECKED)
 $y -= 39
 $x += 120
-GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages1", "Messages 1"), $x + 2, $y, -1, -1)
-$g_hTxtEditGlobalMessages1 = GUICtrlCreateEdit(_ArrayToString($g_iTxtGlobalMessages1, @CRLF), $x, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
+$g_hLblEditGlobalMessages1 = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages1", "Messages 1"), $x + 2, $y, -1, -1)
+$g_hTxtEditGlobalMessages1 = GUICtrlCreateEdit(_ArrayToString($g_sGlobalMessages1, @CRLF), $x, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages1_Info_01", "Take one item randomly from this list (one per line) and add it to create a message to send to global"))
 GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
-GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages2", "Messages 2"), $x + 159, $y, -1, -1)
-$g_hTxtEditGlobalMessages2 = GUICtrlCreateEdit(_ArrayToString($g_iTxtGlobalMessages2, @CRLF), $x + 157, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
-_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages2_Info_01", "Take one item randomly from this list (one per line) and add it to create a message to send to global"))
+$g_hLblEditGlobalMessages2 = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages2", "Messages 2"), $x + 159, $y, -1, -1)
+$g_hTxtEditGlobalMessages2 = GUICtrlCreateEdit(_ArrayToString($g_sGlobalMessages2, @CRLF), $x + 157, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
+_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "GlobalMessages1_Info_01", -1))
 GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Local $x = 25, $y = 161
@@ -22157,11 +22865,11 @@ GUICtrlSetState(-1, $GUI_UNCHECKED)
 $y -= 39
 $x += 120
 $g_hLblEditResponses = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "EditResponses", "Responses Messages"), $x + 2, $y, -1, -1)
-$g_hTxtEditResponses = GUICtrlCreateEdit(_ArrayToString($g_iTxtClanResponses, ":", -1, -1, @CRLF), $x, $y + 15, 150, 57, $GUI_SS_DEFAULT_EDIT)
+$g_hTxtEditResponses = GUICtrlCreateEdit(_ArrayToString($g_sClanResponses, ":", -1, -1, @CRLF), $x, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "EditResponses_Info_01", "Look for the specified keywords in clan messages and respond with the responses. One item per line, in the format keyword:response"))
 GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
 $g_hLblEditGeneric = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "EditGeneric", "Generic Messages"), $x + 159, $y, -1, -1)
-$g_hTxtEditGeneric = GUICtrlCreateEdit(_ArrayToString($g_iTxtClanMessages, @CRLF), $x + 157, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
+$g_hTxtEditGeneric = GUICtrlCreateEdit(_ArrayToString($g_sClanGeneric, @CRLF), $x + 157, $y + 15, 150, 57, BitOR($GUI_SS_DEFAULT_EDIT, $ES_CENTER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "EditGeneric_Info_01", "Generic messages to send, one per line"))
 GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
@@ -22201,10 +22909,11 @@ GUICtrlSetState(-1, $GUI_UNCHECKED)
 $y -= 57
 $x += 120
 $g_hLblChallengeText = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "LblChallengeText", "Challenge Text"), $x + 2, $y, -1, -1)
-$g_hTxtChallengeText = GUICtrlCreateEdit("", $x, $y + 15, 150, 57, BitOR($ES_WANTRETURN, $ES_CENTER, $ES_AUTOVSCROLL))
-GUICtrlSetData(-1, "txtChallengeText")
+$g_hTxtChallengeText = GUICtrlCreateEdit(_ArrayToString($g_sChallengeText, @CRLF), $x, $y + 15, 150, 57, BitOR($ES_WANTRETURN, $ES_CENTER))
+GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
 $g_hLblKeywordForRequest = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - ChatActions", "LblKeywordForRequest", "Keyword For Request"), $x + 159, $y, -1, -1)
-$g_hTxtKeywordForRequest = GUICtrlCreateEdit("", $x + 157, $y + 15, 150, 57, BitOR($ES_WANTRETURN, $ES_CENTER, $ES_AUTOVSCROLL))
+$g_hTxtKeywordForRequest = GUICtrlCreateEdit(_ArrayToString($g_sKeywordForRequest, @CRLF), $x + 157, $y + 15, 150, 57, BitOR($ES_WANTRETURN, $ES_CENTER))
+GUICtrlSetOnEvent(-1, "ChatGuiEditUpdate")
 GUICtrlCreateGroup("", -99, -99, 1, 1)
 Local $x = 25, $y = 392
 GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design - ChatActions", "Group_04", "Only in hours"), $x - 20, $y - 20, $g_iSizeWGrpTab2 - 150, 63)
@@ -22338,12 +23047,12 @@ $g_iFrmBotPosX = 100
 $g_iFrmBotPosY = 100
 EndIf
 EndIf
-GUISetIcon($g_sLibIconPath, $eIcnAiOMOD)
+GUISetIcon($g_sLibModIconPath, $eIcnAIOMod)
 If $g_iGuiMode = 0 Then
 UpdateBotTitle()
 Return
 EndIf
-TraySetIcon($g_sLibIconPath, $eIcnAiOMOD)
+TraySetIcon($g_sLibModIconPath, $eIcnAIOMod)
 Opt("TrayMenuMode", 3)
 Opt("TrayOnEventMode", 1)
 Opt("TrayIconHide", 0)
@@ -27944,16 +28653,20 @@ EndIf
 SetLog("GetLocationBuilding DEBUG IMAGE Create Required: " & Round((__TimerDiff($iTimer) * 0.001), 1) & "Seconds", $COLOR_DEBUG)
 EndFunc
 Func btnTestFindButton()
-BeginImageTest()
-Local $result
+Local $currentRunState = $g_bRunState
+$g_bRunState = True
 Local $sButton = GUICtrlRead($g_hTxtTestFindButton)
-SetLog("Testing findButton(""" & $sButton & """)", $COLOR_INFO)
-$result = findButton($sButton)
-$result =((IsArray($result)) ?(_ArrayToString($result, ",")) :($result))
-If @error Then $result = "Error " & @error & ", " & @extended & ", "
-SetLog("Result findButton(""" & $sButton & """) = " & $result, $COLOR_INFO)
-SetLog("Testing findButton(""" & $sButton & """) DONE", $COLOR_INFO)
-EndImageTest()
+SetLog("Execute : " & $sButton, $COLOR_INFO)
+Local $saExecResult = Execute($sButton)
+If $saExecResult = "" And @error <> 0 Then
+Setlog("Result : Error", $COLOR_ERROR)
+ElseIf IsArray($saExecResult) Then
+Setlog("Result (IsArray) : " & _ArrayToString($saExecResult, ","), $COLOR_INFO)
+_ArrayDisplay($saExecResult, "Debug Func. Result")
+Else
+Setlog("Result : " & $saExecResult, $COLOR_INFO)
+EndIf
+$g_bRunState = $currentRunState
 EndFunc
 Func btnTestCleanYard()
 Local $currentRunState = $g_bRunState
@@ -29272,6 +29985,10 @@ GUICtrlSetState($g_hChkBBTrophyRange, $GUI_ENABLE)
 GUICtrlSetState($g_hChkBBAttIfLootAvail, $GUI_ENABLE)
 GUICtrlSetState($g_hChkBBWaitForMachine, $GUI_ENABLE)
 GUICtrlSetState($g_hBtnBBDropOrder, $GUI_ENABLE)
+GUICtrlSetState($g_hLblBBNextTroopDelay, $GUI_ENABLE)
+GUICtrlSetState($g_hCmbBBNextTroopDelay, $GUI_ENABLE)
+GUICtrlSetState($g_hLblBBSameTroopDelay, $GUI_ENABLE)
+GUICtrlSetState($g_hCmbBBSameTroopDelay, $GUI_ENABLE)
 chkBBTrophyRange()
 Else
 GUICtrlSetState($g_hChkBBTrophyRange, $GUI_DISABLE)
@@ -29280,7 +29997,21 @@ GUICtrlSetState($g_hTxtBBTrophyLowerLimit, $GUI_DISABLE)
 GUICtrlSetState($g_hTxtBBTrophyUpperLimit, $GUI_DISABLE)
 GUICtrlSetState($g_hChkBBWaitForMachine, $GUI_DISABLE)
 GUICtrlSetState($g_hBtnBBDropOrder, $GUI_DISABLE)
+GUICtrlSetState($g_hLblBBNextTroopDelay, $GUI_DISABLE)
+GUICtrlSetState($g_hCmbBBNextTroopDelay, $GUI_DISABLE)
+GUICtrlSetState($g_hLblBBSameTroopDelay, $GUI_DISABLE)
+GUICtrlSetState($g_hCmbBBSameTroopDelay, $GUI_DISABLE)
 EndIf
+EndFunc
+Func cmbBBNextTroopDelay()
+$g_iBBNextTroopDelay = $g_iBBNextTroopDelayDefault +((_GUICtrlComboBox_GetCurSel($g_hCmbBBNextTroopDelay) + 1) - 5)*$g_iBBNextTroopDelayIncrement
+SetDebugLog("Next Troop Delay: " & $g_iBBNextTroopDelay)
+SetDebugLog((_GUICtrlComboBox_GetCurSel($g_hCmbBBNextTroopDelay) + 1) - 5)
+EndFunc
+Func cmbBBSameTroopDelay()
+$g_iBBSameTroopDelay = $g_iBBSameTroopDelayDefault +((_GUICtrlComboBox_GetCurSel($g_hCmbBBSameTroopDelay) + 1) - 5)*$g_iBBSameTroopDelayIncrement
+SetDebugLog("Same Troop Delay: " & $g_iBBSameTroopDelay)
+SetDebugLog((_GUICtrlComboBox_GetCurSel($g_hCmbBBSameTroopDelay) + 1) - 5)
 EndFunc
 Func chkBBTrophyRange()
 If GUICtrlRead($g_hChkBBTrophyRange) = $GUI_CHECKED Then
@@ -29516,50 +30247,54 @@ GUICtrlSetState($g_hRdoGoblinPicnic, $g_iGoblinMapOptSX = 1 ? $GUI_CHECKED : $GU
 GUICtrlSetState($g_hRdoTheArena, $g_iGoblinMapOptSX = 2 ? $GUI_CHECKED : $GUI_UNCHECKED)
 EndFunc
 Func ChatbotReadSettings()
-$g_iTxtGlobalMessages1 = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GlobalMsg1", "War Clan Recruiting|Active War Clan accepting applications"), "|", 2)
-$g_iTxtGlobalMessages2 = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GlobalMsg2", "Join now|Apply now"), "|", 2)
-GUICtrlSetData($g_hTxtEditGlobalMessages1, _ArrayToString($g_iTxtGlobalMessages1, @CRLF))
-GUICtrlSetData($g_hTxtEditGlobalMessages2, _ArrayToString($g_iTxtGlobalMessages2, @CRLF))
-Local $iTxtClanResponses = ""
-$iTxtClanResponses = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "ResponseMsgClan", "keyword:Response|hello:Hi, Welcome to the clan|hey:Hey, how's it going?"), "|", 2)
-$g_iTxtClanMessages = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GenericMsgClan", "Testing on Chat|Hey all"), "|", 2)
-Local $rTxtClanResponses[UBound($iTxtClanResponses)][2]
-For $a = 0 To UBound($iTxtClanResponses) - 1
-Local $TmpResp = StringSplit($iTxtClanResponses[$a], ":", 2)
-If UBound($TmpResp) > 0 Then
-$rTxtClanResponses[$a][0] = $TmpResp[0]
+$g_sGlobalMessages1 = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GlobalMsg1", "War Clan Recruiting|Active War Clan accepting applications"), "|", 2)
+GUICtrlSetData($g_hTxtEditGlobalMessages1, _ArrayToString($g_sGlobalMessages1, @CRLF))
+$g_sGlobalMessages2 = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GlobalMsg2", "Join now|Apply now"), "|", 2)
+GUICtrlSetData($g_hTxtEditGlobalMessages2, _ArrayToString($g_sGlobalMessages2, @CRLF))
+Local $aTmpClanResponses = ""
+$aTmpClanResponses = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "ResponseMsgClan", "keyword:Response|hello:Hi, Welcome to the clan|hey:Hey, how's it going?"), "|", 2)
+Local $aClanResponses[UBound($aTmpClanResponses)][2]
+For $a = 0 To UBound($aTmpClanResponses) - 1
+Local $aTmpResp = StringSplit($aTmpClanResponses[$a], ":", 2)
+If UBound($aTmpResp) > 0 Then
+$aClanResponses[$a][0] = $aTmpResp[0]
 Else
-$rTxtClanResponses[$a][0] = "<invalid>"
+$aClanResponses[$a][0] = "<invalid>"
 EndIf
-If UBound($TmpResp) > 1 Then
-$rTxtClanResponses[$a][1] = $TmpResp[1]
+If UBound($aTmpResp) > 1 Then
+$aClanResponses[$a][1] = $aTmpResp[1]
 Else
-$rTxtClanResponses[$a][1] = "<undefined>"
+$aClanResponses[$a][1] = "<undefined>"
 EndIf
 Next
-$g_iTxtClanResponses = $rTxtClanResponses
-GUICtrlSetData($g_hTxtEditResponses, _ArrayToString($g_iTxtClanResponses, ":", -1, -1, @CRLF))
-GUICtrlSetData($g_hTxtEditGeneric, _ArrayToString($g_iTxtClanMessages, @CRLF))
+$g_sClanResponses = $aClanResponses
+GUICtrlSetData($g_hTxtEditResponses, _ArrayToString($g_sClanResponses, ":", -1, -1, @CRLF))
+$g_sClanGeneric = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GenericMsgClan", "Testing on Chat|Hey all"), "|", 2)
+GUICtrlSetData($g_hTxtEditGeneric, _ArrayToString($g_sClanGeneric, @CRLF))
+$g_sChallengeText = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeText", "Kill me"), "|", 2)
+GUICtrlSetData($g_hTxtChallengeText, _ArrayToString($g_sChallengeText, @CRLF))
+$g_sKeywordForRequest = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeKeyword", "friendly|challenge"), "|", 2)
+GUICtrlSetData($g_hTxtKeywordForRequest, _ArrayToString($g_sKeywordForRequest, @CRLF))
 EndFunc
 Func ChatGuiEditUpdate()
-$TxtGlobal1 = StringReplace(GUICtrlRead($g_hTxtEditGlobalMessages1), @CRLF, "|")
-$TxtGlobal2 = StringReplace(GUICtrlRead($g_hTxtEditGlobalMessages2), @CRLF, "|")
-$TxtResponse = StringReplace(GUICtrlRead($g_hTxtEditResponses), @CRLF, "|")
-$TxtGeneric = StringReplace(GUICtrlRead($g_hTxtEditGeneric), @CRLF, "|")
-_StringRemoveBlanksFromSplit($TxtGlobal1)
-_StringRemoveBlanksFromSplit($TxtGlobal2)
-_StringRemoveBlanksFromSplit($TxtResponse)
-_StringRemoveBlanksFromSplit($TxtGeneric)
-IniWrite($g_sProfileConfigPath, "ChatActions", "GlobalMsg1", $TxtGlobal1)
-IniWrite($g_sProfileConfigPath, "ChatActions", "GlobalMsg2", $TxtGlobal2)
-IniWrite($g_sProfileConfigPath, "ChatActions", "ResponseMsgClan", $TxtResponse)
-IniWrite($g_sProfileConfigPath, "ChatActions", "GenericMsgClan", $TxtGeneric)
+$g_sGlobal1 = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtEditGlobalMessages1), @CRLF, "|"))
+IniWrite($g_sProfileConfigPath, "ChatActions", "GlobalMsg1", $g_sGlobal1)
+$g_sGlobal2 = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtEditGlobalMessages2), @CRLF, "|"))
+IniWrite($g_sProfileConfigPath, "ChatActions", "GlobalMsg2", $g_sGlobal2)
+$g_sResponse = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtEditResponses), @CRLF, "|"))
+IniWrite($g_sProfileConfigPath, "ChatActions", "ResponseMsgClan", $g_sResponse)
+$g_sGeneric = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtEditGeneric), @CRLF, "|"))
+IniWrite($g_sProfileConfigPath, "ChatActions", "GenericMsgClan", $g_sGeneric)
+$g_sWriteFriendlyChallengeText = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtChallengeText), @CRLF, "|"))
+IniWrite($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeText", $g_sWriteFriendlyChallengeText)
+$g_sWriteFriendlyChallengeKeyword = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtKeywordForRequest), @CRLF, "|"))
+IniWrite($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeKeyword", $g_sWriteFriendlyChallengeKeyword)
 ChatbotReadSettings()
 EndFunc
 Func chkGlobalChat()
 If GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED Then
 $g_bChatGlobal = True
-_GUI_Value_STATE("ENABLE", $g_hTxtDelayTimeGlobal & "#" & $g_hChkGlobalScramble & "#" & $g_hChkSwitchLang & "#" & $g_hChkRusLang & "#" & $g_hTxtEditGlobalMessages1 & "#" & $g_hTxtEditGlobalMessages2)
+_GUI_Value_STATE("ENABLE", $g_hTxtDelayTimeGlobal & "#" & $g_hChkGlobalScramble & "#" & $g_hChkSwitchLang & "#" & $g_hChkRusLang & "#" & $g_hLblEditGlobalMessages1 & "#" & $g_hTxtEditGlobalMessages1 & "#" & $g_hLblEditGlobalMessages2 & "#" & $g_hTxtEditGlobalMessages2)
 GUIToggle_OnlyDuringHours(True)
 chkSwitchLang()
 Else
@@ -29618,11 +30353,11 @@ EndFunc
 Func chkUseGeneric()
 If GUICtrlRead($g_hChkClanChat) = $GUI_CHECKED Then
 If GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED Then
-$g_bClanAlwaysMsg = True
+$g_bClanUseGeneric = True
 GUICtrlSetState($g_hLblEditGeneric, $GUI_ENABLE)
 GUICtrlSetState($g_hTxtEditGeneric, $GUI_ENABLE)
 Else
-$g_bClanAlwaysMsg = False
+$g_bClanUseGeneric = False
 GUICtrlSetState($g_hLblEditGeneric, $GUI_DISABLE)
 GUICtrlSetState($g_hTxtEditGeneric, $GUI_DISABLE)
 EndIf
@@ -31289,7 +32024,7 @@ Local $tTcItem = DllStructCreate("uint;dword;dword;ptr;int;int;int")
 DllStructSetData($tTcItem, 1, 0x0002)
 Switch $nCtrl
 Case $g_hTabMain
-Local $aIconIndex = [$eIcnHourGlass, $eIcnTH12, $eIcnAttack, $eIcnAiOMOD, $eIcnGUI, $eIcnInfo]
+Local $aIconIndex = [$eIcnHourGlass, $eIcnTH12, $eIcnAttack, $eIcnAIOMod, $eIcnGUI, $eIcnInfo]
 Case $g_hGUI_VILLAGE_TAB
 Local $aIconIndex = [$eIcnTH1, $eIcnCC, $eIcnLaboratory, $eIcnAchievements, $eIcnTelegram]
 Case $g_hGUI_TRAINARMY_TAB
@@ -31315,11 +32050,11 @@ Local $aIconIndex = [$eIcnMagnifier, $eIcnCamp, $eIcnSilverStar]
 Case $g_hGUI_ATTACKOPTION_TAB
 Local $aIconIndex = [$eIcnMagnifier, $eIcnCamp, $eIcnLightSpell, $eIcnSilverStar, $eIcnTrophy]
 Case $g_hGUI_MOD_TAB
-Local $aIconIndex = [$eIcnSuperXP, $eIcnTroops]
+Local $aIconIndex = [$eIcnSuperXP, $eIcnChatActions]
 Case $g_hGUI_BOT_TAB
-Local $aIconIndex = [$eIcnOptions, $eIcnAndroid, $eIcnDebug, $eIcnProfile, $eIcnGold]
+Local $aIconIndex = [$eIcnOptions, $eIcnAndroid, $eIcnModDebug, $eIcnProfile, $eIcnGold]
 Case $g_hGUI_SWITCH_OPTIONS_TAB
-Local $aIconIndex = [$eIcnSwitchAcc, $eIcnSwitchProfiles, $eIcnFarmingSchedule]
+Local $aIconIndex = [$eIcnModAccountsS, $eIcnModProfilesS, $eIcnModFarmingS]
 Case $g_hGUI_STRATEGIES_TAB
 Local $aIconIndex = [$eIcnReload, $eIcnCopy]
 Case $g_hGUI_STATS_TAB
@@ -31329,7 +32064,25 @@ EndSwitch
 If IsArray($aIconIndex) Then
 For $i = 0 To UBound($aIconIndex) - 1
 DllStructSetData($tTcItem, 6, $i)
+If $nCtrl = $g_hGUI_MOD_TAB Then
+AddImageToModTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibModIconPath, $aIconIndex[$i] - 1)
+ElseIf $nCtrl = $g_hGUI_SWITCH_OPTIONS_TAB Then
+AddImageToModTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibModIconPath, $aIconIndex[$i] - 1)
+ElseIf $nCtrl = $g_hTabMain Then
+If $i <> 3 Then
 AddImageToTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibIconPath, $aIconIndex[$i] - 1)
+Else
+AddImageToModTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibModIconPath, $aIconIndex[$i] - 1)
+EndIf
+ElseIf $nCtrl = $g_hGUI_BOT_TAB Then
+If $i <> 2 Then
+AddImageToTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibIconPath, $aIconIndex[$i] - 1)
+Else
+AddImageToModTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibModIconPath, $aIconIndex[$i] - 1)
+EndIf
+Else
+AddImageToTab($nCtrl, $hImageList, $i, $tTcItem, $g_sLibIconPath, $aIconIndex[$i] - 1)
+EndIf
 Next
 $aIconIndex = 0
 EndIf
@@ -31337,6 +32090,18 @@ EndFunc
 Func AddImageToTab($nCtrl, ByRef $hImageList, $nTabIndex, $nItem, $g_sLibIconPath, $nIconID)
 Local $hIcon = DllStructCreate("int")
 Local $Result = DllCall("shell32.dll", "int", "ExtractIconEx", "str", $g_sLibIconPath, "int", $nIconID, "hwnd", 0, "ptr", DllStructGetPtr($hIcon), "int", 1)
+If UBound($Result) > 0 Then
+$Result = $Result[0]
+If $Result > 0 Then
+DllCall("comctl32.dll", "int", "ImageList_AddIcon", "hwnd", $hImageList, "hwnd", DllStructGetData($hIcon, 1))
+DllCall("user32.dll", "int", "SendMessage", "hwnd", ControlGetHandle($g_hFrmBot, "", $nCtrl), "int", $TCM_SETITEM, "int", $nTabIndex, "ptr", DllStructGetPtr($nItem))
+DllCall("user32.dll", "int", "DestroyIcon", "hwnd", DllStructGetData($hIcon, 1))
+EndIf
+EndIf
+EndFunc
+Func AddImageToModTab($nCtrl, ByRef $hImageList, $nTabIndex, $nItem, $g_sLibModIconPath, $nIconID)
+Local $hIcon = DllStructCreate("int")
+Local $Result = DllCall("shell32.dll", "int", "ExtractIconEx", "str", $g_sLibModIconPath, "int", $nIconID, "hwnd", 0, "ptr", DllStructGetPtr($hIcon), "int", 1)
 If UBound($Result) > 0 Then
 $Result = $Result[0]
 If $Result > 0 Then
@@ -53085,7 +53850,7 @@ Return $success
 EndFunc
 Func isEveryFileInstalled($bSilent = False)
 Local $bResult = False, $iCount = 0
-Local $aCheckFiles = [@ScriptDir & "\COCBot", $g_sLibPath, @ScriptDir & "\Images", @ScriptDir & "\imgxml", $g_sLibPath & "\helper_functions.dll", $g_sLibPath & "\ImageSearchDLL.dll", $g_sLibPath & "\MBRBot.dll", $g_sLibPath & "\MyBot.run.dll", $g_sLibPath & "\Newtonsoft.Json.dll", $g_sLibPath & "\sqlite3.dll", $g_sLibPath & "\opencv_core220.dll", $g_sLibPath & "\opencv_imgproc220.dll"]
+Local $aCheckFiles = [@ScriptDir & "\COCBot", $g_sLibPath, @ScriptDir & "\Images", @ScriptDir & "\imgxml", $g_sLibPath & "\helper_functions.dll", $g_sLibPath & "\ImageSearchDLL.dll", $g_sLibPath & "\MBRBot.dll", $g_sLibPath & "\AIOMod.dll", $g_sLibPath & "\MyBot.run.dll", $g_sLibPath & "\Newtonsoft.Json.dll", $g_sLibPath & "\sqlite3.dll", $g_sLibPath & "\opencv_core220.dll", $g_sLibPath & "\opencv_imgproc220.dll"]
 For $vElement In $aCheckFiles
 $iCount += FileExists($vElement)
 Next
@@ -58799,7 +59564,8 @@ EndSwitch
 If $g_bMeetCondStop Then
 Switch $iCmbBotCommand
 Case 0
-If $g_bChatGlobal Or $g_bChatClan Then ChatActions()
+ChatActions()
+MainSXHandler()
 If $g_bDonationEnabled = False Then
 SetLog("Halt Attack, Stay Online/Collect...", $COLOR_INFO)
 ElseIf $g_bTrainEnabled = False Then
@@ -67184,12 +67950,14 @@ GUICtrlSetState($g_hChkBBSuggestedUpgradesIgnoreGold, $GUI_ENABLE)
 GUICtrlSetState($g_hChkBBSuggestedUpgradesIgnoreElixir, $GUI_ENABLE)
 GUICtrlSetState($g_hChkBBSuggestedUpgradesIgnoreHall, $GUI_ENABLE)
 GUICtrlSetState($g_hChkPlacingNewBuildings, $GUI_ENABLE)
+GUICtrlSetState($g_hChkBBIgnoreWalls, $GUI_ENABLE)
 Else
 $g_iChkBBSuggestedUpgrades = 0
 GUICtrlSetState($g_hChkBBSuggestedUpgradesIgnoreGold, BitOR($GUI_UNCHECKED, $GUI_DISABLE))
 GUICtrlSetState($g_hChkBBSuggestedUpgradesIgnoreElixir, BitOR($GUI_UNCHECKED, $GUI_DISABLE))
 GUICtrlSetState($g_hChkBBSuggestedUpgradesIgnoreHall, BitOR($GUI_UNCHECKED, $GUI_DISABLE))
 GUICtrlSetState($g_hChkPlacingNewBuildings, BitOR($GUI_UNCHECKED, $GUI_DISABLE))
+GUICtrlSetState($g_hChkBBIgnoreWalls, BitOR($GUI_UNCHECKED, $GUI_DISABLE))
 EndIf
 EndFunc
 Func chkActivateBBSuggestedUpgradesGold()
@@ -67339,6 +68107,10 @@ If $aBuildingName[0] = 2 Then
 SetLog("Building: " & $aBuildingName[1], $COLOR_INFO)
 If StringInStr($aBuildingName[1], "Hall") And $g_iChkBBSuggestedUpgradesIgnoreHall Then
 SetLog("Ups! Builder Hall is not to Upgrade!", $COLOR_ERROR)
+Return False
+EndIf
+If StringInStr($aBuildingName[1], "Wall") And $g_bChkBBIgnoreWalls Then
+SetLog("Ups! Ignoring wall upgrade!", $COLOR_ERROR)
 Return False
 EndIf
 Click($g_iQuickMISX + 300, $g_iQuickMISY + 650, 1)
@@ -68620,7 +69392,6 @@ ApplyConfig_MOD_600_29($TypeReadSave)
 ApplyConfig_MOD_600_31($TypeReadSave)
 ApplyConfig_MOD_600_35_1($TypeReadSave)
 ApplyConfig_MOD_600_35_2($TypeReadSave)
-ApplyConfig_MOD_641_1($TypeReadSave)
 PopulatePresetComboBox()
 MakeSavePresetMessage()
 GUICtrlSetState($g_hLblLoadPresetMessage, $GUI_SHOW)
@@ -70708,7 +71479,6 @@ ReadConfig_MOD_600_29()
 ReadConfig_MOD_600_31()
 ReadConfig_MOD_600_35_1()
 ReadConfig_MOD_600_35_2()
-ReadConfig_MOD_641_1()
 EndFunc
 Func ReadConfig_Debug()
 $g_bDebugSetlog = IniRead($g_sProfileConfigPath, "debug", "debugsetlog", 0) = 1 ? True : False
@@ -71796,7 +72566,6 @@ SaveConfig_MOD_600_29()
 SaveConfig_MOD_600_31()
 SaveConfig_MOD_600_35_1()
 SaveConfig_MOD_600_35_2()
-SaveConfig_MOD_641_1()
 _Ini_Save($g_sProfileConfigPath)
 EndFunc
 Func SaveConfig_Android()
@@ -72663,30 +73432,58 @@ EndIf
 $g_sGetOcrMod = $result
 Return $result
 EndFunc
-Func _Wait4PixelGone($x, $y, $sColor, $iColorVariation, $iWait = 1000, $iDelay = 100, $sMsglog = Default)
-Local $hTimer = __TimerInit()
-While BitOr($iWait > __TimerDiff($hTimer),($iWait <= 0))
-ForceCaptureRegion()
-If Not _CheckColorPixel($x, $y, $sColor, $iColorVariation, True, $sMsglog) Then Return True
-If _Sleep($iDelay) Then Return False
-If($iWait <= 0) Then ExitLoop
-WEnd
-Return False
-EndFunc
-Func _CheckColorPixel($x, $y, $sColor, $iColorVariation, $bFCapture = True, $sMsglog = Default)
-Local $hPixelColor = _GetPixelColor2($x, $y, $bFCapture)
-Local $bFound = _ColorCheck($hPixelColor, Hex($sColor,6), Int($iColorVariation))
-Return $bFound
-EndFunc
-Func _GetPixelColor2($iX, $iY, $bNeedCapture = False)
-Local $aPixelColor = 0
-If $bNeedCapture = False Or $g_bRunState = False Then
-$aPixelColor = _GDIPlus_BitmapGetPixel($g_hBitmap, $iX, $iY)
-Else
-_CaptureRegion($iX - 1, $iY - 1, $iX + 1, $iY + 1)
-$aPixelColor = _GDIPlus_BitmapGetPixel($g_hBitmap, 1, 1)
+Func _ImageSearchXML($sDirectory, $Quantity2Match = 0, $saiArea2SearchOri = "0,0,860,732", $bForceCapture = True, $DebugLog = False, $checkDuplicatedpoints = False, $Distance2check = 25, $iLevel = 0)
+$g_aImageSearchXML = -1
+Local $iMax = 0
+Local $sSearchDiamond = GetDiamondFromRect($saiArea2SearchOri)
+Local $aResult = findMultiple($sDirectory , $sSearchDiamond, $sSearchDiamond, $iLevel, 1000, $Quantity2Match, "objectname,objectlevel,objectpoints", $bForceCapture)
+If Not IsArray($aResult) Then Return -1
+Local $iCount = 0
+$iMax = UBound($aResult) -1
+Local $AllResults[0][4]
+Local $aArrays = "", $aCoords, $aCommaCoord
+For $i = 0 To $iMax
+$aArrays = $aResult[$i]
+$aCoords = StringSplit($aArrays[2], "|", 2)
+For $iCoords = 0 To UBound($aCoords) -1
+$aCommaCoord = StringSplit($aCoords[$iCoords], ",", 2)
+Local $aTmpResults[1][4] = [[$aArrays[0], Int($aCommaCoord[0]), Int($aCommaCoord[1]), Int($aArrays[1])]]
+_ArrayAdd($AllResults, $aTmpResults)
+Next
+$iCount += 1
+Next
+If $iCount < 1 Then Return -1
+If $checkDuplicatedpoints And UBound($AllResults) > 0 Then
+_ArraySort($AllResults, 0, 0, 0, 1)
+Local $D2Check = $Distance2check
+For $i = 0 To UBound($AllResults) - 1
+If $i > UBound($AllResults) - 1 Then ExitLoop
+Local $LastCoordinate[4] = [$AllResults[$i][0], $AllResults[$i][1], $AllResults[$i][2], $AllResults[$i][3]]
+SetDebugLog("Coordinate to Check: " & _ArrayToString($LastCoordinate))
+If UBound($AllResults) > 1 Then
+For $j = 0 To UBound($AllResults) - 1
+If $j > UBound($AllResults) - 1 Then ExitLoop
+Local $SingleCoordinate[4] = [$AllResults[$j][0], $AllResults[$j][1], $AllResults[$j][2], $AllResults[$j][3]]
+If $LastCoordinate[1] <> $SingleCoordinate[1] Or $LastCoordinate[2] <> $SingleCoordinate[2] Then
+If $SingleCoordinate[1] < $LastCoordinate[1] + $D2Check And $SingleCoordinate[1] > $LastCoordinate[1] - $D2Check Then
+_ArrayDelete($AllResults, $j)
 EndIf
-Return Hex($aPixelColor, 6)
+Else
+If $LastCoordinate[1] = $SingleCoordinate[1] And $LastCoordinate[2] = $SingleCoordinate[2] And $LastCoordinate[3] <> $SingleCoordinate[3] Then
+_ArrayDelete($AllResults, $j)
+EndIf
+EndIf
+Next
+EndIf
+Next
+EndIf
+If(UBound($AllResults) > 0) Then
+$g_aImageSearchXML = $AllResults
+Return $AllResults
+Else
+$g_aImageSearchXML = -1
+Return -1
+EndIf
 EndFunc
 Func _ArryRemoveBlanks(ByRef $Array)
 Switch(UBound($Array, 2) > 0)
@@ -73095,9 +73892,9 @@ If $g_bFirstStart Then $g_bFirstStart = False
 Return
 EndIf
 If $g_bDebugSX Then SetDebugLog("$g_bIsFullArmywithHeroesAndSpells: " & $g_bIsFullArmywithHeroesAndSpells)
-If $g_bDebugSX Then SetDebugLog("1 Pixel : " & _GetPixelColor(391, 126, True))
-If $g_bDebugSX Then SetDebugLog("2 Pixel : " & _GetPixelColor(587, 126, True))
-If Not $g_bIsFullArmywithHeroesAndSpells And((Not $g_bFullArmy And _ColorCheck(_GetPixelColor(391, 126, True, "CheckForFullArmy-Army"), Hex(0x605C4C, 6), 15)) Or(Not $g_bFullArmySpells And _ColorCheck(_GetPixelColor(587, 126, True, "CheckForFullArmy-Spell"), Hex(0x605C4D, 6), 15))) Then
+If $g_bDebugSX Then SetDebugLog("Army Pixel: " & _GetPixelColor($aGreenArrowTrainTroops[0], $aGreenArrowTrainTroops[1], True))
+If $g_bDebugSX Then SetDebugLog("Spell Pixel: " & _GetPixelColor($aGreenArrowBrewSpells[0], $aGreenArrowBrewSpells[1], True))
+If Not $g_bIsFullArmywithHeroesAndSpells And((Not $g_bFullArmy And _ColorCheck(_GetPixelColor($aGreenArrowTrainTroops[0], $aGreenArrowTrainTroops[1], True, "CheckForFullArmy-Army"), Hex(0x605C4C, 6), 15)) Or(Not $g_bFullArmySpells And _ColorCheck(_GetPixelColor($aGreenArrowBrewSpells[0], $aGreenArrowBrewSpells[1], True, "CheckForFullArmy-Spell"), Hex(0x605C4C, 6), 15))) Then
 If $g_bDebugSX Then SetDebugLog("SX|CheckForFullArmy| TrainSystem. #1", $COLOR_DEBUG)
 TrainSystem()
 ElseIf $g_bIsFullArmywithHeroesAndSpells And $g_bEnableSuperXP And $g_iActivateOptionSX = 1 Then
@@ -73246,7 +74043,7 @@ Return False
 EndIf
 PrepareAttackSX()
 If CheckAvailableHeroes() = False Then
-SetLog("No heroes available to attack with", $COLOR_ACTION)
+SetLog("No heroes available to attack with " & $g_sGoblinMapOptSX, $COLOR_ACTION)
 ReturnHomeSX()
 Return False
 EndIf
@@ -73334,35 +74131,45 @@ $ToReturn[0] = Random($aiDpGoblinMapSX[0] - $aiDpGoblinMapSX[2], $aiDpGoblinMapS
 $ToReturn[1] = Random($aiDpGoblinMapSX[1] - $aiDpGoblinMapSX[3], $aiDpGoblinMapSX[1] + $aiDpGoblinMapSX[3], 1)
 Return $ToReturn
 EndFunc
-Func PrepareAttackSX()
+Func PrepareAttackSX($pMatchMode = $DT, $bRemaining = False)
 If $g_bDebugSX Then SetDebugLog("SX|Begin PrepareAttackSX", $COLOR_DEBUG)
+$g_iTotalAttackSlot = 10
+$g_bDraggedAttackBar = False
 Local $iTroopNumber = 0
+Local $avAttackBar = GetAttackBar($bRemaining, $pMatchMode)
 For $i = 0 To UBound($g_avAttackTroops, 1) - 1
+Local $bClearSlot = True
+If UBound($avAttackBar, 1) > 0 Then
+For $j = 0 To UBound($avAttackBar, 1) - 1
+If $avAttackBar[$j][1] = $i Then
+If IsUnitUsed($pMatchMode, $avAttackBar[$j][0]) Then
+$bClearSlot = False
+Local $iTroopIndex = Number($avAttackBar[$j][0])
+$g_avAttackTroops[$i][0] = $iTroopIndex
+$g_avAttackTroops[$i][1] = Number($avAttackBar[$j][2])
+$g_avAttackTroops[$i][2] = Number($avAttackBar[$j][3])
+$g_avAttackTroops[$i][3] = Number($avAttackBar[$j][4])
+$g_avAttackTroops[$i][4] = Number($avAttackBar[$j][5])
+$g_avAttackTroops[$i][5] = Number($avAttackBar[$j][6])
+$iTroopNumber += $avAttackBar[$j][2]
+Local $sDebugText = $g_bDebugSetlog ? " (X:" & $avAttackBar[$j][3] & "|Y:" & $avAttackBar[$j][4] & "|OCR-X:" & $avAttackBar[$j][5] & "|OCR-Y:" & $avAttackBar[$j][6] & ")" : ""
+SetLog($avAttackBar[$j][1] & ": " & $avAttackBar[$j][2] & " " & GetTroopName($avAttackBar[$j][0], $avAttackBar[$j][2]) & $sDebugText, $COLOR_SUCCESS)
+Else
+SetDebugLog("Discard use of " & GetTroopName($avAttackBar[$j][0]) & " (" & $avAttackBar[$j][0] & ")", $COLOR_ERROR)
+EndIf
+ExitLoop
+EndIf
+Next
+EndIf
+If $bClearSlot Then
 $g_avAttackTroops[$i][0] = -1
 $g_avAttackTroops[$i][1] = 0
 $g_avAttackTroops[$i][2] = 0
 $g_avAttackTroops[$i][3] = 0
 $g_avAttackTroops[$i][4] = 0
 $g_avAttackTroops[$i][5] = 0
-Next
-Local $avAttackBar = GetAttackBar()
-If UBound($avAttackBar, 1) > 0 Then
-For $i = 0 To UBound($avAttackBar, 1) - 1
-If IsUnitUsed($DT, $avAttackBar[$i][0]) Then
-$g_avAttackTroops[$avAttackBar[$i][1]][0] = Number($avAttackBar[$i][0])
-$g_avAttackTroops[$avAttackBar[$i][1]][1] = Number($avAttackBar[$i][2])
-$g_avAttackTroops[$avAttackBar[$i][1]][2] = Number($avAttackBar[$i][3])
-$g_avAttackTroops[$avAttackBar[$i][1]][3] = Number($avAttackBar[$i][4])
-$g_avAttackTroops[$avAttackBar[$i][1]][4] = Number($avAttackBar[$i][5])
-$g_avAttackTroops[$avAttackBar[$i][1]][5] = Number($avAttackBar[$i][6])
-$iTroopNumber += $avAttackBar[$i][2]
-Local $sDebugText = $g_bDebugSetlog ? " (X:" & $avAttackBar[$i][3] & " |Y:" & $avAttackBar[$i][4] & " |OCR-X:" & $avAttackBar[$i][5] & " |OCR-Y:" & $avAttackBar[$i][6] & ")" : ""
-SetLog($avAttackBar[$i][1] & ": " & $avAttackBar[$i][2] & " " & GetTroopName($avAttackBar[$i][0], $avAttackBar[$i][2]) & $sDebugText, $COLOR_SUCCESS)
-Else
-SetDebugLog("Discard use of " & GetTroopName($avAttackBar[$i][0]) & " (" & $avAttackBar[$i][0] & ")", $COLOR_ERROR)
 EndIf
 Next
-EndIf
 SetSlotSpecialTroops()
 If $g_bDebugSX Then SetDebugLog("SX|PrepareAttackSX Finished", $COLOR_DEBUG)
 Return $iTroopNumber
@@ -73509,12 +74316,12 @@ EndIf
 If $g_bDebugSX Then SetDebugLog("SX|OpenGoblinMapSX|Clicking On GP Text: " & $rDragToGoblinMapSX[0] & ", " & $rDragToGoblinMapSX[1])
 Click($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1])
 Local $Counter = 0
-While Not _ColorCheck(_GetPixelColor($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1] + 82, True, "OpenGoblinMapSX-AttackButton"), Hex(0xE04A00, 6), 30)
+While Not _ColorCheck(_GetPixelColor($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1] + 83, True, "OpenGoblinMapSX-AttackButton"), Hex(0xEC5008, 6), 30)
 If _Sleep(50) Then ExitLoop
 SetLog("Waiting for Attack Button color", $COLOR_INFO)
 Click($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1])
 $Counter += 1
-If $Counter > 200 Then
+If $Counter > 50 Then
 If IsGoblinMapSXLocked($rDragToGoblinMapSX) = True Then
 SetLog("Are you kidding me? " & $g_sGoblinMapOptSX & " is Locked", $COLOR_ERROR)
 DisableSX()
@@ -73522,13 +74329,13 @@ SafeReturnSX()
 Return False
 EndIf
 SetLog("Attack Button Cannot be Verified", $COLOR_ERROR)
-DebugImageSave("SuperXP_", True, "png", True, String(Number($rDragToGoblinMapSX[0], 2) & ", " & Number($rDragToGoblinMapSX[1], 2) & @CRLF & Number($rDragToGoblinMapSX[0], 2) & ", " & Number($rDragToGoblinMapSX[1] + 82, 2)))
+DebugImageSave("SuperXP_", True, "png", True, String(Number($rDragToGoblinMapSX[0], 2) & ", " & Number($rDragToGoblinMapSX[1], 2) & @CRLF & Number($rDragToGoblinMapSX[0], 2) & ", " & Number($rDragToGoblinMapSX[1] + 83, 2)))
 SafeReturnSX()
 Return False
 EndIf
 WEnd
-If $g_bDebugSX Then SetDebugLog("SX|OpenGoblinMapSX|Clicking On Attack Btn: " & $rDragToGoblinMapSX[0] & ", " & $rDragToGoblinMapSX[1] + 82)
-Click($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1] + 82)
+If $g_bDebugSX Then SetDebugLog("SX|OpenGoblinMapSX|Clicking On Attack Btn: " & $rDragToGoblinMapSX[0] & ", " & $rDragToGoblinMapSX[1] + 83)
+Click($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1] + 72)
 $Counter = 0
 While IsInSPPage()
 If _Sleep(50) Then ExitLoop
@@ -73631,7 +74438,7 @@ Case "END"
 While Not(IsArray($rIsGoblinMapSXFound))
 If $g_iGoblinMapOptSX = 1 Then
 If $g_bDebugSX Then SetDebugLog("SX|DragToGoblinMapSX|Drag from End Loop #" & $Counter)
-ClickDrag(Random(505, 515, 1), Random(100, 105, 1), Random(505, 515, 1), Random(561, 566, 1), 100)
+ClickDrag(Random(510, 515, 1), Random(100, 105, 1), Random(510, 515, 1), Random(561, 566, 1), 100)
 EndIf
 If _Sleep(100) Then Return False
 $rIsGoblinMapSXFound = IsGoblinMapSXFound()
@@ -73791,540 +74598,6 @@ EndIf
 WEnd
 Return True
 EndFunc
-Global Const $tagNOTIFYICONDATA = 'struct;dword Size;hwnd hWnd;uint ID;uint Flags;uint CallbackMessage;ptr hIcon;wchar Tip[128];dword State;dword StateMask;wchar Info[256];uint Version;wchar InfoTitle[64];dword InfoFlags;endstruct'
-Global Const $__DLG_WM_USER = 0x400
-Global Const $tagPRINTDLG = __Iif(@AutoItX64, '', 'align 2;') & 'dword Size;hwnd hOwner;handle hDevMode;handle hDevNames;handle hDC;dword Flags;word FromPage;word ToPage;word MinPage;word MaxPage;word Copies;handle hInstance;lparam lParam;ptr PrintHook;ptr SetupHook;ptr PrintTemplateName;ptr SetupTemplateName;handle hPrintTemplate;handle hSetupTemplate'
-Global Const $DELAYCHATACTIONS1 = 100
-Global Const $DELAYCHATACTIONS2 = 300
-Global Const $DELAYCHATACTIONS3 = 500
-Global Const $DELAYCHATACTIONS5 = 1000
-Global Const $DELAYCHATACTIONS7 = 1500
-Func ChatActions()
-ApplyConfig_MOD_ChatActions("Save")
-If $g_bChatGlobal Then
-If $g_sDelayTimeGlobal > 0 Then
-If DelayTime("GLOBAL") Then
-ChatGlobal()
-$g_sGlobalChatLastMsgSentTime = _NowCalc()
-EndIf
-Else
-ChatGlobal()
-EndIf
-EndIf
-If $g_bChatClan Then
-If $g_sDelayTimeClan > 0 Then
-If DelayTime("CLAN") Then
-ChatClan()
-$g_sClanChatLastMsgSentTime = _NowCalc()
-EndIf
-Else
-ChatClan()
-EndIf
-EndIf
-If $g_bEnableFriendlyChallenge And Not $g_bStayOnBuilderBase Then
-If $g_sDelayTimeFC > 0 Then
-If DelayTime("FC") Then
-FriendlyChallenge()
-$g_sFCLastMsgSentTime = _NowCalc()
-EndIf
-Else
-FriendlyChallenge()
-EndIf
-EndIf
-EndFunc
-Func DelayTime($chatType)
-Local $aHour = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
-If Not $g_abFriendlyChallengeHours[$aHour[0]] Then
-SetLog("ChatActions not planned, Skipped..", $COLOR_INFO)
-Return False
-EndIf
-Switch $chatType
-Case "GLOBAL"
-If $g_sGlobalChatLastMsgSentTime = "" Then Return True
-Local $sDateTimeDiffOfLastMsgInMin = _DateDiff("s", $g_sGlobalChatLastMsgSentTime, _NowCalc()) / 60
-SetDebugLog("$g_sDelayTimeGlobal = " & $g_sDelayTimeGlobal)
-SetDebugLog("$g_sGlobalChatLastMsgSentTime = " & $g_sGlobalChatLastMsgSentTime & ", $sDateTimeDiffOfLastMsgInMin = " & $sDateTimeDiffOfLastMsgInMin)
-If $sDateTimeDiffOfLastMsgInMin > $g_sDelayTimeGlobal Then
-Return True
-Else
-Local $hour = 0, $min = 0, $sec = 0
-Local $sDateTimeDiffOfLastMsgInSec = _DateDiff("s", _NowCalc(), _DateAdd('n', $g_sDelayTimeGlobal, $g_sGlobalChatLastMsgSentTime))
-SetDebugLog("$sDateTimeDiffOfLastMsgInSec = " & $sDateTimeDiffOfLastMsgInSec)
-_TicksToTime($sDateTimeDiffOfLastMsgInSec * 1000, $hour, $min, $sec)
-SetLog("Chatbot: Skip Sending Chats to Global chat", $COLOR_INFO)
-SetLog("Delay Time " & StringFormat("%02i:%02i:%02i", $hour, $min, $sec) & " left before sending new msg.", $COLOR_INFO)
-Return False
-EndIf
-Case "CLAN"
-If $g_sClanChatLastMsgSentTime = "" Then Return True
-Local $sDateTimeDiffOfLastMsgInMin = _DateDiff("s", $g_sClanChatLastMsgSentTime, _NowCalc()) / 60
-SetDebugLog("$g_iTxtDelayTimeClan = " & $g_sDelayTimeClan)
-SetDebugLog("$g_sClanChatLastMsgSentTime = " & $g_sClanChatLastMsgSentTime & ", $sDateTimeDiffOfLastMsgInMin = " & $sDateTimeDiffOfLastMsgInMin)
-If $sDateTimeDiffOfLastMsgInMin > $g_sDelayTimeClan Then
-Return True
-Else
-Local $hour = 0, $min = 0, $sec = 0
-Local $sDateTimeDiffOfLastMsgInSec = _DateDiff("s", _NowCalc(), _DateAdd('n', $g_sDelayTimeClan, $g_sClanChatLastMsgSentTime))
-SetDebugLog("$sDateTimeDiffOfLastMsgInSec = " & $sDateTimeDiffOfLastMsgInSec)
-_TicksToTime($sDateTimeDiffOfLastMsgInSec * 1000, $hour, $min, $sec)
-SetLog("Chatbot: Skip Sending Chats To clan chat", $COLOR_INFO)
-SetLog("Delay Time " & StringFormat("%02i:%02i:%02i", $hour, $min, $sec) & " left before sending new msg.", $COLOR_INFO)
-Return False
-EndIf
-Case "FC"
-If $g_sFCLastMsgSentTime = "" Then Return True
-Local $sDateTimeDiffOfLastMsgInMin = _DateDiff("s", $g_sFCLastMsgSentTime, _NowCalc()) / 60
-SetDebugLog("$g_iTxtDelayTimeFC = " & $g_sDelayTimeFC)
-SetDebugLog("$g_sFCLastMsgSentTime = " & $g_sFCLastMsgSentTime & ", $sDateTimeDiffOfLastMsgInMin = " & $sDateTimeDiffOfLastMsgInMin)
-If $sDateTimeDiffOfLastMsgInMin > $g_sDelayTimeFC Then
-Return True
-Else
-Local $hour = 0, $min = 0, $sec = 0
-Local $sDateTimeDiffOfLastMsgInSec = _DateDiff("s", _NowCalc(), _DateAdd('n', $g_sDelayTimeFC, $g_sFCLastMsgSentTime))
-SetDebugLog("$sDateTimeDiffOfLastMsgInSec = " & $sDateTimeDiffOfLastMsgInSec)
-_TicksToTime($sDateTimeDiffOfLastMsgInSec * 1000, $hour, $min, $sec)
-SetLog("Chatbot: Skip Sending Chats To friendly challenge", $COLOR_INFO)
-SetLog("Delay Time " & StringFormat("%02i:%02i:%02i", $hour, $min, $sec) & " left before sending new challenge.", $COLOR_INFO)
-Return False
-EndIf
-EndSwitch
-EndFunc
-Func ChatClan()
-If Not $g_bChatClan Then Return
-While 1
-SetLog("Chatbot: Will Send Clan Chat", $COLOR_INFO)
-If Not ChatbotChatOpen() Then ExitLoop
-If Not ChatbotSelectClanChat() Then ExitLoop
-If Not ChatbotCheckIfUserIsInClan() Then ExitLoop
-Local $SentClanChat = False
-_Sleep(2000)
-If $ChatbotReadQueued Then
-ChatbotNotifySendChat()
-$ChatbotReadQueued = False
-$SentClanChat = True
-ElseIf $ChatbotIsOnInterval Then
-If ChatbotIsInterval() Then
-ChatbotStartTimer()
-ChatbotNotifySendChat()
-$SentClanChat = True
-EndIf
-EndIf
-If UBound($ChatbotQueuedChats) > 0 Then
-SetLog("Chatbot: Sending Notify Chats", $COLOR_GREEN)
-For $a = 0 To UBound($ChatbotQueuedChats) - 1
-Local $ChatToSend = $ChatbotQueuedChats[$a]
-If Not ChatbotSelectChatInput("Clan") Then ExitLoop
-If Not ChatbotChatInput(_Encoding_JavaUnicodeDecode($ChatToSend)) Then ExitLoop
-If Not ChatbotSendChat("Clan") Then ExitLoop
-Next
-Dim $Tmp[0]
-$ChatbotQueuedChats = $Tmp
-_Sleep(2000)
-ChatbotNotifySendChat()
-ExitLoop
-EndIf
-If Not ChatbotIsLastChatNew() Then
-Local $sLastChat
-ReadChatIA($sLastChat, -1, True)
-Local $ChatMsg = StringStripWS($sLastChat, 7)
-SetLog("Found Chat Message : " & $ChatMsg, $COLOR_GREEN)
-Local $SentMessage = False
-If StringStripWS($ChatMsg, $STR_STRIPALL) = "" Then
-If $g_bClanAlwaysMsg Then
-If Not ChatbotSelectChatInput("Clan") Then ExitLoop
-If Not ChatbotChatInput($g_iTxtClanMessages[Random(0, UBound($g_iTxtClanMessages) - 1, 1)]) Then ExitLoop
-If Not ChatbotSendChat("Clan") Then ExitLoop
-$SentMessage = True
-EndIf
-EndIf
-If $g_bClanUseResponses And Not $SentMessage Then
-For $a = 0 To UBound($g_iTxtClanResponses) - 1
-If StringInStr($ChatMsg, $g_iTxtClanResponses[$a][0]) Then
-Local $Response = $g_iTxtClanResponses[$a][1]
-SetLog("Sending Response : " & $Response, $COLOR_GREEN)
-If Not ChatbotSelectChatInput("Clan") Then ExitLoop
-If Not ChatbotChatInput($Response) Then ExitLoop
-If Not ChatbotSendChat("Clan") Then ExitLoop
-$SentMessage = True
-ExitLoop
-EndIf
-Next
-EndIf
-If $g_bCleverbot And Not $SentMessage Then
-Local $Response = runHelper($ChatMsg, $g_bCleverbot)
-If $Response = False Or StringStripWS($ChatMsg, $STR_STRIPALL) <> "" Then
-SetLog("Got Cleverbot Response : " & $Response, $COLOR_GREEN)
-If Not ChatbotSelectChatInput("Clan") Then ExitLoop
-If Not ChatbotChatInput($Response) Then ExitLoop
-If Not ChatbotSendChat("Clan") Then ExitLoop
-$SentMessage = True
-EndIf
-EndIf
-If Not $SentMessage Then
-If $g_bClanAlwaysMsg Then
-If Not ChatbotSelectChatInput("Clan") Then ExitLoop
-If Not ChatbotChatInput($g_iTxtClanMessages[Random(0, UBound($g_iTxtClanMessages) - 1, 1)]) Then ExitLoop
-If Not ChatbotSendChat("Clan") Then ExitLoop
-EndIf
-EndIf
-If $g_bUseNotify And $g_bPbSendNew Then
-If Not $SentClanChat Then ChatbotNotifySendChat()
-EndIf
-ElseIf $g_bClanAlwaysMsg Then
-If Not ChatbotSelectChatInput("Clan") Then ExitLoop
-If Not ChatbotChatInput($g_iTxtClanMessages[Random(0, UBound($g_iTxtClanMessages) - 1, 1)]) Then ExitLoop
-If Not ChatbotSendChat("Clan") Then ExitLoop
-EndIf
-ExitLoop
-WEnd
-ChatbotChatClose()
-SetLog("Chatbot: Clan Chatting Done", $COLOR_GREEN)
-EndFunc
-Func ChatGlobal()
-If Not $g_bChatGlobal Then Return
-While 1
-SetLog("Chatbot: Sending Chats To Global", $COLOR_INFO)
-If $g_bSwitchLang Then
-Local $aButtonLanguage = $aButtonLanguageEN
-Local $cmbLangMsg = GUICtrlRead($g_hCmbLang)
-Switch GUICtrlRead($g_hCmbLang)
-Case "FR"
-$aButtonLanguage = $aButtonLanguageFRA
-Case "DE"
-$aButtonLanguage = $aButtonLanguageDE
-Case "ES"
-$aButtonLanguage = $aButtonLanguageES
-Case "IT"
-$aButtonLanguage = $aButtonLanguageITA
-Case "NL"
-$aButtonLanguage = $aButtonLanguageNL
-Case "NO"
-$aButtonLanguage = $aButtonLanguageNO
-Case "PR"
-$aButtonLanguage = $aButtonLanguagePR
-Case "TR"
-$aButtonLanguage = $aButtonLanguageTR
-Case "RU"
-$aButtonLanguage = $aButtonLanguageRU
-EndSwitch
-If Not ChangeLanguageLifeCycle($aButtonLanguage, $cmbLangMsg) Then
-ChatbotSettingClose()
-SetLog("Chatbot: Global Chatting Done", $COLOR_GREEN)
-Return
-EndIf
-EndIf
-If Not ChatbotChatOpen() Then ExitLoop
-Global $g_sMessage[2]
-$g_sMessage[0] = $g_iTxtGlobalMessages1[Random(0, UBound($g_iTxtGlobalMessages1) - 1, 1)]
-$g_sMessage[1] = $g_iTxtGlobalMessages2[Random(0, UBound($g_iTxtGlobalMessages2) - 1, 1)]
-If $g_bScrambleGlobal Then
-_ArrayShuffle($g_sMessage)
-EndIf
-If Not ChatbotSelectGlobalChat() Then ExitLoop
-If Not ChatbotSelectChatInput("Global") Then ExitLoop
-If Not ChatbotChatInput(_ArrayToString($g_sMessage, " ")) Then ExitLoop
-If Not ChatbotSendChat("Global") Then ExitLoop
-ExitLoop
-WEnd
-ChatbotChatClose()
-If $g_bSwitchLang Then
-Local $iReHere = 0
-While $iReHere < 3
-If Not $g_bRunState Then Return
-$iReHere += 1
-If Not ChangeLanguageLifeCycle($aButtonLanguageEN, "EN") Then
-ChatbotSettingClose()
-SetLog("Chatbot: Sorry, Unable To Switch Back To English Try Again : (" & $iReHere & "/3)", $COLOR_ERROR)
-If _Sleep(500) Then Return
-ContinueLoop
-EndIf
-ExitLoop
-WEnd
-EndIf
-SetLog("Chatbot: Global Chatting Done", $COLOR_GREEN)
-EndFunc
-Func ChatbotChatOpen()
-ClickP($aAway, 1, 0, "#0167")
-ForceCaptureRegion()
-If _Sleep($DELAYCHATACTIONS2) Then Return
-If Not _CheckPixel($aChatTab, $g_bCapturePixel) Or Not _CheckPixel($aChatTab2, $g_bCapturePixel) Or Not _CheckPixel($aChatTab3, $g_bCapturePixel) Then ClickP($aOpenChat, 1, 0, "#0168")
-If _Sleep($DELAYCHATACTIONS3) Then Return
-If _WaitForCheckPixel($aChatTab, $g_bCapturePixel, Default, "Wait for ClanChat Page #1:") Or  _WaitForCheckPixel($aChatTab2, $g_bCapturePixel, Default, "Wait for ClanChat Page #2:") Or  _WaitForCheckPixel($aChatTab3, $g_bCapturePixel, Default, "Wait for ClanChat Page #3:") Then
-SetLog("Chatbot: Chat Window Opened.", $COLOR_SUCCESS)
-Return True
-Else
-SetLog("Chatbot: Sorry, Chat Window Did Not Opened.", $COLOR_ERROR)
-Return False
-EndIf
-EndFunc
-Func ChatbotChatClose()
-Click($aCloseChat[0], $aCloseChat[1], 1, 0, "CloseChatBtn")
-If _Sleep($DELAYCHATACTIONS2) Then Return
-If _Wait4PixelGone($aChatTab[0], $aChatTab[1], $aChatTab[2], $aChatTab[3], 5000, "Wait for Close ClanChat #1:") Or  _Wait4PixelGone($aChatTab2[0], $aChatTab2[1], $aChatTab2[2], $aChatTab2[3], 5000, "Wait for Close ClanChat #2:") Or  _Wait4PixelGone($aChatTab3[0], $aChatTab3[1], $aChatTab3[2], $aChatTab3[3], 5000, "Wait for Close ClanChat #3:") Then
-SetLog("Chatbot: Chat Window Closed.", $COLOR_INFO)
-waitMainScreen()
-Return True
-Else
-SetLog("Chatbot: Sorry, Unable To Close The Chat.", $COLOR_ERROR)
-Return False
-EndIf
-EndFunc
-Func ChatbotSelectGlobalChat()
-Click($aGlobalChatTab[0], $aGlobalChatTab[1], 1, 0, "GlobalChatBtn")
-If _Sleep($DELAYCHATACTIONS2) Then Return
-If _WaitForCheckPixel($aGlobalChatTab, $g_bCapturePixel, Default, "Wait for Global Chat tab:") Then
-SetLog("Chatbot: Global Tab Selected.", $COLOR_SUCCESS)
-Local $aCoord = decodeSingleCoord(findImage("I Understand", $g_sImgChatIUnterstand, GetDiamondFromRect("50,400,280,550")))
-If UBound($aCoord) > 1 Then
-If $g_bDebugSetlog Then SetDebugLog("Clicking 'I Understand' button", $COLOR_ACTION)
-ClickP($aCoord)
-If _Sleep($DELAYDONATECC2) Then Return
-EndIf
-Return True
-Else
-SetLog("Chatbot: Sorry, Global Tab Not Selected.", $COLOR_ERROR)
-Return False
-EndIf
-EndFunc
-Func ChatbotSelectClanChat()
-Click($aClanChatTab[0], $aClanChatTab[1], 1, 0, "ClanChatBtn")
-If _Sleep($DELAYCHATACTIONS2) Then Return
-If _WaitForCheckPixel($aClanChatTab, $g_bCapturePixel, Default, "Wait for Clan Chat tab:") Then
-SetLog("Chatbot: Clan Tab Selected.", $COLOR_SUCCESS)
-Local $aCoord = decodeSingleCoord(findImage("I Understand", $g_sImgChatIUnterstand, GetDiamondFromRect("50,400,280,550")))
-If UBound($aCoord) > 1 Then
-If $g_bDebugSetlog Then SetDebugLog("Clicking 'I Understand' button", $COLOR_ACTION)
-ClickP($aCoord)
-If _Sleep($DELAYDONATECC2) Then Return
-EndIf
-Return True
-Else
-SetLog("Chatbot: Sorry, Clan Tab Not Selected.", $COLOR_ERROR)
-Return False
-EndIf
-EndFunc
-Func ChatbotCheckIfUserIsInClan()
-If Not _CheckPixel($aClanBadgeNoClan, $g_bCapturePixel, Default, "Clan Badge No Clan:") Then
-Return True
-Else
-SetLog("Chatbot: Sorry, You Are Not In A Clan You Can't Chat.", $COLOR_ERROR)
-Return False
-EndIf
-EndFunc
-Func ChatbotSelectChatInput($fromTab)
-Click($aChatSelectTextBox[0], $aChatSelectTextBox[1], 1, 0, "SelectTextBoxBtn")
-If _Sleep($DELAYCHATACTIONS2) Then Return
-If _WaitForCheckPixel($aOpenedChatSelectTextBox, $g_bCapturePixel, Default, "Wait for Chat Select Text Box:") Then
-SetLog("Chatbot: " & $fromTab & " Chat TextBox Appeared.", $COLOR_INFO)
-Return True
-Else
-SetLog("Chatbot: Sorry, " & $fromTab & " Chat TextBox Is Not Opened.", $COLOR_ERROR)
-Return False
-EndIf
-EndFunc
-Func ChatbotChatInput($g_sMessage)
-SetLog("Chatbot: Type Msg : " & $g_sMessage, $COLOR_SUCCESS)
-Click($aOpenedChatSelectTextBox[0], $aOpenedChatSelectTextBox[1], 1, 0, "ChatInput")
-If _Sleep($DELAYCHATACTIONS5) Then Return
-If $g_bRusLang Then
-SetLog("Chat Send In Russia", $COLOR_INFO)
-AutoItWinSetTitle('MyAutoItTitle')
-_WinAPI_SetKeyboardLayout(WinGetHandle(AutoItWinGetTitle()), 0x0419)
-_Sleep($DELAYCHATACTIONS3)
-ControlFocus($g_hAndroidWindow, "", "")
-SendKeepActive($g_hAndroidWindow)
-_Sleep($DELAYCHATACTIONS3)
-AutoItSetOption("SendKeyDelay", 50)
-_SendExEx($g_sMessage)
-SendKeepActive("")
-Else
-_Sleep($DELAYCHATACTIONS3)
-SendText($g_sMessage)
-EndIf
-Return True
-EndFunc
-Func ChatbotSendChat($fromTab)
-If _CheckPixel($aChatSendBtn, $g_bCapturePixel, Default, "Chat Send (" & $fromTab & ") Btn:") Then
-Click($aChatSendBtn[0], $aChatSendBtn[1], 1, 0, "ChatSendBtn")
-If _Sleep($DELAYCHATACTIONS5) Then Return
-Return True
-Else
-SetLog("Chatbot: Sorry, " & $fromTab & " Chat Send Button is not available.", $COLOR_ERROR)
-Return False
-EndIf
-EndFunc
-Func ChatbotIsLastChatNew()
-_CaptureRegion()
-For $x = 38 To 261
-If _ColorCheck(_GetPixelColor($x, 129), Hex(0x78BC10, 6), 5) Then Return True
-Next
-Return False
-EndFunc
-Func ChatbotNotifySendChat()
-If Not $g_bUseNotify Then Return
-Local $Date = @YEAR & "-" & @MON & "-" & @MDAY
-Local $Time = @HOUR & "." & @MIN & "." & @SEC
-_CaptureRegion(0, 0, 320, 675)
-Local $ChatFile = $Date & "__" & $Time & ".jpg"
-_GDIPlus_ImageSaveToFile($g_hBitmap, $g_sProfileLootsPath & $ChatFile)
-_GDIPlus_ImageDispose($g_hBitmap)
-SetLog("Chatbot: Sent chat image", $COLOR_SUCCESS)
-NotifyPushFileToTelegram($ChatFile, "Loots", "image/jpeg", $g_sNotifyOrigin & " | Last Clan Chats" & "\n" & $ChatFile)
-If _Sleep($DELAYPUSHMSG2) Then Return
-Local $iDelete = FileDelete($g_sProfileLootsPath & $ChatFile)
-If Not($iDelete) Then SetLog("Chatbot: Failed to delete temp file", $COLOR_ERROR)
-EndFunc
-Func ChatbotStartTimer()
-$ChatbotStartTime = TimerInit()
-EndFunc
-Func ChatbotIsInterval()
-Local $Time_Difference = TimerDiff($ChatbotStartTime)
-If $Time_Difference > $ChatbotReadInterval * 1000 Then
-Return True
-Else
-Return False
-EndIf
-EndFunc
-Func ChatbotNotifyQueueChat($Chat)
-If Not $g_bUseNotify Then Return
-_ArrayAdd($ChatbotQueuedChats, $Chat)
-EndFunc
-Func ChatbotNotifyStopChatRead()
-If Not $g_bUseNotify Then Return
-$ChatbotReadInterval = 0
-$ChatbotIsOnInterval = False
-EndFunc
-Func ChangeLanguageLifeCycle($aButtonLanguage, $cmbLangMsg)
-If Not ChatbotSettingOpen() Then Return False
-If Not ChatbotClickLanguageButton() Then Return False
-If Not ChangeLanguageForChatBot($aButtonLanguage, $cmbLangMsg) Then Return False
-If Not ChangeLanguagePressOk($cmbLangMsg) Then
-ClickP($aAway, 1, 0, "#0167")
-Return False
-Else
-Sleep(3000)
-checkMainScreen()
-Return True
-EndIf
-EndFunc
-Func ChatbotSettingOpen()
-ClickP($aAway, 1, 0, "#0167")
-ForceCaptureRegion()
-If _Sleep($DELAYCHATACTIONS2) Then Return
-If _CheckPixel($aButtonSetting, $g_bCapturePixel, Default, "OpenSettingBtn:") Then Click($aButtonSetting[0], $aButtonSetting[1], 1, 0, "OpenSettingBtn")
-If _WaitForCheckPixel($aIsSettingPage, $g_bCapturePixel, Default, "Wait for Setting Page:") Then
-SetLog("Chatbot: Main Settings Opened.", $COLOR_SUCCESS)
-Return True
-Else
-SetLog("Chatbot: Sorry, Settings Did Not Opened.", $COLOR_ERROR)
-Return False
-EndIf
-EndFunc
-Func ChatbotSettingClose()
-Click($aIsSettingPage[0], $aIsSettingPage[1], 1, 0, "CloseSettingBtn")
-If _Sleep($DELAYCHATACTIONS2) Then Return
-If _Wait4PixelGone($aIsSettingPage[0], $aIsSettingPage[1], $aIsSettingPage[2], $aIsSettingPage[3], 5000, "Wait for Close Setting Page:") Then
-SetLog("Chatbot: Close Language Settings Window.", $COLOR_SUCCESS)
-Return True
-Else
-SetLog("Chatbot: Sorry, Unable To Close The Settings.", $COLOR_ERROR)
-Return False
-EndIf
-EndFunc
-Func ChatbotClickLanguageButton()
-Click($aSelectLangBtn[0], $aSelectLangBtn[1], 1, 0, "SelectLanguageBtn")
-If _Sleep($DELAYCHATACTIONS2) Then Return
-If _WaitForCheckPixel($aOpenedSelectLang, $g_bCapturePixel, Default, "Wait for Select Language Page:") Then
-SetLog("Chatbot: Language Settings Opened", $COLOR_SUCCESS)
-Return True
-Else
-SetLog("Chatbot: Sorry, Language Screen Not Opened.", $COLOR_ERROR)
-Return False
-EndIf
-EndFunc
-Func ChangeLanguageForChatBot($aButtonLanguage, $cmbLangMsg)
-SetLog("Chatbot: Switching Language To " & $cmbLangMsg, $COLOR_SUCCESS)
-If _Sleep($DELAYCHATACTIONS2) Then Return
-If $cmbLangMsg == "EN" Then
-ClickDrag(775, 180, 775, 440)
-If _Sleep($DELAYCHATACTIONS7) Then Return
-EndIf
-Click($aButtonLanguage[0], $aButtonLanguage[1], 1, 0, "LanguageBtn")
-If _Sleep($DELAYCHATACTIONS2) Then Return
-If _WaitForCheckPixel($aLangSelected, $g_bCapturePixel, Default, "Wait for Selected Language:") Then
-Click($aIsSettingPage[0], $aIsSettingPage[1], 1, 0, "CloseSettingBtn")
-If _Sleep($DELAYCHATACTIONS2) Then Return
-SetLog("Chatbot: Sorry, Language Change Dialog Does Not Appear. May Be You Are Already In : " & $cmbLangMsg, $COLOR_SUCCESS)
-Return True
-EndIf
-Return True
-EndFunc
-Func ChangeLanguagePressOk($cmbLangMsg)
-Click(Random(460, 565, 1), Random(412, 447, 1), 1, 0, "OkayBtn")
-If _Sleep($DELAYCHATACTIONS2) Then Return
-If _Wait4PixelGone($aLangSettingOK[0], $aLangSettingOK[1], $aLangSettingOK[2], $aLangSettingOK[3], 5000, "Okay Button:") Then
-SetLog("Chatbot: Language Successfully Changed To : " & $cmbLangMsg, $COLOR_SUCCESS)
-Return True
-Else
-SetLog("Chatbot: Sorry, Unable To Change Language : " & $cmbLangMsg, $COLOR_ERROR)
-Return False
-EndIf
-EndFunc
-Func runHelper($msg, $bCleverbot)
-Local $command, $DOS, $HelperStartTime, $Time_Difference
-Dim $DOS, $g_sMessage = ''
-$command = ' /c "phantomjs.exe phantom-cleverbot-helper.js '
-$DOS = Run(@ComSpec & $command & $msg & '"', "", @SW_HIDE, 8)
-$HelperStartTime = TimerInit()
-SetLog("Waiting for chatbot helper...")
-While ProcessExists($DOS)
-ProcessWaitClose($DOS, 10)
-SetLog("Still waiting for chatbot helper...")
-$Time_Difference = TimerDiff($HelperStartTime)
-If $Time_Difference > 50000 Then
-SetLog("Chatbot helper is taking too long!", $COLOR_RED)
-ProcessClose($DOS)
-_RunDos("taskkill -f -im phantomjs.exe")
-Return ""
-EndIf
-WEnd
-$g_sMessage = ''
-While 1
-$g_sMessage &= StdoutRead($DOS)
-If @error Then
-ExitLoop
-EndIf
-WEnd
-Return StringStripWS($g_sMessage, 7)
-EndFunc
-Func _Encoding_JavaUnicodeDecode($sString)
-Local $iOld_Opt_EVS = Opt('ExpandVarStrings', 0)
-Local $iOld_Opt_EES = Opt('ExpandEnvStrings', 0)
-Local $sOut = "", $aString = StringRegExp($sString, "(\\\\|\\'|\\u[[:xdigit:]]{4}|[[:ascii:]])", 3)
-For $i = 0 To UBound($aString) - 1
-Switch StringLen($aString[$i])
-Case 1
-$sOut &= $aString[$i]
-Case 2
-$sOut &= StringRight($aString[$i], 1)
-Case 6
-$sOut &= ChrW(Dec(StringRight($aString[$i], 4)))
-EndSwitch
-Next
-Opt('ExpandVarStrings', $iOld_Opt_EVS)
-Opt('ExpandEnvStrings', $iOld_Opt_EES)
-Return $sOut
-EndFunc
-Func _StringRemoveBlanksFromSplit(ByRef $strMsg)
-Local $strArray = StringSplit($strMsg, "|", 2)
-$strMsg = ""
-For $i = 0 To(UBound($strArray) - 1)
-If $strArray[$i] <> "" Then
-$strMsg = $strMsg & $strArray[$i] & "|"
-EndIf
-Next
-If($strMsg <> "") Then $strMsg = StringTrimRight($strMsg, 1)
-EndFunc
 Func _SendExEx($sKeys, $iFlag = 0)
 If @KBLayout = 0419 Then
 Local $sANSI_Chars = "ёйцукенгшщзхъфывапролджэячсмитьбю.?"
@@ -74348,7 +74621,7 @@ Local $bResult = True
 Local $asFCKeyword = ""
 $bResult = False
 Local $aLastResult[1][2]
-Local $sDirectory = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\Chat\"
+Local $sDirectory = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\ChatActions\Chat"
 Local $returnProps = "objectpoints"
 Local $aCoor
 Local $aPropsValues
@@ -74383,7 +74656,7 @@ _ArraySort($aLastResult, 1, 0, 0, 1)
 $iMax = UBound($aLastResult) - 1
 Local $aIAVarTmp = $g_aIAVar
 _ArraySort($aIAVarTmp, 0, 0, 0, 1)
-_CaptureRegion2(0,0,310,732)
+_CaptureRegion2(0,0,287,732)
 For $i = 0 To $iMax
 $sOCRString = ""
 For $ii = 0 To UBound($aIAVarTmp) - 1
@@ -74429,10 +74702,6 @@ Next
 If StringStripWS($sOCRString, $STR_STRIPALL) = "" Then
 SetDebugLog("Unable to read Chat!", $COLOR_ERROR)
 Else
-SetLog("Chat : " & $sOCRString, $COLOR_INFO)
-If $sCondition = -1 Then
-$bResult &= " " & $sOCRString
-Else
 Local $asFCKeyword = StringSplit($sCondition, "|", BitOR($STR_ENTIRESPLIT, $STR_NOCOUNT))
 For $j = 0 To UBound($asFCKeyword) - 1
 If StringInStr($sOCRString, $asFCKeyword[$j], 2) Then
@@ -74441,7 +74710,6 @@ $bResult = True
 If $bFast = True Then Return $bResult
 EndIf
 Next
-EndIf
 EndIf
 Next
 Return $bResult
@@ -74543,20 +74811,606 @@ $sReturn = StringReplace($sReturn, "99", "ث")
 $sReturn = StringStripWS($sReturn, 1 + 2)
 Return $sReturn
 EndFunc
+Global Const $tagNOTIFYICONDATA = 'struct;dword Size;hwnd hWnd;uint ID;uint Flags;uint CallbackMessage;ptr hIcon;wchar Tip[128];dword State;dword StateMask;wchar Info[256];uint Version;wchar InfoTitle[64];dword InfoFlags;endstruct'
+Global Const $__DLG_WM_USER = 0x400
+Global Const $tagPRINTDLG = __Iif(@AutoItX64, '', 'align 2;') & 'dword Size;hwnd hOwner;handle hDevMode;handle hDevNames;handle hDC;dword Flags;word FromPage;word ToPage;word MinPage;word MaxPage;word Copies;handle hInstance;lparam lParam;ptr PrintHook;ptr SetupHook;ptr PrintTemplateName;ptr SetupTemplateName;handle hPrintTemplate;handle hSetupTemplate'
+Global Const $DELAYCHATACTIONS1 = 100
+Global Const $DELAYCHATACTIONS2 = 250
+Global Const $DELAYCHATACTIONS3 = 500
+Global Const $DELAYCHATACTIONS5 = 1000
+Func DelayTime($chatType)
+Local $aHour = StringSplit(_NowTime(4), ":", $STR_NOCOUNT)
+If Not $g_abFriendlyChallengeHours[$aHour[0]] Then
+SetLog("ChatActions not planned, Skipped..", $COLOR_INFO)
+Return False
+EndIf
+Switch $chatType
+Case "GLOBAL"
+If $g_sGlobalChatLastMsgSentTime = "" Then Return True
+Local $sDateTimeDiffOfLastMsgInMin = _DateDiff("s", $g_sGlobalChatLastMsgSentTime, _NowCalc()) / 60
+SetDebugLog("$g_sDelayTimeGlobal = " & $g_sDelayTimeGlobal)
+SetDebugLog("$g_sGlobalChatLastMsgSentTime = " & $g_sGlobalChatLastMsgSentTime & ", $sDateTimeDiffOfLastMsgInMin = " & $sDateTimeDiffOfLastMsgInMin)
+If $sDateTimeDiffOfLastMsgInMin > $g_sDelayTimeGlobal Then
+Return True
+Else
+Local $hour = 0, $min = 0, $sec = 0
+Local $sDateTimeDiffOfLastMsgInSec = _DateDiff("s", _NowCalc(), _DateAdd('n', $g_sDelayTimeGlobal, $g_sGlobalChatLastMsgSentTime))
+SetDebugLog("$sDateTimeDiffOfLastMsgInSec = " & $sDateTimeDiffOfLastMsgInSec)
+_TicksToTime($sDateTimeDiffOfLastMsgInSec * 1000, $hour, $min, $sec)
+SetLog("Chatbot: Skip Sending Chats to Global Chat", $COLOR_INFO)
+SetLog("Delay Time " & StringFormat("%02i:%02i:%02i", $hour, $min, $sec) & " left before sending new msg.", $COLOR_INFO)
+Return False
+EndIf
+Case "CLAN"
+If $g_sClanChatLastMsgSentTime = "" Then Return True
+Local $sDateTimeDiffOfLastMsgInMin = _DateDiff("s", $g_sClanChatLastMsgSentTime, _NowCalc()) / 60
+SetDebugLog("$g_iTxtDelayTimeClan = " & $g_sDelayTimeClan)
+SetDebugLog("$g_sClanChatLastMsgSentTime = " & $g_sClanChatLastMsgSentTime & ", $sDateTimeDiffOfLastMsgInMin = " & $sDateTimeDiffOfLastMsgInMin)
+If $sDateTimeDiffOfLastMsgInMin > $g_sDelayTimeClan Then
+Return True
+Else
+Local $hour = 0, $min = 0, $sec = 0
+Local $sDateTimeDiffOfLastMsgInSec = _DateDiff("s", _NowCalc(), _DateAdd('n', $g_sDelayTimeClan, $g_sClanChatLastMsgSentTime))
+SetDebugLog("$sDateTimeDiffOfLastMsgInSec = " & $sDateTimeDiffOfLastMsgInSec)
+_TicksToTime($sDateTimeDiffOfLastMsgInSec * 1000, $hour, $min, $sec)
+SetLog("Chatbot: Skip Sending Chats to Clan Chat", $COLOR_INFO)
+SetLog("Delay Time " & StringFormat("%02i:%02i:%02i", $hour, $min, $sec) & " left before sending new msg.", $COLOR_INFO)
+Return False
+EndIf
+Case "FC"
+If $g_sFCLastMsgSentTime = "" Then Return True
+Local $sDateTimeDiffOfLastMsgInMin = _DateDiff("s", $g_sFCLastMsgSentTime, _NowCalc()) / 60
+SetDebugLog("$g_iTxtDelayTimeFC = " & $g_sDelayTimeFC)
+SetDebugLog("$g_sFCLastMsgSentTime = " & $g_sFCLastMsgSentTime & ", $sDateTimeDiffOfLastMsgInMin = " & $sDateTimeDiffOfLastMsgInMin)
+If $sDateTimeDiffOfLastMsgInMin > $g_sDelayTimeFC Then
+Return True
+Else
+Local $hour = 0, $min = 0, $sec = 0
+Local $sDateTimeDiffOfLastMsgInSec = _DateDiff("s", _NowCalc(), _DateAdd('n', $g_sDelayTimeFC, $g_sFCLastMsgSentTime))
+SetDebugLog("$sDateTimeDiffOfLastMsgInSec = " & $sDateTimeDiffOfLastMsgInSec)
+_TicksToTime($sDateTimeDiffOfLastMsgInSec * 1000, $hour, $min, $sec)
+SetLog("Chatbot: Skip Sending Chats to Friendly Challenge", $COLOR_INFO)
+SetLog("Delay Time " & StringFormat("%02i:%02i:%02i", $hour, $min, $sec) & " left before sending new challenge.", $COLOR_INFO)
+Return False
+EndIf
+EndSwitch
+EndFunc
+Func ChatActions()
+ApplyConfig_MOD_ChatActions("Save")
+If $g_bChatClan Then
+If $g_sDelayTimeClan > 0 Then
+If DelayTime("CLAN") Then
+ChatClan()
+$g_sClanChatLastMsgSentTime = _NowCalc()
+EndIf
+Else
+ChatClan()
+EndIf
+EndIf
+If $g_bEnableFriendlyChallenge And Not $g_bStayOnBuilderBase Then
+If $g_sDelayTimeFC > 0 Then
+If DelayTime("FC") Then
+FriendlyChallenge()
+$g_sFCLastMsgSentTime = _NowCalc()
+EndIf
+Else
+FriendlyChallenge()
+EndIf
+EndIf
+If $g_bChatGlobal Then
+If $g_sDelayTimeGlobal > 0 Then
+If DelayTime("GLOBAL") Then
+ChatGlobal()
+$g_sGlobalChatLastMsgSentTime = _NowCalc()
+EndIf
+Else
+ChatGlobal()
+EndIf
+EndIf
+EndFunc
+Func ChatClan()
+If Not $g_bChatClan Then Return
+While 1
+SetLog("Chatbot: Sending Chats To Clan", $COLOR_INFO)
+If Not ChatbotChatOpen() Then ExitLoop
+If Not ChatbotSelectClanChat() Then ExitLoop
+If Not ChatbotCheckIfUserIsInClan() Then ExitLoop
+Local $bSentClanChat = False
+If _Sleep(2000) Then Return
+If $ChatbotReadQueued Then
+ChatbotNotifySendChat()
+$ChatbotReadQueued = False
+$bSentClanChat = True
+ElseIf $ChatbotIsOnInterval Then
+If ChatbotIsInterval() Then
+ChatbotStartTimer()
+ChatbotNotifySendChat()
+$bSentClanChat = True
+EndIf
+EndIf
+If UBound($ChatbotQueuedChats) > 0 Then
+SetLog("Chatbot: Sending Notify Chats", $COLOR_SUCCESS)
+For $a = 0 To UBound($ChatbotQueuedChats) - 1
+Local $ChatToSend = $ChatbotQueuedChats[$a]
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput(_Encoding_JavaUnicodeDecode($ChatToSend)) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+Next
+Dim $Tmp[0]
+$ChatbotQueuedChats = $Tmp
+_Sleep(2000)
+ChatbotNotifySendChat()
+ExitLoop
+EndIf
+If Not ChatbotIsLastChatNew() Then
+Local $sChatMsg = "", $bChatMsg = False, $sCondition = ""
+For $iRespInt = 0 To UBound($g_sClanResponses)-1
+$sCondition &= $g_sClanResponses[$iRespInt][0] & "|"
+Next
+$bChatMsg = ReadChatIA($sChatMsg, $sCondition, True)
+Local $bSentMessage = False
+If Not $bChatMsg Then
+If $g_bClanUseGeneric Then
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput($g_sClanGeneric[Random(0, UBound($g_sClanGeneric) - 1, 1)]) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+$bSentMessage = True
+EndIf
+EndIf
+If $bChatMsg And $g_bClanUseResponses And Not $bSentMessage Then
+For $a = 0 To UBound($g_sClanResponses) - 1
+If StringInStr($sChatMsg, $g_sClanResponses[$a][0]) Then
+Local $sResponse = $g_sClanResponses[$a][1]
+SetLog("Sending Response : " & $sResponse, $COLOR_SUCCESS)
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput($sResponse) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+$bSentMessage = True
+ExitLoop
+EndIf
+Next
+EndIf
+If $g_bCleverbot And Not $bSentMessage Then
+Local $sResponse = runHelper($sChatMsg, $g_bCleverbot)
+If $sResponse = False Or StringStripWS($sChatMsg, $STR_STRIPALL) <> "" Then
+SetLog("Got Cleverbot Response : " & $sResponse, $COLOR_SUCCESS)
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput($sResponse) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+$bSentMessage = True
+EndIf
+EndIf
+If Not $bSentMessage Then
+If $g_bClanUseGeneric Then
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput($g_sClanGeneric[Random(0, UBound($g_sClanGeneric) - 1, 1)]) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+EndIf
+EndIf
+If $g_bUseNotify And $g_bPbSendNew Then
+If Not $bSentClanChat Then ChatbotNotifySendChat()
+EndIf
+ElseIf $g_bClanUseGeneric Then
+If Not ChatbotSelectChatInput("Clan") Then ExitLoop
+If Not ChatbotChatInput($g_sClanGeneric[Random(0, UBound($g_sClanGeneric) - 1, 1)]) Then ExitLoop
+If Not ChatbotSendChat("Clan") Then ExitLoop
+EndIf
+ExitLoop
+WEnd
+ChatbotChatClose()
+SetLog("Chatbot: Clan Chatting Done", $COLOR_SUCCESS)
+EndFunc
+Func ChatGlobal()
+If Not $g_bChatGlobal Then Return
+While 1
+SetLog("Chatbot: Sending Chats To Global", $COLOR_INFO)
+If $g_bSwitchLang Then
+Local $aButtonLanguage = $aButtonLanguageEN
+Local $aLangSelected = $aLangSelectedEN
+Local $cmbLangMsg = GUICtrlRead($g_hCmbLang)
+Switch GUICtrlRead($g_hCmbLang)
+Case "FR"
+$aButtonLanguage = $aButtonLanguageFRA
+$aLangSelected = $aLangSelectedFRA
+Case "DE"
+$aButtonLanguage = $aButtonLanguageDE
+$aLangSelected = $aLangSelectedDE
+Case "ES"
+$aButtonLanguage = $aButtonLanguageES
+$aLangSelected = $aLangSelectedES
+Case "IT"
+$aButtonLanguage = $aButtonLanguageITA
+$aLangSelected = $aLangSelectedITA
+Case "NL"
+$aButtonLanguage = $aButtonLanguageNL
+$aLangSelected = $aLangSelectedNL
+Case "NO"
+$aButtonLanguage = $aButtonLanguageNO
+$aLangSelected = $aLangSelectedNO
+Case "PR"
+$aButtonLanguage = $aButtonLanguagePR
+$aLangSelected = $aLangSelectedPR
+Case "TR"
+$aButtonLanguage = $aButtonLanguageTR
+$aLangSelected = $aLangSelectedTR
+Case "RU"
+$aButtonLanguage = $aButtonLanguageRU
+$aLangSelected = $aLangSelectedRU
+EndSwitch
+If Not ChangeLanguageLifeCycle($aButtonLanguage, $aLangSelected, $cmbLangMsg) Then
+ChatbotSettingClose()
+SetLog("Chatbot: Language Switch Done.", $COLOR_SUCCESS)
+Return
+EndIf
+EndIf
+If Not ChatbotChatOpen() Then ExitLoop
+If Not ChatbotSelectGlobalChat() Then ExitLoop
+If Not ChatbotSelectChatInput("Global") Then ExitLoop
+Global $g_sMessage[2]
+$g_sMessage[0] = $g_sGlobalMessages1[Random(0, UBound($g_sGlobalMessages1) - 1, 1)]
+$g_sMessage[1] = $g_sGlobalMessages2[Random(0, UBound($g_sGlobalMessages2) - 1, 1)]
+If $g_bScrambleGlobal Then
+_ArrayShuffle($g_sMessage)
+EndIf
+If Not ChatbotChatInput(_ArrayToString($g_sMessage, " ")) Then ExitLoop
+If Not ChatbotSendChat("Global") Then ExitLoop
+ExitLoop
+WEnd
+ChatbotChatClose()
+If $g_bSwitchLang Then
+Local $iReHere = 0
+While $iReHere < 3
+If Not $g_bRunState Then Return
+$iReHere += 1
+If Not ChangeLanguageLifeCycle($aButtonLanguageEN, $aLangSelectedEN, "EN") Then
+ChatbotSettingClose()
+SetLog("Chatbot: Sorry, Unable To Switch Back To English Try Again : (" & $iReHere & "/3)", $COLOR_ERROR)
+If _Sleep(500) Then Return
+ContinueLoop
+EndIf
+ExitLoop
+WEnd
+EndIf
+SetLog("Chatbot: Global Chatting Done", $COLOR_SUCCESS)
+EndFunc
+Func ChatbotChatOpen()
+SetDebugLog("ChatBot|Begin ChatbotChatOpen", $COLOR_DEBUG)
+ClickP($aAway, 1, 0, "#0167")
+ForceCaptureRegion()
+If _Sleep($DELAYCHATACTIONS2) Then Return
+If Not _CheckPixel($aChatTab, $g_bCapturePixel) Or Not _CheckPixel($aChatTab2, $g_bCapturePixel) Or Not _CheckPixel($aChatTab3, $g_bCapturePixel) Then
+ClickP($aOpenChat, 1, 0, "#OpenChatBtn")
+If _Sleep($DELAYCHATACTIONS2) Then Return
+If _WaitForCheckPixel($aChatTab, $g_bCapturePixel, Default, "Wait for Open ClanChat #1:") Or _WaitForCheckPixel($aChatTab2, $g_bCapturePixel, Default, "Wait for Open ClanChat #2:") Or _WaitForCheckPixel($aChatTab3, $g_bCapturePixel, Default, "Wait for Open ClanChat #3:") Then
+SetDebugLog("Chatbot: Chat Window Opened.", $COLOR_SUCCESS)
+Return True
+Else
+SetDebugLog("Chatbot: Not find $aChatTab|Pixel was:" & _GetPixelColor($aChatTab[0], $aChatTab[1], True), $COLOR_ERROR)
+Return False
+EndIf
+EndIf
+SetDebugLog("ChatBot|ChatbotChatOpen Finished", $COLOR_DEBUG)
+EndFunc
+Func ChatbotChatClose()
+SetDebugLog("ChatBot|Begin ChatbotChatClose", $COLOR_DEBUG)
+If _WaitForCheckPixel($aCloseChat, $g_bCapturePixel, Default, "Wait for Close Chat Btn:") Then
+Click($aCloseChat[0], $aCloseChat[1], 1, 0, "#CloseChatBtn")
+If _Sleep($DELAYCHATACTIONS2) Then Return
+SetDebugLog("Chatbot: Chat Window Closed.", $COLOR_INFO)
+waitMainScreen()
+Return True
+Else
+SetDebugLog("Chatbot: Not find $aCloseChat|Pixel was:" & _GetPixelColor($aCloseChat[0], $aCloseChat[1], True), $COLOR_ERROR)
+Return False
+EndIf
+SetDebugLog("ChatBot|ChatbotChatClose Finished", $COLOR_DEBUG)
+EndFunc
+Func ChatbotSelectGlobalChat()
+SetDebugLog("ChatBot|Begin ChatbotSelectGlobalChat", $COLOR_DEBUG)
+Click($aGlobalChatTab[0], $aGlobalChatTab[1], 1, 0, "GlobalChatBtn")
+If _Sleep($DELAYCHATACTIONS2) Then Return
+If _WaitForCheckPixel($aGlobalChatTab, $g_bCapturePixel, Default, "Wait for Global Chat tab:") Then
+SetDebugLog("Chatbot: Global Tab Selected.", $COLOR_SUCCESS)
+If _Sleep($DELAYCHATACTIONS2) Then Return
+If _CheckPixel($aChatRules, $g_bCapturePixel) Then ClickP($aChatRules, 1, 0, "#ChatRulesBtn")
+Return True
+Else
+SetDebugLog("Chatbot: Not find $aGlobalChatTab|Pixel was:" & _GetPixelColor($aGlobalChatTab[0], $aGlobalChatTab[1], True), $COLOR_ERROR)
+Return False
+EndIf
+SetDebugLog("ChatBot|ChatbotSelectGlobalChat Finished", $COLOR_DEBUG)
+EndFunc
+Func ChatbotSelectClanChat()
+SetDebugLog("ChatBot|Begin ChatbotSelectClanChat", $COLOR_DEBUG)
+Click($aClanChatTab[0], $aClanChatTab[1], 1, 0, "ClanChatBtn")
+If _Sleep($DELAYCHATACTIONS2) Then Return
+If _WaitForCheckPixel($aClanChatTab, $g_bCapturePixel, Default, "Wait for Clan Chat tab:") Then
+SetDebugLog("Chatbot: Clan Tab Selected.", $COLOR_SUCCESS)
+If _Sleep($DELAYCHATACTIONS2) Then Return
+If _CheckPixel($aChatRules, $g_bCapturePixel) Then ClickP($aChatRules, 1, 0, "#ChatRulesBtn")
+Return True
+Else
+SetDebugLog("Chatbot: Not find $aClanChatTab|Pixel was:" & _GetPixelColor($aClanChatTab[0], $aClanChatTab[1], True), $COLOR_ERROR)
+Return False
+EndIf
+SetDebugLog("ChatBot|ChatbotSelectClanChat Finished", $COLOR_DEBUG)
+EndFunc
+Func ChatbotCheckIfUserIsInClan()
+If Not _CheckPixel($aClanBadgeNoClan, $g_bCapturePixel, Default, "Clan Badge No Clan:") Then
+Return True
+Else
+SetLog("Chatbot: Sorry, You Are Not In A Clan You Can't Chat.", $COLOR_ERROR)
+Return False
+EndIf
+EndFunc
+Func ChatbotSelectChatInput($fromTab)
+SetDebugLog("ChatBot|Begin ChatbotSelectChatInput", $COLOR_DEBUG)
+Click($aChatSelectTextBox[0], $aChatSelectTextBox[1], 1, 0, "SelectTextBoxBtn")
+If _Sleep($DELAYCHATACTIONS2) Then Return
+If _WaitForCheckPixel($aOpenedChatSelectTextBox, $g_bCapturePixel, Default, "Wait for Chat Select Text Box:") Then
+SetDebugLog("Chatbot: " & $fromTab & " Chat TextBox Appeared.", $COLOR_INFO)
+Return True
+Else
+SetDebugLog("Chatbot: Not find $aOpenedChatSelectTextBox in " & $fromTab & "|Pixel was:" & _GetPixelColor($aOpenedChatSelectTextBox[0], $aOpenedChatSelectTextBox[1], True), $COLOR_ERROR)
+If _WaitForCheckPixel($aChatRules, $g_bCapturePixel, Default, "Wait for Chat Rules:") Then
+ClickP($aChatRules, 1, 0, "#ChatRulesBtn")
+If _Sleep($DELAYCHATACTIONS2) Then Return
+Return ChatbotSelectChatInput($fromTab)
+EndIf
+Return False
+EndIf
+SetDebugLog("ChatBot|ChatbotSelectChatInput Finished", $COLOR_DEBUG)
+EndFunc
+Func ChatbotChatInput($g_sMessage)
+SetDebugLog("ChatBot|Begin ChatbotChatInput", $COLOR_DEBUG)
+SetLog("Chatbot: Type msg : " & $g_sMessage, $COLOR_SUCCESS)
+Click($aOpenedChatSelectTextBox[0], $aOpenedChatSelectTextBox[1], 1, 0, "ChatInput")
+If _Sleep($DELAYCHATACTIONS5) Then Return
+If $g_bRusLang Then
+SetLog("Chat Send In Russia", $COLOR_INFO)
+AutoItWinSetTitle('MyAutoItTitle')
+_WinAPI_SetKeyboardLayout(WinGetHandle(AutoItWinGetTitle()), 0x0419)
+_Sleep($DELAYCHATACTIONS3)
+ControlFocus($g_hAndroidWindow, "", "")
+SendKeepActive($g_hAndroidWindow)
+_Sleep($DELAYCHATACTIONS3)
+AutoItSetOption("SendKeyDelay", 50)
+_SendExEx($g_sMessage)
+SendKeepActive("")
+Else
+_Sleep($DELAYCHATACTIONS3)
+SendText($g_sMessage)
+EndIf
+Return True
+SetDebugLog("ChatBot|ChatbotChatInput Finished", $COLOR_DEBUG)
+EndFunc
+Func ChatbotSendChat($fromTab)
+SetDebugLog("ChatBot|Begin ChatbotSendChat", $COLOR_DEBUG)
+If _CheckPixel($aChatSendBtn, $g_bCapturePixel, Default, "Chat Send (" & $fromTab & ") Btn:") Then
+Click($aChatSendBtn[0], $aChatSendBtn[1], 1, 0, "ChatSendBtn")
+If _Sleep($DELAYCHATACTIONS5) Then Return
+Return True
+Else
+SetDebugLog("Chatbot: Not find $aChatSendBtn in " & $fromTab & "|Pixel was:" & _GetPixelColor($aChatSendBtn[0], $aChatSendBtn[1], True), $COLOR_ERROR)
+Return False
+EndIf
+SetDebugLog("ChatBot|ChatbotSendChat Finished", $COLOR_DEBUG)
+EndFunc
+Func ChatbotIsLastChatNew()
+_CaptureRegion()
+For $x = 38 To 261
+If _ColorCheck(_GetPixelColor($x, 129), Hex(0x78BC10, 6), 5) Then Return True
+Next
+Return False
+EndFunc
+Func ChatbotNotifySendChat()
+If Not $g_bUseNotify Then Return
+Local $Date = @YEAR & "-" & @MON & "-" & @MDAY
+Local $Time = @HOUR & "." & @MIN & "." & @SEC
+_CaptureRegion(0, 0, 320, 675)
+Local $ChatFile = $Date & "__" & $Time & ".jpg"
+_GDIPlus_ImageSaveToFile($g_hBitmap, $g_sProfileLootsPath & $ChatFile)
+_GDIPlus_ImageDispose($g_hBitmap)
+SetLog("Chatbot: Sent chat image", $COLOR_SUCCESS)
+NotifyPushFileToTelegram($ChatFile, "Loots", "image/jpeg", $g_sNotifyOrigin & " | Last Clan Chats" & "\n" & $ChatFile)
+If _Sleep($DELAYPUSHMSG2) Then Return
+Local $iDelete = FileDelete($g_sProfileLootsPath & $ChatFile)
+If Not($iDelete) Then SetLog("Chatbot: Failed to delete temp file", $COLOR_ERROR)
+EndFunc
+Func ChatbotStartTimer()
+$ChatbotStartTime = TimerInit()
+EndFunc
+Func ChatbotIsInterval()
+Local $Time_Difference = TimerDiff($ChatbotStartTime)
+If $Time_Difference > $ChatbotReadInterval * 1000 Then
+Return True
+Else
+Return False
+EndIf
+EndFunc
+Func ChatbotNotifyQueueChat($Chat)
+If Not $g_bUseNotify Then Return
+_ArrayAdd($ChatbotQueuedChats, $Chat)
+EndFunc
+Func ChatbotNotifyStopChatRead()
+If Not $g_bUseNotify Then Return
+$ChatbotReadInterval = 0
+$ChatbotIsOnInterval = False
+EndFunc
+Func ChatbotSettingOpen()
+SetDebugLog("ChatBot|Begin ChatbotSettingOpen", $COLOR_DEBUG)
+ClickP($aAway, 1, 0, "#0167")
+ForceCaptureRegion()
+If _Sleep($DELAYCHATACTIONS2) Then Return
+If Not _CheckPixel($aIsSettingPage, $g_bCapturePixel) Then
+Click($aButtonSetting[0], $aButtonSetting[1], 1, 0, "OpenSettingBtn")
+If _Sleep($DELAYCHATACTIONS2) Then Return
+If _WaitForCheckPixel($aIsSettingPage, $g_bCapturePixel, Default, "Wait for Setting Page:") Then
+SetDebugLog("Chatbot: Main Settings Opened.", $COLOR_SUCCESS)
+Return True
+Else
+SetDebugLog("Chatbot: Not find $aIsSettingPage|Pixel was:" & _GetPixelColor($aIsSettingPage[0], $aIsSettingPage[1], True), $COLOR_ERROR)
+Return False
+EndIf
+EndIf
+SetDebugLog("ChatBot|ChatbotSettingOpen Finished", $COLOR_DEBUG)
+EndFunc
+Func ChatbotSettingClose()
+SetDebugLog("ChatBot|Begin ChatbotSettingClose", $COLOR_DEBUG)
+If _WaitForCheckPixel($aIsSettingPage, $g_bCapturePixel, Default, "Wait for Close Setting Btn:") Then
+Click($aIsSettingPage[0], $aIsSettingPage[1], 1, 0, "#CloseChatBtn")
+If _Sleep($DELAYCHATACTIONS2) Then Return
+SetDebugLog("Chatbot: Close Language Settings Window..", $COLOR_INFO)
+Return True
+Else
+SetDebugLog("Chatbot: Error in $aIsSettingPage|Pixel was:" & _GetPixelColor($aIsSettingPage[0], $aIsSettingPage[1], True), $COLOR_ERROR)
+Return False
+EndIf
+SetDebugLog("ChatBot|ChatbotSettingClose Finished", $COLOR_DEBUG)
+EndFunc
+Func ChatbotClickLanguageButton()
+SetDebugLog("ChatBot|Begin ChatbotClickLanguageButton", $COLOR_DEBUG)
+Click($aSelectLangBtn[0], $aSelectLangBtn[1], 1, 0, "SelectLanguageBtn")
+If _Sleep($DELAYCHATACTIONS2) Then Return
+If _WaitForCheckPixel($aOpenedSelectLang, $g_bCapturePixel, Default, "Wait for Select Language Page:") Then
+SetDebugLog("Chatbot: Language Settings Opened", $COLOR_SUCCESS)
+Return True
+Else
+SetDebugLog("Chatbot: Not find $aOpenedSelectLang|Pixel was:" & _GetPixelColor($aOpenedSelectLang[0], $aOpenedSelectLang[1], True), $COLOR_ERROR)
+Return False
+EndIf
+SetDebugLog("ChatBot|ChatbotClickLanguageButton Finished", $COLOR_DEBUG)
+EndFunc
+Func ChangeLanguageForChatBot($aButtonLanguage, $cmbLangMsg)
+SetDebugLog("ChatBot|Begin ChangeLanguageForChatBot", $COLOR_DEBUG)
+Local $bDragDone = False
+If QuickMIS("N1", @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\ChatActions", 130, 170, 195, 195, True, $g_bDebugImageSave) = "EN" Then
+$bDragDone = True
+Else
+ClickDrag(775, 180, 775, 440, 2000)
+If _Sleep($DELAYCHATACTIONS2) Then Return
+Local $iCount = 0
+While 1
+If QuickMIS("N1", @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\ChatActions", 130, 170, 195, 195, True, $g_bDebugImageSave) = "EN" Then
+$bDragDone = True
+ExitLoop
+EndIf
+$iCount += 1
+If $iCount >= 15 Then
+$bDragDone = False
+Return
+EndIf
+WEnd
+EndIf
+If $bDragDone Then ClickP($aButtonLanguage)
+SetLog("Chatbot: Switching Language To " & $cmbLangMsg, $COLOR_SUCCESS)
+If _Sleep($DELAYCHATACTIONS2) Then Return
+Return True
+SetDebugLog("ChatBot|ChangeLanguageForChatBot Finished", $COLOR_DEBUG)
+EndFunc
+Func ChangeLanguagePressOk($aLangSelected, $cmbLangMsg)
+SetDebugLog("ChatBot|Begin ChangeLanguagePressOk", $COLOR_DEBUG)
+If _CheckPixel($aLangSelected, $g_bCapturePixel, Default, "Wait for Selected Language:") Then
+SetLog("Chatbot: Sorry, You Are Already In : " & $cmbLangMsg, $COLOR_SUCCESS)
+Click($aIsSettingPage[0], $aIsSettingPage[1], 1, 0, "CloseSettingBtn")
+If _Sleep($DELAYCHATACTIONS2) Then Return
+Return True
+Else
+If _WaitForCheckPixel($aLangSettingOK, $g_bCapturePixel, Default, "Wait for Okay Btn:") Then
+Click(Random(460, 565, 1), Random(412, 447, 1), 1, 0, "OkayBtn")
+If _Sleep($DELAYCHATACTIONS2) Then Return
+SetLog("Chatbot: Language Successfully Changed To : " & $cmbLangMsg, $COLOR_SUCCESS)
+Return True
+Else
+SetDebugLog("Chatbot: Error in $aLangSettingOK|Pixel was:" & _GetPixelColor($aLangSettingOK[0], $aLangSettingOK[1], True), $COLOR_ERROR)
+Return False
+EndIf
+EndIf
+SetDebugLog("ChatBot|ChangeLanguagePressOk Finished", $COLOR_DEBUG)
+EndFunc
+Func ChangeLanguageLifeCycle($aButtonLanguage, $aLangSelected, $cmbLangMsg)
+If Not ChatbotSettingOpen() Then Return False
+If Not ChatbotClickLanguageButton() Then Return False
+If Not ChangeLanguageForChatBot($aButtonLanguage, $cmbLangMsg) Then Return False
+If Not ChangeLanguagePressOk($aLangSelected, $cmbLangMsg) Then
+ClickP($aAway, 1, 0, "#0167")
+Return False
+Else
+Sleep(3000)
+checkMainScreen()
+Return True
+EndIf
+EndFunc
+Func runHelper($msg, $g_bCleverbot)
+Local $command, $DOS, $HelperStartTime, $Time_Difference
+Dim $DOS, $g_sMessage = ''
+$command = ' /c "phantomjs.exe phantom-cleverbot-helper.js '
+$DOS = Run(@ComSpec & $command & $msg & '"', "", @SW_HIDE, 8)
+$HelperStartTime = TimerInit()
+SetLog("Waiting for chatbot helper...")
+While ProcessExists($DOS)
+ProcessWaitClose($DOS, 10)
+SetLog("Still waiting for chatbot helper...")
+$Time_Difference = TimerDiff($HelperStartTime)
+If $Time_Difference > 50000 Then
+SetLog("Chatbot helper is taking too long!", $COLOR_RED)
+ProcessClose($DOS)
+_RunDos("taskkill -f -im phantomjs.exe")
+Return ""
+EndIf
+WEnd
+$g_sMessage = ''
+While 1
+$g_sMessage &= StdoutRead($DOS)
+If @error Then
+ExitLoop
+EndIf
+WEnd
+Return StringStripWS($g_sMessage, 7)
+EndFunc
+Func _Encoding_JavaUnicodeDecode($sString)
+Local $iOld_Opt_EVS = Opt('ExpandVarStrings', 0)
+Local $iOld_Opt_EES = Opt('ExpandEnvStrings', 0)
+Local $sOut = "", $aString = StringRegExp($sString, "(\\\\|\\'|\\u[[:xdigit:]]{4}|[[:ascii:]])", 3)
+For $i = 0 To UBound($aString) - 1
+Switch StringLen($aString[$i])
+Case 1
+$sOut &= $aString[$i]
+Case 2
+$sOut &= StringRight($aString[$i], 1)
+Case 6
+$sOut &= ChrW(Dec(StringRight($aString[$i], 4)))
+EndSwitch
+Next
+Opt('ExpandVarStrings', $iOld_Opt_EVS)
+Opt('ExpandEnvStrings', $iOld_Opt_EES)
+Return $sOut
+EndFunc
+Func _StringRemoveBlanksFromSplit($strMsg)
+Local $strArray = StringSplit($strMsg, "|", 2)
+$strMsg = ""
+For $i = 0 To(UBound($strArray) - 1)
+If $strArray[$i] <> "" Then
+$strMsg = $strMsg & $strArray[$i] & "|"
+EndIf
+Next
+If($strMsg <> "") Then $strMsg = StringTrimRight($strMsg, 1)
+Return $strMsg
+EndFunc
 Func FriendlyChallenge()
 If Not $g_bEnableFriendlyChallenge Then Return
-Local $aBaseForShare[1]
-Local $iCount4Share = 0
+Local $aBaseForShare[0][2]
+Local $iCount4Share
 For $i = 0 To 5
-If $g_bFriendlyChallengeBase[$i] = True Then
-ReDim $aBaseForShare[$iCount4Share + 1]
-$aBaseForShare[$iCount4Share] = $i
-$iCount4Share += 1
-EndIf
+Local $bIAdd[1][2] = [[$i, $g_bFriendlyChallengeBase[$i]]]
+_ArrayAdd($aBaseForShare, $bIAdd)
+If $g_bFriendlyChallengeBase[$i] Then $iCount4Share += 1
 Next
 If $iCount4Share = 0 Then
 SetLog("No base to share for friend challenge, please check your setting.", $COLOR_ERROR)
 Return
+Else
+_ArrayShuffle($aBaseForShare)
 EndIf
 ClickP($aAway, 1, 0, "#0167")
 Setlog("Checking Friendly Challenge at Clan Chat", $COLOR_INFO)
@@ -74576,32 +75430,36 @@ EndIf
 $iLoopCount += 1
 If $iLoopCount >= 15 Then
 SetLog("Cannot switch to Clan Chat Tab - Abandon Friendly Challenge")
-AndroidPageError("FriendlyChallenge")
-ClostChatTab()
+AndroidPageError("ChatActions")
 Return False
 EndIf
 If _Sleep($DELAYDONATECC1) Then Return
 WEnd
 Local $aCoord = decodeSingleCoord(findImage("I Understand", $g_sImgChatIUnterstand, GetDiamondFromRect("50,400,280,550")))
 If UBound($aCoord) > 1 Then
-SetLog("Clicking 'I Understand' button", $COLOR_ACTION)
+SetDebugLog("Clicking 'I Understand' button", $COLOR_ACTION)
 ClickP($aCoord)
 If _Sleep($DELAYDONATECC2) Then Return
 EndIf
 Local $bDoFriendlyChallenge = False
-Local $iBaseForShare = $aBaseForShare[Random(0,UBound($aBaseForShare)-1,1)]
-Local $ClanString
+Local $sClanString, $iRequested, $iTempR
 If $g_bOnlyOnRequest Then
-If ReadChatIA($ClanString, $g_iTxtKeywordForRequest, False) = True Then
-Local $ret = StringRegExp($ClanString, '\d+', 1)
+If ReadChatIA($sClanString, $g_sWriteFriendlyChallengeKeyword, False) = True Then
 $bDoFriendlyChallenge = True
-If IsArray($ret) Then
-For $k = 0 To UBound($aBaseForShare) - 1
-If $aBaseForShare[$k] = Int($ret[0] - 1) Then
-$iBaseForShare = Int($ret[0] - 1)
-SetLog("User request challenge base: " & $iBaseForShare + 1, $COLOR_INFO)
+$iTempR = Number(StringReverse($sClanString))
+$iRequested =(BitAnd($iTempR > 0, $iTempR < 7)) ?($iTempR-1) :(-1)
+If $iRequested <> -1 Then
+For $i = 0 To UBound($aBaseForShare) -1
+If $aBaseForShare[$i][0] = $iRequested And $aBaseForShare[$i][1] = True Then
+_ArrayDelete($aBaseForShare, $i)
+Local $bIAdd[1][2] = [[$iRequested, $g_bFriendlyChallengeBase[$i]]]
+_ArrayInsert($aBaseForShare, 0, $bIAdd)
+SetLog("User request challenge base: " & $iRequested, $COLOR_INFO)
+ExitLoop
 EndIf
 Next
+Else
+SetLog("Prepare for select random base", $COLOR_INFO)
 EndIf
 EndIf
 Else
@@ -74609,22 +75467,21 @@ $bDoFriendlyChallenge = True
 EndIf
 Local $bIsBtnStartOk = False
 If $bDoFriendlyChallenge Then
-SetLog("Prepare for select base: " & $iBaseForShare + 1, $COLOR_INFO)
 If _WaitForCheckPixel($aButtonFriendlyChallenge, $g_bCapturePixel, Default, "Wait for FC Btn:") Then
 Click($aButtonFriendlyChallenge[0], $aButtonFriendlyChallenge[1], 1, 0, "#BtnFC")
 If _WaitForCheckPixel($aButtonFCChangeLayout, $g_bCapturePixel, Default, "Wait for FCCL Btn:") Then
 Click($aButtonFCChangeLayout[0], $aButtonFCChangeLayout[1], 1, 0, "#BtnFCCL")
 If _WaitForCheckPixel($aButtonFCBack, $g_bCapturePixel, Default, "Wait for FC Back:") Then
-If CheckNeedSwipeFriendlyChallengeBase($iBaseForShare) Then
+If RandomBaseIfNot($aBaseForShare) Then
 If _WaitForCheckPixel($aButtonFCStart, $g_bCapturePixel, Default, "Wait for FC Start:") Then
-If $g_iTxtChallengeText <> "" Then
+If $g_sWriteFriendlyChallengeText <> "" Then
 Click(Random(440, 620, 1), Random(165, 185, 1))
 If _Sleep($DELAYCHATACTIONS1) Then Return False
-Local $asText = StringSplit($g_iTxtChallengeText, @CRLF, BitOR($STR_ENTIRESPLIT, $STR_NOCOUNT))
+Local $asText = StringSplit($g_sWriteFriendlyChallengeText, "|", BitOR($STR_ENTIRESPLIT, $STR_NOCOUNT))
 If IsArray($asText) Then
 Local $sText4Send = $asText[Random(0, UBound($asText) - 1, 1)]
 SetLog("Send text: " & $sText4Send, $COLOR_DEBUG)
-If Not $g_bChkBackgroundMode And Not $g_bNoFocusTampering Then ControlFocus($g_hAndroidWindow, "", "")
+If $g_bChkBackgroundMode = False And $g_bNoFocusTampering = False Then ControlFocus($g_hAndroidWindow, "", "")
 If SendText($sText4Send) = 0 Then
 Setlog("Challenge text entry failed!", $COLOR_ERROR)
 EndIf
@@ -74636,74 +75493,71 @@ If _Sleep($DELAYCHATACTIONS2) Then Return
 If $bIsBtnStartOk = True Then
 Click($aButtonFCStart[0], $aButtonFCStart[1], 1, 0, "#BtnFCStart")
 SetLog("Friendly Challenge Shared.", $COLOR_INFO)
-ClostChatTab()
 Return True
 EndIf
 Else
 SetLog("Cannot find friendly challenge start button. Maybe the base cannot be select.", $COLOR_ERROR)
-$g_bFriendlyChallengeBase[$iBaseForShare] = False
-GUICtrlSetState($g_hChkFriendlyChallengeBase[$iBaseForShare], $GUI_UNCHECKED)
 EndIf
 EndIf
 EndIf
 EndIf
 EndIf
 EndIf
-ClostChatTab()
+Return False
+ChatbotChatClose()
+EndFunc
+Func RandomBaseIfNot($aBaseForShare)
+Local Static $asLastTimeChecked[8] = ["", "", "", "", "", "", "", ""]
+If _Sleep($DELAYCHATACTIONS3) Then Return
+For $i = 0 To UBound($aBaseForShare) - 1
+If $aBaseForShare[$i][1] <> True Or(StringInStr($asLastTimeChecked[$g_iCurAccount], $aBaseForShare[$i][0]) > 0) Then ContinueLoop
+Setlog("Friendly Challenge : Sharing base " & $aBaseForShare[$i][0] + 1 & ".", $COLOR_ACTION)
+If CheckNeedSwipeFriendlyChallengeBase($aBaseForShare[$i][0]) = True Then
+Return True
+Else
+$asLastTimeChecked[$g_iCurAccount] &= " " & $aBaseForShare[$i][0]
+Setlog("Friendly Challenge : The base has obstacles, it will not be taken into account until you correct it and restart the bot or change account.", $COLOR_INFO)
+EndIf
+If _Sleep($DELAYCHATACTIONS3) Then Return
+Next
+Setlog("Friendly Challenge : No base for share.", $COLOR_ERROR)
 Return False
 EndFunc
 Func CheckNeedSwipeFriendlyChallengeBase($iBaseSlot)
 If _Sleep($DELAYCHATACTIONS1) Then Return False
+Local $aMeasures[3] = ["148, 180, 330, 300", "330, 180, 518, 300", "516, 180, 712, 300"]
+Local $aClick[3][2] = [[250, 245], [435, 235], [595, 226]]
 Local $iSwipeNum = 2
 Local $iCount = 0
 If $iBaseSlot > $iSwipeNum Then
 $iCount = 0
 While Not _ColorCheck(_GetPixelColor(712, 295, True), Hex(0XD3D3CB, 6), 10)
 ClickDrag(700, 250, 150, 250, 250)
-If _Sleep($DELAYCHATACTIONS1) Then Return False
+If _Sleep($DELAYCHATACTIONS2) Then Return False
 $iCount += 1
 If $iCount > 3 Then Return False
 WEnd
 $iBaseSlot -= 3
-Click(Random(200 +($iBaseSlot * 184), 230 +($iBaseSlot * 184), 1), Random(220, 270, 1))
+If _Sleep($DELAYCHATACTIONS3) Then Return False
+If _ImageSearchXML($g_sImgChatObstacles, 1, $aMeasures[$iBaseSlot], True, False) = -1 Then
+Click($aClick[$iBaseSlot][0], $aClick[$iBaseSlot][1], 1, Random(500, 570, 1))
+Return True
+EndIf
 Else
 $iCount = 0
 While Not _ColorCheck(_GetPixelColor(146, 295, True), Hex(0XD3D3CB, 6), 10)
 ClickDrag(155, 250, 705, 250, 250)
-If _Sleep($DELAYCHATACTIONS1) Then Return False
+If _Sleep($DELAYCHATACTIONS2) Then Return False
 $iCount += 1
 If $iCount > 3 Then Return False
 WEnd
-Click(Random(200 +($iBaseSlot * 184), 230 +($iBaseSlot * 184), 1), Random(220, 270, 1))
-EndIf
+If _Sleep($DELAYCHATACTIONS3) Then Return False
+If _ImageSearchXML($g_sImgChatObstacles, 1, $aMeasures[$iBaseSlot], True, False) = -1 Then
+Click($aClick[$iBaseSlot][0], $aClick[$iBaseSlot][1], 1, Random(500,570,1))
 Return True
-EndFunc
-Func ClostChatTab()
-Local $i = 0
-While 1
-If _Sleep($DELAYCHATACTIONS1) Then Return
-ForceCaptureRegion()
-_CaptureRegion()
-Select
-Case _CheckPixel($aCloseChat, $g_bCapturePixel, Default, "BtnCloseChat:")
-Click($aCloseChat[0], $aCloseChat[1], 1, 0, "#0173")
-Case _CheckPixel($aOpenChatTab, $g_bCapturePixel, Default, "BtnOpenChatTab:")
-ExitLoop
-Case _CheckPixel($aButtonFCClose, $g_bCapturePixel, Default, "BtnFCClose:")
-Click($aButtonFCClose[0], $aButtonFCClose[1], 1, 0, "#BtnFCClose")
-Case _CheckPixel($aButtonFCBack, $g_bCapturePixel, Default, "BtnFCBack:")
-AndroidBackButton()
-Case Else
-ClickP($aAway, 1, 0, "#0167")
-$i += 1
-If $i > 30 Then
-SetLog("Error finding Clan Tab to close...", $COLOR_ERROR)
-AndroidPageError("FriendlyChallenge")
-ExitLoop
 EndIf
-EndSelect
-WEnd
-If _Sleep($DELAYCHATACTIONS1) Then Return
+EndIf
+Return False
 EndFunc
 Func DailyDiscounts()
 If Not $g_bDD_DealsSet Then Return
@@ -75485,49 +76339,57 @@ EndIf
 Return $bReady
 EndFunc
 Func AttackBuilderBase()
-Local $iSide = Random(0, 1, 1)
-Local $aBMPos = 0
+If Not $g_bChkEnableBBAttack Then Return
+local $iSide = Random(0, 1, 1)
+local $aBMPos = 0
 ClickP($aAway)
-SetLog("Going to Attack.", $COLOR_INFO)
+SetLog("Going to attack.", $COLOR_BLUE)
 If Not PrepareAttackBB() Then Return
 SetDebugLog("PrepareAttackBB(): Success.")
 If _Sleep(2000) Then Return
-Local $aBBFindNow = [521, 308, 0xffc246, 30]
+local $aBBFindNow = [521, 308, 0xffc246, 30]
 If _CheckPixel($aBBFindNow, True) Then
 PureClick($aBBFindNow[0], $aBBFindNow[1])
 Else
 SetLog("Could not locate search button to go find an attack.", $COLOR_ERROR)
 Return
 EndIf
-If Not CheckBattleStarted() Then Return
+SetLog("Searching for Opponent.", $COLOR_BLUE)
+local $timer = __TimerInit()
+local $iPrevTime = 0
+While Not CheckBattleStarted()
+local $iTime = Int(__TimerDiff($timer)/ 60000)
+If $iTime > $iPrevTime Then
+SetLog("Clouds: " & $iTime & "-Minute(s)")
+$iPrevTime = $iTime
+EndIf
+If _Sleep(1500) Then Return
+WEnd
+local $aBBAttackBar = GetAttackBarBB()
 If _Sleep($DELAYRESPOND) Then Return
-Local $aBBAttackBar = GetAttackBarBB()
-If _Sleep($DELAYRESPOND) Then Return
-Local $bTroopsDropped = False, $bBMDeployed = False
-SetLog($g_bBBDropOrderSet = True ? "Deploying Troops in Custom Order." : "Deploying Troops in Order of Attack Bar.", $COLOR_INFO)
+local $bTroopsDropped = False, $bBMDeployed = False
+SetLog( $g_bBBDropOrderSet = True ? "Deploying Troops in Custom Order." : "Deploying Troops in Order of Attack Bar.", $COLOR_BLUE)
 While Not $bTroopsDropped
-Local $iNumSlots = UBound($aBBAttackBar, 1)
-If $g_bBBDropOrderSet Then
-Local $asBBDropOrder = StringSplit($g_sBBDropOrder, "|")
-For $i = 0 To $g_iBBTroopCount - 1
-Local $j = 0, $bDone = False
+local $iNumSlots = UBound($aBBAttackBar, 1)
+If $g_bBBDropOrderSet = True Then
+local $asBBDropOrder = StringSplit($g_sBBDropOrder, "|")
+For $i=0 To $g_iBBTroopCount - 1
+local $j=0, $bDone = 0
 While $j < $iNumSlots And Not $bDone
-If $aBBAttackBar[$j][0] = $asBBDropOrder[$i + 1] Then
+If $aBBAttackBar[$j][0] = $asBBDropOrder[$i+1] Then
 DeployBBTroop($aBBAttackBar[$j][0], $aBBAttackBar[$j][1], $aBBAttackBar[$j][2], $aBBAttackBar[$j][4], $iSide)
-If $j = $iNumSlots -1 Or $aBBAttackBar[$j][0] <> $aBBAttackBar[$j + 1][0] Then
+If $j = $iNumSlots-1 Or $aBBAttackBar[$j][0] <> $aBBAttackBar[$j+1][0] Then
 $bDone = True
 If _Sleep($g_iBBNextTroopDelay) Then Return
-Else
-If _Sleep($DELAYRESPOND) Then Return
 EndIf
 EndIf
-$j += 1
+$j+=1
 WEnd
 Next
 Else
-For $i = 0 To $iNumSlots - 1
+For $i=0 To $iNumSlots - 1
 DeployBBTroop($aBBAttackBar[$i][0], $aBBAttackBar[$i][1], $aBBAttackBar[$i][2], $aBBAttackBar[$i][4], $iSide)
-If $i = $iNumSlots -1 Or $aBBAttackBar[$i][0] <> $aBBAttackBar[$i + 1][0] Then
+If $i = $iNumSlots-1 Or $aBBAttackBar[$i][0] <> $aBBAttackBar[$i+1][0] Then
 If _Sleep($g_iBBNextTroopDelay) Then Return
 Else
 If _Sleep($DELAYRESPOND) Then Return
@@ -75538,11 +76400,11 @@ $aBBAttackBar = GetAttackBarBB(True)
 If $aBBAttackBar = "" Then $bTroopsDropped = True
 WEnd
 SetLog("All Troops Deployed", $COLOR_SUCCESS)
-SetLog("Deploying Battle Machine.", $COLOR_INFO)
+If $g_bBBMachineReady And Not $bBMDeployed Then SetLog("Deploying Battle Machine.", $COLOR_BLUE)
 While Not $bBMDeployed And $g_bBBMachineReady
 $aBMPos = GetMachinePos()
 If IsArray($aBMPos) Then
-Local $iPoint = Random(0, 9, 1)
+local $iPoint = Random(0, 9, 1)
 If $iSide Then
 PureClick($g_apTR[$iPoint][0], $g_apTR[$iPoint][1])
 Else
@@ -75554,11 +76416,11 @@ Else
 $bBMDeployed = True
 EndIf
 WEnd
-SetLog("Battle Machine Deployed", $COLOR_SUCCESS)
-Local $bMachineAlive = True
-while $bMachineAlive
+If $bBMDeployed Then SetLog("Battle Machine Deployed", $COLOR_SUCCESS)
+local $bMachineAlive = True
+while $bMachineAlive And $bBMDeployed
 If _Sleep($g_iBBMachAbilityTime) Then Return
-Local $timer = __TimerInit()
+local $timer = __TimerInit()
 $aBMPos = GetMachinePos()
 While __TimerDiff($timer) < 3000 And Not IsArray($aBMPos)
 $aBMPos = GetMachinePos()
@@ -75569,31 +76431,24 @@ Else
 PureClickP($aBMPos)
 EndIf
 WEnd
-SetLog("Battle Machine Dead")
-SetLog("Waiting for end of battle.", $COLOR_INFO)
+If $bBMDeployed And Not $bMachineAlive Then SetLog("Battle Machine Dead")
+SetLog("Waiting for end of battle.", $COLOR_BLUE)
 If Not Okay() Then Return
 SetLog("Battle Ended.")
 If _Sleep(3000) Then Return
-SetLog("Waiting for opponent.", $COLOR_INFO)
+SetLog("Waiting for opponent.", $COLOR_BLUE)
 Okay()
 SetLog("Done.", $COLOR_SUCCESS)
 ZoomOut()
 EndFunc
 Func CheckBattleStarted()
-Local $sSearchDiamond = GetDiamondFromRect("376,11,420,26")
-Local $timer = __TimerInit()
-While 1
-Local $aCoords = decodeSingleCoord(findImage("BBBattleStarted", $g_sImgBBBattleStarted, $sSearchDiamond, 1, True))
+local $sSearchDiamond = GetDiamondFromRect("376,11,420,26")
+local $aCoords = decodeSingleCoord(findImage("BBBattleStarted", $g_sImgBBBattleStarted, $sSearchDiamond, 1, True))
 If IsArray($aCoords) And UBound($aCoords) = 2 Then
-SetLog("Battle Started")
+SetLog("Battle Started", $COLOR_SUCCESS)
 Return True
 EndIf
-If __TimerDiff($timer) > $g_iBBBattleStartedTimeout Then
-SetLog("Battle did not start after " & String($g_iBBBattleStartedTimeout) & " seconds.")
-If $g_bDebugImageSave Then DebugImageSave("BBBattleStarted")
 Return False
-EndIf
-WEnd
 EndFunc
 Func GetMachinePos()
 If Not $g_bBBMachineReady Then Return
@@ -75629,8 +76484,8 @@ Func DeployBBTroop($sName, $x, $y, $iAmount, $iSide)
 SetLog("Deploying " & $sName & "x" & String($iAmount), $COLOR_ACTION)
 PureClick($x, $y)
 If _Sleep($g_iBBSameTroopDelay) Then Return
-For $j = 0 To $iAmount - 1
-Local $iPoint = Random(0, 9, 1)
+For $j=0 To $iAmount - 1
+local $iPoint = Random(0, 9, 1)
 If $iSide Then
 PureClick($g_apTR[$iPoint][0], $g_apTR[$iPoint][1])
 Else
@@ -75691,28 +76546,28 @@ _Ini_Add("SuperXP", "GWardenSX", $g_bGWardenSX)
 EndFunc
 Func SaveConfig_MOD_ChatActions()
 ApplyConfig_MOD_ChatActions(GetApplyConfigSaveAction())
+_Ini_Add("ChatActions", "GlobalMsg1", $g_sGlobal1)
+_Ini_Add("ChatActions", "GlobalMsg2", $g_sGlobal2)
+_Ini_Add("ChatActions", "ResponseMsgClan", $g_sResponse)
+_Ini_Add("ChatActions", "GenericMsgClan", $g_sGeneric)
+_Ini_Add("ChatActions", "FriendlyChallengeText", $g_sWriteFriendlyChallengeText)
+_Ini_Add("ChatActions", "FriendlyChallengeKeyword", $g_sWriteFriendlyChallengeKeyword)
 _Ini_Add("ChatActions", "EnableChatGlobal", $g_bChatGlobal ? 1 : 0)
 _Ini_Add("ChatActions", "DelayTimeGlobal", $g_sDelayTimeGlobal)
 _Ini_Add("ChatActions", "ScrambleGlobal", $g_bScrambleGlobal ? 1 : 0)
 _Ini_Add("ChatActions", "SwitchLang", $g_bSwitchLang ? 1 : 0)
 _Ini_Add("ChatActions", "CmbLang", $g_iCmbLang)
 _Ini_Add("ChatActions", "RusLang", $g_bRusLang ? 1 : 0)
-_Ini_Add("ChatActions", "GlobalMsg1", $TxtGlobal1)
-_Ini_Add("ChatActions", "GlobalMsg2", $TxtGlobal2)
 _Ini_Add("ChatActions", "EnableChatClan", $g_bChatClan ? 1 : 0)
 _Ini_Add("ChatActions", "DelayTimeClan", $g_sDelayTimeClan)
 _Ini_Add("ChatActions", "UseResponsesClan", $g_bClanUseResponses ? 1 : 0)
-_Ini_Add("ChatActions", "UseGenericClan", $g_bClanAlwaysMsg ? 1 : 0)
+_Ini_Add("ChatActions", "UseGenericClan", $g_bClanUseGeneric ? 1 : 0)
 _Ini_Add("ChatActions", "Cleverbot", $g_bCleverbot ? 1 : 0)
 _Ini_Add("ChatActions", "ChatNotify", $g_bUseNotify ? 1 : 0)
 _Ini_Add("ChatActions", "PbSendNewChats", $g_bPbSendNew ? 1 : 0)
-_Ini_Add("ChatActions", "ResponseMsgClan", $TxtResponse)
-_Ini_Add("ChatActions", "GenericMsgClan", $TxtGeneric)
 _Ini_Add("ChatActions", "EnableFriendlyChallenge", $g_bEnableFriendlyChallenge ? 1 : 0)
 _Ini_Add("ChatActions", "DelayTimeFriendlyChallenge", $g_sDelayTimeFC)
 _Ini_Add("ChatActions", "EnableOnlyOnRequest", $g_bOnlyOnRequest ? 1 : 0)
-_Ini_Add("ChatActions", "FriendlyChallengeText", StringReplace($g_iTxtChallengeText, @CRLF, "|"))
-_Ini_Add("ChatActions", "FriendlyChallengeKeyword", StringReplace($g_iTxtKeywordForRequest, @CRLF, "|"))
 Local $string = ""
 For $i = 0 To 5
 $string &=($g_bFriendlyChallengeBase[$i] ? "1" : "0") & "|"
@@ -75738,8 +76593,11 @@ _Ini_Add("BBAttack", "TxtBBTrophyLowerLimit", $g_iTxtBBTrophyLowerLimit)
 _Ini_Add("BBAttack", "TxtBBTrophyUpperLimit", $g_iTxtBBTrophyUpperLimit)
 _Ini_Add("BBAttack", "ChkBBAttIfLootAvail", $g_bChkBBAttIfLootAvail)
 _Ini_Add("BBAttack", "ChkBBWaitForMachine", $g_bChkBBWaitForMachine)
+_Ini_Add("BBAttack", "iBBNextTroopDelay", $g_iBBNextTroopDelay)
+_Ini_Add("BBAttack", "iBBSameTroopDelay", $g_iBBSameTroopDelay)
 _Ini_Add("BBAttack", "bBBDropOrderSet", $g_bBBDropOrderSet)
 _Ini_Add("BBAttack", "sBBDropOrder", $g_sBBDropOrder)
+_Ini_Add("other", "ChkBBIgnoreWalls", $g_bChkBBIgnoreWalls ? 1 : 0)
 EndFunc
 Func SaveConfig_MOD_600_11()
 ApplyConfig_MOD_600_11(GetApplyConfigSaveAction())
@@ -75759,6 +76617,8 @@ _Ini_Add("donate", "chkClanHop", $g_bChkClanHop ? 1 : 0)
 EndFunc
 Func SaveConfig_MOD_600_28()
 ApplyConfig_MOD_600_28(GetApplyConfigSaveAction())
+_Ini_Add("other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime ? 1 : 0)
+_Ini_Add("other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime)
 _Ini_Add("other", "ChkSearchTimeout", $g_bIsSearchTimeout ? 1 : 0)
 _Ini_Add("other", "SearchTimeout", $g_iSearchTimeout)
 EndFunc
@@ -75802,11 +76662,6 @@ _Ini_Add("SwitchProfile", "ConditionMax" & $i, $g_aiConditionMax[$i])
 _Ini_Add("SwitchProfile", "ConditionMin" & $i, $g_aiConditionMin[$i])
 Next
 EndFunc
-Func SaveConfig_MOD_641_1()
-ApplyConfig_MOD_641_1(GetApplyConfigSaveAction())
-_Ini_Add("other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime ? 1 : 0)
-_Ini_Add("other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime)
-EndFunc
 Func ReadConfig_MOD_SuperXP()
 IniReadS($g_bEnableSuperXP, $g_sProfileConfigPath, "SuperXP", "EnableSuperXP", $g_bEnableSuperXP, "Bool")
 IniReadS($g_bSkipZoomOutSX, $g_sProfileConfigPath, "SuperXP", "SkipZoomOutSX", $g_bSkipZoomOutSX, "Bool")
@@ -75829,15 +76684,13 @@ IniReadS($g_bRusLang, $g_sProfileConfigPath, "ChatActions", "RusLang", $g_bRusLa
 IniReadS($g_bChatClan, $g_sProfileConfigPath, "ChatActions", "EnableChatClan", $g_bChatClan, "Bool")
 IniReadS($g_sDelayTimeClan, $g_sProfileConfigPath, "ChatActions", "DelayTimeClan", $g_sDelayTimeClan, "Int")
 IniReadS($g_bClanUseResponses, $g_sProfileConfigPath, "ChatActions", "UseResponsesClan", $g_bClanUseResponses, "Bool")
-IniReadS($g_bClanAlwaysMsg, $g_sProfileConfigPath, "ChatActions", "UseGenericClan", $g_bClanAlwaysMsg, "Bool")
+IniReadS($g_bClanUseGeneric, $g_sProfileConfigPath, "ChatActions", "UseGenericClan", $g_bClanUseGeneric, "Bool")
 IniReadS($g_bCleverbot, $g_sProfileConfigPath, "ChatActions", "Cleverbot", $g_bCleverbot, "Bool")
 IniReadS($g_bUseNotify, $g_sProfileConfigPath, "ChatActions", "ChatNotify", $g_bUseNotify, "Bool")
 IniReadS($g_bPbSendNew, $g_sProfileConfigPath, "ChatActions", "PbSendNewChats", $g_bPbSendNew, "Bool")
 IniReadS($g_bEnableFriendlyChallenge, $g_sProfileConfigPath, "ChatActions", "EnableFriendlyChallenge", $g_bEnableFriendlyChallenge, "Bool")
 IniReadS($g_sDelayTimeFC, $g_sProfileConfigPath, "ChatActions", "DelayTimeFriendlyChallenge", $g_sDelayTimeFC, "Int")
 IniReadS($g_bOnlyOnRequest, $g_sProfileConfigPath, "ChatActions", "EnableOnlyOnRequest", $g_bOnlyOnRequest, "Bool")
-$g_iTxtChallengeText = StringReplace(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeText", "I am challenging help you|HaHaHaHa"), "|", @CRLF)
-$g_iTxtKeywordForRequest = StringReplace(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeKeyword", "friendly|challenge"), "|", @CRLF)
 $g_bFriendlyChallengeBase = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeBaseForShare", "0|0|0|0|0|0"), "|", $STR_NOCOUNT)
 For $i = 0 To 5
 $g_bFriendlyChallengeBase[$i] =($g_bFriendlyChallengeBase[$i] = "1")
@@ -75860,8 +76713,11 @@ IniReadS($g_iTxtBBTrophyLowerLimit, $g_sProfileConfigPath, "BBAttack", "TxtBBTro
 IniReadS($g_iTxtBBTrophyUpperLimit, $g_sProfileConfigPath, "BBAttack", "TxtBBTrophyUpperLimit", $g_iTxtBBTrophyUpperLimit, "int")
 IniReadS($g_bChkBBAttIfLootAvail, $g_sProfileConfigPath, "BBAttack", "ChkBBAttIfLootAvail", $g_bChkBBAttIfLootAvail, "Bool")
 IniReadS($g_bChkBBWaitForMachine, $g_sProfileConfigPath, "BBAttack", "ChkBBWaitForMachine", $g_bChkBBWaitForMachine, "Bool")
+IniReadS($g_iBBNextTroopDelay, $g_sProfileConfigPath, "BBAttack", "iBBNextTroopDelay", $g_iBBNextTroopDelayDefault, "int")
+IniReadS($g_iBBSameTroopDelay, $g_sProfileConfigPath, "BBAttack", "iBBSameTroopDelay", $g_iBBSameTroopDelayDefault, "int")
 IniReadS($g_bBBDropOrderSet, $g_sProfileConfigPath, "BBAttack", "bBBDropOrderSet", $g_bBBDropOrderSet, "Bool")
 $g_sBBDropOrder = IniRead($g_sProfileConfigPath, "BBAttack", "sBBDropOrder", $g_sBBDropOrderDefault)
+IniReadS($g_bChkBBIgnoreWalls, $g_sProfileConfigPath, "other", "ChkBBIgnoreWalls", $g_bChkBBIgnoreWalls, "Bool")
 EndFunc
 Func ReadConfig_MOD_600_11()
 $g_bRequestCCDefense =(IniRead($g_sProfileConfigPath, "donate", "RequestDefenseEnable", "0") = "1")
@@ -75884,6 +76740,8 @@ Func ReadConfig_MOD_600_12()
 IniReadS($g_bChkClanHop, $g_sProfileConfigPath, "donate", "chkClanHop", $g_bChkClanHop, "Bool")
 EndFunc
 Func ReadConfig_MOD_600_28()
+IniReadS($g_bTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime, "Bool")
+IniReadS($g_iTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime, "int")
 IniReadS($g_bIsSearchTimeout, $g_sProfileConfigPath, "other", "ChkSearchTimeout", $g_bIsSearchTimeout, "Bool")
 IniReadS($g_iSearchTimeout, $g_sProfileConfigPath, "other", "SearchTimeout", $g_iSearchTimeout, "int")
 EndFunc
@@ -75929,10 +76787,6 @@ IniReadS($g_aiCmbBotTypeMin[$i], $g_sProfileConfigPath, "SwitchProfile", "Target
 IniReadS($g_aiConditionMax[$i], $g_sProfileConfigPath, "SwitchProfile", "ConditionMax" & $i, $g_aiConditionMax[$i], "Int")
 IniReadS($g_aiConditionMin[$i], $g_sProfileConfigPath, "SwitchProfile", "ConditionMin" & $i, $g_aiConditionMin[$i], "Int")
 Next
-EndFunc
-Func ReadConfig_MOD_641_1()
-IniReadS($g_bTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime, "Bool")
-IniReadS($g_iTrainLogoutMaxTime, $g_sProfileConfigPath, "other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime, "int")
 EndFunc
 Func ApplyConfig_MOD_SuperXP($TypeReadSave)
 Switch $TypeReadSave
@@ -75983,7 +76837,7 @@ chkGlobalChat()
 GUICtrlSetState($g_hChkClanChat, $g_bChatClan = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetData($g_hTxtDelayTimeClan, $g_sDelayTimeClan)
 GUICtrlSetState($g_hChkUseResponses, $g_bClanUseResponses = True ? $GUI_CHECKED : $GUI_UNCHECKED)
-GUICtrlSetState($g_hChkUseGeneric, $g_bClanAlwaysMsg = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+GUICtrlSetState($g_hChkUseGeneric, $g_bClanUseGeneric = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkCleverbot, $g_bCleverbot = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkChatNotify, $g_bUseNotify = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkPbSendNewChats, $g_bPbSendNew = True ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -75991,8 +76845,6 @@ chkClanChat()
 GUICtrlSetState($g_hChkEnableFriendlyChallenge, $g_bEnableFriendlyChallenge = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetData($g_hTxtDelayTimeFC, $g_sDelayTimeFC)
 GUICtrlSetState($g_hChkOnlyOnRequest, $g_bOnlyOnRequest = True ? $GUI_CHECKED : $GUI_UNCHECKED)
-GUICtrlSetData($g_hTxtChallengeText, $g_iTxtChallengeText)
-GUICtrlSetData($g_hTxtKeywordForRequest, $g_iTxtKeywordForRequest)
 For $i = 0 To 5
 GUICtrlSetState($g_hChkFriendlyChallengeBase[$i], $g_bFriendlyChallengeBase[$i] = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 Next
@@ -76011,15 +76863,13 @@ $g_bRusLang =(GUICtrlRead($g_hChkRusLang) = $GUI_CHECKED)
 $g_bChatClan =(GUICtrlRead($g_hChkClanChat) = $GUI_CHECKED)
 $g_sDelayTimeClan = GUICtrlRead($g_hTxtDelayTimeClan)
 $g_bClanUseResponses =(GUICtrlRead($g_hChkUseResponses) = $GUI_CHECKED)
-$g_bClanAlwaysMsg =(GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED)
+$g_bClanUseGeneric =(GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED)
 $g_bCleverbot =(GUICtrlRead($g_hChkCleverbot) = $GUI_CHECKED)
 $g_bUseNotify =(GUICtrlRead($g_hChkChatNotify) = $GUI_CHECKED)
 $g_bPbSendNew =(GUICtrlRead($g_hChkPbSendNewChats) = $GUI_CHECKED)
 $g_bEnableFriendlyChallenge =(GUICtrlRead($g_hChkEnableFriendlyChallenge) = $GUI_CHECKED)
 $g_sDelayTimeFC = GUICtrlRead($g_hTxtDelayTimeFC)
 $g_bOnlyOnRequest =(GUICtrlRead($g_hChkOnlyOnRequest) = $GUI_CHECKED)
-$g_iTxtChallengeText = GUICtrlRead($g_hTxtChallengeText)
-$g_iTxtKeywordForRequest = GUICtrlRead($g_hTxtKeywordForRequest)
 For $i = 0 To 5
 $g_bFriendlyChallengeBase[$i] =(GUICtrlRead($g_hChkFriendlyChallengeBase[$i]) = $GUI_CHECKED)
 Next
@@ -76042,6 +76892,8 @@ GUICtrlSetData($g_hTxtBBTrophyLowerLimit, $g_iTxtBBTrophyLowerLimit)
 GUICtrlSetData($g_hTxtBBTrophyUpperLimit, $g_iTxtBBTrophyUpperLimit)
 GUICtrlSetState($g_hChkBBAttIfLootAvail, $g_bChkBBAttIfLootAvail = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetState($g_hChkBBWaitForMachine, $g_bChkBBWaitForMachine = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+_GUICtrlComboBox_SetCurSel($g_hCmbBBNextTroopDelay,(($g_iBBNextTroopDelay - $g_iBBNextTroopDelayDefault) / $g_iBBNextTroopDelayIncrement) + 4)
+_GUICtrlComboBox_SetCurSel($g_hCmbBBSameTroopDelay,(($g_iBBSameTroopDelay - $g_iBBSameTroopDelayDefault) / $g_iBBSameTroopDelayIncrement) + 4)
 chkBBTrophyRange()
 chkEnableBBAttack()
 If $g_bBBDropOrderSet Then
@@ -76054,6 +76906,7 @@ _GUICtrlComboBox_SetCurSel($g_ahCmbBBDropOrder[$i], _GUICtrlComboBox_SelectStrin
 Next
 GUICtrlSetBkColor($g_hBtnBBDropOrder, $COLOR_GREEN)
 EndIf
+GUICtrlSetState($g_hChkBBIgnoreWalls, $g_bChkBBIgnoreWalls = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 Case "Save"
 For $i = 0 To $g_iDDCount - 1
 $g_abChkDD_Deals[$i] =(GUICtrlRead($g_ahChkDD_Deals[$i]) = $GUI_CHECKED)
@@ -76064,6 +76917,7 @@ $g_iTxtBBTrophyLowerLimit = GUICtrlRead($g_hTxtBBTrophyLowerLimit)
 $g_iTxtBBTrophyUpperLimit = GUICtrlRead($g_hTxtBBTrophyUpperLimit)
 $g_bChkBBAttIfLootAvail =(GUICtrlRead($g_hChkBBAttIfLootAvail) = $GUI_CHECKED)
 $g_bChkBBWaitForMachine =(GUICtrlRead($g_hChkBBWaitForMachine) = $GUI_CHECKED)
+$g_bChkBBIgnoreWalls =(GUICtrlRead($g_hChkBBIgnoreWalls) = $GUI_CHECKED)
 EndSwitch
 EndFunc
 Func ApplyConfig_MOD_600_11($TypeReadSave)
@@ -76103,10 +76957,15 @@ EndFunc
 Func ApplyConfig_MOD_600_28($TypeReadSave)
 Switch $TypeReadSave
 Case "Read"
+GUICtrlSetState($g_hChkTrainLogoutMaxTime, $g_bTrainLogoutMaxTime = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+chkTrainLogoutMaxTime()
+GUICtrlSetData($g_hTxtTrainLogoutMaxTime, $g_iTrainLogoutMaxTime)
 GUICtrlSetState($g_hChkSearchTimeout, $g_bIsSearchTimeout = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 GUICtrlSetData($g_hTxtSearchTimeout, $g_iSearchTimeout)
 chkSearchTimeout()
 Case "Save"
+$g_bTrainLogoutMaxTime =(GUICtrlRead($g_hChkTrainLogoutMaxTime) = $GUI_CHECKED)
+$g_iTrainLogoutMaxTime = GUICtrlRead($g_hTxtTrainLogoutMaxTime)
 $g_bIsSearchTimeout =(GUICtrlRead($g_hChkSearchTimeout) = $GUI_CHECKED)
 $g_iSearchTimeout = GUICtrlRead($g_hTxtSearchTimeout)
 EndSwitch
@@ -76196,17 +77055,6 @@ $g_aiCmbBotTypeMin[$i] = _GUICtrlComboBox_GetCurSel($g_ahCmb_BotTypeMin[$i])
 $g_aiConditionMax[$i] = GUICtrlRead($g_ahTxt_ConditionMax[$i])
 $g_aiConditionMin[$i] = GUICtrlRead($g_ahTxt_ConditionMin[$i])
 Next
-EndSwitch
-EndFunc
-Func ApplyConfig_MOD_641_1($TypeReadSave)
-Switch $TypeReadSave
-Case "Read"
-GUICtrlSetState($g_hChkTrainLogoutMaxTime, $g_bTrainLogoutMaxTime = True ? $GUI_CHECKED : $GUI_UNCHECKED)
-chkTrainLogoutMaxTime()
-GUICtrlSetData($g_hTxtTrainLogoutMaxTime, $g_iTrainLogoutMaxTime)
-Case "Save"
-$g_bTrainLogoutMaxTime =(GUICtrlRead($g_hChkTrainLogoutMaxTime) = $GUI_CHECKED)
-$g_iTrainLogoutMaxTime = GUICtrlRead($g_hTxtTrainLogoutMaxTime)
 EndSwitch
 EndFunc
 Func GetTranslatedParsedText($sText, $var1 = Default, $var2 = Default, $var3 = Default)
@@ -78386,7 +79234,7 @@ If CheckAndroidReboot() = True Then ContinueLoop 2
 WEnd
 ClanHop()
 If $g_bRunState = False Then Return
-If $g_bChatGlobal Or $g_bChatClan Or $g_bEnableFriendlyChallenge Then ChatActions()
+ChatActions()
 If $g_bRunState = False Then Return
 If IsSearchAttackEnabled() Then
 If ProfileSwitchAccountEnabled() And $g_abDonateOnly[$g_iCurAccount] Then checkSwitchAcc()
@@ -78453,7 +79301,7 @@ CheckAndroidReboot()
 NotifyPendingActions()
 If _Sleep($DELAYIDLE1) Then Return
 If $g_iCommandStop = -1 Then SetLog("====== Waiting for full army ======", $COLOR_SUCCESS)
-If $g_bChatGlobal Or $g_bChatClan Or $g_bEnableFriendlyChallenge Then ChatActions()
+ChatActions()
 Local $hTimer = __TimerInit()
 If _Sleep($DELAYIDLE1) Then ExitLoop
 checkObstacles()
@@ -78578,7 +79426,7 @@ If $g_bDebugSetlog Then
 SetDebugLog(_PadStringCenter(" Hero status check" & BitAND($g_aiAttackUseHeroes[$DB], $g_aiSearchHeroWaitEnable[$DB], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$DB] & "|" & $g_iHeroAvailable, 54, "="), $COLOR_DEBUG)
 SetDebugLog(_PadStringCenter(" Hero status check" & BitAND($g_aiAttackUseHeroes[$LB], $g_aiSearchHeroWaitEnable[$LB], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$LB] & "|" & $g_iHeroAvailable, 54, "="), $COLOR_DEBUG)
 EndIf
-If $g_bChatGlobal Or $g_bChatClan Or $g_bEnableFriendlyChallenge Then ChatActions()
+ChatActions()
 _ClanGames()
 ClickP($aAway, 1, 0, "#0000")
 If $g_bUpdateSharedPrefs Then PullSharedPrefs()

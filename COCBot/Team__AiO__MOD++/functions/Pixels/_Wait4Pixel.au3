@@ -9,27 +9,6 @@
 ; Example .......: No
 ; ===============================================================================================================================
 
-Func MultiPSimple($iX, $iY, $iX2, $iY2, $Hex, $iTolerance = 10, $iWait = 1000, $iDelay = 100)
-	Local $aReturn[2] = [0, 0]
-
-	Local $hTimer = __TimerInit()
-	While BitOr($iWait > __TimerDiff($hTimer), $iWait <= 0) ; '-1' support
-	_CaptureRegion()
-		For $y = $iY To $iY2 - 1
-			For $x = $iX To $iX2 - 1
-				If _ColorCheck(_GetPixelColor($x, $y), Hex($Hex, 6), 40) Then
-				$aReturn[0] = $iX + $x
-				$aReturn[1] = $iY + $y
-				Return $aReturn
-				EndIf
-			Next
-		Next
-		If ($iWait <= 0) Then ExitLoop ; Loop prevention.
-	WEnd
-
-	Return 0
-EndFunc   ;==>MultiPSimple
-
 Func _Wait4Pixel($x, $y, $sColor, $iColorVariation, $iWait = 1000, $iDelay = 100, $sMsglog = Default) ; Return true if pixel is true
 	Local $hTimer = __TimerInit()
 	While BitOr($iWait > __TimerDiff($hTimer), $iWait <= 0) ; '-1' support
@@ -75,3 +54,50 @@ Func _GetPixelColor2($iX, $iY, $bNeedCapture = False)
 	EndIf
 	Return Hex($aPixelColor, 6)
 EndFunc   ;==>_GetPixelColor2
+
+; #FUNCTION# ====================================================================================================================
+; Name ..........: MultiPSimple
+; Description ...:
+; Author ........: Boludoz
+; Remarks .......: This file is part of MyBot, previously known as ClashGameBot. Copyright 2015-2018
+;                  MyBot is distributed under the terms of the GNU GPL
+; Related .......:
+; Link ..........: https://github.com/MyBotRun/MyBot/wiki
+; Example .......: No
+; ===============================================================================================================================
+
+Func MultiPSimple($iLeft, $iTop, $iRight, $iBottom, $Hex, $iTolerance = 10, $iWait = 1000, $iDelay = 100)
+	Local $aReturn[2] = [0, 0]
+
+	Local $hTimer = __TimerInit()
+	While BitOr($iWait > __TimerDiff($hTimer), $iWait <= 0) ; '-1' support
+	If _Sleep($iDelay) Then Return False
+	_CaptureRegion($iLeft, $iTop, $iRight, $iBottom)
+	Local $xRange = $iRight - $iLeft
+	Local $yRange = $iBottom - $iTop
+
+		For $x = 0 To $xRange
+			For $y = 0 To $yRange
+				If _ColorCheck(_GetPixelColor($x, $y), $Hex, $iTolerance) Then
+					$aReturn[0] = $x + $iLeft
+					$aReturn[1] = $y + $iTop
+					Return $aReturn
+				EndIf
+			Next
+		Next
+		If ($iWait <= 0) Then ExitLoop ; Loop prevention.
+	WEnd
+
+	Return 0
+EndFunc   ;==>MultiPSimple
+
+Func _WaitForCheckXML($pathImage, $SearchZone, $ForceArea = True, $iWait = 10000, $iDelay = 250)
+    Local $hTimer = __TimerInit()
+    While BitOr($iWait > __TimerDiff($hTimer), $iWait <= 0) ; '-1' support
+    Local $aRetutn = _ImageSearchXML($pathImage, 1000, $SearchZone)
+        If (UBound($aRetutn) > 0) Then Return True
+        If _Sleep($iDelay) Then Return False
+        If ($iWait <= 0) Then ExitLoop ; Loop prevention.
+    WEnd
+    Return False
+EndFunc   ;==>_WaitForCheckXML

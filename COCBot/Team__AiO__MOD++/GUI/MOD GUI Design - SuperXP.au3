@@ -46,13 +46,13 @@ Func TabSuperXPGUI()
 					GetTranslatedFileIni("MOD GUI Design - SuperXP", "ChkSkipDragToEndSX_Info_03", "Note: Check When You Have New Missions Locked. It will be fast."))
 			GUICtrlSetState(-1, $GUI_UNCHECKED)
 
-	$y += 22
+	$y += 25
 		GUICtrlCreateGroup("", $x - 11, $y - 7, $g_iSizeWGrpTab2 - 8, 70)
-		GUICtrlCreateGraphic($x - 9, $y + 15, $g_iSizeWGrpTab2 - 12, 1, $SS_GRAYRECT)
+		GUICtrlCreateGraphic($x - 9, $y + 18, $g_iSizeWGrpTab2 - 12, 1, $SS_GRAYRECT)
 		GUICtrlCreateGraphic($x + 202, $y + 2, 5, 57, $SS_GRAYRECT)
 
-		GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_02", "Farm XP Options"), $x - 10, $y + 1, 210, -1, $SS_CENTER)
-		GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_03", "Goblin Map Options"), $x + 210, $y + 1, 210, -1, $SS_CENTER)
+		GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_02", "Farm XP Options"), $x - 10, $y + 4, 210, -1, $SS_CENTER)
+		GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_03", "Goblin Map Options"), $x + 210, $y + 4, 210, -1, $SS_CENTER)
 	$y += 20
 		GUIStartGroup()
 		$g_hRdoTrainingSX = GUICtrlCreateRadio(GetTranslatedFileIni("MOD GUI Design - SuperXP", "RdoTrainingSX", "Farm XP during troops Training"), $x, $y, -1, -1)
@@ -74,9 +74,9 @@ Func TabSuperXPGUI()
 
 	$x += 85
 	$y += 28
-		_GUICtrlCreateIcon($g_sLibIconPath, $eIcnBKingSX, $x, $y, 64, 64)
-		_GUICtrlCreateIcon($g_sLibIconPath, $eIcnAQueenSX, $x + 85, $y, 64, 64)
-		_GUICtrlCreateIcon($g_sLibIconPath, $eIcnGWardenSX, $x + 170, $y, 64, 64)
+		_GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModBKingSX, $x, $y, 64, 64)
+		_GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModAQueenSX, $x + 85, $y, 64, 64)
+		_GUICtrlCreateIcon($g_sLibModIconPath, $eIcnModGWardenSX, $x + 170, $y, 64, 64)
 	$y += 68
 		GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_04", "Pick Hero/es:"), $x - 85, $y, -1, -1)
 		$g_hChkBKingSX = GUICtrlCreateCheckbox("", $x + 25, $y, 13, 13)
@@ -87,7 +87,7 @@ Func TabSuperXPGUI()
 			GUICtrlSetState(-1, $GUI_UNCHECKED)
 
 	$x -= 85
-	$y += 20
+	$y += 28
 		$g_hLblGoblinPicnic1 = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_05", "Super XP attacks continuously the TH of 'Goblin Picnic' to farm XP."), $x, $y, -1, -1)
 			GUICtrlSetState(-1, $GUI_HIDE)
 		$g_hLblGoblinPicnic2 = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_06", "At each attack, you win 5 XP"), $x, $y + 18, -1, -1)
@@ -111,7 +111,7 @@ Func TabSuperXPGUI()
 			GUICtrlSetFont(-1, 10, 800, 0, "Candara")
 			GUICtrlSetColor(-1, 0x282800)
 			GUICtrlSetBkColor (-1, 0xFFCC00)
-		GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_12", "XP Won/Hour"), $x + 248, $y, 87, 19)
+		GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_12", "XP/Hour"), $x + 248, $y, 87, 19)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - SuperXP", "Label_12_Info_01", "Average Earning XP."))
 			GUICtrlSetFont(-1, 10, 800, 0, "Candara")
 			GUICtrlSetColor(-1, 0x282800)
@@ -149,8 +149,8 @@ Func TabSuperXPGUI()
 			GUICtrlSetColor(-1, 0xFFCC00)
 			GUICtrlSetBkColor (-1, 0x333300)
 
-	$y += 32
-		_GUICtrlCreatePic($g_sIcnSuperXP, $x - 7, $y, 424, 97)
+	$y += 36
+		_GUICtrlCreatePic($g_sIcnSuperXP, $x - 7, $y, 426, 80)
 	GUICtrlCreateGroup("", -99, -99, 1, 1)
 
 EndFunc   ;==>TabSuperXPGUI

@@ -68,7 +68,7 @@ Func ApplyConfig_MOD_ChatActions($TypeReadSave)
 			GUICtrlSetState($g_hChkClanChat, $g_bChatClan = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetData($g_hTxtDelayTimeClan, $g_sDelayTimeClan)
 			GUICtrlSetState($g_hChkUseResponses, $g_bClanUseResponses = True ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetState($g_hChkUseGeneric, $g_bClanAlwaysMsg = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+			GUICtrlSetState($g_hChkUseGeneric, $g_bClanUseGeneric = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkCleverbot, $g_bCleverbot = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkChatNotify, $g_bUseNotify = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkPbSendNewChats, $g_bPbSendNew = True ? $GUI_CHECKED : $GUI_UNCHECKED)
@@ -77,8 +77,6 @@ Func ApplyConfig_MOD_ChatActions($TypeReadSave)
 			GUICtrlSetState($g_hChkEnableFriendlyChallenge, $g_bEnableFriendlyChallenge = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetData($g_hTxtDelayTimeFC, $g_sDelayTimeFC)
 			GUICtrlSetState($g_hChkOnlyOnRequest, $g_bOnlyOnRequest = True ? $GUI_CHECKED : $GUI_UNCHECKED)
-			GUICtrlSetData($g_hTxtChallengeText, $g_iTxtChallengeText)
-			GUICtrlSetData($g_hTxtKeywordForRequest, $g_iTxtKeywordForRequest)
 			For $i = 0 To 5
 				GUICtrlSetState($g_hChkFriendlyChallengeBase[$i], $g_bFriendlyChallengeBase[$i] = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			Next
@@ -98,7 +96,7 @@ Func ApplyConfig_MOD_ChatActions($TypeReadSave)
 			$g_bChatClan = (GUICtrlRead($g_hChkClanChat) = $GUI_CHECKED)
 			$g_sDelayTimeClan = GUICtrlRead($g_hTxtDelayTimeClan)
 			$g_bClanUseResponses = (GUICtrlRead($g_hChkUseResponses) = $GUI_CHECKED)
-			$g_bClanAlwaysMsg = (GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED)
+			$g_bClanUseGeneric = (GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED)
 			$g_bCleverbot = (GUICtrlRead($g_hChkCleverbot) = $GUI_CHECKED)
 			$g_bUseNotify = (GUICtrlRead($g_hChkChatNotify) = $GUI_CHECKED)
 			$g_bPbSendNew = (GUICtrlRead($g_hChkPbSendNewChats) = $GUI_CHECKED)
@@ -106,8 +104,6 @@ Func ApplyConfig_MOD_ChatActions($TypeReadSave)
 			$g_bEnableFriendlyChallenge = (GUICtrlRead($g_hChkEnableFriendlyChallenge) = $GUI_CHECKED)
 			$g_sDelayTimeFC = GUICtrlRead($g_hTxtDelayTimeFC)
 			$g_bOnlyOnRequest = (GUICtrlRead($g_hChkOnlyOnRequest) = $GUI_CHECKED)
-			$g_iTxtChallengeText = GUICtrlRead($g_hTxtChallengeText)
-			$g_iTxtKeywordForRequest = GUICtrlRead($g_hTxtKeywordForRequest)
 			For $i = 0 To 5
 				$g_bFriendlyChallengeBase[$i] = (GUICtrlRead($g_hChkFriendlyChallengeBase[$i]) = $GUI_CHECKED)
 			Next
@@ -133,6 +129,8 @@ Func ApplyConfig_MOD_600_6($TypeReadSave)
 			GUICtrlSetData($g_hTxtBBTrophyUpperLimit, $g_iTxtBBTrophyUpperLimit)
 			GUICtrlSetState($g_hChkBBAttIfLootAvail, $g_bChkBBAttIfLootAvail = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetState($g_hChkBBWaitForMachine, $g_bChkBBWaitForMachine = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+			_GUICtrlComboBox_SetCurSel($g_hCmbBBNextTroopDelay, (($g_iBBNextTroopDelay - $g_iBBNextTroopDelayDefault) / $g_iBBNextTroopDelayIncrement) + 4) ; set combos based on delays
+			_GUICtrlComboBox_SetCurSel($g_hCmbBBSameTroopDelay, (($g_iBBSameTroopDelay - $g_iBBSameTroopDelayDefault) / $g_iBBSameTroopDelayIncrement) + 4)
 			chkBBTrophyRange()
 			chkEnableBBAttack()
 
@@ -146,6 +144,9 @@ Func ApplyConfig_MOD_600_6($TypeReadSave)
 				Next
 				GUICtrlSetBkColor($g_hBtnBBDropOrder, $COLOR_GREEN)
 			EndIf
+
+			; BB Suggested Upgrades
+			GUICtrlSetState($g_hChkBBIgnoreWalls, $g_bChkBBIgnoreWalls = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 		Case "Save"
 			For $i = 0 To $g_iDDCount - 1
 				$g_abChkDD_Deals[$i] = (GUICtrlRead($g_ahChkDD_Deals[$i]) = $GUI_CHECKED)
@@ -157,6 +158,9 @@ Func ApplyConfig_MOD_600_6($TypeReadSave)
 			$g_iTxtBBTrophyUpperLimit = GUICtrlRead($g_hTxtBBTrophyUpperLimit)
 			$g_bChkBBAttIfLootAvail = (GUICtrlRead($g_hChkBBAttIfLootAvail) = $GUI_CHECKED)
 			$g_bChkBBWaitForMachine = (GUICtrlRead($g_hChkBBWaitForMachine) = $GUI_CHECKED)
+
+			; BB Suggested Upgrades
+			$g_bChkBBIgnoreWalls = (GUICtrlRead($g_hChkBBIgnoreWalls) = $GUI_CHECKED)
 	EndSwitch
 EndFunc   ;==>ApplyConfig_MOD_600_6
 
@@ -199,13 +203,20 @@ Func ApplyConfig_MOD_600_12($TypeReadSave)
 EndFunc   ;==>ApplyConfig_MOD_600_12
 
 Func ApplyConfig_MOD_600_28($TypeReadSave)
-	; <><><> Restart Search Legend league <><><>
+	; <><><> Max logout time + Restart Search Legend league <><><>
 	Switch $TypeReadSave
 		Case "Read"
+			GUICtrlSetState($g_hChkTrainLogoutMaxTime, $g_bTrainLogoutMaxTime = True ? $GUI_CHECKED : $GUI_UNCHECKED)
+			chkTrainLogoutMaxTime()
+			GUICtrlSetData($g_hTxtTrainLogoutMaxTime, $g_iTrainLogoutMaxTime)
+
 			GUICtrlSetState($g_hChkSearchTimeout, $g_bIsSearchTimeout = True ? $GUI_CHECKED : $GUI_UNCHECKED)
 			GUICtrlSetData($g_hTxtSearchTimeout, $g_iSearchTimeout)
 			chkSearchTimeout()
 		Case "Save"
+			$g_bTrainLogoutMaxTime = (GUICtrlRead($g_hChkTrainLogoutMaxTime) = $GUI_CHECKED)
+			$g_iTrainLogoutMaxTime = GUICtrlRead($g_hTxtTrainLogoutMaxTime)
+
 			$g_bIsSearchTimeout = (GUICtrlRead($g_hChkSearchTimeout) = $GUI_CHECKED)
 			$g_iSearchTimeout = GUICtrlRead($g_hTxtSearchTimeout)
 	EndSwitch
@@ -316,16 +327,3 @@ Func ApplyConfig_MOD_600_35_2($TypeReadSave)
 			Next
 	EndSwitch
 EndFunc   ;==>ApplyConfig_MOD_600_35_2
-
-Func ApplyConfig_MOD_641_1($TypeReadSave)
-	; <><><> Max logout time <><><>
-	Switch $TypeReadSave
-		Case "Read"
-			GUICtrlSetState($g_hChkTrainLogoutMaxTime, $g_bTrainLogoutMaxTime = True ? $GUI_CHECKED : $GUI_UNCHECKED)
-			chkTrainLogoutMaxTime()
-			GUICtrlSetData($g_hTxtTrainLogoutMaxTime, $g_iTrainLogoutMaxTime)
-		Case "Save"
-			$g_bTrainLogoutMaxTime = (GUICtrlRead($g_hChkTrainLogoutMaxTime) = $GUI_CHECKED)
-			$g_iTrainLogoutMaxTime = GUICtrlRead($g_hTxtTrainLogoutMaxTime)
-	EndSwitch
-EndFunc   ;==>ApplyConfig_MOD_641_1

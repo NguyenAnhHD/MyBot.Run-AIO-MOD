@@ -268,11 +268,12 @@ Func CheckForFullArmy()
 	EndIf
 
 	If $g_bDebugSX Then SetDebugLog("$g_bIsFullArmywithHeroesAndSpells: " & $g_bIsFullArmywithHeroesAndSpells)
-	If $g_bDebugSX Then SetDebugLog("1 Pixel : " & _GetPixelColor(391, 126, True))
-	If $g_bDebugSX Then SetDebugLog("2 Pixel : " & _GetPixelColor(587, 126, True))
+	If $g_bDebugSX Then SetDebugLog("Army Pixel: " & _GetPixelColor($aGreenArrowTrainTroops[0], $aGreenArrowTrainTroops[1], True))
+	If $g_bDebugSX Then SetDebugLog("Spell Pixel: " & _GetPixelColor($aGreenArrowBrewSpells[0], $aGreenArrowBrewSpells[1], True))
 
-	If Not $g_bIsFullArmywithHeroesAndSpells And ((Not $g_bFullArmy And _ColorCheck(_GetPixelColor(391, 126, True, "CheckForFullArmy-Army"), Hex(0x605C4C, 6), 15)) Or _
-		(Not $g_bFullArmySpells And _ColorCheck(_GetPixelColor(587, 126, True, "CheckForFullArmy-Spell"), Hex(0x605C4D, 6), 15))) Then ; if Full army was false and nothing was in 'Train' and 'Brew' Queue then check for train
+	If Not $g_bIsFullArmywithHeroesAndSpells And _
+		((Not $g_bFullArmy And _ColorCheck(_GetPixelColor($aGreenArrowTrainTroops[0], $aGreenArrowTrainTroops[1], True, "CheckForFullArmy-Army"), Hex(0x605C4C, 6), 15)) Or _
+		(Not $g_bFullArmySpells And _ColorCheck(_GetPixelColor($aGreenArrowBrewSpells[0], $aGreenArrowBrewSpells[1], True, "CheckForFullArmy-Spell"), Hex(0x605C4C, 6), 15))) Then ; if Full army was false and nothing was in 'Train' and 'Brew' Queue then check for train
 
 		If $g_bDebugSX Then SetDebugLog("SX|CheckForFullArmy| TrainSystem. #1", $COLOR_DEBUG)
 		TrainSystem()
@@ -449,7 +450,7 @@ Func AttackSX()
 	EndIf
 	PrepareAttackSX()
 	If CheckAvailableHeroes() = False Then
-		SetLog("No heroes available to attack with", $COLOR_ACTION)
+		SetLog("No heroes available to attack with " & $g_sGoblinMapOptSX, $COLOR_ACTION)
 		ReturnHomeSX()
 		Return False
 	EndIf
@@ -555,40 +556,51 @@ Func GetDropPointSX($iHero)
 	Return $ToReturn
 EndFunc   ;==>GetDropPointSX
 
-Func PrepareAttackSX()
+Func PrepareAttackSX($pMatchMode = $DT, $bRemaining = False)
 	If $g_bDebugSX Then SetDebugLog("SX|Begin PrepareAttackSX", $COLOR_DEBUG)
 
+	$g_iTotalAttackSlot = 10 ; reset flag - Slot11+
+	$g_bDraggedAttackBar = False
 	Local $iTroopNumber = 0
+	Local $avAttackBar = GetAttackBar($bRemaining, $pMatchMode)
 	For $i = 0 To UBound($g_avAttackTroops, 1) - 1
-		$g_avAttackTroops[$i][0] = -1
-		$g_avAttackTroops[$i][1] = 0
-		$g_avAttackTroops[$i][2] = 0
-		$g_avAttackTroops[$i][3] = 0
-		$g_avAttackTroops[$i][4] = 0
-		$g_avAttackTroops[$i][5] = 0
+		Local $bClearSlot = True ; by default clear the slot, if no corresponding slot is found in attackbar detection
+		If UBound($avAttackBar, 1) > 0 Then
+			For $j = 0 To UBound($avAttackBar, 1) - 1
+				If $avAttackBar[$j][1] = $i Then
+					; troop slot found
+					If IsUnitUsed($pMatchMode, $avAttackBar[$j][0]) Then
+						$bClearSlot = False
+						Local $iTroopIndex = Number($avAttackBar[$j][0]) ; Troop Index
+						$g_avAttackTroops[$i][0] = $iTroopIndex ; Troop Index
+						$g_avAttackTroops[$i][1] = Number($avAttackBar[$j][2]) ; Amount
+						$g_avAttackTroops[$i][2] = Number($avAttackBar[$j][3]) ; X-Coord
+						$g_avAttackTroops[$i][3] = Number($avAttackBar[$j][4]) ; Y-Coord
+						$g_avAttackTroops[$i][4] = Number($avAttackBar[$j][5]) ; OCR X-Coord
+						$g_avAttackTroops[$i][5] = Number($avAttackBar[$j][6]) ; OCR Y-Coord
+						$iTroopNumber += $avAttackBar[$j][2]
+
+						Local $sDebugText = $g_bDebugSetlog ? " (X:" & $avAttackBar[$j][3] & "|Y:" & $avAttackBar[$j][4] & "|OCR-X:" & $avAttackBar[$j][5] & "|OCR-Y:" & $avAttackBar[$j][6] & ")" : ""
+						SetLog($avAttackBar[$j][1] & ": " & $avAttackBar[$j][2] & " " & GetTroopName($avAttackBar[$j][0], $avAttackBar[$j][2]) & $sDebugText, $COLOR_SUCCESS)
+					Else
+						SetDebugLog("Discard use of " & GetTroopName($avAttackBar[$j][0]) & " (" & $avAttackBar[$j][0] & ")", $COLOR_ERROR)
+					EndIf
+					ExitLoop
+				EndIf
+			Next
+		EndIf
+
+		If $bClearSlot Then
+			; slot not identified
+			$g_avAttackTroops[$i][0] = -1
+			$g_avAttackTroops[$i][1] = 0
+			$g_avAttackTroops[$i][2] = 0
+			$g_avAttackTroops[$i][3] = 0
+			$g_avAttackTroops[$i][4] = 0
+			$g_avAttackTroops[$i][5] = 0
+		EndIf
 	Next
-
-	Local $avAttackBar = GetAttackBar()
-	If UBound($avAttackBar, 1) > 0 Then
-		For $i = 0 To UBound($avAttackBar, 1) - 1
-			If IsUnitUsed($DT, $avAttackBar[$i][0]) Then
-				$g_avAttackTroops[$avAttackBar[$i][1]][0] = Number($avAttackBar[$i][0]) ; Troop Index
-				$g_avAttackTroops[$avAttackBar[$i][1]][1] = Number($avAttackBar[$i][2]) ; Amount
-				$g_avAttackTroops[$avAttackBar[$i][1]][2] = Number($avAttackBar[$i][3]) ; X-Coord
-				$g_avAttackTroops[$avAttackBar[$i][1]][3] = Number($avAttackBar[$i][4]) ; Y-Coord
-				$g_avAttackTroops[$avAttackBar[$i][1]][4] = Number($avAttackBar[$i][5]) ; OCR X-Coord
-				$g_avAttackTroops[$avAttackBar[$i][1]][5] = Number($avAttackBar[$i][6]) ; OCR Y-Coord
-				$iTroopNumber += $avAttackBar[$i][2]
-				Local $sDebugText = $g_bDebugSetlog ? " (X:" & $avAttackBar[$i][3] & " |Y:" & $avAttackBar[$i][4] & " |OCR-X:" & $avAttackBar[$i][5] & " |OCR-Y:" & $avAttackBar[$i][6] & ")" : ""
-				SetLog($avAttackBar[$i][1] & ": " & $avAttackBar[$i][2] & " " & GetTroopName($avAttackBar[$i][0], $avAttackBar[$i][2]) & $sDebugText, $COLOR_SUCCESS)
-			Else
-				SetDebugLog("Discard use of " & GetTroopName($avAttackBar[$i][0]) & " (" & $avAttackBar[$i][0] & ")", $COLOR_ERROR)
-			EndIf
-		Next
-	EndIf
-
 	SetSlotSpecialTroops()
-
 	If $g_bDebugSX Then SetDebugLog("SX|PrepareAttackSX Finished", $COLOR_DEBUG)
 	Return $iTroopNumber
 EndFunc   ;==>PrepareAttackSX
@@ -764,13 +776,13 @@ Func OpenGoblinMapSX()
 	Click($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1]) ; Click On Goblin Picnic Text To Show Attack Button
 
 	Local $Counter = 0
-	While Not _ColorCheck(_GetPixelColor($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1] + 82, True, "OpenGoblinMapSX-AttackButton"), Hex(0xE04A00, 6), 30)
+	While Not _ColorCheck(_GetPixelColor($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1] + 83, True, "OpenGoblinMapSX-AttackButton"), Hex(0xEC5008, 6), 30)
 		If _Sleep(50) Then ExitLoop
 		SetLog("Waiting for Attack Button color", $COLOR_INFO)
 		Click($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1]) ; Click On Goblin Picnic Text To Show Attack Button
-
 		$Counter += 1
-		If $Counter > 200 Then
+
+		If $Counter > 50 Then
 			If IsGoblinMapSXLocked($rDragToGoblinMapSX) = True Then
 				SetLog("Are you kidding me? " & $g_sGoblinMapOptSX & " is Locked", $COLOR_ERROR)
 				DisableSX()
@@ -778,14 +790,14 @@ Func OpenGoblinMapSX()
 				Return False
 			EndIf
 			SetLog("Attack Button Cannot be Verified", $COLOR_ERROR)
-			DebugImageSave("SuperXP_", True, "png", True, String(Number($rDragToGoblinMapSX[0], 2) & ", " & Number($rDragToGoblinMapSX[1], 2) & @CRLF & Number($rDragToGoblinMapSX[0], 2) & ", " & Number($rDragToGoblinMapSX[1] + 82, 2)))
+			DebugImageSave("SuperXP_", True, "png", True, String(Number($rDragToGoblinMapSX[0], 2) & ", " & Number($rDragToGoblinMapSX[1], 2) & @CRLF & Number($rDragToGoblinMapSX[0], 2) & ", " & Number($rDragToGoblinMapSX[1] + 83, 2)))
 			SafeReturnSX()
 			Return False
 		EndIf
 	WEnd
 
-	If $g_bDebugSX Then SetDebugLog("SX|OpenGoblinMapSX|Clicking On Attack Btn: " & $rDragToGoblinMapSX[0] & ", " & $rDragToGoblinMapSX[1] + 82)
-	Click($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1] + 82) ; Click On Attack Button
+	If $g_bDebugSX Then SetDebugLog("SX|OpenGoblinMapSX|Clicking On Attack Btn: " & $rDragToGoblinMapSX[0] & ", " & $rDragToGoblinMapSX[1] + 83)
+	Click($rDragToGoblinMapSX[0], $rDragToGoblinMapSX[1] + 72) ; Click On Attack Button
 
 	$Counter = 0
 	While IsInSPPage()
@@ -898,7 +910,7 @@ Func DragToGoblinMapSX()
 			While Not (IsArray($rIsGoblinMapSXFound))
 				If $g_iGoblinMapOptSX = 1 Then
 					If $g_bDebugSX Then SetDebugLog("SX|DragToGoblinMapSX|Drag from End Loop #" & $Counter)
-					ClickDrag(Random(505, 515, 1), Random(100, 105, 1), Random(505, 515, 1), Random(561, 566, 1), 100)
+					ClickDrag(Random(510, 515, 1), Random(100, 105, 1), Random(510, 515, 1), Random(561, 566, 1), 100)
 				EndIf
 				If _Sleep(100) Then Return False
 				$rIsGoblinMapSXFound = IsGoblinMapSXFound()

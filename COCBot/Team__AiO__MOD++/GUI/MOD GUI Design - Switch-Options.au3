@@ -162,6 +162,7 @@ Func CreateSwitchProfile()
 				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_01", "Set the amount of") & " " & $asText[$i] &  " " & _
 								   GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_02", "to trigger switching Profile & Bot Type."))
 				GUICtrlSetLimit(-1, $aiLimitMax[$i])
+				GUICtrlSetBkColor(-1, 0xD1DFE7)
 
 		$y += 30
 			$g_ahChk_SwitchMin[$i] = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Switch", -1), $x - 10, $y + 5 + $i * 51, -1, -1)
@@ -179,6 +180,7 @@ Func CreateSwitchProfile()
 				_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_01", -1) & " " & $asText[$i] & " " & _
 								   GetTranslatedFileIni("MBR GUI Design Child Bot - Profiles", "Condition_Info_02", -1))
 				GUICtrlSetLimit(-1, $aiLimitMin[$i])
+				GUICtrlSetBkColor(-1, 0xD1DFE7)
 
 		GUICtrlCreateGroup("", -99, -99, 1, 1)
 	Next

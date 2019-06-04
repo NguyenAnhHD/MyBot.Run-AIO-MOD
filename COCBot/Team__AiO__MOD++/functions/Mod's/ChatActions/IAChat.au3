@@ -18,7 +18,7 @@ Func ReadChatIA(ByRef $sOCRString, $sCondition = -1, $bFast = True)
 
 		$bResult = False
 		Local $aLastResult[1][2]
-		Local $sDirectory = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\Chat\"
+		Local $sDirectory = @ScriptDir & "\COCBot\Team__AiO__MOD++\Images\ChatActions\Chat"
 		Local $returnProps = "objectpoints"
 		Local $aCoor
 		Local $aPropsValues
@@ -35,7 +35,7 @@ Func ReadChatIA(ByRef $sOCRString, $sCondition = -1, $bFast = True)
 		$result = findMultiple($sDirectory, "FV", "FV", 0, 0, 0, $returnProps, False)
 
 		Local $iCount = 0
-		If Not IsArray($result) Then Return False
+			If Not IsArray($result) Then Return False
 			; Multibot pay XML func is based on it !
 			$iMax = UBound($result) - 1
 			For $i = 0 To $iMax
@@ -60,7 +60,7 @@ Func ReadChatIA(ByRef $sOCRString, $sCondition = -1, $bFast = True)
 
 			Local $aIAVarTmp = $g_aIAVar
 			_ArraySort($aIAVarTmp, 0, 0, 0, 1)
-			_CaptureRegion2(0,0,310,732)
+			_CaptureRegion2(0,0,287,732)
 			For $i = 0 To $iMax
 						$sOCRString = ""
 						For $ii = 0 To UBound($aIAVarTmp) - 1
@@ -106,11 +106,11 @@ Func ReadChatIA(ByRef $sOCRString, $sCondition = -1, $bFast = True)
 				If StringStripWS($sOCRString, $STR_STRIPALL) = "" Then ; Or MultiPSimple(33, $aLastResult[$i][1], 307, $aLastResult[$i][1] + 23, 0x91ED4D, 20) <> 0 Then
 					SetDebugLog("Unable to read Chat!", $COLOR_ERROR)
 				Else
-					SetLog("Chat : " & $sOCRString, $COLOR_INFO)
-					If $sCondition = -1 Then
-						$bResult &= " " & $sOCRString
-					Else
-						Local $asFCKeyword = StringSplit($sCondition, "|", BitOR($STR_ENTIRESPLIT, $STR_NOCOUNT))
+ 					;SetLog("Chat : " & $sOCRString, $COLOR_INFO)
+					;If $sCondition = -1 Then
+					;	$bResult &= " " & $sOCRString
+					;Else
+ 						Local $asFCKeyword = StringSplit($sCondition, "|", BitOR($STR_ENTIRESPLIT, $STR_NOCOUNT))
 
 						For $j = 0 To UBound($asFCKeyword) - 1
 							If StringInStr($sOCRString, $asFCKeyword[$j], 2) Then
@@ -119,7 +119,7 @@ Func ReadChatIA(ByRef $sOCRString, $sCondition = -1, $bFast = True)
 								If $bFast = True Then Return $bResult
 							EndIf
 						Next
-					EndIf
+					;EndIf
 				EndIf
 			Next
 	Return $bResult ; IF THE STATE = -1 CHAT TEXT IS RETURNED IN TEXT, ANOTHER BOOLEAN OF RETURN

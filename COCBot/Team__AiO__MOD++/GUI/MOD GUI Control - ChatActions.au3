@@ -16,54 +16,62 @@
 
 Func ChatbotReadSettings()
 
-	$g_iTxtGlobalMessages1 = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GlobalMsg1", "War Clan Recruiting|Active War Clan accepting applications"), "|", 2)
-	$g_iTxtGlobalMessages2 = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GlobalMsg2", "Join now|Apply now"), "|", 2)
-	GUICtrlSetData($g_hTxtEditGlobalMessages1, _ArrayToString($g_iTxtGlobalMessages1, @CRLF))
-	GUICtrlSetData($g_hTxtEditGlobalMessages2, _ArrayToString($g_iTxtGlobalMessages2, @CRLF))
+	$g_sGlobalMessages1 = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GlobalMsg1", "War Clan Recruiting|Active War Clan accepting applications"), "|", 2)
+	GUICtrlSetData($g_hTxtEditGlobalMessages1, _ArrayToString($g_sGlobalMessages1, @CRLF))
 
-	Local $iTxtClanResponses = ""
-	$iTxtClanResponses = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "ResponseMsgClan", "keyword:Response|hello:Hi, Welcome to the clan|hey:Hey, how's it going?"), "|", 2)
-	$g_iTxtClanMessages = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GenericMsgClan", "Testing on Chat|Hey all"), "|", 2)
-	Local $rTxtClanResponses[UBound($iTxtClanResponses)][2]
-	For $a = 0 To UBound($iTxtClanResponses) - 1
-		Local $TmpResp = StringSplit($iTxtClanResponses[$a], ":", 2)
-		If UBound($TmpResp) > 0 Then
-			$rTxtClanResponses[$a][0] = $TmpResp[0]
-		Else
-			$rTxtClanResponses[$a][0] = "<invalid>"
-		EndIf
-		If UBound($TmpResp) > 1 Then
-			$rTxtClanResponses[$a][1] = $TmpResp[1]
-		Else
-			$rTxtClanResponses[$a][1] = "<undefined>"
-		EndIf
-	Next
-	$g_iTxtClanResponses = $rTxtClanResponses
-	GUICtrlSetData($g_hTxtEditResponses, _ArrayToString($g_iTxtClanResponses, ":", -1, -1, @CRLF))
-	GUICtrlSetData($g_hTxtEditGeneric, _ArrayToString($g_iTxtClanMessages, @CRLF))
+	$g_sGlobalMessages2 = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GlobalMsg2", "Join now|Apply now"), "|", 2)
+	GUICtrlSetData($g_hTxtEditGlobalMessages2, _ArrayToString($g_sGlobalMessages2, @CRLF))
+
+	Local $aTmpClanResponses = ""
+    $aTmpClanResponses = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "ResponseMsgClan", "keyword:Response|hello:Hi, Welcome to the clan|hey:Hey, how's it going?"), "|", 2)
+    Local $aClanResponses[UBound($aTmpClanResponses)][2]
+    For $a = 0 To UBound($aTmpClanResponses) - 1
+        Local $aTmpResp = StringSplit($aTmpClanResponses[$a], ":", 2)
+        If UBound($aTmpResp) > 0 Then
+            $aClanResponses[$a][0] = $aTmpResp[0]
+        Else
+            $aClanResponses[$a][0] = "<invalid>"
+        EndIf
+        If UBound($aTmpResp) > 1 Then
+            $aClanResponses[$a][1] = $aTmpResp[1]
+        Else
+            $aClanResponses[$a][1] = "<undefined>"
+        EndIf
+    Next
+	$g_sClanResponses = $aClanResponses
+	GUICtrlSetData($g_hTxtEditResponses, _ArrayToString($g_sClanResponses, ":", -1, -1, @CRLF))
+
+	$g_sClanGeneric = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "GenericMsgClan", "Testing on Chat|Hey all"), "|", 2)
+	GUICtrlSetData($g_hTxtEditGeneric, _ArrayToString($g_sClanGeneric, @CRLF))
+
+	$g_sChallengeText = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeText", "Kill me"), "|", 2)
+	GUICtrlSetData($g_hTxtChallengeText, _ArrayToString($g_sChallengeText, @CRLF))
+
+	$g_sKeywordForRequest = StringSplit(IniRead($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeKeyword", "friendly|challenge"), "|", 2)
+	GUICtrlSetData($g_hTxtKeywordForRequest, _ArrayToString($g_sKeywordForRequest, @CRLF))
 
 EndFunc   ;==>ChatbotReadSettings
 
+
 Func ChatGuiEditUpdate()
 
-	; how 2 be lazy 101
-	$TxtGlobal1 = StringReplace(GUICtrlRead($g_hTxtEditGlobalMessages1), @CRLF, "|")
-	$TxtGlobal2 = StringReplace(GUICtrlRead($g_hTxtEditGlobalMessages2), @CRLF, "|")
+	$g_sGlobal1 = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtEditGlobalMessages1), @CRLF, "|"))
+	IniWrite($g_sProfileConfigPath, "ChatActions", "GlobalMsg1", $g_sGlobal1)
 
-	$TxtResponse = StringReplace(GUICtrlRead($g_hTxtEditResponses), @CRLF, "|")
-	$TxtGeneric = StringReplace(GUICtrlRead($g_hTxtEditGeneric), @CRLF, "|")
+	$g_sGlobal2 = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtEditGlobalMessages2), @CRLF, "|"))
+	IniWrite($g_sProfileConfigPath, "ChatActions", "GlobalMsg2", $g_sGlobal2)
 
-	; Clean empty messages to avoid chat bot to slect empty msg
-	_StringRemoveBlanksFromSplit($TxtGlobal1)
-	_StringRemoveBlanksFromSplit($TxtGlobal2)
-	_StringRemoveBlanksFromSplit($TxtResponse)
-	_StringRemoveBlanksFromSplit($TxtGeneric)
+	$g_sResponse = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtEditResponses), @CRLF, "|"))
+	IniWrite($g_sProfileConfigPath, "ChatActions", "ResponseMsgClan", $g_sResponse)
 
-	;Need to save live changes into config.
-	IniWrite($g_sProfileConfigPath, "ChatActions", "GlobalMsg1", $TxtGlobal1)
-	IniWrite($g_sProfileConfigPath, "ChatActions", "GlobalMsg2", $TxtGlobal2)
-	IniWrite($g_sProfileConfigPath, "ChatActions", "ResponseMsgClan", $TxtResponse)
-	IniWrite($g_sProfileConfigPath, "ChatActions", "GenericMsgClan", $TxtGeneric)
+	$g_sGeneric = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtEditGeneric), @CRLF, "|"))
+	IniWrite($g_sProfileConfigPath, "ChatActions", "GenericMsgClan", $g_sGeneric)
+
+	$g_sWriteFriendlyChallengeText = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtChallengeText), @CRLF, "|"))
+	IniWrite($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeText", $g_sWriteFriendlyChallengeText)
+
+	$g_sWriteFriendlyChallengeKeyword = _StringRemoveBlanksFromSplit(StringReplace(GUICtrlRead($g_hTxtKeywordForRequest), @CRLF, "|"))
+	IniWrite($g_sProfileConfigPath, "ChatActions", "FriendlyChallengeKeyword", $g_sWriteFriendlyChallengeKeyword)
 
 	ChatbotReadSettings()
 EndFunc   ;==>ChatGuiEditUpdate
@@ -72,7 +80,7 @@ EndFunc   ;==>ChatGuiEditUpdate
 Func chkGlobalChat()
 	If GUICtrlRead($g_hChkGlobalChat) = $GUI_CHECKED Then
 		$g_bChatGlobal = True
-		_GUI_Value_STATE("ENABLE", $g_hTxtDelayTimeGlobal & "#" & $g_hChkGlobalScramble & "#" & $g_hChkSwitchLang & "#" & $g_hChkRusLang & "#" & $g_hTxtEditGlobalMessages1 & "#" & $g_hTxtEditGlobalMessages2)
+		_GUI_Value_STATE("ENABLE", $g_hTxtDelayTimeGlobal & "#" & $g_hChkGlobalScramble & "#" & $g_hChkSwitchLang & "#" & $g_hChkRusLang & "#" & $g_hLblEditGlobalMessages1 & "#" & $g_hTxtEditGlobalMessages1 & "#" & $g_hLblEditGlobalMessages2 & "#" & $g_hTxtEditGlobalMessages2)
 		GUIToggle_OnlyDuringHours(True)
 		chkSwitchLang()
 	Else
@@ -136,11 +144,11 @@ EndFunc   ;==>chkUseResponses
 Func chkUseGeneric()
 	If GUICtrlRead($g_hChkClanChat) = $GUI_CHECKED Then
 		If GUICtrlRead($g_hChkUseGeneric) = $GUI_CHECKED Then
-			$g_bClanAlwaysMsg = True
+			$g_bClanUseGeneric = True
 			GUICtrlSetState($g_hLblEditGeneric, $GUI_ENABLE)
 			GUICtrlSetState($g_hTxtEditGeneric, $GUI_ENABLE)
 		Else
-			$g_bClanAlwaysMsg = False
+			$g_bClanUseGeneric = False
 			GUICtrlSetState($g_hLblEditGeneric, $GUI_DISABLE)
 			GUICtrlSetState($g_hTxtEditGeneric, $GUI_DISABLE)
 		EndIf
@@ -178,24 +186,6 @@ Func chkOnlyOnRequest()
 		EndIf
 	EndIf
 EndFunc   ;==>chkOnlyOnRequest
-
-Func txtChallengeText()
-	Local $sInputText = StringReplace(GUICtrlRead($g_hTxtChallengeText), @CRLF, "|")
-	Local $iCount = 0
-	Local $bUpdateDateFlag = False
-	While 1
-		If StringRight($sInputText,1) = "|" Then
-			$sInputText = StringLeft($sInputText, StringLen($sInputText) - 1)
-			$bUpdateDateFlag = True
-		Else
-			If $bUpdateDateFlag Then GUICtrlSetData($g_hTxtChallengeText, StringReplace($sInputText, "|", @CRLF))
-			ExitLoop
-		EndIf
-		$iCount += 1
-		If $iCount > 10 Then ExitLoop
-	WEnd
-	$g_iTxtChallengeText = StringReplace($sInputText, "|", @CRLF)
-EndFunc   ;==>txtChallengeText
 
 Func chkFriendlyChallengeHoursE1()
 	If GUICtrlRead($g_hChkFriendlyChallengeHoursE1) = $GUI_CHECKED And GUICtrlRead($g_ahChkFriendlyChallengeHours[0]) = $GUI_CHECKED Then

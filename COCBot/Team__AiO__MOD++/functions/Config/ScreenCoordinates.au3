@@ -22,8 +22,9 @@ Global $aClanChatRules[4] = [158, 493, 0x6CB531, 20]
 Global $aClanNameBtn[2] = [89, 63] ; Button to open Clan Page from Chat Tab
 
 ;Chat Actions
-Global $aGlobalChatTab[4] = [41, 24, 0x706C50, 20] ; Global Chat Tab on Top, check if right one is selected
-Global $aClanChatTab[4] = [189, 24, 0x706C50, 20] ; Clan Chat Tab on Top, check if right one is selected
+Global $aGlobalChatTab[4] = [20, 24, 0x706C50, 20] ; Global Chat Tab on Top, check if right one is selected
+Global $aClanChatTab[4] = [170, 24, 0x706C50, 20] ; Clan Chat Tab on Top, check if right one is selected
+Global $aChatRules[4] = [75, 495, 0xB4E35C, 20]
 Global $aChatSelectTextBox[4] = [277, 700, 0xFFFFFF, 10] ; color white Select Chat Textbox
 Global $aOpenedChatSelectTextBox[4] = [100, 700, 0xFFFFFF, 10] ; color white Select Chat Textbox Opened
 Global $aChatSendBtn[4] = [840, 700, 0xFFFFFF, 10] ; color white Send Chat Textbox
@@ -42,6 +43,17 @@ Global Const $aButtonLanguageNO[2] = [163, 473] ;Norsk
 Global Const $aButtonLanguagePR[2] = [163, 521] ;Portugal
 Global Const $aButtonLanguageTR[2] = [163, 570] ;Turk
 Global Const $aButtonLanguageRU[2] = [163, 608] ;Russian
+
+Global Const $aLangSelectedEN[4] = [118, 185, 0xCAFF40, 20]
+Global Const $aLangSelectedFRA[4] = [118, 234, 0xCAFF40, 20]
+Global Const $aLangSelectedDE[4] = [118, 283, 0xCAFF40, 20]
+Global Const $aLangSelectedES[4] = [118, 332, 0xCAFF40, 20]
+Global Const $aLangSelectedITA[4] = [118, 380, 0xCAFF40, 20]
+Global Const $aLangSelectedNL[4] = [118, 429, 0xCAFF40, 20]
+Global Const $aLangSelectedNO[4] = [118, 478, 0xCAFF40, 20]
+Global Const $aLangSelectedPR[4] = [118, 526, 0xCAFF40, 20]
+Global Const $aLangSelectedTR[4] = [118, 575, 0xCAFF40, 20]
+Global Const $aLangSelectedRU[4] = [125, 615, 0xCAFF40, 20]
 
 Global $aButtonFriendlyChallenge[4] = [200, 695, 0xDDF685, 20]
 Global $aButtonFCChangeLayout[4] = [240, 286, 0XDDF685, 20]

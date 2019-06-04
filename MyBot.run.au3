@@ -840,7 +840,7 @@ Func runBot() ;Bot that runs everything in order
 
 			ClanHop() ; ClanHop - Team AiO MOD++
 			If $g_bRunState = False Then Return
-			If $g_bChatGlobal Or $g_bChatClan Or $g_bEnableFriendlyChallenge Then ChatActions() ; ChatActions - Team AiO MOD++
+			ChatActions() ; ChatActions - Team AiO MOD++
 			If $g_bRunState = False Then Return
 
 			If IsSearchAttackEnabled() Then ; If attack scheduled has attack disabled now, stop wall upgrades, and attack.
@@ -922,7 +922,7 @@ Func _Idle() ;Sequence that runs until Full Army
 		If _Sleep($DELAYIDLE1) Then Return
 		If $g_iCommandStop = -1 Then SetLog("====== Waiting for full army ======", $COLOR_SUCCESS)
 
-		If $g_bChatGlobal Or $g_bChatClan Or $g_bEnableFriendlyChallenge Then ChatActions() ; ChatActions - Team AiO MOD++
+		ChatActions() ; ChatActions - Team AiO MOD++
 
 		Local $hTimer = __TimerInit()
 		If _Sleep($DELAYIDLE1) Then ExitLoop
@@ -1060,7 +1060,7 @@ Func AttackMain() ;Main control for attack functions
 				;SetLog("BullyMode: " & $g_abAttackTypeEnable[$TB] & ", Bully Hero: " & BitAND($g_aiAttackUseHeroes[$g_iAtkTBMode], $g_aiSearchHeroWaitEnable[$g_iAtkTBMode], $g_iHeroAvailable) & "|" & $g_aiSearchHeroWaitEnable[$g_iAtkTBMode] & "|" & $g_iHeroAvailable, $COLOR_DEBUG)
 			EndIf
 
-			If $g_bChatGlobal Or $g_bChatClan Or $g_bEnableFriendlyChallenge Then ChatActions() ; ChatActions - Team AiO MOD++
+			ChatActions() ; ChatActions - Team AiO MOD++
 
 			_ClanGames()
 			ClickP($aAway, 1, 0, "#0000") ;Click Away to prevent any pages on top

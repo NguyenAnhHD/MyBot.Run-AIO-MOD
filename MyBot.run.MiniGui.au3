@@ -145,7 +145,7 @@ Func UpdateBotTitle($sTitle = "My Bot " & $g_sBotVersion)
 	DllCall("kernel32.dll", "bool", "SetConsoleTitle", "str", "Console " & $g_sBotTitle)
 	; Update try icon title
 	TraySetToolTip($g_sBotTitle)
-	GUISetIcon($g_sLibIconPath, $eIcnAiOMOD)
+	GUISetIcon($g_sLibModIconPath, $eIcnAIOMod)
 
 	SetDebugLog("Bot title updated to: " & $g_sBotTitle)
 EndFunc   ;==>UpdateBotTitle

@@ -17,6 +17,7 @@
 Global $g_hGUI_BBDropOrder = 0
 Global $g_hChkEnableBBAttack = 0
 Global $g_hBtnBBDropOrder = 0, $g_hChkBBTrophyRange = 0, $g_hTxtBBTrophyLowerLimit = 0, $g_hTxtBBTrophyUpperLimit = 0, $g_hChkBBAttIfLootAvail = 0, $g_hChkBBWaitForMachine = 0
+Global $g_hCmbBBNextTroopDelay = 0, $g_hCmbBBSameTroopDelay = 0, $g_hLblBBNextTroopDelay = 0, $g_hLblBBSameTroopDelay = 0
 
 Global $g_hChkBBCustomDropOrderEnable = 0
 Global $g_ahCmbBBDropOrder[$g_iBBTroopCount] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -25,31 +26,43 @@ Global $g_hBtnBBDropOrderSet = 0, $g_hBtnBBRemoveDropOrder = 0, $g_hBtnBBClose =
 Func CreateBBAttackGUI()
 	Local $x = 15, $y = 115
 	GUICtrlCreateGroup(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "Group_01", "Builders Base Attacking"), $x - 10, $y - 20, $g_iSizeWGrpTab3, 100)
-		$g_hChkEnableBBAttack = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkEnableBBAttack", "Attack"), $x + 60, $y + 5, -1, -1)
+		$g_hChkEnableBBAttack = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkEnableBBAttack", "Attack"), $x + 20, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkEnableBBAttack_Info_01", "Uses the currently queued army to attack."))
 			GUICtrlSetOnEvent(-1, "chkEnableBBAttack")
-
-		$g_hBtnBBDropOrder = GUICtrlCreateButton(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "BtnBBDropOrder", "Drop Order"), $x + 40, $y + 30, 75, 25)
+		$g_hBtnBBDropOrder = GUICtrlCreateButton(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "BtnBBDropOrder", "Drop Order"), $x + 10, $y + 30, 65, -1)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "BtnBBDropOrder_Info", "Set a custom dropping order for your troops."))
 			GUICtrlSetBkColor(-1, $COLOR_RED)
 			GUICtrlSetOnEvent(-1, "btnBBDropOrder")
 
-		$g_hChkBBTrophyRange = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBTrophyRange", "Trophies:"), $x + 180, $y + 5, -1, -1)
+	$x += 90
+		$g_hLblBBNextTroopDelay = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "LblBBNextTroopDelay", "Next Troop Delay"), $x, $y + 20, -1, -1)
+		$g_hCmbBBNextTroopDelay = GUICtrlCreateCombo("", $x + 100, $y + 17, 30, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "CmbBBNextTroopDelay_Info_01", "Set the delay between different troops. 1 fastest to 9 slowest."))
+			GUICtrlSetOnEvent(-1, "cmbBBNextTroopDelay")
+			GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9")
+			_GUICtrlComboBox_SetCurSel($g_hCmbBBNextTroopDelay, 4) ; start in middle
+		$g_hLblBBSameTroopDelay = GUICtrlCreateLabel(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "LblBBSameTroopDelay", "Same Troop Delay"), $x, $y + 50, -1, -1)
+		$g_hCmbBBSameTroopDelay = GUICtrlCreateCombo("", $x + 100, $y + 47, 30, 21, BitOR($CBS_DROPDOWNLIST, $CBS_AUTOHSCROLL))
+			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "CmbBBSameTroopDelay_Info_01", "Set the delay between same troops. 1 fastest to 9 slowest."))
+			GUICtrlSetOnEvent(-1, "cmbBBSameTroopDelay")
+			GUICtrlSetData(-1, "1|2|3|4|5|6|7|8|9")
+			_GUICtrlComboBox_SetCurSel($g_hCmbBBSameTroopDelay, 4) ; start in middle
+
+	$x += 160
+		$g_hChkBBTrophyRange = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBTrophyRange", "Trophies:"), $x, $y, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBTrophyRange_Info_01", "Enable ability to set a trophy range."))
 			GUICtrlSetOnEvent(-1, "chkBBTrophyRange")
-
-		$g_hTxtBBTrophyLowerLimit = GUICtrlCreateInput($g_iTxtBBTrophyLowerLimit, $x + 250, $y + 5, 40, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+			GUICtrlSetState(-1, $GUI_DISABLE)
+		$g_hTxtBBTrophyLowerLimit = GUICtrlCreateInput($g_iTxtBBTrophyLowerLimit, $x + 70, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "TxtBBTrophyLimit_Info_01", "If your trophies go below this number then attacking is stopped."))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-		GUICtrlCreateLabel("-", $x + 293, $y + 9, -1, -1)
-		$g_hTxtBBTrophyUpperLimit = GUICtrlCreateInput($g_iTxtBBTrophyUpperLimit, $x + 300, $y + 5, 40, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
+		$g_hTxtBBTrophyUpperLimit = GUICtrlCreateInput($g_iTxtBBTrophyUpperLimit, $x + 120, $y, 40, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "TxtBBTrophyLimit_Info_02", "If your trophies go above this number then the bot drops trophies"))
 			GUICtrlSetState(-1, $GUI_DISABLE)
-
-		$g_hChkBBAttIfLootAvail = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBAttIfLootAvail", "Only if loot is available"), $x + 180, $y + 30, -1, -1)
+		$g_hChkBBAttIfLootAvail = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBAttIfLootAvail", "Only if loot is available"), $x, $y + 25, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBAttIfLootAvail_Info_01", "Only attack if there is loot available."))
-
-		$g_hChkBBWaitForMachine = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBWaitForMachine", "Wait For Battle Machine"), $x + 180, $y + 55, -1, -1)
+			GUICtrlSetState(-1, $GUI_DISABLE)
+		$g_hChkBBWaitForMachine = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBWaitForMachine", "Wait For Battle Machine"), $x, $y + 50, -1, -1)
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design Child Village - Misc", "ChkBBWaitForMachine_Info_01", "Makes the bot not attack while Machine is down."))
 
 	GUICtrlCreateGroup("", -99, -99, 1, 1)

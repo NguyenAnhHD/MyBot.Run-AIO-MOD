@@ -32,30 +32,31 @@ EndFunc   ;==>SaveConfig_MOD_SuperXP
 Func SaveConfig_MOD_ChatActions()
 	; <><><> ChatActions <><><>
 	ApplyConfig_MOD_ChatActions(GetApplyConfigSaveAction())
+	_Ini_Add("ChatActions", "GlobalMsg1", $g_sGlobal1)
+	_Ini_Add("ChatActions", "GlobalMsg2", $g_sGlobal2)
+	_Ini_Add("ChatActions", "ResponseMsgClan", $g_sResponse)
+	_Ini_Add("ChatActions", "GenericMsgClan", $g_sGeneric)
+	_Ini_Add("ChatActions", "FriendlyChallengeText", $g_sWriteFriendlyChallengeText)
+	_Ini_Add("ChatActions", "FriendlyChallengeKeyword", $g_sWriteFriendlyChallengeKeyword)
+
 	_Ini_Add("ChatActions", "EnableChatGlobal", $g_bChatGlobal ? 1 : 0)
 	_Ini_Add("ChatActions", "DelayTimeGlobal", $g_sDelayTimeGlobal)
 	_Ini_Add("ChatActions", "ScrambleGlobal", $g_bScrambleGlobal ? 1 : 0)
 	_Ini_Add("ChatActions", "SwitchLang", $g_bSwitchLang ? 1 : 0)
 	_Ini_Add("ChatActions", "CmbLang", $g_iCmbLang)
 	_Ini_Add("ChatActions", "RusLang", $g_bRusLang ? 1 : 0)
-	_Ini_Add("ChatActions", "GlobalMsg1", $TxtGlobal1)
-	_Ini_Add("ChatActions", "GlobalMsg2", $TxtGlobal2)
 
 	_Ini_Add("ChatActions", "EnableChatClan", $g_bChatClan ? 1 : 0)
 	_Ini_Add("ChatActions", "DelayTimeClan", $g_sDelayTimeClan)
 	_Ini_Add("ChatActions", "UseResponsesClan", $g_bClanUseResponses ? 1 : 0)
-	_Ini_Add("ChatActions", "UseGenericClan", $g_bClanAlwaysMsg ? 1 : 0)
+	_Ini_Add("ChatActions", "UseGenericClan", $g_bClanUseGeneric ? 1 : 0)
 	_Ini_Add("ChatActions", "Cleverbot", $g_bCleverbot ? 1 : 0)
 	_Ini_Add("ChatActions", "ChatNotify", $g_bUseNotify ? 1 : 0)
 	_Ini_Add("ChatActions", "PbSendNewChats", $g_bPbSendNew ? 1 : 0)
-	_Ini_Add("ChatActions", "ResponseMsgClan", $TxtResponse)
-	_Ini_Add("ChatActions", "GenericMsgClan", $TxtGeneric)
 
 	_Ini_Add("ChatActions", "EnableFriendlyChallenge", $g_bEnableFriendlyChallenge ? 1 : 0)
 	_Ini_Add("ChatActions", "DelayTimeFriendlyChallenge", $g_sDelayTimeFC)
 	_Ini_Add("ChatActions", "EnableOnlyOnRequest", $g_bOnlyOnRequest ? 1 : 0)
-	_Ini_Add("ChatActions", "FriendlyChallengeText", StringReplace($g_iTxtChallengeText, @CRLF, "|"))
-	_Ini_Add("ChatActions", "FriendlyChallengeKeyword", StringReplace($g_iTxtKeywordForRequest, @CRLF, "|"))
 	Local $string = ""
 	For $i = 0 To 5
 		$string &= ($g_bFriendlyChallengeBase[$i] ? "1" : "0") & "|"
@@ -85,9 +86,14 @@ Func SaveConfig_MOD_600_6()
 	_Ini_Add("BBAttack", "TxtBBTrophyUpperLimit", $g_iTxtBBTrophyUpperLimit)
 	_Ini_Add("BBAttack", "ChkBBAttIfLootAvail", $g_bChkBBAttIfLootAvail)
 	_Ini_Add("BBAttack", "ChkBBWaitForMachine", $g_bChkBBWaitForMachine)
+	_Ini_Add("BBAttack", "iBBNextTroopDelay", $g_iBBNextTroopDelay)
+	_Ini_Add("BBAttack", "iBBSameTroopDelay", $g_iBBSameTroopDelay)
 
 	_Ini_Add("BBAttack", "bBBDropOrderSet", $g_bBBDropOrderSet)
 	_Ini_Add("BBAttack", "sBBDropOrder", $g_sBBDropOrder)
+
+	; BB Suggested Upgrades
+	_Ini_Add("other", "ChkBBIgnoreWalls", $g_bChkBBIgnoreWalls ? 1 : 0)
 EndFunc   ;==>SaveConfig_MOD_600_6
 
 Func SaveConfig_MOD_600_11()
@@ -111,8 +117,11 @@ Func SaveConfig_MOD_600_12()
 EndFunc   ;==>SaveConfig_MOD_600_12
 
 Func SaveConfig_MOD_600_28()
-	; <><><> Restart Search Legend league <><><>
+	; <><><> Max logout time + Restart Search Legend league <><><>
 	ApplyConfig_MOD_600_28(GetApplyConfigSaveAction())
+	_Ini_Add("other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime ? 1 : 0)
+	_Ini_Add("other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime)
+
 	_Ini_Add("other", "ChkSearchTimeout", $g_bIsSearchTimeout ? 1 : 0)
 	_Ini_Add("other", "SearchTimeout", $g_iSearchTimeout)
 EndFunc   ;==>SaveConfig_MOD_600_28
@@ -169,10 +178,3 @@ Func SaveConfig_MOD_600_35_2()
 		_Ini_Add("SwitchProfile", "ConditionMin" & $i, $g_aiConditionMin[$i])
 	Next
 EndFunc   ;==>SaveConfig_MOD_600_35_2
-
-Func SaveConfig_MOD_641_1()
-	; <><><> Max logout time <><><>
-	ApplyConfig_MOD_641_1(GetApplyConfigSaveAction())
-	_Ini_Add("other", "chkTrainLogoutMaxTime", $g_bTrainLogoutMaxTime ? 1 : 0)
-	_Ini_Add("other", "txtTrainLogoutMaxTime", $g_iTrainLogoutMaxTime)
-EndFunc   ;==>SaveConfig_MOD_MOD_641_1

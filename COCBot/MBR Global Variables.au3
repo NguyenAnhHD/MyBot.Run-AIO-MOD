@@ -556,14 +556,10 @@ Global Enum $eIcnArcher = 1, $eIcnDonArcher, $eIcnBalloon, $eIcnDonBalloon, $eIc
 		$eWall04, $eWall05, $eWall06, $eWall07, $eWall08, $eWall09, $eWall10, $eWall11, $eIcnPBNotify, $eIcnCCTroops, _
 		$eIcnCCSpells, $eIcnSpellsGroup, $eBahasaIND, $eChinese_S, $eChinese_T, $eEnglish, $eFrench, $eGerman, $eItalian, $ePersian, _
 		$eRussian, $eSpanish, $eTurkish, $eMissingLangIcon, $eWall12, $ePortuguese, $eIcnDonPoisonSpell, $eIcnDonEarthQuakeSpell, $eIcnDonHasteSpell, $eIcnDonSkeletonSpell, $eVietnamese, $eKorean, $eAzerbaijani, _
-		$eArabic, $eIcnBuilderHall, $eIcnClockTower, $eIcnElixirCollectorL5, $eIcnGemMine, $eIcnGoldMineL5, $eIcnElectroDragon, $eIcnTH12, $eHdV12, $eWall13, _
-		$eIcnBattleB, $eIcnWallW, $eIcnSiegeCost, $eIcnTrainingPotion, $eIcnBatSpell, $eIcnStoneS, $eIcnIceGolem, $eIcnStarLaboratory, $eIcnRagedBarbarian, $eIcnSneakyArcher, $eIcnBoxerGiant, $eIcnBetaMinion, _
+		$eArabic, $eIcnBuilderHall, $eIcnClockTower, $eIcnElixirCollectorL5, $eIcnGemMine, $eIcnGoldMineL5, $eIcnElectroDragon, $eIcnTH12, $eHdV12, $eWall13, $eIcnGrayShield, $eIcnBlueShield, $eIcnGreenShield, $eIcnRedShield, _
+		$eIcnBattleB, $eIcnWallW, $eIcnSiegeCost, $eIcnBoostPotion, $eIcnBatSpell, $eIcnStoneS, $eIcnIceGolem, $eIcnStarLaboratory, $eIcnRagedBarbarian, $eIcnSneakyArcher, $eIcnBoxerGiant, $eIcnBetaMinion, _
 		$eIcnBomber, $eIcnBBBabyDragon, $eIcnCannonCart, $eIcnNightWitch, $eIcnDropShip, $eIcnSuperPekka, $eIcnBBWall01, $eIcnBBWall02, $eIcnBBWall03, $eIcnBBWall04, $eIcnBBWall05, $eIcnBBWall06, $eIcnBBWall07, $eIcnBBWall08, _
-		$eIcnKingGrayShield, $eIcnKingBlueShield, $eIcnKingGreenShield, $eIcnKingRedShield, $eIcnQueenGrayShield, $eIcnQueenBlueShield, $eIcnQueenGreenShield, $eIcnQueenRedShield, _
-		$eIcnWardenGrayShield, $eIcnWardenBlueShield, $eIcnWardenGreenShield, $eIcnWardenRedShield, $eIcnLabGrayShield, $eIcnLabGreenShield, $eIcnLabRedShield, _
-		$eIcnClanHop, $eIcnChat, $eIcnRepeat, $eIcnClan, $eIcnTarget, $eIcnSettings, _
-		$eIcnStrongMan, $eIcnDebug, $eIcnSwitchAcc, $eIcnSwitchProfiles, $eIcnFarmingSchedule, $eIcnAiOMOD, $eIcnMiscMod, $eIcnHumanization, $eIcnSuperXP, $eIcnWarPreparation, _
-		$eIcnBKingSX, $eIcnAQueenSX, $eIcnGWardenSX, $eIcnPrecise, $eIcnWorkshopBoost, $eIcnPowerPotion, $eIcnResourcePotion
+		$eIcnWorkshopBoost, $eIcnStrongMan, $eIcnPowerPotion
 
 Global $eIcnDonBlank = $eIcnDonBlacklist
 Global $eIcnOptions = $eIcnDonBlacklist

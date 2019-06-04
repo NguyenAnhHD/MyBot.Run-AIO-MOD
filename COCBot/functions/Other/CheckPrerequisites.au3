@@ -101,6 +101,7 @@ Func isEveryFileInstalled($bSilent = False)
 			$g_sLibPath & "\helper_functions.dll", _
 			$g_sLibPath & "\ImageSearchDLL.dll", _
 			$g_sLibPath & "\MBRBot.dll", _
+			$g_sLibPath & "\AIOMod.dll", _
 			$g_sLibPath & "\MyBot.run.dll", _
 			$g_sLibPath & "\Newtonsoft.Json.dll", _
 			$g_sLibPath & "\sqlite3.dll", _
@@ -137,7 +138,7 @@ Func isEveryFileInstalled($bSilent = False)
 	If @Compiled Then ;if .exe
 		If Not StringInStr(@ScriptFullPath, "MyBot.run.exe", 1) Then ; if filename isn't MyBot.run.exe
 			If Not $bSilent Then
-			
+
 				SetLog($sText1, $COLOR_ERROR)
 				SetLog($sText5, $COLOR_ERROR)
 				SetLog($sText3, $COLOR_ERROR)

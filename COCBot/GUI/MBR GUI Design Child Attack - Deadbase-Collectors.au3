@@ -83,6 +83,7 @@ Func CreateAttackSearchDeadBaseCollectors()
 			_GUICtrlSlider_SetTipSide(-1, $TBTS_BOTTOM)
 			_GUICtrlSlider_SetTicFreq(-1, 1)
 			GUICtrlSetLimit(-1, 15, -15) ; change max/min value
+			GUICtrlSetBkColor(-1, 0xD1DFE7)
 			GUICtrlSetData(-1, 0) ; default value
 			GUICtrlSetOnEvent(-1, "sldCollectorTolerance")
 		;If $g_bDevMode = False Then
@@ -108,6 +109,7 @@ Func CreateAttackSearchDeadBaseCollectors()
 		$g_hTxtDBMinCollectorOutsidePercent = GUICtrlCreateInput("80", $x + 50, $y - 3, 31, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "ChkDBMeetCollectorOutside_Info_02", "Set the Min. % of collectors outside to search for on a village to attack."))
 			GUICtrlSetLimit(-1, 3)
+			GUICtrlSetBkColor(-1, 0xD1DFE7)
 
 	$y += 20
 		$g_hChkDBCollectorNearRedline = GUICtrlCreateCheckbox(GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "ChkDBCollectorNearRedline", "Collectors Near Redline"), $x, $y, -1, -1)
@@ -133,18 +135,21 @@ Func CreateAttackSearchDeadBaseCollectors()
 		$g_hTxtSkipCollectorGold = GUICtrlCreateInput("400000", $x + 8, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "TxtSkipCollectorGold", "Skip outside collectors check IF target Gold value over"))
 			GUICtrlSetLimit(-1, 7)
+			GUICtrlSetBkColor(-1, 0xD1DFE7)
 	$x += 90
 		$g_hLblSkipCollectorElixir = GUICtrlCreateLabel(ChrW(8805), $x, $y + 2, -1, -1)
 		_GUICtrlCreateIcon($g_sLibIconPath, $eIcnElixir, $x + 60, $y, 16, 16)
 		$g_hTxtSkipCollectorElixir = GUICtrlCreateInput("400000", $x + 8, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "TxtSkipCollectorElixir", "Skip outside collectors check IF target Elixir value over"))
 			GUICtrlSetLimit(-1, 7)
+			GUICtrlSetBkColor(-1, 0xD1DFE7)
 	$y += 25
 		$g_hLblSkipCollectorDark = GUICtrlCreateLabel(ChrW(8805), $x - 40, $y + 2, -1, -1)
 		_GUICtrlCreateIcon($g_sLibIconPath, $eIcnDark, $x + 20, $y, 16, 16)
 		$g_hTxtSkipCollectorDark = GUICtrlCreateInput("0", $x - 32, $y, 50, 18, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 			_GUICtrlSetTip(-1, GetTranslatedFileIni("MBR GUI Design Child Attack - Deadbase-Collectors", "TxtSkipCollectorDark", "Skip outside collectors check IF target Dark Elixir value over"))
 			GUICtrlSetLimit(-1, 6)
+			GUICtrlSetBkColor(-1, 0xD1DFE7)
 
 	$y += 25
 	$x -= 90
