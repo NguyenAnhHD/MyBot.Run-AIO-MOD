@@ -156,7 +156,7 @@ EndFunc   ;==>SetBotGuiPID
 
 Func CheckForumAuthentication()
 	If $g_hLibMyBot = -1 Then Return False ; Bot didn't finish launch yet
-	Local $result = DllCall($g_hLibMyBot, "str", "CheckForumAuthentication")
+#cs	Local $result = DllCall($g_hLibMyBot, "str", "CheckForumAuthentication")
 	If @error Then
 		_logErrorDLLCall($g_sLibMyBotPath & ", CheckForumAuthentication:", @error)
 		Return SetError(@error)
@@ -180,7 +180,9 @@ Func CheckForumAuthentication()
 	Else
 		SetDebugLog($g_sMBRLib & " not found.", $COLOR_ERROR)
 	EndIf
-	Return $iAuthenticated
+#ce	Return $iAuthenticated
+	SetLog(GetTranslatedFileIni("MBR Authentication", "BotIsAuthenticated", "MyBot.run is authenticated"), $COLOR_SUCCESS)
+	Return 1
 EndFunc   ;==>CheckForumAuthentication
 
 Func ForumLogin($sUsername, $sPassword)

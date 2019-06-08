@@ -53,46 +53,55 @@ Func PrepareAttackBB()
 EndFunc
 
 Func ClickAttack()
-	Local $aColors = [[0xfdd79b, 96, 0], [0xffffff, 20, 50], [0xffffff, 69, 50]] ; coordinates of pixels relative to the 1st pixel
-	Local $ButtonPixel = _MultiPixelSearch(8, 640, 120, 755, 1, 1, Hex(0xeac68c, 6), $aColors, 20)
+	Local $aColors = [[0xF5CC90, 86, 0], [0xFFFFFF, 15, 72], [0xFFFFFF, 26, 72]] ; coordinates of pixels relative to the 1st pixel
+	Local $ButtonPixel = _MultiPixelSearch(8, 620, 120, 730, 1, 1, Hex(0xA2490F, 6), $aColors, 20)
 	Local $bRet = False
 
 	If IsArray($ButtonPixel) Then
-		SetDebugLog(String($ButtonPixel[0]) & " " & String($ButtonPixel[1]))
-		PureClick($ButtonPixel[0] + 25, $ButtonPixel[1] + 25) ; Click fight Button
+		SetDebugLog("ButtonPixelLocation = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG) ;Debug
+		SetDebugLog("Pixel color found #1: " & _GetPixelColor($ButtonPixel[0], $ButtonPixel[1], True) & _
+									", #2: " & _GetPixelColor($ButtonPixel[0] + 86, $ButtonPixel[1], True) & _
+									", #3: " & _GetPixelColor($ButtonPixel[0] + 15, $ButtonPixel[1] + 72, True) & _
+									", #4: " & _GetPixelColor($ButtonPixel[0] + 26, $ButtonPixel[1] + 72, True), $COLOR_DEBUG)
+		PureClick($ButtonPixel[0] + 40, $ButtonPixel[1] + 40) ; Click fight Button
 		$bRet = True
 	Else
 		SetLog("Can not find button for Builders Base Attack button", $COLOR_ERROR)
-		If $g_bDebugImageSave Then DebugImageSave("BBAttack_ButtonCheck_")
+		If $g_bDebugImageSave Then DebugImageSave("BB_AttackButton_")
 	EndIf
 	Return $bRet
 EndFunc
 
 Func CheckLootAvail()
-	Local $aColors = [[0x292928, 135, 0], [0x74bd2f, 13, 19], [0x74bd2f, 117, 19]]
+	Local $aColors = [[0x0F0F0F, 36, 0], [0x646464, 14, 6], [0x464646, 14, 16]]
 	Local $bRet = False
-	Local $aGemButton = _MultiPixelSearch(500, 650, 645, 718, 1, 1, Hex(0x2b2b2a, 6), $aColors, 20)
+	Local $ButtonPixel = _MultiPixelSearch(480, 670, 545, 705, 1, 1, Hex(0x0A0A0A, 6), $aColors, 20)
 
-	If Not IsArray($aGemButton) Then
+	If IsArray($ButtonPixel) Then
+		SetDebugLog("ButtonPixelLocation = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG) ;Debug
+		SetDebugLog("Pixel color found #1: " & _GetPixelColor($ButtonPixel[0], $ButtonPixel[1], True) & _
+									", #2: " & _GetPixelColor($ButtonPixel[0] + 36, $ButtonPixel[1], True) & _
+									", #3: " & _GetPixelColor($ButtonPixel[0] + 14, $ButtonPixel[1] + 6, True) & _
+									", #4: " & _GetPixelColor($ButtonPixel[0] + 14, $ButtonPixel[1] + 16, True), $COLOR_DEBUG)
 		$bRet = True
 		SetLog("Loot is available.")
 	Else
-		SetLog("No loot available")
-		If $g_bDebugImageSave Then DebugImageSave("CheckLootAvail")
+		SetLog("No loot available.")
+		If $g_bDebugImageSave Then DebugImageSave("BB_CheckLootAvail_")
 	EndIf
 
 	Return $bRet
 EndFunc
 
 Func CheckMachReady()
-	Local $aCoords = decodeSingleCoord(findImage("BBMachReady_bmp", $g_sImgBBMachReady, GetDiamondFromRect("113,388,170,448"), 1, True))
+	Local $aCoords = decodeSingleCoord(findImage("BBMachReady", $g_sImgBBMachReady, GetDiamondFromRect("113,388,170,448"), 1, True))
 	Local $bRet = False
 
 	If IsArray($aCoords) And UBound($aCoords) = 2 Then
 		$bRet = True
 		SetLog("Battle Machine ready.")
 	Else
-		If $g_bDebugImageSave Then DebugImageSave("CheckMachReady")
+		If $g_bDebugImageSave Then DebugImageSave("BB_CheckMachReady_")
 	EndIf
 
 	Return $bRet

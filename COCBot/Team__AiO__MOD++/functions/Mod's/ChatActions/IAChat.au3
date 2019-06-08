@@ -62,6 +62,10 @@ Func ReadChatIA(ByRef $sOCRString, $sCondition = -1, $bFast = True)
 			_ArraySort($aIAVarTmp, 0, 0, 0, 1)
 			_CaptureRegion2(0,0,287,732)
 			For $i = 0 To $iMax
+					If MultiPSimple(32, $aLastResult[$i][1] - 82, 135, $aLastResult[$i][1] + 23, Hex(0x92ED4D, 6), 20) <> 0 Then
+						SetDebugLog("Chat IA : Own talk jumped.", $COLOR_INFO)
+						ContinueLoop
+					EndIf
 						$sOCRString = ""
 						For $ii = 0 To UBound($aIAVarTmp) - 1
 						If _Sleep($DELAYDONATECC2) Then ExitLoop
@@ -103,8 +107,8 @@ Func ReadChatIA(ByRef $sOCRString, $sCondition = -1, $bFast = True)
 										EndIf
 							EndSwitch
 						Next
-				If StringStripWS($sOCRString, $STR_STRIPALL) = "" Then ; Or MultiPSimple(33, $aLastResult[$i][1], 307, $aLastResult[$i][1] + 23, 0x91ED4D, 20) <> 0 Then
-					SetDebugLog("Unable to read Chat!", $COLOR_ERROR)
+				If StringStripWS($sOCRString, $STR_STRIPALL) = "" Then 
+					SetDebugLog("Chat IA : Unable to read Chat!", $COLOR_ERROR)
 				Else
  					;SetLog("Chat : " & $sOCRString, $COLOR_INFO)
 					;If $sCondition = -1 Then
@@ -114,7 +118,7 @@ Func ReadChatIA(ByRef $sOCRString, $sCondition = -1, $bFast = True)
 
 						For $j = 0 To UBound($asFCKeyword) - 1
 							If StringInStr($sOCRString, $asFCKeyword[$j], 2) Then
-								Setlog("Chat : " & $asFCKeyword[$j], $COLOR_SUCCESS)
+								Setlog("Chat IA : " & $asFCKeyword[$j], $COLOR_SUCCESS)
 								$bResult = True
 								If $bFast = True Then Return $bResult
 							EndIf

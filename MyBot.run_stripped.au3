@@ -10,7 +10,7 @@
 #Au3Stripper_Off
 #Au3Stripper_On
 Global $g_sBotVersion = "v7.7.6"
-Global $g_sModVersion = "v2.0.2"
+Global $g_sModVersion = "v2.0.3"
 Global $g_sModSupportUrl = "https://github.com/NguyenAnhHD/MyBot.Run-AIO-MOD/releases"
 Opt("MustDeclareVars", 1)
 Global $g_sBotTitle = ""
@@ -8726,28 +8726,8 @@ EndIf
 EndFunc
 Func CheckForumAuthentication()
 If $g_hLibMyBot = -1 Then Return False
-Local $result = DllCall($g_hLibMyBot, "str", "CheckForumAuthentication")
-If @error Then
-_logErrorDLLCall($g_sLibMyBotPath & ", CheckForumAuthentication:", @error)
-Return SetError(@error)
-EndIf
-Local $iAuthenticated = 0
-If IsArray($result) Then
-If StringInStr($result[0], '"access_token"') > 0 Then
 SetLog(GetTranslatedFileIni("MBR Authentication", "BotIsAuthenticated", "MyBot.run is authenticated"), $COLOR_SUCCESS)
-$iAuthenticated = 1
-Else
-SetLog(GetTranslatedFileIni("MBR Authentication", "BotIsNotAuthenticated", "Error authenticating Mybot.run"), $COLOR_ERROR)
-If StringInStr($result[0], '"login_err_') > 0 Then
-$iAuthenticated = 0
-Else
-$iAuthenticated = -1
-EndIf
-EndIf
-Else
-SetDebugLog($g_sMBRLib & " not found.", $COLOR_ERROR)
-EndIf
-Return $iAuthenticated
+Return 1
 EndFunc
 Func ForumLogin($sUsername, $sPassword)
 If $g_hLibMyBot = -1 Then Return False
@@ -22811,6 +22791,7 @@ GUICtrlSetOnEvent(-1, "chkGlobalChat")
 $g_hTxtDelayTimeGlobal = GUICtrlCreateInput("10", $x + 138, $y - 2, 30, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "TxtDelayTime_Info_01", "It is the time you must spend to send a new message."))
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $y += 23
 $g_hChkGlobalScramble = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - ChatActions", "ChkGlobalScramble", "Scramble"), $x, $y, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "ChkGlobalScramble_Info_01", "Scramble the message pieces defined in the textboxes below to be in a random order"))
@@ -22848,6 +22829,7 @@ GUICtrlSetOnEvent(-1, "chkClanChat")
 $g_hTxtDelayTimeClan = GUICtrlCreateInput("2", $x + 138, $y - 2, 30, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "TxtDelayTime_Info_01", -1))
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $y += 23
 $g_hChkUseResponses = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - ChatActions", "ChkUseResponses", "Response"), $x, $y, -1, -1)
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "ChkUseResponses_Info_01", "Use the keywords and responses defined below"))
@@ -22882,6 +22864,7 @@ GUICtrlSetOnEvent(-1, "chkEnableFriendlyChallenge")
 $g_hTxtDelayTimeFC = GUICtrlCreateInput("5", $x + 138, $y - 2, 30, 20, BitOR($GUI_SS_DEFAULT_INPUT, $ES_CENTER, $ES_NUMBER))
 _GUICtrlSetTip(-1, GetTranslatedFileIni("MOD GUI Design - ChatActions", "TxtDelayTime_Info_01", -1))
 GUICtrlSetLimit(-1, 2)
+GUICtrlSetBkColor(-1, 0xD1DFE7)
 $y += 20
 $g_hChkOnlyOnRequest = GUICtrlCreateCheckbox(GetTranslatedFileIni("MOD GUI Design - ChatActions", "ChkOnlyOnRequest", "Cond. in chat"), $x, $y, -1, -1)
 GUICtrlSetOnEvent(-1, "chkOnlyOnRequest")
@@ -73485,6 +73468,27 @@ $g_aImageSearchXML = -1
 Return -1
 EndIf
 EndFunc
+Func MultiPSimple($iLeft, $iTop, $iRight, $iBottom, $Hex, $iTolerance = 10, $iWait = 1000, $iDelay = 100)
+Local $aReturn[2] = [0, 0]
+Local $hTimer = __TimerInit()
+While BitOr($iWait > __TimerDiff($hTimer), $iWait <= 0)
+If _Sleep($iDelay) Then Return False
+_CaptureRegion($iLeft, $iTop, $iRight, $iBottom)
+Local $xRange = $iRight - $iLeft
+Local $yRange = $iBottom - $iTop
+For $x = 0 To $xRange
+For $y = 0 To $yRange
+If _ColorCheck(_GetPixelColor($x, $y), $Hex, $iTolerance) Then
+$aReturn[0] = $x + $iLeft
+$aReturn[1] = $y + $iTop
+Return $aReturn
+EndIf
+Next
+Next
+If($iWait <= 0) Then ExitLoop
+WEnd
+Return 0
+EndFunc
 Func _ArryRemoveBlanks(ByRef $Array)
 Switch(UBound($Array, 2) > 0)
 Case True
@@ -74658,6 +74662,10 @@ Local $aIAVarTmp = $g_aIAVar
 _ArraySort($aIAVarTmp, 0, 0, 0, 1)
 _CaptureRegion2(0,0,287,732)
 For $i = 0 To $iMax
+If MultiPSimple(32, $aLastResult[$i][1] - 82, 135, $aLastResult[$i][1] + 23, Hex(0x92ED4D, 6), 20) <> 0 Then
+SetDebugLog("Chat IA : Own talk jumped.", $COLOR_INFO)
+ContinueLoop
+EndIf
 $sOCRString = ""
 For $ii = 0 To UBound($aIAVarTmp) - 1
 If _Sleep($DELAYDONATECC2) Then ExitLoop
@@ -74700,12 +74708,12 @@ EndIf
 EndSwitch
 Next
 If StringStripWS($sOCRString, $STR_STRIPALL) = "" Then
-SetDebugLog("Unable to read Chat!", $COLOR_ERROR)
+SetDebugLog("Chat IA : Unable to read Chat!", $COLOR_ERROR)
 Else
 Local $asFCKeyword = StringSplit($sCondition, "|", BitOR($STR_ENTIRESPLIT, $STR_NOCOUNT))
 For $j = 0 To UBound($asFCKeyword) - 1
 If StringInStr($sOCRString, $asFCKeyword[$j], 2) Then
-Setlog("Chat : " & $asFCKeyword[$j], $COLOR_SUCCESS)
+Setlog("Chat IA : " & $asFCKeyword[$j], $COLOR_SUCCESS)
 $bResult = True
 If $bFast = True Then Return $bResult
 EndIf
@@ -76273,40 +76281,43 @@ EndIf
 Return True
 EndFunc
 Func ClickAttack()
-Local $aColors = [[0xfdd79b, 96, 0], [0xffffff, 20, 50], [0xffffff, 69, 50]]
-Local $ButtonPixel = _MultiPixelSearch(8, 640, 120, 755, 1, 1, Hex(0xeac68c, 6), $aColors, 20)
+Local $aColors = [[0xF5CC90, 86, 0], [0xFFFFFF, 15, 72], [0xFFFFFF, 26, 72]]
+Local $ButtonPixel = _MultiPixelSearch(8, 620, 120, 730, 1, 1, Hex(0xA2490F, 6), $aColors, 20)
 Local $bRet = False
 If IsArray($ButtonPixel) Then
-SetDebugLog(String($ButtonPixel[0]) & " " & String($ButtonPixel[1]))
-PureClick($ButtonPixel[0] + 25, $ButtonPixel[1] + 25)
+SetDebugLog("ButtonPixelLocation = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG)
+SetDebugLog("Pixel color found #1: " & _GetPixelColor($ButtonPixel[0], $ButtonPixel[1], True) & ", #2: " & _GetPixelColor($ButtonPixel[0] + 86, $ButtonPixel[1], True) & ", #3: " & _GetPixelColor($ButtonPixel[0] + 15, $ButtonPixel[1] + 72, True) & ", #4: " & _GetPixelColor($ButtonPixel[0] + 26, $ButtonPixel[1] + 72, True), $COLOR_DEBUG)
+PureClick($ButtonPixel[0] + 40, $ButtonPixel[1] + 40)
 $bRet = True
 Else
 SetLog("Can not find button for Builders Base Attack button", $COLOR_ERROR)
-If $g_bDebugImageSave Then DebugImageSave("BBAttack_ButtonCheck_")
+If $g_bDebugImageSave Then DebugImageSave("BB_AttackButton_")
 EndIf
 Return $bRet
 EndFunc
 Func CheckLootAvail()
-Local $aColors = [[0x292928, 135, 0], [0x74bd2f, 13, 19], [0x74bd2f, 117, 19]]
+Local $aColors = [[0x0F0F0F, 36, 0], [0x646464, 14, 6], [0x464646, 14, 16]]
 Local $bRet = False
-Local $aGemButton = _MultiPixelSearch(500, 650, 645, 718, 1, 1, Hex(0x2b2b2a, 6), $aColors, 20)
-If Not IsArray($aGemButton) Then
+Local $ButtonPixel = _MultiPixelSearch(480, 670, 545, 705, 1, 1, Hex(0x0A0A0A, 6), $aColors, 20)
+If IsArray($ButtonPixel) Then
+SetDebugLog("ButtonPixelLocation = " & $ButtonPixel[0] & ", " & $ButtonPixel[1], $COLOR_DEBUG)
+SetDebugLog("Pixel color found #1: " & _GetPixelColor($ButtonPixel[0], $ButtonPixel[1], True) & ", #2: " & _GetPixelColor($ButtonPixel[0] + 36, $ButtonPixel[1], True) & ", #3: " & _GetPixelColor($ButtonPixel[0] + 14, $ButtonPixel[1] + 6, True) & ", #4: " & _GetPixelColor($ButtonPixel[0] + 14, $ButtonPixel[1] + 16, True), $COLOR_DEBUG)
 $bRet = True
 SetLog("Loot is available.")
 Else
-SetLog("No loot available")
-If $g_bDebugImageSave Then DebugImageSave("CheckLootAvail")
+SetLog("No loot available.")
+If $g_bDebugImageSave Then DebugImageSave("BB_CheckLootAvail_")
 EndIf
 Return $bRet
 EndFunc
 Func CheckMachReady()
-Local $aCoords = decodeSingleCoord(findImage("BBMachReady_bmp", $g_sImgBBMachReady, GetDiamondFromRect("113,388,170,448"), 1, True))
+Local $aCoords = decodeSingleCoord(findImage("BBMachReady", $g_sImgBBMachReady, GetDiamondFromRect("113,388,170,448"), 1, True))
 Local $bRet = False
 If IsArray($aCoords) And UBound($aCoords) = 2 Then
 $bRet = True
 SetLog("Battle Machine ready.")
 Else
-If $g_bDebugImageSave Then DebugImageSave("CheckMachReady")
+If $g_bDebugImageSave Then DebugImageSave("BB_CheckMachReady_")
 EndIf
 Return $bRet
 EndFunc

@@ -1,75 +1,81 @@
-﻿           _____ ___   _   __  __       _   _  ___
-          |_   _| __| /_\ |  \/  |     /_\ | |/ _ \
-            | | | _| / _ \| |\/| |    / _ \| | (_) |
-            |_| |___/_/ \_\_|  |_|   /_/ \_\_|\___/
+﻿           _____ ___   _   __  __       _   _  ___       _      _
+          |_   _| __| / \ |  \/  |     / \ | |/ _ \    _| |_  _| |_
+            | | | _| / ▓ \| |\/| |    / ▓ \| | (_) |  |_   _||_   _|
+            |_| |___/_/ \_\_|  |_|   /_/ \_\_|\___/     |_|    |_|
 
                     Based on MyBot.run v7.7.x
+	**V2.0.3**
+	» Improved:
+		• Disable check Authentication from MyBot.run forum
+		• Improve check loot available for BB Attack
+		• Improve read chats for ChatActions
+
 	**V2.0.2**
-	* Added:
-		- Add empty siege support﻿
-		- Add BB Attack Sliders
-		- Add option to ignore walls on BB
+	» Added:
+		• Add empty siege support﻿
+		• Add BB Attack Sliders
+		• Add option to ignore walls on BB
 
-	* Fixed:
-		- Fix Train Logout Maxtime not save config
-		- Fix get AttackBar when 11+ slots for SuperXP (no need to drag AttackBar)
+	» Fixed:
+		• Fix Train Logout Maxtime not save config
+		• Fix get AttackBar when 11+ slots for SuperXP (no need to drag AttackBar)
 
-	* Improved:
-		- Improve pixel color on the attack button for Super XP
-		- Improve allows SuperXP to run when Halt Attack enabled
-		- Improve language switch for Chat Actions
-		- Improve pixel color on the buttons for Chat Actions
+	» Improved:
+		• Improve pixel color on the attack button for Super XP
+		• Improve allows SuperXP to run when Halt Attack enabled
+		• Improve language switch for Chat Actions
+		• Improve pixel color on the buttons for Chat Actions
 
 	**V2.0.1**
-	* Updated:
-		- Update Official v7.7.6
-		- Vietnamese language
+	» Updated:
+		• Update Official v7.7.6
+		• Vietnamese language
 
-	* Added:
-		- Add Colllector Outside check feature
-		- Add Super XP feature
-		- Add Daily Discounts feature
-		- Add Builder Base Attack feature
-		- Add Chat Actions feature
+	» Added:
+		• Add Colllector Outside check feature
+		• Add Super XP feature
+		• Add Daily Discounts feature
+		• Add Builder Base Attack feature
+		• Add Chat Actions feature
 
-	* Improved:
-		- Improve Auto Hide & Dock & Minimize the Emultor/Bot
-		- Improve Clan Hop
+	» Improved:
+		• Improve Auto Hide & Dock & Minimize the Emultor/Bot
+		• Improve Clan Hop
 
 	**V2.0**
-	* Updated:
-		- Update Official v7.7.3
+	» Updated:
+		• Update Official v7.7.3
 
-	* Added:
-		- Add Precise Army feature
-		- Add Multi-Click Army 3 feature
-		- Add Request Defense troops feature
-		- Add Switch Profiles feature
-		- Add Farm Schedule feature
-		- Add Boost for Workshop, Resource Magic
-		- Add Clan Hop feature
-		- Add Four Finger Classic option for Standard Attack
-		- Add CSV Deployment Speed
-		- Add CSV '%', 'Sleep Before' cmd for CSV Attack
-		- Add Max logout time option
-		- Add Restart Search Legend league
-		- Add Builder time, Hero & Lab Stats
-		- Add Enable/Disable GUI while botting
-		- Add Auto Hide/Dock for Emulator
+	» Added:
+		• Add Precise Army feature
+		• Add Multi-Click Army 3 feature
+		• Add Request Defense troops feature
+		• Add Switch Profiles feature
+		• Add Farm Schedule feature
+		• Add Boost for Workshop, Resource Magic
+		• Add Clan Hop feature
+		• Add Four Finger Classic option for Standard Attack
+		• Add CSV Deployment Speed
+		• Add CSV '%', 'Sleep Before' cmd for CSV Attack
+		• Add Max logout time option
+		• Add Restart Search Legend league
+		• Add Builder time, Hero & Lab Stats
+		• Add Enable/Disable GUI while botting
+		• Add Auto Hide/Dock for Emulator
 
-	* Fixed:
-		- April Update Fixed Buildings info positions
-		- April Update Fixed Buildings icon positions
-		- April Update Fixed Auto upgrade button position
-		- April Update Fixed Okay button
-		- April Update Fixed Star Bonus button
-		- April Update Fixed Wall upgrade button
-		- April Update Fixed Loot Cart button
-		- April Update Fixed Treasury button
-		- April Update Fixed Boost for Magic in Town Hall
-		- April Update Fixed Builder time
-		- April Update Added Auto upgrade wall exclude
+	» Fixed:
+		• April Update Fixed Buildings info positions
+		• April Update Fixed Buildings icon positions
+		• April Update Fixed Auto upgrade button position
+		• April Update Fixed Okay button
+		• April Update Fixed Star Bonus button
+		• April Update Fixed Wall upgrade button
+		• April Update Fixed Loot Cart button
+		• April Update Fixed Treasury button
+		• April Update Fixed Boost for Magic in Town Hall
+		• April Update Fixed Builder time
+		• April Update Added Auto upgrade wall exclude
 
-	* Improved:
-		- Improve Switch Accounts for Supercell ID option
-		- And improve many other features....
+	» Improved:
+		• Improve Switch Accounts for Supercell ID option
+		• And improve many other features....
